@@ -6,7 +6,8 @@ using System.Web.Http.Description;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Serialization;
+using VirtoCommerce.Platform.Core.Web.Security;
 using VirtoCommerce.PricingModule.Web.Converters;
 using VirtoCommerce.PricingModule.Web.Security;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
@@ -22,10 +23,12 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         private readonly IItemService _itemService;
         private readonly ICatalogService _catalogService;
         private readonly IPricingExtensionManager _extensionManager;
+        private readonly IExpressionSerializer _expressionSerializer;
 
-        public PricingModuleController(IPricingService pricingService, IItemService itemService, ICatalogService catalogService, IPricingExtensionManager extensionManager)
+        public PricingModuleController(IPricingService pricingService, IItemService itemService, ICatalogService catalogService, IPricingExtensionManager extensionManager, IExpressionSerializer expressionSerializer)
         {
             _extensionManager = extensionManager;
+            _expressionSerializer = expressionSerializer;
             _pricingService = pricingService;
             _itemService = itemService;
             _catalogService = catalogService;
@@ -126,7 +129,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [CheckPermission(Permission = PricingPredefinedPermissions.Create)]
         public IHttpActionResult CreatePricelistAssignment(webModel.PricelistAssignment assignment)
         {
-            var priceListAssignment = _pricingService.CreatePriceListAssignment(assignment.ToCoreModel());
+            var priceListAssignment = _pricingService.CreatePriceListAssignment(assignment.ToCoreModel(_expressionSerializer));
             var result = priceListAssignment.ToWebModel(null, _extensionManager.ConditionExpressionTree);
             return Ok(result);
         }
@@ -143,7 +146,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
         public IHttpActionResult UpdatePriceListAssignment(webModel.PricelistAssignment assignment)
         {
-            _pricingService.UpdatePricelistAssignments(new[] { assignment.ToCoreModel() });
+            _pricingService.UpdatePricelistAssignments(new[] { assignment.ToCoreModel(_expressionSerializer) });
             return StatusCode(HttpStatusCode.NoContent);
         }
 
@@ -279,7 +282,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [CheckPermission(Permission = PricingPredefinedPermissions.Create)]
         public IHttpActionResult CreatePriceList(webModel.Pricelist priceList)
         {
-            var pricelist = _pricingService.CreatePricelist(priceList.ToCoreModel());
+            var pricelist = _pricingService.CreatePricelist(priceList.ToCoreModel(_expressionSerializer));
             var result = pricelist.ToWebModel();
             return Ok(result);
         }
@@ -294,7 +297,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
         public IHttpActionResult UpdatePriceList(webModel.Pricelist priceList)
         {
-            _pricingService.UpdatePricelists(new[] { priceList.ToCoreModel() });
+            _pricingService.UpdatePricelists(new[] { priceList.ToCoreModel(_expressionSerializer) });
             return StatusCode(HttpStatusCode.NoContent);
         }
 
@@ -323,7 +326,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 }
 
                 //Add changed prices to original pricelist
-                originalPriceList.Prices.AddRange(priceList.ToCoreModel().Prices);
+                originalPriceList.Prices.AddRange(priceList.ToCoreModel(_expressionSerializer).Prices);
                 _pricingService.UpdatePricelists(new[] { originalPriceList });
             }
 

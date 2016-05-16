@@ -4,11 +4,11 @@ using System.Data.Entity;
 using System.Linq;
 using CacheManager.Core;
 using Common.Logging;
-using VirtoCommerce.CoreModule.Data.Common;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Serialization;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Data.Converters;
@@ -24,12 +24,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly IItemService _productService;
         private readonly ILog _logger;
         private readonly ICacheManager<object> _cacheManager;
-        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager)
+        private readonly IExpressionSerializer _expressionSerializer;
+
+        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer)
         {
             _repositoryFactory = repositoryFactory;
             _productService = productService;
             _logger = logger;
             _cacheManager = cacheManager;
+            _expressionSerializer = expressionSerializer;
         }
 
         #region IPricingService Members
@@ -52,7 +55,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                              try
                              {
                                  //Deserialize conditions
-                                 assignment.Condition = SerializationUtil.DeserializeExpression<Func<IEvaluationContext, bool>>(assignment.ConditionExpression);
+                                 assignment.Condition = _expressionSerializer.DeserializeExpression<Func<IEvaluationContext, bool>>(assignment.ConditionExpression);
                              }
                              catch (Exception ex)
                              {
@@ -88,7 +91,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     if (assignment.Condition(evalContext))
                     {
-                        if (!retVal.Any(p => p.Id == assignment.Pricelist.Id))
+                        if (retVal.All(p => p.Id != assignment.Pricelist.Id))
                         {
                             retVal.Add(assignment.Pricelist);
                         }
@@ -141,7 +144,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         groupPrices = groupPrices.OrderBy(x => Array.IndexOf(evalContext.PricelistIds, x.PricelistId));
                     }
                     //Order by  price value
-                    var orderedPrices = groupPrices.ThenBy(x => Math.Min(x.Sale.HasValue ? x.Sale.Value : x.List, x.List));
+                    var orderedPrices = groupPrices.ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
                     retVal.AddRange(orderedPrices);
                 }
 
@@ -152,13 +155,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var productIdsWithoutPrice = evalContext.ProductIds.Except(retVal.Select(x => x.ProductId).Distinct()).ToArray();
                     if (productIdsWithoutPrice.Any())
                     {
-                        var variations = _productService.GetByIds(productIdsWithoutPrice, Domain.Catalog.Model.ItemResponseGroup.ItemInfo).Where(x => x.MainProductId != null);
+                        var variations = _productService.GetByIds(productIdsWithoutPrice, Domain.Catalog.Model.ItemResponseGroup.ItemInfo).Where(x => x.MainProductId != null).ToList();
                         evalContext.ProductIds = variations.Select(x => x.MainProductId).Distinct().ToArray();
+
                         foreach (var inheritedPrice in EvaluateProductPrices(evalContext))
                         {
                             foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
                             {
-                                var variationPrice = inheritedPrice.Clone() as coreModel.Price;
+                                var variationPrice = (coreModel.Price)inheritedPrice.Clone();
                                 //For correct override price in possible update 
                                 variationPrice.Id = null;
                                 variationPrice.ProductId = variation.Id;
@@ -325,12 +329,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var repository = _repositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
             {
-                changeTracker.AddAction = (x) =>
+                changeTracker.AddAction = x =>
                 {
                     repository.Add(x);
-                    if (x is dataModel.Price)
+
+                    var price = x as dataModel.Price;
+                    if (price != null)
                     {
-                        TryToCreateCatalogAssignment((dataModel.Price)x, repository);
+                        TryToCreateCatalogAssignment(price, repository);
                     }
                 };
 
@@ -437,7 +443,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             //need create price list assignment to catalog if it not exist
             var product = _productService.GetById(price.ProductId, Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
-            if (!repository.PricelistAssignments.Where(x => x.PricelistId == price.PricelistId && x.CatalogId == product.CatalogId).Any())
+            if (!repository.PricelistAssignments.Any(x => x.PricelistId == price.PricelistId && x.CatalogId == product.CatalogId))
             {
                 var assignment = new coreModel.PricelistAssignment
                 {
@@ -450,7 +456,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         }
         private static string GetDefaultPriceListName(string currency)
         {
-            var retVal = "Default" + currency.ToString();
+            var retVal = "Default" + currency;
             return retVal;
         }
 
