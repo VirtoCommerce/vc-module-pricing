@@ -10,7 +10,7 @@
         <projectUrl>https://github.com/VirtoCommerce/vc-module-pricing</projectUrl>
         <iconUrl>https://github.com/VirtoCommerce/vc-module-pricing/raw/master/NuGet/icon.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Order implementation</description>
+        <description>Pricing implementation</description>
         <copyright>Copyright © VirtoCommerce 2011-2016</copyright>
     </metadata>
 </package>
