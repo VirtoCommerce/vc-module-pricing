@@ -15,8 +15,10 @@
     };
 
     function initializeBlade(data) {
-        _.each(data.dynamicExpression.children, extendElementBlock);
-        groupAvailableChildren(data.dynamicExpression.children[0]);
+        if (data.dynamicExpression) {
+            _.each(data.dynamicExpression.children, extendElementBlock);
+            groupAvailableChildren(data.dynamicExpression.children[0]);
+        }
 
         blade.currentEntity = angular.copy(data);
         blade.origEntity = data;
@@ -57,14 +59,16 @@
     $scope.cancelChanges = function () {
         $scope.bladeClose();
     };
-    
+
     $scope.saveChanges = function () {
-        if (blade.isNew) {
-            blade.isLoading = true;
+        blade.isLoading = true;
+        if (blade.currentEntity.dynamicExpression) {
             blade.currentEntity.dynamicExpression.availableChildren = undefined;
             _.each(blade.currentEntity.dynamicExpression.children, stripOffUiInformation);
+        }
 
-            assignments.save({}, blade.currentEntity, function (data) {
+        if (blade.isNew) {
+            assignments.save(blade.currentEntity, function (data) {
                 blade.isNew = undefined;
                 blade.currentEntityId = data.id;
                 blade.refresh(true);
@@ -72,11 +76,7 @@
                 bladeNavigationService.setError('Error ' + error.status, blade);
             });
         } else {
-            blade.isLoading = true;
-            blade.currentEntity.dynamicExpression.availableChildren = undefined;
-            _.each(blade.currentEntity.dynamicExpression.children, stripOffUiInformation);
-
-            assignments.update({}, blade.currentEntity, function (data) {
+            assignments.update(blade.currentEntity, function (data) {
                 blade.refresh(true);
             }, function (error) {
                 bladeNavigationService.setError('Error ' + error.status, blade);
