@@ -81,6 +81,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Converters\PriceConverter.cs" />
     <Compile Include="Converters\PriceListAssignmentConverter.cs" />
     <Compile Include="Converters\PricelistConverter.cs" />
@@ -97,7 +100,6 @@
     <Compile Include="Model\Pricelist.cs" />
     <Compile Include="Model\PricelistAssignment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="Repositories\PricingRepositoryImpl.cs" />
     <Compile Include="Repositories\IPricingRepository.cs" />
     <Compile Include="Services\PricingServiceImpl.cs" />
