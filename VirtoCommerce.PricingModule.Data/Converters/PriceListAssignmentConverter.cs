@@ -30,8 +30,17 @@ namespace VirtoCommerce.PricingModule.Data.Converters
             {
                 retVal.Pricelist = dbEntity.Pricelist.ToCoreModel();
             }
-      
-			return retVal;
+            if (!string.IsNullOrEmpty(retVal.ConditionExpression))
+            {
+                //Temporary back data compatibility fix for serialized expressions
+                retVal.ConditionExpression = retVal.ConditionExpression.Replace("VirtoCommerce.DynamicExpressionModule.", "VirtoCommerce.DynamicExpressionsModule.");
+            }
+            if (!string.IsNullOrEmpty(retVal.PredicateVisualTreeSerialized))
+            {
+                //Temporary back data compatibility fix for serialized expressions
+                retVal.PredicateVisualTreeSerialized = retVal.PredicateVisualTreeSerialized.Replace("VirtoCommerce.DynamicExpressionModule.", "VirtoCommerce.DynamicExpressionsModule.");
+            }
+            return retVal;
 
 		}
 
