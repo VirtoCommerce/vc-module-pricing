@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Data.Entity;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Data.Model;
-using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Data.Repositories
 {
@@ -25,9 +20,6 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //MapEntity<Price>(modelBuilder, toTable: "Price");
-            //MapEntity<Pricelist>(modelBuilder, toTable: "Pricelist");
-            //MapEntity<PricelistAssignment>(modelBuilder, toTable: "PricelistAssignment");
             modelBuilder.Entity<Price>().HasKey(x => x.Id).Property(x => x.Id);
             modelBuilder.Entity<Price>().HasRequired(x => x.Pricelist).WithMany(x => x.Prices).HasForeignKey(x => x.PricelistId);
             modelBuilder.Entity<Price>().ToTable("Price");
