@@ -9,6 +9,7 @@ using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Services;
 using Xunit;
+using Common.Logging;
 
 namespace VirtoCommerce.PricingModule.Tests
 {
@@ -31,8 +32,8 @@ namespace VirtoCommerce.PricingModule.Tests
 
         private IPricingService GetPricingService()
         {
-            var cacheManager = new Moq.Mock<ICacheManager<object>>();
-            return new PricingServiceImpl(GetPricingRepository, null, null, cacheManager.Object, null);
+            var logger = new Moq.Mock<ILog>();
+            return new PricingServiceImpl(GetPricingRepository, null, logger.Object, null, null);
         }
 
         private IPricingRepository GetPricingRepository()

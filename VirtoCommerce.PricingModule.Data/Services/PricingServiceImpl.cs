@@ -45,27 +45,36 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             var retVal = new List<coreModel.Pricelist>();
 
-            var query = _cacheManager.Get("PricingServiceImpl.EvaluatePriceLists", "PricingModuleRegion", () =>
-                 {
-                     using (var repository = _repositoryFactory())
-                     {
-                         var allAssignments = repository.PricelistAssignments.Include(x => x.Pricelist).ToArray().Select(x => x.ToCoreModel()).ToArray();
-                         foreach (var assignment in allAssignments)
-                         {
-                             try
-                             {
-                                 //Deserialize conditions
-                                 assignment.Condition = _expressionSerializer.DeserializeExpression<Func<IEvaluationContext, bool>>(assignment.ConditionExpression);
-                             }
-                             catch (Exception ex)
-                             {
-                                 _logger.Error(ex);
-                             }
-                         }
-                         return allAssignments;
-                     }
-                 }).AsQueryable();
-
+            Func<coreModel.PricelistAssignment[]> assignemntsGetters = () =>
+            {
+                using (var repository = _repositoryFactory())
+                {
+                    var allAssignments = repository.PricelistAssignments.Include(x => x.Pricelist).ToArray().Select(x => x.ToCoreModel()).ToArray();
+                    foreach (var assignment in allAssignments)
+                    {
+                        try
+                        {
+                            //Deserialize conditions
+                            assignment.Condition = _expressionSerializer.DeserializeExpression<Func<IEvaluationContext, bool>>(assignment.ConditionExpression);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Error(ex);
+                        }
+                    }
+                    return allAssignments;
+                };
+            };
+            IQueryable<coreModel.PricelistAssignment> query = null;
+            if (_cacheManager != null)
+            {
+                query = _cacheManager.Get("PricingServiceImpl.EvaluatePriceLists", "PricingModuleRegion", assignemntsGetters).AsQueryable();
+            }
+            else
+            {
+                query = assignemntsGetters().AsQueryable();
+            }
+         
             if (evalContext.CatalogId != null)
             {
                 //filter by catalog
