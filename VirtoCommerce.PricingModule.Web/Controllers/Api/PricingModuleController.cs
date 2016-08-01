@@ -269,7 +269,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 }
                 result.Add(priceList.ToWebModel());
             }
-            return result.Any() ? Ok(result.ToArray()) : (IHttpActionResult)NotFound();
+            return Ok(result.ToArray());
         }
 
 
