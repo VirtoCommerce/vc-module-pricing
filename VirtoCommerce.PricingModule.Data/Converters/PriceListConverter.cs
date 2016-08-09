@@ -28,31 +28,26 @@ namespace VirtoCommerce.PricingModule.Data.Converters
 			var retVal = new coreModel.Pricelist();
 			retVal.InjectFrom(dbEntity);
 			retVal.Currency = dbEntity.Currency;
-			retVal.Prices = dbEntity.Prices.Select(x => x.ToCoreModel()).ToList();
 		
 			return retVal;
-
 		}
 
 
-		public static dataModel.Pricelist ToDataModel(this coreModel.Pricelist priceList)
+		public static dataModel.Pricelist ToDataModel(this coreModel.Pricelist priceList, PrimaryKeyResolvingMap pkMap)
 		{
 			if (priceList == null)
 				throw new ArgumentNullException("priceList");
 
 			var retVal = new dataModel.Pricelist();
 
-			retVal.InjectFrom(priceList);
-			retVal.Currency = priceList.Currency.ToString();
+            pkMap.AddPair(priceList, retVal);
 
-			retVal.Prices = new NullCollection<dataModel.Price>();
-			if (priceList.Prices != null)
-			{
-				retVal.Prices = new ObservableCollection<dataModel.Price>(priceList.Prices.Select(x=>x.ToDataModel()));
-			}
+            retVal.InjectFrom(priceList);
+			retVal.Currency = priceList.Currency.ToString();
+		
 			if(priceList.Assignments != null)
 			{
-				retVal.Assignments = new ObservableCollection<dataModel.PricelistAssignment>(priceList.Assignments.Select(x => x.ToDataModel()));
+				retVal.Assignments = new ObservableCollection<dataModel.PricelistAssignment>(priceList.Assignments.Select(x => x.ToDataModel(pkMap)));
 			}
 			return retVal;
 		}
@@ -68,18 +63,13 @@ namespace VirtoCommerce.PricingModule.Data.Converters
 				throw new ArgumentNullException("target");
 			var patchInjection = new PatchInjection<dataModel.Pricelist>(x => x.Name, x => x.Currency,
 																		   x => x.Description);
-			target.InjectFrom(patchInjection, source);
+			target.InjectFrom(patchInjection, source);		
 		
-			if (!source.Prices.IsNullCollection())
-			{
-				source.Prices.Patch(target.Prices, (sourcePrice, targetPrice) => sourcePrice.Patch(targetPrice));
-			}
 			if (!source.Assignments.IsNullCollection())
 			{
 				source.Assignments.Patch(target.Assignments, (sourceAssignment, targetAssignment) => sourceAssignment.Patch(targetAssignment));
 			}
 		} 
-
 
 	}
 }

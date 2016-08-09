@@ -1,18 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using VirtoCommerce.Domain.Catalog.Model;
 
 namespace VirtoCommerce.PricingModule.Web.Model
 {
 	public class ProductPrice
 	{
-		public ProductPrice(string productId, IEnumerable<Price> prices)
-		{
-			Prices = prices.Where(x => x.ProductId == productId).ToList();
-			ProductId = productId;
-
-		}
-		public string ProductId { get; set; }
-		public string ProductName { get; set; }
+  		public string ProductId { get; set; }
+		public CatalogProduct Product { get; set; }
         
         /// <summary>
         /// List prices for the products. It includes tiered prices also. (Depending on the quantity, for example)

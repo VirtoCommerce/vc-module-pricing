@@ -12,20 +12,11 @@ namespace VirtoCommerce.PricingModule.Web.Converters
 {
     public static class PricelistAssignmentConverter
     {
-        public static webModel.PricelistAssignment ToWebModel(this coreModel.PricelistAssignment assignment, coreCatalogModel.Catalog[] catalogs = null, ConditionExpressionTree etalonEpressionTree = null)
+        public static webModel.PricelistAssignment ToWebModel(this coreModel.PricelistAssignment assignment, ConditionExpressionTree etalonEpressionTree = null)
         {
             var retVal = new webModel.PricelistAssignment();
             retVal.InjectFrom(assignment);
-
-            if (catalogs != null)
-            {
-                var catalog = catalogs.FirstOrDefault(x => x.Id == assignment.CatalogId);
-                if (catalog != null)
-                {
-                    retVal.CatalogName = catalog.Name;
-                }
-            }
-
+ 
             retVal.DynamicExpression = etalonEpressionTree;
             if (!string.IsNullOrEmpty(assignment.PredicateVisualTreeSerialized))
             {

@@ -59,8 +59,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         public Pricelist GetPricelistById(string priceListId)
         {
-            var retVal = Pricelists.Include(x => x.Prices)
-                                   .Include(x => x.Assignments)
+            var retVal = Pricelists.Include(x => x.Assignments)
                                    .FirstOrDefault(x => x.Id == priceListId);
             return retVal;
         }

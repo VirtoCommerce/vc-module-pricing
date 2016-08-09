@@ -9,6 +9,7 @@ using dataModel = VirtoCommerce.PricingModule.Data.Model;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Data.Common.ConventionInjections;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Data.Converters
 {
@@ -45,14 +46,15 @@ namespace VirtoCommerce.PricingModule.Data.Converters
 		}
 
 
-		public static dataModel.PricelistAssignment ToDataModel(this coreModel.PricelistAssignment assignment)
+		public static dataModel.PricelistAssignment ToDataModel(this coreModel.PricelistAssignment assignment, PrimaryKeyResolvingMap pkMap)
 		{
 			if (assignment == null)
 				throw new ArgumentNullException("assignment");
 
 			var retVal = new dataModel.PricelistAssignment();
+            pkMap.AddPair(assignment, retVal);
 
-			retVal.InjectFrom(assignment);
+            retVal.InjectFrom(assignment);
 
 			return retVal;
 		}

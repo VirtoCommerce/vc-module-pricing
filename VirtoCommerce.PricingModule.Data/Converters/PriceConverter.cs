@@ -36,13 +36,13 @@ namespace VirtoCommerce.PricingModule.Data.Converters
         }
 
 
-        public static dataModel.Price ToDataModel(this coreModel.Price price)
+        public static dataModel.Price ToDataModel(this coreModel.Price price, PrimaryKeyResolvingMap pkMap)
         {
             if (price == null)
                 throw new ArgumentNullException("price");
 
             var retVal = new dataModel.Price();
-
+            pkMap.AddPair(price, retVal);
             retVal.InjectFrom(price);
             retVal.ProductId = price.ProductId;
             retVal.MinQuantity = price.MinQuantity;

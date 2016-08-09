@@ -6,6 +6,7 @@ using CacheManager.Core;
 using Common.Logging;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Common;
+using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
@@ -18,22 +19,70 @@ using dataModel = VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricingServiceImpl : ServiceBase, IPricingService
+    public class PricingServiceImpl : ServiceBase, IPricingService, IPricingSearchService
     {
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly IItemService _productService;
+        private readonly ICatalogSearchService _catalogSearchService;
+        private readonly ICatalogService _catalogService;
         private readonly ILog _logger;
         private readonly ICacheManager<object> _cacheManager;
         private readonly IExpressionSerializer _expressionSerializer;
 
-        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer)
+        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer, ICatalogService catalogService, ICatalogSearchService catalogSearchService)
         {
             _repositoryFactory = repositoryFactory;
             _productService = productService;
             _logger = logger;
             _cacheManager = cacheManager;
             _expressionSerializer = expressionSerializer;
+            _catalogService = catalogService;
+            _catalogSearchService = catalogSearchService;
         }
+
+
+        #region IPricingSearchService Members
+        public SearchResult Search(SearchCriteria criteria)
+        {
+            SearchResult retVal = new SearchResult();
+            using (var repository = _repositoryFactory())
+            {
+                var query = repository.Prices;
+                
+                if (!criteria.PriceListIds.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
+                }            
+                if(!criteria.ProductIds.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.ProductIds.Contains(x.ProductId));
+                }
+                var sortInfos = criteria.SortInfos;
+                if (sortInfos.IsNullOrEmpty())
+                {
+                    sortInfos = new[] { new SortInfo { SortColumn = "List" } };
+                }
+
+                
+                query = query.OrderBySortInfos(sortInfos);
+
+                if(criteria.GroupByProducts)
+                {
+                    var groupedQuery = query.GroupBy(x => x.ProductId).OrderBy(x=> 1);
+                    retVal.TotalCount = groupedQuery.Count();
+                    query = groupedQuery.Skip(criteria.Skip).Take(criteria.Take).SelectMany(x => x);
+                }
+                else
+                {
+                    retVal.TotalCount = query.Count();
+                    query = query.Skip(criteria.Skip).Take(criteria.Take);
+                }
+
+                retVal.Prices = query.ToArray().Select(x => x.ToCoreModel()).ToList();
+            }
+            return retVal;
+        }
+        #endregion
 
         #region IPricingService Members
         /// <summary>
@@ -74,7 +123,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 query = assignemntsGetters().AsQueryable();
             }
-         
+
             if (evalContext.CatalogId != null)
             {
                 //filter by catalog
@@ -255,54 +304,52 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
-        public virtual coreModel.Price CreatePrice(coreModel.Price price)
+        public virtual void CreatePrices(coreModel.Price[] prices)
         {
-            var entity = price.ToDataModel();
-
+            var pkMap = new PrimaryKeyResolvingMap();
             using (var repository = _repositoryFactory())
+            using (var changeTracker = GetChangeTracker(repository))
             {
-                //Need assign price to default pricelist with same currency or create it if not exist
-                if (price.PricelistId == null)
+                foreach (var groups in prices.GroupBy(x => x.PricelistId ?? GetDefaultPriceListName(x.Currency)).Where(x => x.Any()))
                 {
-                    var defaultPriceListId = GetDefaultPriceListName(price.Currency);
-                    var dbDefaultPriceList = repository.GetPricelistById(defaultPriceListId);
-
-                    if (dbDefaultPriceList == null)
+                    var dbPriceList = repository.GetPricelistById(groups.Key);
+                    if (dbPriceList == null)
                     {
-                        var defaultPriceList = new coreModel.Pricelist
+                        dbPriceList = new coreModel.Pricelist
                         {
-                            Id = defaultPriceListId,
-                            Currency = price.Currency,
-                            Name = defaultPriceListId,
-                            Description = defaultPriceListId
-                        };
-                        dbDefaultPriceList = defaultPriceList.ToDataModel();
+                            Id = groups.Key,
+                            Currency = groups.First().Currency,
+                            Name = groups.Key,
+                            Description = groups.Key
+                        }.ToDataModel(pkMap);
+
+                        repository.Add(dbPriceList);
                     }
-                    entity.PricelistId = dbDefaultPriceList.Id;
-                    entity.Pricelist = dbDefaultPriceList;
-
-                    repository.Add(entity);
-
-                    CommitChanges(repository);
-                    //Automatically create catalog assignment 
-                    TryToCreateCatalogAssignment(entity, repository);
-                    ResetCache();
+                    dbPriceList.Prices.AddRange(groups.Select(x => x.ToDataModel(pkMap)));
                 }
 
+                CommitChanges(repository);
+                pkMap.ResolvePrimaryKeys();
+                ResetCache();
             }
-            price.Id = entity.Id;
-            var retVal = GetPriceById(entity.Id);
-            return retVal;
+
+        }
+
+        public virtual coreModel.Price CreatePrice(coreModel.Price price)
+        {
+            CreatePrices(new[] { price });
+            return price;
         }
 
         public virtual coreModel.Pricelist CreatePricelist(coreModel.Pricelist priceList)
         {
-            var entity = priceList.ToDataModel();
-
+            var pkMap = new PrimaryKeyResolvingMap();
+            var entity = priceList.ToDataModel(pkMap);
             using (var repository = _repositoryFactory())
             {
                 repository.Add(entity);
                 CommitChanges(repository);
+                pkMap.ResolvePrimaryKeys();
                 ResetCache();
             }
 
@@ -314,9 +361,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var repository = _repositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
             {
+                var pkMap = new PrimaryKeyResolvingMap();
                 foreach (var price in prices)
                 {
-                    var sourceEntity = price.ToDataModel();
+                    var sourceEntity = price.ToDataModel(pkMap);
                     var targetEntity = repository.GetPriceById(price.Id);
 
                     if (targetEntity == null)
@@ -329,6 +377,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
 
                 CommitChanges(repository);
+                pkMap.ResolvePrimaryKeys();
                 ResetCache();
             }
         }
@@ -338,31 +387,21 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var repository = _repositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
             {
-                changeTracker.AddAction = x =>
-                {
-                    repository.Add(x);
-
-                    var price = x as dataModel.Price;
-                    if (price != null)
-                    {
-                        TryToCreateCatalogAssignment(price, repository);
-                    }
-                };
-
+                var pkMap = new PrimaryKeyResolvingMap();
                 foreach (var priceList in priceLists)
                 {
-                    var sourceEntity = priceList.ToDataModel();
+                    var sourceEntity = priceList.ToDataModel(pkMap);
                     var targetEntity = repository.GetPricelistById(priceList.Id);
                     if (targetEntity == null)
                     {
                         throw new NullReferenceException("targetEntity");
-                    }
-
+                    }                 
                     changeTracker.Attach(targetEntity);
                     sourceEntity.Patch(targetEntity);
                 }
 
                 CommitChanges(repository);
+                pkMap.ResolvePrimaryKeys();
                 ResetCache();
             }
         }
@@ -375,7 +414,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             GenericDelete(ids, (repository, id) => repository.GetPricelistById(id));
         }
-
 
 
         public coreModel.PricelistAssignment GetPricelistAssignmentById(string id)
@@ -404,17 +442,17 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         public coreModel.PricelistAssignment CreatePriceListAssignment(coreModel.PricelistAssignment assignment)
         {
-            var entity = assignment.ToDataModel();
+            var pkMap = new PrimaryKeyResolvingMap();
+            var entity = assignment.ToDataModel(pkMap);
 
             using (var repository = _repositoryFactory())
             {
                 repository.Add(entity);
                 CommitChanges(repository);
+                pkMap.ResolvePrimaryKeys();
                 ResetCache();
             }
-
-            var retVal = GetPricelistAssignmentById(entity.Id);
-            return retVal;
+            return assignment;
         }
 
         public void UpdatePricelistAssignments(coreModel.PricelistAssignment[] assignments)
@@ -422,9 +460,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var repository = _repositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
             {
+                var pkMap = new PrimaryKeyResolvingMap();
                 foreach (var assignment in assignments)
                 {
-                    var sourceEntity = assignment.ToDataModel();
+                    var sourceEntity = assignment.ToDataModel(pkMap);
                     var targetEntity = repository.GetPricelistAssignmentById(assignment.Id);
 
                     if (targetEntity == null)
@@ -437,6 +476,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
 
                 CommitChanges(repository);
+                pkMap.ResolvePrimaryKeys();
                 ResetCache();
             }
         }
@@ -448,21 +488,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         #endregion
 
-        private void TryToCreateCatalogAssignment(dataModel.Price price, IPricingRepository repository)
-        {
-            //need create price list assignment to catalog if it not exist
-            var product = _productService.GetById(price.ProductId, Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
-            if (!repository.PricelistAssignments.Any(x => x.PricelistId == price.PricelistId && x.CatalogId == product.CatalogId))
-            {
-                var assignment = new coreModel.PricelistAssignment
-                {
-                    CatalogId = product.CatalogId,
-                    Name = product.Catalog.Name + "-" + price.Pricelist.Name,
-                    PricelistId = price.Pricelist.Id
-                };
-                CreatePriceListAssignment(assignment);
-            }
-        }
+      
+
         private static string GetDefaultPriceListName(string currency)
         {
             var retVal = "Default" + currency;

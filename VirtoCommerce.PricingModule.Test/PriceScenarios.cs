@@ -33,7 +33,7 @@ namespace VirtoCommerce.PricingModule.Tests
         private IPricingService GetPricingService()
         {
             var logger = new Moq.Mock<ILog>();
-            return new PricingServiceImpl(GetPricingRepository, null, logger.Object, null, null);
+            return new PricingServiceImpl(GetPricingRepository, null, logger.Object, null, null, null, null);
         }
 
         private IPricingRepository GetPricingRepository()

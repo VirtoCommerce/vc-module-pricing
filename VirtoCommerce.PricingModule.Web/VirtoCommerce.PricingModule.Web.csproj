@@ -113,8 +113,8 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.14.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.14.1\lib\net451\VirtoCommerce.Domain.dll</HintPath>
+    <Reference Include="VirtoCommerce.Domain, Version=2.15.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.15.3-rc1\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.11.4.0, Culture=neutral, processorArchitecture=MSIL">
@@ -179,6 +179,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\Api\PricingModuleController.cs" />
+    <Compile Include="Model\ProductPricesSearchResult.cs" />
     <Compile Include="Security\PricingPredefinedPermissions.cs" />
     <Compile Include="Converters\PricelistAssignmentConverter.cs" />
     <Compile Include="Converters\PriceListConverter.cs" />

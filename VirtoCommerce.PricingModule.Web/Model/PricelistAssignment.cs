@@ -1,12 +1,13 @@
 ﻿using System;
+using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Platform.Core.Common;
 namespace VirtoCommerce.PricingModule.Web.Model
 {
 	public class PricelistAssignment : AuditableEntity
 	{
-		public string CatalogName { get; set; }
 		public string CatalogId { get; set; }
+        public Catalog Catalog { get; set; }
 		public string PricelistId { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
