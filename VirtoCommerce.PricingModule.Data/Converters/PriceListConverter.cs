@@ -49,7 +49,11 @@ namespace VirtoCommerce.PricingModule.Data.Converters
 			{
 				retVal.Assignments = new ObservableCollection<dataModel.PricelistAssignment>(priceList.Assignments.Select(x => x.ToDataModel(pkMap)));
 			}
-			return retVal;
+            if (string.IsNullOrEmpty(retVal.Id))
+            {
+                retVal.Id = null;
+            }
+            return retVal;
 		}
 
 		/// <summary>

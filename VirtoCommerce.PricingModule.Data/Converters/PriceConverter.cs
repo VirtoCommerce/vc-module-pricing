@@ -46,6 +46,10 @@ namespace VirtoCommerce.PricingModule.Data.Converters
             retVal.InjectFrom(price);
             retVal.ProductId = price.ProductId;
             retVal.MinQuantity = price.MinQuantity;
+            if(string.IsNullOrEmpty(retVal.Id))
+            {
+                retVal.Id = null;
+            }
             return retVal;
         }
 

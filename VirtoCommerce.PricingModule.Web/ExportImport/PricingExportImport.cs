@@ -12,15 +12,19 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
     public sealed class BackupObject
     {
         public ICollection<Pricelist> Pricelists { get; set; }
+        public ICollection<Price> Prices { get; set; }
+        public ICollection<PricelistAssignment> Assignments { get; set; }
     }
 
     public sealed class PricingExportImport
     {
         private readonly IPricingService _pricingService;
+        private readonly IPricingSearchService _pricingSearchService;
 
-        public PricingExportImport(IPricingService pricingService)
+        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService)
         {
             _pricingService = pricingService;
+            _pricingSearchService = pricingSearchService;
         }
 
         public void DoExport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
@@ -32,44 +36,47 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
         public void DoImport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
             var backupObject = backupStream.DeserializeJson<BackupObject>();
-			var originalObject = GetBackupObject(progressCallback);
-
-			var progressInfo = new ExportImportProgressInfo();
+	    	var progressInfo = new ExportImportProgressInfo();
 
 			progressInfo.Description = String.Format("{0} price lists importing...", backupObject.Pricelists.Count());
 			progressCallback(progressInfo);
 
-            UpdatePricelist(originalObject.Pricelists, backupObject.Pricelists);
-        }
+            _pricingService.SavePricelists(backupObject.Pricelists.ToArray());
+            _pricingService.SavePricelistAssignments(backupObject.Assignments.ToArray());
 
-        private void UpdatePricelist(ICollection<Pricelist> original, ICollection<Pricelist> backup)
-        {
-            var toUpdate = new List<Pricelist>();
-	
-            backup.CompareTo(original, EqualityComparer<Pricelist>.Default, (state, x, y) =>
+            progressInfo.TotalCount = backupObject.Prices.Count();
+            var chunkSize = 500;
+            for (int i = 0; i <= backupObject.Prices.Count(); i += chunkSize)
             {
-                switch (state)
-                {
-                    case EntryState.Modified:
-                        toUpdate.Add(x);
-                        break;
-                    case EntryState.Added:
-                        _pricingService.CreatePricelist(x);
-                        break;
-                }
-            });
-            _pricingService.UpdatePricelists(toUpdate.ToArray());
+                var prices = backupObject.Prices.Skip(i).Take(chunkSize).ToArray();
+                _pricingService.SavePrices(prices);
+                progressInfo.ProcessedCount += prices.Count();
+                progressInfo.Description = string.Format("Prices: {0} of {1} importing...", progressInfo.ProcessedCount, progressInfo.TotalCount);
+                progressCallback(progressInfo);
+            }
         }
 
+   
 		private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
         {
 			var allPricelistIds = _pricingService.GetPriceLists().Select(x => x.Id);
 			var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , allPricelistIds.Count())};
 			progressCallback(progressInfo);
-            return new BackupObject
+            var retVal = new BackupObject
             {
-                Pricelists = allPricelistIds.Select(x => _pricingService.GetPricelistById(x)).ToList()
+                Pricelists = _pricingService.GetPriceLists().ToList(),
+                Assignments = _pricingService.GetPriceListAssignments().ToList(),
+                Prices = new List<Price>()
             };
+
+            foreach(var priceList in retVal.Pricelists)
+            {
+                progressInfo.Description = String.Format("Loading {0} prices ...", priceList.Name);
+                progressCallback(progressInfo);
+                var result = _pricingSearchService.Search(new Domain.Pricing.Model.Search.SearchCriteria { Take = int.MaxValue, PriceListId = priceList.Id });
+                retVal.Prices.AddRange(result.Prices);
+            }
+            return retVal;
         }
 
     }

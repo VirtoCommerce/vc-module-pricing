@@ -17,11 +17,6 @@ namespace VirtoCommerce.PricingModule.Web.Model
 		public string Currency { get; set; }
 
         /// <summary>
-        /// List of Products prices. It includes tiered prices also
-        /// </summary>
-		public ICollection<ProductPrice> ProductPrices { get; set; }
-
-        /// <summary>
         /// Assignments define condition and rules to use the price list
         /// </summary>
 		public ICollection<PricelistAssignment> Assignments { get; set; }

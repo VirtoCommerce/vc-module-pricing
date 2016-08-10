@@ -55,8 +55,11 @@ namespace VirtoCommerce.PricingModule.Data.Converters
             pkMap.AddPair(assignment, retVal);
 
             retVal.InjectFrom(assignment);
-
-			return retVal;
+            if (string.IsNullOrEmpty(retVal.Id))
+            {
+                retVal.Id = null;
+            }
+            return retVal;
 		}
 
 		/// <summary>

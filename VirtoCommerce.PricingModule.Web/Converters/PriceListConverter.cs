@@ -17,12 +17,6 @@ namespace VirtoCommerce.PricingModule.Web.Converters
             retVal.InjectFrom(priceList);
             retVal.Currency = priceList.Currency;
 
-            if (priceList.Prices != null)
-            {
-                retVal.ProductPrices = new List<webModel.ProductPrice>();
-
-            }
-
             if (priceList.Assignments != null)
             {
                 retVal.Assignments = priceList.Assignments.Select(x => x.ToWebModel(etalonEpressionTree)).ToList();
@@ -36,11 +30,6 @@ namespace VirtoCommerce.PricingModule.Web.Converters
             var retVal = new coreModel.Pricelist();
             retVal.InjectFrom(priceList);
             retVal.Currency = priceList.Currency;
-
-            if (priceList.ProductPrices != null)
-            {
-                retVal.Prices = priceList.ProductPrices.SelectMany(x => x.Prices).Select(x => x.ToCoreModel()).ToList();
-            }
 
             if (priceList.Assignments != null)
             {
