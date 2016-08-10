@@ -170,6 +170,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
+        /// <summary>
+        /// Evaluation product prices. For the one product will be returned only prices from a single price list for each currency. 
+        /// Appropriate price list will be selected based  on price list index position  in evaluation context.
+        /// </summary>
+        /// <param name="evalContext"></param>
+        /// <returns></returns>
         public IEnumerable<coreModel.Price> EvaluateProductPrices(coreModel.PriceEvaluationContext evalContext)
         {
             if (evalContext == null)
@@ -194,19 +200,33 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
-                //query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
+                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
                 prices = query.ToArray().Select(x => x.ToCoreModel()).ToArray();
             }
 
-            //add to result prices with passed price lists
-            var resultingPrices = prices.Where(x => evalContext.PricelistIds.Contains(x.PricelistId)).ToList();
-            //then for missed products prices need return all prices in system (default prices)
-            var productIdsWithoutPrice = evalContext.ProductIds.Except(retVal.Select(x => x.ProductId).Distinct()).ToArray();
-            resultingPrices.AddRange(prices.Where(x => productIdsWithoutPrice.Contains(x.ProductId)));
+            foreach(var productId in evalContext.ProductIds)
+            {
+                var productPrices = prices.Where(x => x.ProductId == productId);
+                //Order by priority
+                foreach (var currencyPricesGroup in productPrices.GroupBy(x => x.Currency))
+                {
+                    var groupPrices = currencyPricesGroup.OrderBy(x => Math.Min(x.Sale ?? x.List, x.List));
+                    if (!evalContext.PricelistIds.IsNullOrEmpty())
+                    {
+                        //return only prices from one prioritized price list
+                        var prioritedPriceListId = evalContext.PricelistIds.FirstOrDefault(x => groupPrices.Any(y => y.PricelistId == x));
+                        if(prioritedPriceListId != null)
+                        {
+                            retVal.AddRange(groupPrices.Where(x => x.PricelistId == prioritedPriceListId));
+                        }                      
+                    }
+                }
+            }    
+                 
             //Then variation inherited prices
             if (_productService != null)
             {
-                productIdsWithoutPrice = evalContext.ProductIds.Except(retVal.Select(x => x.ProductId).Distinct()).ToArray();
+                var productIdsWithoutPrice = evalContext.ProductIds.Except(retVal.Select(x => x.ProductId).Distinct()).ToArray();
                 //Variation price inheritance
                 //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
                 if (productIdsWithoutPrice.Any())
@@ -222,26 +242,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
                             //For correct override price in possible update 
                             variationPrice.Id = null;
                             variationPrice.ProductId = variation.Id;
-                            resultingPrices.Add(variationPrice);
+                            retVal.Add(variationPrice);
                         }
                     }
                 }
             }
-
-            //Order by priority
-            foreach (var currencyPricesGroup in resultingPrices.GroupBy(x => x.Currency))
-            {
-                var groupPrices = currencyPricesGroup.OrderBy(x => 1);
-                if (evalContext.PricelistIds != null)
-                {
-                    //Construct ordered groups of list prices (ordered by pricelist priority taken from pricelistid array as index)
-                    groupPrices = groupPrices.OrderBy(x => Array.IndexOf(evalContext.PricelistIds, x.PricelistId));
-                }
-                //Order by  price value
-                var orderedPrices = groupPrices.ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
-                retVal.AddRange(orderedPrices);
-            }
-
+                    
             return retVal;
         }
 

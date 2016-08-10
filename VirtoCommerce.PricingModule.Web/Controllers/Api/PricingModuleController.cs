@@ -254,13 +254,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
 
         [HttpPut]
         [ResponseType(typeof(void))]
-        [Route("api/products/{productId}/prices")]
+        [Route("api/products/prices")]
         [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
-        public IHttpActionResult UpdateProductPrices(webModel.ProductPrice productPrice)
+        public IHttpActionResult UpdateProductsPrices(webModel.ProductPrice[] productPrices)
         {
-            var result = _pricingSearchService.Search(new Domain.Pricing.Model.Search.SearchCriteria { Take = int.MaxValue, ProductId = productPrice.ProductId });
+            var result = _pricingSearchService.Search(new Domain.Pricing.Model.Search.SearchCriteria { Take = int.MaxValue, ProductIds = productPrices.Select(x=>x.ProductId).ToArray() });
             var targetPrices = result.Prices;
-            var sourcePrices = productPrice.Prices.Select(x => x.ToCoreModel()).ToList();
+            var sourcePrices = productPrices.SelectMany(x=>x.Prices).Select(x => x.ToCoreModel()).ToList();
 
             var changedPrices = new List<coreModel.Price>();
             var deletedPrices = new List<coreModel.Price>();
@@ -279,11 +279,20 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 }
             });
             _pricingService.SavePrices(changedPrices.ToArray());
-            if(!deletedPrices.IsNullOrEmpty())
+            if (!deletedPrices.IsNullOrEmpty())
             {
                 _pricingService.DeletePrices(changedPrices.Select(x => x.Id).ToArray());
             }
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [HttpPut]
+        [ResponseType(typeof(void))]
+        [Route("api/products/{productId}/prices")]
+        [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
+        public IHttpActionResult UpdateProductPrices(webModel.ProductPrice productPrice)
+        {
+            return UpdateProductsPrices(new[] { productPrice });
         }
 
         /// <summary>
