@@ -1,12 +1,12 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.productPrices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', function ($scope, productPrices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils) {
+.controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
 
     blade.refresh = function () {
         blade.isLoading = true;
 
-        productPrices.search({
+        prices.search({
             priceListId: blade.currentEntityId,
             keyword: filter.keyword,
             sort: uiGridHelper.getSortExpression($scope),
@@ -40,6 +40,7 @@
     };
 
     function openAddEntityWizard() {
+        $scope.selectedNodeId = null;
         var selectedProducts = [];
         var newBlade = {
             id: "CatalogItemsSelect",
@@ -51,8 +52,7 @@
         {
             name: "pricing.commands.add-selected", icon: 'fa fa-plus',
             executeMethod: function (blade) {
-                addProductsToPricelist(selectedProducts);
-                bladeNavigationService.closeBlade(blade);
+                addProductsToPricelist(selectedProducts, blade);
             },
             canExecuteMethod: function () {
                 return selectedProducts.length > 0;
@@ -82,38 +82,50 @@
         bladeNavigationService.showBlade(newBlade, blade);
     }
 
-    function addProductsToPricelist(products) {
-        angular.forEach(products, function (product) {
-            if (_.all(blade.currentEntities, function (x) { return x.productId != product.id; })) {
-                var newPricelistItem =
-                {
-                    product: product,
-                    productId: product.id,
-                    prices: []
-                };
-                blade.currentEntities.push(newPricelistItem);
-            }
-        });
+    function addProductsToPricelist(products, theBlade) {
+        theBlade.isLoading = true;
 
-        // TODO: updateAll
-        if (products.length === 1) {
-            $scope.selectNode(_.last(blade.currentEntities));
-        }
+        // search for possible duplicating prices
+        prices.search({
+            priceListId: blade.currentEntityId,
+            productIds: _.pluck(products, 'id')
+        }, function (data) {
+            var newItems = _.filter(products, function (product) {
+                return _.all(data.productPrices, function (x) {
+                    return x.productId != product.id;
+                })
+            });
+
+            var newProductPrices = _.map(newItems, function (x) {
+                return {
+                    // productId: x.id,
+                    prices: [{ productId: x.id, list: 0, minQuantity: 1, currency: blade.currency, priceListId: blade.currentEntityId }]
+                };
+            });
+
+            prices.update(newProductPrices, function () {
+                bladeNavigationService.closeBlade(theBlade);
+                blade.refresh();
+            }, function (error) {
+                bladeNavigationService.setError('Error ' + error.status, blade);
+            });
+        }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
     }
 
     blade.headIcon = 'fa-usd';
 
     blade.toolbarCommands = [
-            {
-                name: "platform.commands.add", icon: 'fa fa-plus',
-                executeMethod: function () {
-                    openAddEntityWizard();
-                },
-                canExecuteMethod: function () {
-                    return true;
-                },
-                permission: 'pricing:update'
-            }
+        {
+            name: "platform.commands.refresh", icon: 'fa fa-refresh',
+            executeMethod: blade.refresh,
+            canExecuteMethod: function () { return true; }
+        },
+        {
+            name: "platform.commands.add", icon: 'fa fa-plus',
+            executeMethod: openAddEntityWizard,
+            canExecuteMethod: function () { return true; },
+            permission: 'pricing:update'
+        }
     ];
 
     $scope.getPriceRange = function (priceGroup) {

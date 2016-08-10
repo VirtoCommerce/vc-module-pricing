@@ -1,11 +1,11 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.pricesWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.productPrices', function ($scope, bladeNavigationService, productPrices) {
+.controller('virtoCommerce.pricingModule.pricesWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.prices', function ($scope, bladeNavigationService, prices) {
     var blade = $scope.widget.blade;
 
     function refresh() {
         $scope.priceCount = '...';
 
-        productPrices.search({
+        prices.search({
             priceListId: blade.currentEntityId,
             take: 0
         }, function (data) {
@@ -13,18 +13,6 @@
         }//, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); }
         );
     }
-
-    //$scope.getPriceCount = function () {
-    //    var retVal;
-    //    // all prices count
-    //    if (blade.currentEntity) {
-    //        var pricelistPrices = _.flatten(_.pluck(blade.currentEntity.productPrices, 'prices'), true);
-    //        retVal = pricelistPrices.length;
-    //    } else {
-    //        retVal = '';
-    //    }
-    //    return retVal;
-    //}
 
     $scope.openBlade = function () {
         var newBlade = {
