@@ -47,7 +47,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             SearchResult retVal = new SearchResult();
             using (var repository = _repositoryFactory())
             {
-                var query = repository.Prices;
+                var query = repository.Prices.Include(x=>x.Pricelist);
 
                 if (!criteria.PriceListIds.IsNullOrEmpty())
                 {

@@ -259,25 +259,36 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         public IHttpActionResult UpdateProductsPrices(webModel.ProductPrice[] productPrices)
         {
             var result = _pricingSearchService.Search(new Domain.Pricing.Model.Search.SearchCriteria { Take = int.MaxValue, ProductIds = productPrices.Select(x=>x.ProductId).ToArray() });
-            var targetPrices = result.Prices;
-            var sourcePrices = productPrices.SelectMany(x=>x.Prices).Select(x => x.ToCoreModel()).ToList();
+            var targetPricesGroups = result.Prices.GroupBy(x => x.PricelistId);
+            var sourcePricesGroups = productPrices.SelectMany(x => x.Prices).Select(x => x.ToCoreModel()).GroupBy(x => x.PricelistId);
 
             var changedPrices = new List<coreModel.Price>();
             var deletedPrices = new List<coreModel.Price>();
 
-            sourcePrices.CompareTo(targetPrices, EqualityComparer<coreModel.Price>.Default, (state, x, y) =>
+            foreach (var sourcePricesGroup in sourcePricesGroups)
             {
-                switch (state)
+                var targetPricesGroup = targetPricesGroups.FirstOrDefault(x => x.Key == sourcePricesGroup.Key);
+                if (targetPricesGroup != null)
                 {
-                    case EntryState.Modified:
-                    case EntryState.Added:
-                        changedPrices.Add(x);
-                        break;
-                    case EntryState.Deleted:
-                        deletedPrices.Add(x);
-                        break;
+                    sourcePricesGroup.ToArray().CompareTo(targetPricesGroup.ToArray(), EqualityComparer<coreModel.Price>.Default, (state, x, y) =>
+                    {
+                        switch (state)
+                        {
+                            case EntryState.Modified:
+                            case EntryState.Added:
+                                changedPrices.Add(x);
+                                break;
+                            case EntryState.Deleted:
+                                deletedPrices.Add(x);
+                                break;
+                        }
+                    });
                 }
-            });
+                else
+                {
+                    changedPrices.AddRange(sourcePricesGroup);
+                }
+            }
             _pricingService.SavePrices(changedPrices.ToArray());
             if (!deletedPrices.IsNullOrEmpty())
             {
