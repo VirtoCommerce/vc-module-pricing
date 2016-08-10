@@ -28,7 +28,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly ILog _logger;
         private readonly ICacheManager<object> _cacheManager;
         private readonly IExpressionSerializer _expressionSerializer;
-
+        private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
         public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer, ICatalogService catalogService, ICatalogSearchService catalogSearchService)
         {
             _repositoryFactory = repositoryFactory;
@@ -38,6 +38,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _expressionSerializer = expressionSerializer;
             _catalogService = catalogService;
             _catalogSearchService = catalogSearchService;
+            _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List);
         }
 
 
@@ -66,8 +67,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
-                    sortInfos = new[] { new SortInfo { SortColumn = "List" } };
+                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List) } };
                 }
+                //Try to replace sorting columns names
+                TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
 
 
                 query = query.OrderBySortInfos(sortInfos);
@@ -495,9 +498,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _cacheManager.ClearRegion("PricingModuleRegion");
         }
 
-  
-      
-       
+        private static void TryTransformSortingInfoColumnNames(IDictionary<string, string> transformationMap, SortInfo[] sortingInfos)
+        {
+            //Try to replace sorting columns names
+            foreach (var sortInfo in sortingInfos)
+            {
+                string newColumnName;
+                if (transformationMap.TryGetValue(sortInfo.SortColumn.ToLowerInvariant(), out newColumnName))
+                {
+                    sortInfo.SortColumn = newColumnName;
+                }
+            }
+        }
+
+
     }
 
 

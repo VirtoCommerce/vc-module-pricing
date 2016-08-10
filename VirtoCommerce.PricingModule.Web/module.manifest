@@ -5,6 +5,7 @@
     <platformVersion>2.11.0</platformVersion>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="2.15.3" />
+		<dependency id="VirtoCommerce.Catalog" version="2.13.0" />
     </dependencies>
 
     <title>Pricing module</title>

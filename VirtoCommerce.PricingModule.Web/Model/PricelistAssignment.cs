@@ -1,5 +1,5 @@
 ﻿using System;
-using VirtoCommerce.Domain.Catalog.Model;
+using VirtoCommerce.CatalogModule.Web.Model;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Platform.Core.Common;
 namespace VirtoCommerce.PricingModule.Web.Model

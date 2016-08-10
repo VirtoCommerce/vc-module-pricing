@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
+using VirtoCommerce.CatalogModule.Web.Converters;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Pricing.Services;
+using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
 using VirtoCommerce.Platform.Core.Web.Security;
@@ -26,9 +28,10 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         private readonly ICatalogService _catalogService;
         private readonly IPricingExtensionManager _extensionManager;
         private readonly IExpressionSerializer _expressionSerializer;
+        private readonly IBlobUrlResolver _blobUrlResolver;
 
 
-        public PricingModuleController(IPricingService pricingService, IItemService itemService, ICatalogService catalogService, IPricingExtensionManager extensionManager, IExpressionSerializer expressionSerializer, IPricingSearchService pricingSearchService)
+        public PricingModuleController(IPricingService pricingService, IItemService itemService, ICatalogService catalogService, IPricingExtensionManager extensionManager, IExpressionSerializer expressionSerializer, IPricingSearchService pricingSearchService, IBlobUrlResolver blobUrlResolver)
         {
             _extensionManager = extensionManager;
             _expressionSerializer = expressionSerializer;
@@ -36,6 +39,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             _itemService = itemService;
             _catalogService = catalogService;
             _pricingSearchService = pricingSearchService;
+            _blobUrlResolver = blobUrlResolver;
         }
 
         /// <summary>
@@ -90,7 +94,11 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
 
             if (result != null)
             {
-                result.Catalog = _catalogService.GetById(result.CatalogId);               
+                var catalog = _catalogService.GetById(result.CatalogId);
+                if (catalog != null)
+                {
+                    result.Catalog = catalog.ToWebModel();
+                }               
             }
             return result != null ? Ok(result) : (IHttpActionResult)NotFound();
         }
@@ -112,7 +120,11 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 var catalogs = _catalogService.GetCatalogsList();
                 foreach(var assignment in result)
                 {
-                    assignment.Catalog = catalogs.FirstOrDefault(x => x.Id == assignment.CatalogId);
+                    var catalog = catalogs.FirstOrDefault(x => x.Id == assignment.CatalogId);
+                    if (catalog != null)
+                    {
+                        assignment.Catalog = catalog.ToWebModel();
+                    }
                 }
             }
 
@@ -244,9 +256,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             if(retVal.ProductPrices != null)
             {
                 var products = _itemService.GetByIds(retVal.ProductPrices.Select(x => x.ProductId).ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
-                foreach(var productPrice in retVal.ProductPrices)
+                foreach (var productPrice in retVal.ProductPrices)
                 {
-                    productPrice.Product = products.FirstOrDefault(x => x.Id == productPrice.ProductId);
+                    var product = products.FirstOrDefault(x => x.Id == productPrice.ProductId);
+                    if (product != null)
+                    {
+                        productPrice.Product = product.ToWebModel(_blobUrlResolver);
+                    }
                 }
             }
             return Ok(retVal);
