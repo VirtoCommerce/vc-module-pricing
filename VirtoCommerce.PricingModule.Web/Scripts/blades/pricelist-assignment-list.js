@@ -1,32 +1,54 @@
 ﻿angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.pricelistAssignmentListController', ['$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
+    var blade = $scope.blade;
     var selectedNode = null;
 
     function initializeBlade(data) {
-        $scope.blade.currentEntities = data;
-        $scope.blade.isLoading = false;
+        blade.currentEntities = data;
+        blade.isLoading = false;
     }
 
-    $scope.selectNode = function (node) {
+    $scope.selectNode = function (node, isNew) {
         selectedNode = node;
         $scope.selectedNodeId = selectedNode.id;
 
         var newBlade = {
             id: 'pricelistChildChild',
-            currentEntityId: selectedNode.id,
-            title: selectedNode.name,
-            subtitle: 'pricing.blades.assignment-detail.edit-subtitle',
             controller: 'virtoCommerce.pricingModule.assignmentDetailController',
             template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/assignment-detail.tpl.html'
         };
 
-        bladeNavigationService.showBlade(newBlade, $scope.blade);
+        if (isNew) {
+            angular.extend(newBlade, {
+                isNew: true,
+                data: selectedNode,
+                title: 'pricing.blades.assignment-detail.new-title'
+            });
+        } else {
+            angular.extend(newBlade, {
+                currentEntityId: selectedNode.id,
+                title: selectedNode.name,
+                subtitle: 'pricing.blades.assignment-detail.subtitle'
+            });
+        }
+
+        bladeNavigationService.showBlade(newBlade, blade);
     };
-    
-    $scope.blade.headIcon = 'fa-usd';
+
+    blade.headIcon = 'fa-anchor';
+
+    blade.toolbarCommands = [
+      {
+          name: "platform.commands.add", icon: 'fa fa-plus',
+          executeMethod: function () {
+              $scope.selectNode({ pricelistId: blade.currentEntity.id }, true);
+          },
+          canExecuteMethod: function () { return true; },
+          permission: 'pricing:create'
+      }
+    ];
 
     $scope.$watch('blade.parentBlade.currentEntity.assignments', function (currentEntities) {
-        // $scope.blade.data = currentEntities;
         initializeBlade(currentEntities);
     });
 

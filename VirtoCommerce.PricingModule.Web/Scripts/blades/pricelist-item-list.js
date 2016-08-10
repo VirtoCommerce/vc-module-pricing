@@ -1,19 +1,23 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', '$filter', 'platformWebApp.bladeNavigationService', 'filterFilter', 'uiGridConstants', 'platformWebApp.uiGridHelper', function ($scope, $filter, bladeNavigationService, filterFilter, uiGridConstants, uiGridHelper) {
+.controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.productPrices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', function ($scope, productPrices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
 
-    //pagination settings
-    $scope.pageSettings = {};
-    $scope.pageSettings.totalItems = 0;
-    $scope.pageSettings.currentPage = 1;
-    $scope.pageSettings.numPages = 5;
-    $scope.pageSettings.itemsPerPageCount = 20;
+    blade.refresh = function () {
+        blade.isLoading = true;
 
-    function initializeBlade(data) {
-        blade.currentEntities = data;
-        $scope.pageSettings.totalItems = data.length;
-        blade.isLoading = false;
+        productPrices.search({
+            priceListId: blade.currentEntityId,
+            keyword: filter.keyword,
+            sort: uiGridHelper.getSortExpression($scope),
+            skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+            take: $scope.pageSettings.itemsPerPageCount
+        }, function (data) {
+            blade.currentEntities = data.productPrices;
+            $scope.pageSettings.totalItems = data.totalCount;
+
+            blade.isLoading = false;
+        }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
     };
 
     $scope.selectNode = function (node) {
@@ -22,10 +26,11 @@
         var newBlade = {
             id: 'pricelistChildChild',
             itemId: node.productId,
+            priceListId: blade.currentEntityId,
             data: node,
             currency: blade.currency,
             title: 'pricing.blades.prices-list.title',
-            titleValues: { name: node.productName },
+            titleValues: { name: node.product.name },
             subtitle: 'pricing.blades.prices-list.subtitle',
             controller: 'virtoCommerce.pricingModule.pricesListController',
             template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/prices-list.tpl.html'
@@ -38,21 +43,21 @@
         var selectedProducts = [];
         var newBlade = {
             id: "CatalogItemsSelect",
-            title: "Select items for pricing", //catalogItemSelectController hardcode set title 
+            title: "Select items for pricing", //catalogItemSelectController: hard-coded title
             controller: 'virtoCommerce.catalogModule.catalogItemSelectController',
             template: 'Modules/$(VirtoCommerce.Catalog)/Scripts/blades/common/catalog-items-select.tpl.html',
             breadcrumbs: [],
             toolbarCommands: [
-            {
-                name: "pricing.commands.add-selected", icon: 'fa fa-plus',
-                executeMethod: function (blade) {
-                    addProductsToPricelist(selectedProducts);
-                    bladeNavigationService.closeBlade(blade);
-                },
-                canExecuteMethod: function () {
-                    return selectedProducts.length > 0;
-                }
-            }]
+        {
+            name: "pricing.commands.add-selected", icon: 'fa fa-plus',
+            executeMethod: function (blade) {
+                addProductsToPricelist(selectedProducts);
+                bladeNavigationService.closeBlade(blade);
+            },
+            canExecuteMethod: function () {
+                return selectedProducts.length > 0;
+            }
+        }]
         };
 
         newBlade.options = {
@@ -82,28 +87,33 @@
             if (_.all(blade.currentEntities, function (x) { return x.productId != product.id; })) {
                 var newPricelistItem =
                 {
-                    productName: product.name,
+                    product: product,
                     productId: product.id,
                     prices: []
                 };
                 blade.currentEntities.push(newPricelistItem);
             }
         });
+
+        // TODO: updateAll
+        if (products.length === 1) {
+            $scope.selectNode(_.last(blade.currentEntities));
+        }
     }
 
     blade.headIcon = 'fa-usd';
 
     blade.toolbarCommands = [
-    {
-        name: "platform.commands.add", icon: 'fa fa-plus',
-        executeMethod: function () {
-            openAddEntityWizard();
-        },
-        canExecuteMethod: function () {
-            return true;
-        },
-        permission: 'pricing:update'
-    }
+            {
+                name: "platform.commands.add", icon: 'fa fa-plus',
+                executeMethod: function () {
+                    openAddEntityWizard();
+                },
+                canExecuteMethod: function () {
+                    return true;
+                },
+                permission: 'pricing:update'
+            }
     ];
 
     $scope.getPriceRange = function (priceGroup) {
@@ -120,28 +130,23 @@
         return retVal;
     }
 
+    var filter = $scope.filter = {};
+    filter.criteriaChanged = function () {
+        if ($scope.pageSettings.currentPage > 1) {
+            $scope.pageSettings.currentPage = 1;
+        } else {
+            blade.refresh();
+        }
+    };
+
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions,
-        function (gridApi) {
-            gridApi.grid.registerRowsProcessor($scope.singleFilter, 90);
-            $scope.$watch('pageSettings.currentPage', gridApi.pagination.seek);
+        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
+            uiGridHelper.bindRefreshOnSortChanged($scope);
         });
+        bladeUtils.initializePagination($scope);
     };
 
-    $scope.singleFilter = function (renderableRows) {
-        var visibleCount = 0;
-        renderableRows.forEach(function (row) {
-            row.visible = _.any(filterFilter([row.entity], blade.searchText));
-            if (row.visible) visibleCount++;
-        });
-
-        $scope.filteredEntitiesCount = visibleCount;
-        return renderableRows;
-    };
-
-    $scope.$watch('blade.parentBlade.currentEntity.productPrices', initializeBlade);
-
-    // actions on load
-    // $scope.$watch('blade.parentBlade.currentEntity.productPrices' gets fired
+    //No need to call this because page 'pageSettings.currentPage' is watched!!! It would trigger subsequent duplicated req...
+    //blade.refresh();
 }]);

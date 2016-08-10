@@ -1,13 +1,18 @@
 ﻿angular.module('virtoCommerce.pricingModule')
     .factory('virtoCommerce.pricingModule.prices', ['$resource', function ($resource) {
-        return $resource('api/catalog/products/:id/pricelists', { id: '@Id' }, {
-            getProductPrices: { url: 'api/products/:id/prices', isArray: true },
-            // query: { isArray: true },
-            update: { method: 'PUT' }
+        return $resource('api/products/:id/prices', { id: '@Id' }, {
+            getProductPrices: { isArray: true }, // is also used in other modules
+            update: { method: 'PUT' },
+            updateAll: { url: 'api/products/prices', method: 'PUT' }
+        });
+    }])
+    .factory('virtoCommerce.pricingModule.productPrices', ['$resource', function ($resource) {
+        return $resource('api/catalog/products/:id/prices', {}, {
+            search: { url: 'api/catalog/products/prices/search' },
         });
     }])
     .factory('virtoCommerce.pricingModule.pricelists', ['$resource', function ($resource) {
-        return $resource('api/pricing/pricelists/:id', { id: '@Id' }, {
+        return $resource('api/pricing/pricelists/:id', {}, {
             update: { method: 'PUT' }
         });
     }])

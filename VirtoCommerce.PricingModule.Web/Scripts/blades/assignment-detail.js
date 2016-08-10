@@ -15,6 +15,10 @@
     };
 
     function initializeBlade(data) {
+        if (blade.isNew) {
+            data = angular.extend(blade.data, data);
+        }
+
         if (data.dynamicExpression) {
             _.each(data.dynamicExpression.children, extendElementBlock);
             groupAvailableChildren(data.dynamicExpression.children[0]);
@@ -87,8 +91,6 @@
     blade.onClose = function (closeCallback) {
         bladeNavigationService.showConfirmationIfNeeded(isDirty(), canSave(), blade, $scope.saveChanges, closeCallback, "pricing.dialogs.assignment-save.title", "pricing.dialogs.assignment-save.message");
     };
-
-    blade.headIcon = blade.parentBlade.headIcon;
 
     // datepicker
     $scope.datepickers = {

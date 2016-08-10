@@ -35,7 +35,7 @@
         }
       },
       "pricelist-item-list": {
-        "subtitle": "Select Price list to manage prices",
+        "subtitle": "Select Product to manage Prices",
         "labels": {
           "item-name": "Item name",
           "item-code": "Item code",
@@ -76,9 +76,8 @@
         }
       },
       "assignment-detail": {
-        "subtitle": "Merchandise management",
         "new-title": "New price list assignment",
-        "edit-subtitle": "Edit catalog assignment",
+        "subtitle": "Edit catalog assignment",
         "labels": {
           "assignment-name": "Assignment name",
           "price-list": "Price list",

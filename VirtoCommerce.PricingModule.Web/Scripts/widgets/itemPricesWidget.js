@@ -1,30 +1,47 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPricesWidgetController', ['$scope', '$filter', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.prices', function ($scope, $filter, bladeNavigationService, prices) {
+.controller('virtoCommerce.pricingModule.itemPricesWidgetController', ['$scope', '$filter', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.pricelists', 'virtoCommerce.pricingModule.prices', '$q', function ($scope, $filter, bladeNavigationService, pricelists, prices, $q) {
     var blade = $scope.blade;
+
+    var pricelists = pricelists.query();
 
     function refresh() {
         $scope.priceRange = '...';
 
-        return prices.query({ id: blade.itemId }, function (data) {
-            // find the most popular currency and min/max prices in it.
-            var pricelists = _.flatten(_.pluck(data, 'productPrices'), true);
-            var prices = _.flatten(_.pluck(pricelists, 'prices'), true);
-            if (prices.length) {
+        var prodPrices = prices.get({ id: blade.itemId });
+        var deferred = $q.defer();
+
+        $q.all([pricelists.$promise, prodPrices.$promise]).then(function () {
+            var prices = prodPrices.prices;
+            if (_.any(prices)) {
+                _.each(prices, function (p) {
+                    var found = _.findWhere(pricelists, { id: p.pricelistId });
+                    if (found) {
+                        p.currency = found.currency;
+                    }
+                });
+
                 prices = _.groupBy(prices, 'currency');
                 prices = _.max(_.values(prices), function (x) { return x.length; });
                 var allPrices = _.union(_.pluck(prices, 'list'), _.pluck(prices, 'sale'));
                 var minprice = _.min(allPrices);
                 var maxprice = _.max(allPrices);
-                var currency = prices.length ? ' ' + prices[0].currency : '';
+                var currency = _.any(prices) ? ' ' + prices[0].currency : '';
                 minprice = $filter('number')(minprice, 2);
                 maxprice = $filter('number')(maxprice, 2);
                 $scope.priceRange = (minprice == maxprice ? minprice : minprice + '-' + maxprice) + currency;
             } else {
                 $scope.priceRange = 'N/A';
             }
-        }, function (error) {
-            $scope.priceRange = 'N/A';
+
+            var processedPricelists = angular.copy(pricelists);
+            _.each(processedPricelists, function (list) {
+                list.prices = _.where(prodPrices.prices, { pricelistId: list.id });
+            });
+
+            deferred.resolve(processedPricelists);
         });
+
+        return deferred.promise;
     }
 
     $scope.openBlade = function () {

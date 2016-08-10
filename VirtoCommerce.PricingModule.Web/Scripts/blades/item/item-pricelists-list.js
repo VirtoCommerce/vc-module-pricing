@@ -1,10 +1,10 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.bladeNavigationService', function ($scope, prices, bladeNavigationService) {
+.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
     var blade = $scope.blade;
 
     blade.refresh = function () {
         blade.isLoading = true;
-        return blade.parentWidgetRefresh().$promise.then(function (results) {
+        return blade.parentWidgetRefresh().then(function (results) {
             blade.isLoading = false;
             blade.currentEntities = results;
             return results;
@@ -18,8 +18,8 @@
 
         var newBlade = {
             id: "itemPrices",
-            isApiSave: true,
             itemId: blade.itemId,
+            priceListId: data.id,
             data: data,
             currency: data.currency,
             title: data.name,
@@ -55,11 +55,6 @@
 		}
     ];
 
-
-    $scope.getPriceCount = function (pricelist) {
-        var pricelistPrices = _.flatten(_.pluck(pricelist.productPrices, 'prices'), true);
-        return pricelistPrices.length;
-    }
 
     blade.refresh();
 }]);

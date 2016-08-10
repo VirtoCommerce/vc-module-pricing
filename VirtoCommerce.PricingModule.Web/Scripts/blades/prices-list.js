@@ -2,38 +2,26 @@
 .controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', function ($scope, prices, objCompareService, bladeNavigationService) {
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
-    blade.selectedAll = false;
 
-    blade.refresh = function (parentRefresh) {
-        if (blade.isApiSave) {
-            if (parentRefresh) {
-                blade.isLoading = true;
-                blade.parentBlade.refresh().then(function (results) {
-                    blade.data = _.find(results, function (x) { return x.id === blade.data.id; });
-                    if (blade.data.productPrices.length == 0) {
-                        blade.data.productPrices.push({ prices: [], productId: blade.itemId });
-                    }
-                    initializeBlade(blade.data.productPrices[0].prices);
-                });
-            } else {
-                if (blade.data.productPrices.length == 0) {
-                    blade.data.productPrices.push({ prices: [], productId: blade.itemId });
-                }
-                initializeBlade(blade.data.productPrices[0].prices);
-            }
-        } else {
-            initializeBlade(blade.data.prices);
+    blade.refresh = function () {
+        blade.data.productId = blade.itemId;
+        if (!blade.data.prices) {
+            blade.data.prices = [];
         }
+
+        //if (!_.any(blade.data.prices)) {
+
+        //    addNewPrice(blade.data.prices);
+        //}
+
+        blade.currentEntities = angular.copy(blade.data.prices);
+        blade.origEntity = blade.data.prices;
+        blade.isLoading = false;
+        blade.selectedAll = false;
     };
 
-    function initializeBlade(data) {
-        blade.currentEntities = angular.copy(data);
-        blade.origEntity = data;
-        blade.isLoading = false;
-    }
-
     $scope.selectItem = function (listItem) {
-        $scope.selectedItemId = listItem.id;
+        $scope.selectedItem = listItem;
     };
 
     blade.onClose = function (closeCallback) {
@@ -60,19 +48,14 @@
     }
 
     $scope.saveChanges = function () {
-        if (blade.isApiSave) {
-            blade.isLoading = true;
+        blade.isLoading = true;
 
-            angular.copy(blade.currentEntities, blade.data.productPrices[0].prices);
-            prices.update({ id: blade.itemId }, blade.data, function (data) {
-                blade.refresh(true);
-            },
-            function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
-        } else {
-            angular.copy(blade.currentEntities, blade.data.prices);
-            angular.copy(blade.currentEntities, blade.origEntity);
+        angular.copy(blade.currentEntities, blade.origEntity);
+        prices.update({ id: blade.itemId }, blade.data, function (data) {
+            blade.parentBlade.refresh();
             $scope.bladeClose();
-        }
+        },
+        function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
     };
 
     $scope.delete = function (listItem) {
@@ -87,21 +70,7 @@
         formScope = form;
     }
 
-    blade.headIcon = 'fa-usd';
-
     blade.toolbarCommands = [
-        {
-            name: "platform.commands.add", icon: 'fa fa-plus',
-            executeMethod: function () {
-                var newEntity = { productId: blade.itemId, list: 0, minQuantity: 1, currency: blade.currency };
-                blade.currentEntities.push(newEntity);
-                $scope.selectItem(newEntity);
-            },
-            canExecuteMethod: function () {
-                return true;
-            },
-            permission: blade.updatePermission
-        },
         {
             name: "platform.commands.save", icon: 'fa fa-save',
             executeMethod: $scope.saveChanges,
@@ -115,6 +84,12 @@
                 blade.selectedAll = false;
             },
             canExecuteMethod: isDirty,
+            permission: blade.updatePermission
+        },
+        {
+            name: "platform.commands.add", icon: 'fa fa-plus',
+            executeMethod: function () { addNewPrice(blade.currentEntities); },
+            canExecuteMethod: function () { return true; },
             permission: blade.updatePermission
         },
         {
@@ -132,8 +107,10 @@
         }
     ];
 
-    if (!blade.isApiSave) {
-        blade.toolbarCommands.splice(1, 1); // remove save button
+    function addNewPrice(targetList) {
+        var newEntity = { productId: blade.itemId, list: 0, minQuantity: 1, currency: blade.currency, priceListId: blade.priceListId };
+        targetList.push(newEntity);
+        $scope.selectItem(newEntity);
     }
 
     $scope.toggleAll = function () {
