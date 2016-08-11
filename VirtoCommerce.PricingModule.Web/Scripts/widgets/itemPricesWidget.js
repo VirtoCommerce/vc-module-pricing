@@ -1,63 +1,93 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPricesWidgetController', ['$scope', '$filter', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.pricelists', 'virtoCommerce.pricingModule.prices', '$q', function ($scope, $filter, bladeNavigationService, pricelists, prices, $q) {
-    var blade = $scope.blade;
+.controller('virtoCommerce.pricingModule.itemPricesWidgetController', ['$scope', '$filter', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.pricelists', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.pricingModule.pricelistAssignments', '$q', '$state',
+    function ($scope, $filter, bladeNavigationService, pricelists, prices, pricelistAssignments, $q, $state) {
+        var blade = $scope.blade;
+        $scope.priceLabel = '...';
+        var pricelists, catalogAssignments;
 
-    var pricelists = pricelists.query();
+        // first check if catalog has any assingment
+        pricelistAssignments.query({}, function (data) {
+            catalogAssignments = _.where(data, { catalogId: bladeNavigationService.catalogsSelectedCatalog.id });
+            if (_.any(catalogAssignments)) {
+                pricelists = pricelists.query();
 
-    function refresh() {
-        $scope.priceRange = '...';
+                catalogAssignments.sort(function (a, b) { return b.priority - a.priority; });
+                refreshPricesCount(true);
+            } else {
+                $scope.noPricelist = true;
+            }
+        }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
 
-        var prodPrices = prices.get({ id: blade.itemId });
-        var deferred = $q.defer();
 
-        $q.all([pricelists.$promise, prodPrices.$promise]).then(function () {
-            var prices = prodPrices.prices;
-            if (_.any(prices)) {
-                _.each(prices, function (p) {
-                    var found = _.findWhere(pricelists, { id: p.pricelistId });
-                    if (found) {
-                        p.currency = found.currency;
-                    }
+        function refreshPricesCount(doInitialize) {
+            $scope.priceLabel = '...';
+
+            var prodPricesResult = prices.get({ id: blade.itemId });
+            var deferred = $q.defer();
+
+            $q.all([pricelists.$promise, prodPricesResult.$promise]).then(function () {
+                var prodPrices = prodPricesResult.prices;
+
+                // set priority and prices for catalog pricelists
+                if (doInitialize) {
+                    pricelists = _.filter(pricelists, function (x) {
+                        return _.any(catalogAssignments, function (a) { return a.pricelistId === x.id; });
+                    });
+                    // set assignment priority to pricelist
+                    _.each(pricelists, function (x) {
+                        var pricelistAssignments = _.where(catalogAssignments, { pricelistId: x.id });
+                        x.priority = _.pluck(pricelistAssignments, 'priority').sort().join(", ");
+                    });
+                }
+
+                _.each(pricelists, function (list) {
+                    list.prices = _.where(prodPrices, { pricelistId: list.id });
+                    list.prices.sort(function (a, b) { return a.minQuantity - b.minQuantity; });
                 });
 
-                prices = _.groupBy(prices, 'currency');
-                prices = _.max(_.values(prices), function (x) { return x.length; });
-                var allPrices = _.union(_.pluck(prices, 'list'), _.pluck(prices, 'sale'));
-                var minprice = _.min(allPrices);
-                var maxprice = _.max(allPrices);
-                var currency = _.any(prices) ? ' ' + prices[0].currency : '';
-                minprice = $filter('number')(minprice, 2);
-                maxprice = $filter('number')(maxprice, 2);
-                $scope.priceRange = (minprice == maxprice ? minprice : minprice + '-' + maxprice) + currency;
-            } else {
-                $scope.priceRange = 'N/A';
-            }
+                deferred.resolve(pricelists);
 
-            var processedPricelists = angular.copy(pricelists);
-            _.each(processedPricelists, function (list) {
-                list.prices = _.where(prodPrices.prices, { pricelistId: list.id });
+                // calculate $scope.priceLabel as list price for single item from highest priority pricelist                
+                var thePrice;
+                if (_.any(prodPrices)) {
+                    var pricelistIds = _.pluck(catalogAssignments, 'pricelistId');
+
+                    for (var i = 0; i < pricelistIds.length; i++) {
+                        var list = _.findWhere(pricelists, { id: pricelistIds[i] });
+                        if (_.any(list.prices)) {
+                            thePrice = list.prices[0];
+                            break;
+                        }
+                    }
+                }
+
+                if (thePrice) {
+                    $scope.priceLabel = $filter('number')(thePrice.list, 2) + ' ' + thePrice.currency;
+                } else {
+                    $scope.priceLabel = 'N/A';
+                }
             });
 
-            deferred.resolve(processedPricelists);
-        });
-
-        return deferred.promise;
-    }
-
-    $scope.openBlade = function () {
-        if ($scope.priceRange !== '...') {
-            var newBlade = {
-                id: "itemPricelists",
-                itemId: blade.itemId,
-                parentWidgetRefresh: refresh,
-                title: blade.title,
-                subtitle: 'pricing.blades.item-pricelists-list.subtitle',
-                controller: 'virtoCommerce.pricingModule.itemPricelistsListController',
-                template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/item/item-pricelists-list.tpl.html'
-            };
-            bladeNavigationService.showBlade(newBlade, blade);
+            return deferred.promise;
         }
-    };
 
-    refresh();
-}]);
+        $scope.openBlade = function () {
+            if ($scope.noPricelist) {
+                bladeNavigationService.closeChildrenBlades(blade.parentBlade, function () {
+                    $state.go('workspace.pricingModule');
+                });
+            } else if ($scope.priceLabel !== '...') {
+                var newBlade = {
+                    id: "itemPricelists",
+                    itemId: blade.itemId,
+                    parentWidgetRefresh: refreshPricesCount,
+                    title: blade.title,
+                    subtitle: 'pricing.blades.item-pricelists-list.subtitle',
+                    controller: 'virtoCommerce.pricingModule.itemPricelistsListController',
+                    template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/item/item-pricelists-list.tpl.html'
+                };
+                bladeNavigationService.showBlade(newBlade, blade);
+            }
+        };
+
+    }]);

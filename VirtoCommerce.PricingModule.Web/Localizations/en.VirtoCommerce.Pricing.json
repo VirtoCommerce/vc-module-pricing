@@ -100,7 +100,9 @@
             "item-pricelists-list": {
                 "subtitle": "Select Price list to manage prices",
                 "labels": {
-                    "no-pricelists": "No Pricelists yet"
+                    "name": "Price List",
+                    "currency": "Currency",
+                    "priority": "Priority"
                 }
             }
         },
@@ -109,7 +111,8 @@
                 "title": "Assigned catalog"
             },
             "itemPricesWidget": {
-                "title": "Price"
+                "title": "Price",
+                "assign-pricelist": "Assign Price list"
             },
             "prices": {
                 "title": "Prices"

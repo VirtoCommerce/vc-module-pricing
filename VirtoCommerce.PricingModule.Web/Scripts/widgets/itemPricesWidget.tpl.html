@@ -1,6 +1,7 @@
 ﻿<div class="gridster-cnt" ng-click="openBlade()">
     <div class="cnt-inner">
-        <div class="list-count">{{ priceRange }}</div>
-        <div class="list-t">{{ 'pricing.widgets.itemPricesWidget.title' | translate }}</div>
+        <div class="list-count" ng-if="!noPricelist">{{ priceLabel }}</div>
+        <div class="list-t" ng-if="!noPricelist">{{ 'pricing.widgets.itemPricesWidget.title' | translate }}</div>
+        <div class="list-t" ng-if="noPricelist">{{ 'pricing.widgets.itemPricesWidget.assign-pricelist' | translate }}</div>
     </div>
 </div>

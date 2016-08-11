@@ -21,17 +21,28 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
         });
     };
 
-    $scope.selectNode = function (node) {
+    $scope.selectNode = function (node, isNew) {
         $scope.selectedNodeId = node.id;
-
+        
         var newBlade = {
             id: 'listItemChild',
-            currentEntityId: node.id,
-            title: node.name,
-            subtitle: blade.subtitle,
             controller: 'virtoCommerce.pricingModule.assignmentDetailController',
             template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/assignment-detail.tpl.html'
         };
+
+        if (isNew) {
+            angular.extend(newBlade, {
+                isNew: true,
+                data: node,
+                title: 'pricing.blades.assignment-detail.new-title'
+            });
+        } else {
+            angular.extend(newBlade, {
+                currentEntityId: node.id,
+                title: node.name,
+                subtitle: 'pricing.blades.assignment-detail.subtitle'
+            });
+        }
 
         bladeNavigationService.showBlade(newBlade, blade);
     };
@@ -74,28 +85,14 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
         {
             name: "platform.commands.refresh", icon: 'fa fa-refresh',
             executeMethod: blade.refresh,
-            canExecuteMethod: function () {
-                return true;
-            }
+            canExecuteMethod: function () { return true; }
         },
         {
             name: "platform.commands.add", icon: 'fa fa-plus',
             executeMethod: function () {
-                closeChildrenBlades();
-
-                var newBlade = {
-                    id: 'listItemChild',
-                    title: 'pricing.blades.assignment-detail.new-title',
-                    subtitle: blade.subtitle,
-                    isNew: true,
-                    controller: 'virtoCommerce.pricingModule.assignmentDetailController',
-                    template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/assignment-detail.tpl.html'
-                };
-                bladeNavigationService.showBlade(newBlade, blade);
+                $scope.selectNode({}, true);
             },
-            canExecuteMethod: function () {
-                return true;
-            },
+            canExecuteMethod: function () { return true; },
             permission: 'pricing:create'
         },
         {
