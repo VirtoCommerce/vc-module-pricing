@@ -323,6 +323,24 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Delete all prices for specified product in specified price list
+        /// </summary>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [ResponseType(typeof(void))]
+        [Route("api/pricing/pricelists/{pricelistId}/products/prices")]
+        [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
+        public IHttpActionResult DeleteProductPrices(string pricelistId, [FromUri]string[] productIds)
+        {
+            var result = _pricingSearchService.Search(new coreModel.Search.SearchCriteria { PriceListId = pricelistId, ProductIds = productIds, Take = int.MaxValue });
+            _pricingService.DeletePrices(result.Prices.Select(x => x.Id).ToArray());
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+
+        /// <summary>
         /// Get pricelist
         /// </summary>
         /// <param name="id">Pricelist id</param>
@@ -383,7 +401,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ResponseType(typeof(void))]
         [Route("api/pricing/pricelists")]
         [CheckPermission(Permission = PricingPredefinedPermissions.Delete)]
-        public IHttpActionResult DeletePriceLists([FromUri] string[] ids)
+        public IHttpActionResult DeletePricelists([FromUri] string[] ids)
         {
             _pricingService.DeletePricelists(ids);
             return StatusCode(HttpStatusCode.NoContent);
