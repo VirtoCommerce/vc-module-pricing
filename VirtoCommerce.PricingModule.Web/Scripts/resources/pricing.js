@@ -4,7 +4,7 @@
             search: { url: 'api/catalog/products/prices/search' },
             getProductPrices: { isArray: true }, // is also used in other modules
             update: { method: 'PUT' },
-            updateAll: { method: 'PUT' }
+            remove: { method: 'DELETE', url: 'api/pricing/pricelists/:priceListId/products/prices' }
         });
     }])
     .factory('virtoCommerce.pricingModule.pricelists', ['$resource', function ($resource) {

@@ -124,6 +124,10 @@
                 "title": "Delete confirmation",
                 "message": "Are you sure you want to delete selected Price lists?"
             },
+            "pricelist-item-list-delete": {
+                "title": "Delete confirmation",
+                "message": "Are you sure you want to delete ALL prices for selected Products in this Price list?"
+            },
             "prices-save": {
                 "title": "Save changes",
                 "message": "The Prices has been modified. Do you want to save changes?"

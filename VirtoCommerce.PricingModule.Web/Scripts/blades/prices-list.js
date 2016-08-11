@@ -51,11 +51,20 @@
         blade.isLoading = true;
 
         angular.copy(blade.currentEntities, blade.origEntity);
-        prices.update({ id: blade.itemId }, blade.data, function (data) {
-            blade.parentBlade.refresh();
-            $scope.bladeClose();
-        },
-        function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+        if (_.any(blade.currentEntities)) {
+            prices.update({ id: blade.itemId }, blade.data, function (data) {
+                // blade.parentBlade.refresh();
+                $scope.bladeClose();
+            },
+            function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+        }
+        else {
+            prices.remove({ priceListId: blade.priceListId, productIds: [blade.itemId] }, function () {
+                $scope.bladeClose();
+                blade.parentBlade.refresh();
+            },
+            function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+        }
     };
 
     $scope.delete = function (listItem) {

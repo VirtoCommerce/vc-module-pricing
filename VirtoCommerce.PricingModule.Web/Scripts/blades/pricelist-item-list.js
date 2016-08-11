@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils) {
+.controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
 
@@ -106,13 +106,32 @@
             prices.update(newProductPrices, function () {
                 bladeNavigationService.closeBlade(theBlade);
                 blade.refresh();
+                blade.parentWidgetRefresh();
             }, function (error) {
                 bladeNavigationService.setError('Error ' + error.status, blade);
             });
         }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
     }
 
-    blade.headIcon = 'fa-usd';
+    $scope.deleteList = function (list) {
+        var dialog = {
+            id: "confirmDeleteItem",
+            title: "pricing.dialogs.pricelist-item-list-delete.title",
+            message: "pricing.dialogs.pricelist-item-list-delete.message",
+            callback: function (remove) {
+                if (remove) {
+                    bladeNavigationService.closeChildrenBlades(blade, function () {
+                        prices.remove({ priceListId: blade.currentEntityId, productIds: _.pluck(list, 'productId') }, function () {
+                            blade.refresh();
+                            blade.parentWidgetRefresh();
+                        },
+                        function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+                    });
+                }
+            }
+        }
+        dialogService.showConfirmationDialog(dialog);
+    }
 
     blade.toolbarCommands = [
         {
@@ -124,7 +143,17 @@
             name: "platform.commands.add", icon: 'fa fa-plus',
             executeMethod: openAddEntityWizard,
             canExecuteMethod: function () { return true; },
-            permission: 'pricing:update'
+            permission: blade.updatePermission
+        },
+        {
+            name: "platform.commands.delete", icon: 'fa fa-trash-o',
+            executeMethod: function () {
+                $scope.deleteList($scope.gridApi.selection.getSelectedRows());
+            },
+            canExecuteMethod: function () {
+                return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
+            },
+            permission: blade.updatePermission
         }
     ];
 

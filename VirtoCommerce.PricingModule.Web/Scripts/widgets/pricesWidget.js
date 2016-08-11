@@ -20,6 +20,7 @@
             currency: blade.currentEntity.currency,
             currentEntity: blade.currentEntity,
             currentEntityId: blade.currentEntityId,
+            parentWidgetRefresh: refresh,
             title: blade.title,
             subtitle: 'pricing.blades.pricelist-item-list.subtitle',
             controller: 'virtoCommerce.pricingModule.pricelistItemListController',
