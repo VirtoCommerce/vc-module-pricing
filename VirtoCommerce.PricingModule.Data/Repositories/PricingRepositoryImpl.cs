@@ -3,6 +3,7 @@ using System.Data.Entity;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Data.Model;
+using System;
 
 namespace VirtoCommerce.PricingModule.Data.Repositories
 {
@@ -51,32 +52,47 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             get { return GetAsQueryable<PricelistAssignment>(); }
         }
 
-        public Price GetPriceById(string priceId)
+        public Price[] GetPricesByIds(string[] priceIds)
         {
-            var retVal = Prices.Include(x => x.Pricelist).FirstOrDefault(x => x.Id == priceId);
+            var retVal = Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToArray();
             return retVal;
         }
 
-        public Pricelist GetPricelistById(string priceListId)
+        public Pricelist[] GetPricelistByIds(string[] priceListIds)
         {
             var retVal = Pricelists.Include(x => x.Assignments)
-                                   .FirstOrDefault(x => x.Id == priceListId);
+                                  .Where(x => priceListIds.Contains(x.Id))
+                                  .ToArray();
             return retVal;
         }
 
-        public PricelistAssignment GetPricelistAssignmentById(string assignmentId)
+        public PricelistAssignment[] GetPricelistAssignmentsById(string[] assignmentsIds)
         {
-            var retVal = PricelistAssignments.FirstOrDefault(x => x.Id == assignmentId);
+            var retVal = PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsIds.Contains(x.Id)).ToArray();
             return retVal;
-        }
+        }     
 
 
-        public PricelistAssignment[] GetAllPricelistAssignments(string pricelistId)
+        public void DeletePrices(string[] ids)
         {
-            var retVal = PricelistAssignments.Where(x => x.PricelistId == pricelistId);
-            return retVal.ToArray();
+            var queryPattern = @"DELETE FROM Price WHERE Id IN ({0})";
+            var query = string.Format(queryPattern, string.Join(", ", ids.Select(x => string.Format("'{0}'", x))));
+            ObjectContext.ExecuteStoreCommand(query);
         }
 
+        public void DeletePricelists(string[] ids)
+        {
+            var queryPattern = @"DELETE FROM Pricelist WHERE Id IN ({0})";
+            var query = string.Format(queryPattern, string.Join(", ", ids.Select(x => string.Format("'{0}'", x))));
+            ObjectContext.ExecuteStoreCommand(query);
+        }
+        
+        public void DeletePricelistAssignments(string[] ids)
+        {
+            var queryPattern = @"DELETE FROM PricelistAssignment WHERE Id IN ({0})";
+            var query = string.Format(queryPattern, string.Join(", ", ids.Select(x => string.Format("'{0}'", x))));
+            ObjectContext.ExecuteStoreCommand(query);
+        }
         #endregion
     }
 

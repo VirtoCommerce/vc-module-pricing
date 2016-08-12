@@ -28,6 +28,17 @@ namespace VirtoCommerce.PricingModule.Data.Converters
 			var retVal = new coreModel.Pricelist();
 			retVal.InjectFrom(dbEntity);
 			retVal.Currency = dbEntity.Currency;
+            if (!dbEntity.Assignments.IsNullOrEmpty())
+            {
+                retVal.Assignments = new List<coreModel.PricelistAssignment>();
+                foreach(var assignment in dbEntity.Assignments)
+                {
+                    var priceList = assignment.Pricelist;
+                    assignment.Pricelist = null;
+                    retVal.Assignments.Add(assignment.ToCoreModel());
+                    assignment.Pricelist = priceList;
+                }
+            }
 		
 			return retVal;
 		}

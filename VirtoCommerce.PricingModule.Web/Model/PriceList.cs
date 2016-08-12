@@ -21,5 +21,11 @@ namespace VirtoCommerce.PricingModule.Web.Model
         /// </summary>
 		public ICollection<PricelistAssignment> Assignments { get; set; }
 
-	}
+        /// <summary>
+        /// List of prices belongs to price list. 
+        /// </summary>
+        public ICollection<Price> Prices { get; set; }
+
+
+    }
 }

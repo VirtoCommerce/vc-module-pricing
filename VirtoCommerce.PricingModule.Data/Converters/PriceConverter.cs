@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Omu.ValueInjecter;
+using VirtoCommerce.Domain.Catalog.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Common.ConventionInjections;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
@@ -14,7 +17,7 @@ namespace VirtoCommerce.PricingModule.Data.Converters
         /// </summary>
         /// <param name="dbEntity"></param>
         /// <returns></returns>
-        public static coreModel.Price ToCoreModel(this dataModel.Price dbEntity)
+        public static coreModel.Price ToCoreModel(this dataModel.Price dbEntity, IEnumerable<CatalogProduct> products = null)
         {
             if (dbEntity == null)
                 throw new ArgumentNullException("dbEntity");
@@ -29,6 +32,12 @@ namespace VirtoCommerce.PricingModule.Data.Converters
             if (dbEntity.Pricelist != null)
             {
                 retVal.Currency = dbEntity.Pricelist.Currency;
+                retVal.Pricelist = dbEntity.Pricelist.ToCoreModel();
+            }
+
+            if(!products.IsNullOrEmpty())
+            {
+                retVal.Product = products.FirstOrDefault(x => x.Id == retVal.ProductId);
             }
 
             return retVal;

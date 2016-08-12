@@ -6,17 +6,15 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
 
     blade.refresh = function () {
         blade.isLoading = true;
-
-        pricelists.query({
+        return pricelists.query({
             sort: uiGridHelper.getSortExpression($scope),
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
             blade.isLoading = false;
             blade.currentEntities = data;
-        }, function (error) {
-            bladeNavigationService.setError('Error ' + error.status, blade);
-        });
+            return data;
+        }).$promise;
     };
 
     $scope.selectNode = function (node, isNew) {
@@ -31,7 +29,14 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
         if (isNew) {
             angular.extend(newBlade, {
                 title: 'pricing.blades.pricelist-detail.title-new',
-                isNew: true
+                isNew: true,
+                saveCallback: function (newPricelist) {
+                	newBlade.isNew = false;
+                	blade.refresh().then(function () {
+                		newBlade.currentEntityId = newPricelist.id;
+                		bladeNavigationService.showBlade(newBlade, blade);
+                	});
+                }
                 // onChangesConfirmedFn: callback,
             });
         } else {
@@ -85,16 +90,7 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
             return true;
         },
         permission: 'pricing:create'
-    },
-        //{
-                    //    name: "Clone", icon: 'fa fa-files-o',
-    //    executeMethod: function () {
-    //    },
-    //    canExecuteMethod: function () {
-    //        return false;
-    //    },
-    //    permission: 'pricing:update'
-    //},
+    },   
     {
         name: "platform.commands.delete", icon: 'fa fa-trash-o',
         executeMethod: function () {

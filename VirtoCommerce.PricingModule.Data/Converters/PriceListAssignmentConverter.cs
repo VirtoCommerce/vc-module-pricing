@@ -10,6 +10,7 @@ using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Data.Common.ConventionInjections;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Domain.Catalog.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Converters
 {
@@ -20,7 +21,7 @@ namespace VirtoCommerce.PricingModule.Data.Converters
 		/// </summary>
 		/// <param name="catalogBase"></param>
 		/// <returns></returns>
-		public static coreModel.PricelistAssignment ToCoreModel(this dataModel.PricelistAssignment dbEntity)
+		public static coreModel.PricelistAssignment ToCoreModel(this dataModel.PricelistAssignment dbEntity, IEnumerable<Catalog> catalogs = null)
 		{
 			if (dbEntity == null)
 				throw new ArgumentNullException("dbEntity");
@@ -40,6 +41,10 @@ namespace VirtoCommerce.PricingModule.Data.Converters
             {
                 //Temporary back data compatibility fix for serialized expressions
                 retVal.PredicateVisualTreeSerialized = retVal.PredicateVisualTreeSerialized.Replace("VirtoCommerce.DynamicExpressionModule.", "VirtoCommerce.DynamicExpressionsModule.");
+            }
+            if(!catalogs.IsNullOrEmpty())
+            {
+                retVal.Catalog = catalogs.FirstOrDefault(x => x.Id == retVal.CatalogId);
             }
             return retVal;
 

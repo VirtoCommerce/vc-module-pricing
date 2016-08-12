@@ -13,8 +13,7 @@
                         if (parentRefresh) {
                             blade.parentBlade.refresh();
                         }
-                    },
-                    function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+                    });
                 }
             };
 
@@ -44,20 +43,19 @@
                 blade.isLoading = true;
 
                 if (blade.isNew) {
-                    pricelists.save({}, blade.currentEntity, function (data) {
-                        blade.isNew = undefined;
-                        blade.currentEntityId = data.id;
-                        initializeBlade(data);
-                        initializeToolbar();
-                        blade.parentBlade.refresh();
-                    }, function (error) {
-                        bladeNavigationService.setError('Error ' + error.status, $scope.blade);
+                	pricelists.save({}, blade.currentEntity, function (data) {
+                		angular.copy(blade.currentEntity, blade.origEntity);
+                		$scope.bladeClose();
+                        if (blade.saveCallback) {
+                        	blade.saveCallback(data);
+                        }
+                        else {
+                        	blade.parentBlade.refresh();
+                        }  
                     });
                 } else {
                     pricelists.update({}, blade.currentEntity, function (data) {
                         blade.refresh(true);
-                    }, function (error) {
-                        bladeNavigationService.setError('Error ' + error.status, $scope.blade);
                     });
                 }
             };

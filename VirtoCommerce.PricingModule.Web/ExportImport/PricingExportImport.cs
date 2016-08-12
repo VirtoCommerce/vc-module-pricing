@@ -59,13 +59,14 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
    
 		private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
         {
-			var allPricelistIds = _pricingService.GetPriceLists().Select(x => x.Id);
-			var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , allPricelistIds.Count())};
+            var priceListsResult = _pricingSearchService.SearchPricelists(new Domain.Pricing.Model.Search.PricingSearchCriteria { Take = int.MaxValue });
+            var assignmentsResult = _pricingSearchService.SearchPricelistAssignments(new Domain.Pricing.Model.Search.PricingSearchCriteria { Take = int.MaxValue });
+            var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , priceListsResult.TotalCount)};
 			progressCallback(progressInfo);
             var retVal = new BackupObject
             {
-                Pricelists = _pricingService.GetPriceLists().ToList(),
-                Assignments = _pricingService.GetPriceListAssignments().ToList(),
+                Pricelists = priceListsResult.Results,
+                Assignments = assignmentsResult.Results,
                 Prices = new List<Price>()
             };
 
@@ -73,8 +74,8 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
             {
                 progressInfo.Description = String.Format("Loading {0} prices ...", priceList.Name);
                 progressCallback(progressInfo);
-                var result = _pricingSearchService.Search(new Domain.Pricing.Model.Search.SearchCriteria { Take = int.MaxValue, PriceListId = priceList.Id });
-                retVal.Prices.AddRange(result.Prices);
+                var result = _pricingSearchService.SearchPrices(new Domain.Pricing.Model.Search.PricesSearchCriteria { Take = int.MaxValue, PriceListId = priceList.Id });
+                retVal.Prices.AddRange(result.Results);
             }
             return retVal;
         }

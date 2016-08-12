@@ -1,4 +1,5 @@
 ﻿using Omu.ValueInjecter;
+using VirtoCommerce.Platform.Core.Assets;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using webModel = VirtoCommerce.PricingModule.Web.Model;
 
@@ -11,6 +12,10 @@ namespace VirtoCommerce.PricingModule.Web.Converters
 			var retVal = new webModel.Price();
 			retVal.InjectFrom(price);
 			retVal.Currency = price.Currency;
+            if (price.Pricelist != null)
+            {
+                retVal.PriceListName = price.Pricelist.Name;
+            }       
 			return retVal;
 		}
 

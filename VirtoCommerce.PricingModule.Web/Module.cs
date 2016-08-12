@@ -43,7 +43,7 @@ namespace VirtoCommerce.PricingModule.Web
 
             _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(), new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { typeof(dataModel.Price).Name }, _container.Resolve<IUserNameResolver>()))));
             _container.RegisterType<IPricingService, PricingServiceImpl>();
-            _container.RegisterType<IPricingSearchService, PricingServiceImpl>();
+            _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
         }
 
         #endregion

@@ -1,17 +1,29 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', function ($scope, bladeNavigationService, uiGridConstants, uiGridHelper) {
+.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.prices', function ($scope, bladeNavigationService, uiGridConstants, uiGridHelper, prices) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
 
     blade.refresh = function () {
-        blade.isLoading = true;
-        return blade.parentWidgetRefresh().then(function (results) {
-            blade.isLoading = false;
-            blade.currentEntities = results;
-            return results;
-        }, function (reason) {
-            blade.isLoading = false;
-        });
+    	blade.isLoading = true;
+    	prices.getProductPricelists({ id: blade.itemId }, function (pricelists) {
+    		blade.isLoading = false;
+    		blade.currentEntities = pricelists;
+
+    		if (!pricelists.length) {
+    			var newPricelistBlade = {
+    				id: 'newPricelist',
+    				controller: 'virtoCommerce.pricingModule.pricelistDetailController',
+    				template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/pricelist-detail.tpl.html',
+    				title: 'pricing.blades.pricelist-detail.title-new',
+    				isNew: true,
+    				saveCallback: function (pricelist) {
+    					blade.refresh();
+    				}
+    			};
+    			bladeNavigationService.showBlade(newPricelistBlade, blade);
+    		}
+
+    	});
     }
 
     $scope.openBlade = function (data) {
@@ -39,21 +51,7 @@
             canExecuteMethod: function () {
                 return true;
             }
-        }
-		//{
-		//    name: "pricing.blades.pricelist-list.subtitle", icon: 'fa fa-usd',
-		//    executeMethod: function () {
-		//        var newBlade = {
-		//            id: 'pricingList',
-		//            title: 'pricing.blades.pricing-main.menu.pricelist-list.title',
-		//            controller: 'virtoCommerce.pricingModule.pricelistListController',
-		//            template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/pricelist-list.tpl.html'
-		//        };
-		//        bladeNavigationService.showBlade(newBlade, blade.parentBlade);
-		//    },
-		//    canExecuteMethod: function () { return true; },
-		//    permission: 'pricing:access'
-		//}
+        }	
     ];
 
     // ui-grid

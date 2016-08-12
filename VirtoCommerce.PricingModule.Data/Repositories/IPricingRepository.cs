@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.PricingModule.Data.Model;
-using foundation = VirtoCommerce.PricingModule.Data.Model;
+
 
 namespace VirtoCommerce.PricingModule.Data.Repositories
 {
@@ -15,9 +15,12 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 		IQueryable<Price> Prices { get; }
 		IQueryable<PricelistAssignment> PricelistAssignments { get; }
 
-		foundation.Price GetPriceById(string priceId);
-		foundation.Pricelist GetPricelistById(string priceListId);
-		foundation.PricelistAssignment GetPricelistAssignmentById(string assignmentId);
-		foundation.PricelistAssignment[] GetAllPricelistAssignments(string pricelistId);
-	}
+		Price[] GetPricesByIds(string[] priceIds);
+		Pricelist[] GetPricelistByIds(string[] pricelistIds);
+		PricelistAssignment[] GetPricelistAssignmentsById(string[] assignmentsId);
+
+        void DeletePrices(string[] ids);
+        void DeletePricelists(string[] ids);
+        void DeletePricelistAssignments(string[] ids);
+    }
 }

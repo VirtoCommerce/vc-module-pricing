@@ -19,7 +19,7 @@ using dataModel = VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricingServiceImpl : ServiceBase, IPricingService, IPricingSearchService
+    public class PricingServiceImpl : ServiceBase, IPricingService
     {
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly IItemService _productService;
@@ -28,7 +28,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly ILog _logger;
         private readonly ICacheManager<object> _cacheManager;
         private readonly IExpressionSerializer _expressionSerializer;
-        private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
+
         public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer, ICatalogService catalogService, ICatalogSearchService catalogSearchService)
         {
             _repositoryFactory = repositoryFactory;
@@ -38,61 +38,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _expressionSerializer = expressionSerializer;
             _catalogService = catalogService;
             _catalogSearchService = catalogSearchService;
-            _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List);
         }
-
-
-        #region IPricingSearchService Members
-        public SearchResult Search(SearchCriteria criteria)
-        {
-            SearchResult retVal = new SearchResult();
-            using (var repository = _repositoryFactory())
-            {
-                var query = repository.Prices.Include(x=>x.Pricelist);
-
-                if (!criteria.PriceListIds.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
-                }
-                if (!criteria.ProductIds.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.ProductIds.Contains(x.ProductId));
-                }
-                if (!string.IsNullOrEmpty(criteria.Keyword))
-                {
-                    var catalogSearchResult = _catalogSearchService.Search(new Domain.Catalog.Model.SearchCriteria { Keyword = criteria.Keyword, Skip = criteria.Skip, Take = criteria.Take, Sort = criteria.Sort, ResponseGroup = Domain.Catalog.Model.SearchResponseGroup.WithProducts });
-                    var productIds = catalogSearchResult.Products.Select(x => x.Id).ToArray();
-                    query = query.Where(x => productIds.Contains(x.ProductId));
-                }
-                var sortInfos = criteria.SortInfos;
-                if (sortInfos.IsNullOrEmpty())
-                {
-                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List) } };
-                }
-                //Try to replace sorting columns names
-                TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
-
-
-                query = query.OrderBySortInfos(sortInfos);
-
-                if (criteria.GroupByProducts)
-                {
-                    var groupedQuery = query.GroupBy(x => x.ProductId).OrderBy(x => 1);
-                    retVal.TotalCount = groupedQuery.Count();
-                    query = groupedQuery.Skip(criteria.Skip).Take(criteria.Take).SelectMany(x => x);
-                }
-                else
-                {
-                    retVal.TotalCount = query.Count();
-                    query = query.Skip(criteria.Skip).Take(criteria.Take);
-                }
-
-                retVal.Prices = query.ToArray().Select(x => x.ToCoreModel()).ToList();
-            }
-            return retVal;
-        }
-        #endregion
-
+   
         #region IPricingService Members
         /// <summary>
         /// Evaluate pricelists for special context. All resulting pricelists ordered by priority
@@ -253,73 +200,51 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     
             return retVal;
         }
+            
 
-        public virtual coreModel.Price GetPriceById(string id)
-        {
-            coreModel.Price retVal = null;
-
-            using (var repository = _repositoryFactory())
-            {
-                var entity = repository.GetPriceById(id);
-                if (entity != null)
-                {
-                    retVal = entity.ToCoreModel();
-                }
-            }
-            return retVal;
-        }
-
-        public virtual IEnumerable<coreModel.Price> GetPricesById(IEnumerable<string> ids)
+        public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
             coreModel.Price[] result = null;
+            if (ids != null)
+            {
+                dataModel.Price[] dbPrices;
 
+                using (var repository = _repositoryFactory())
+                {
+                    dbPrices = repository.GetPricesByIds(ids);               
+                }
+                var products = _productService.GetByIds(dbPrices.Select(x => x.ProductId).ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
+                result = dbPrices.Select(x => x.ToCoreModel(products)).ToArray();
+            }
+            return result;
+        }
+
+        public coreModel.PricelistAssignment[] GetPricelistAssignmentsById(string[] ids)
+        {
+            coreModel.PricelistAssignment[] result = null;
+            if (ids != null)
+            {
+                dataModel.PricelistAssignment[] dbAssignments;
+                using (var repository = _repositoryFactory())
+                {
+                    dbAssignments = repository.GetPricelistAssignmentsById(ids);
+                }
+                result = dbAssignments.Select(x => x.ToCoreModel(_catalogService.GetCatalogsList())).ToArray();
+            }
+            return result;
+        }
+
+        public coreModel.Pricelist[] GetPricelistsById(string[] ids)
+        {
+            coreModel.Pricelist[] result = null;
             if (ids != null)
             {
                 using (var repository = _repositoryFactory())
                 {
-                    var entities = repository.Prices
-                        .Where(p => ids.Contains(p.Id))
-                        .ToList();
-
-                    result = entities
-                        .Select(entity => entity.ToCoreModel())
-                        .ToArray();
+                    result = repository.GetPricelistByIds(ids).Select(x => x.ToCoreModel()).ToArray();
                 }
             }
-
             return result;
-        }
-
-
-        public IEnumerable<coreModel.Pricelist> GetPriceLists()
-        {
-            List<coreModel.Pricelist> retVal;
-
-            using (var repository = _repositoryFactory())
-            {
-                retVal = repository.Pricelists.ToArray().Select(x => x.ToCoreModel()).ToList();
-            }
-
-            return retVal;
-        }
-
-        public virtual coreModel.Pricelist GetPricelistById(string id)
-        {
-            coreModel.Pricelist retVal = null;
-
-            using (var repository = _repositoryFactory())
-            {
-                var entity = repository.GetPricelistById(id);
-
-                if (entity != null)
-                {
-                    retVal = entity.ToCoreModel();
-
-                    var assignments = repository.GetAllPricelistAssignments(id);
-                    retVal.Assignments = assignments.Select(x => x.ToCoreModel()).ToList();
-                }
-            }
-            return retVal;
         }
 
         public void SavePrices(coreModel.Price[] prices)
@@ -335,7 +260,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 foreach(var priceWithoutPricelistGroup in prices.Where(x => x.PricelistId == null).GroupBy(x=>x.Currency))
                 {
                     var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
-                    if(GetPricelistById(defaultPriceListId) == null)
+                    if(GetPricelistsById(new[] { defaultPriceListId }).IsNullOrEmpty())
                     {
                         var defaultPriceList = new coreModel.Pricelist
                         {
@@ -379,7 +304,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var changeTracker = GetChangeTracker(repository))
             {
                 var pricelistsIds = priceLists.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistEntities = repository.Pricelists.Where(x => pricelistsIds.Contains(x.Id)).ToArray();
+                var alreadyExistEntities = repository.Pricelists.Include(x=>x.Assignments)
+                                                     .Where(x => pricelistsIds.Contains(x.Id)).ToArray();
                 foreach (var pricelist in priceLists)
                 {
                     var sourceEntity = pricelist.ToDataModel(pkMap);
@@ -398,41 +324,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 pkMap.ResolvePrimaryKeys();
                 ResetCache();
             }
-
-        }
-
-        public virtual void DeletePrices(string[] ids)
-        {
-            GenericDelete(ids, (repository, id) => repository.GetPriceById(id));
-        }
-        public virtual void DeletePricelists(string[] ids)
-        {
-            GenericDelete(ids, (repository, id) => repository.GetPricelistById(id));
-        }
-
-
-        public coreModel.PricelistAssignment GetPricelistAssignmentById(string id)
-        {
-            dataModel.PricelistAssignment retVal;
-
-            using (var repository = _repositoryFactory())
-            {
-                retVal = repository.GetPricelistAssignmentById(id);
-            }
-
-            return retVal != null ? retVal.ToCoreModel() : null;
-        }
-
-        public IEnumerable<coreModel.PricelistAssignment> GetPriceListAssignments()
-        {
-            List<coreModel.PricelistAssignment> retVal;
-
-            using (var repository = _repositoryFactory())
-            {
-                retVal = repository.PricelistAssignments.ToArray().Select(x => x.ToCoreModel()).ToList();
-            }
-
-            return retVal;
         }
 
         public void SavePricelistAssignments(coreModel.PricelistAssignment[] assignments)
@@ -463,11 +354,34 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
         }
 
-        public void DeletePricelistsAssignments(string[] ids)
+        public virtual void DeletePrices(string[] ids)
         {
-            GenericDelete(ids, (repository, id) => repository.GetPricelistAssignmentById(id));
+            using (var repository = _repositoryFactory())
+            {
+                repository.DeletePrices(ids);
+                CommitChanges(repository);
+                ResetCache();
+            }
+        }
+        public virtual void DeletePricelists(string[] ids)
+        {
+            using (var repository = _repositoryFactory())
+            {
+                repository.DeletePricelists(ids);
+                CommitChanges(repository);
+                ResetCache();
+            }
         }
 
+        public void DeletePricelistsAssignments(string[] ids)
+        {
+            using (var repository = _repositoryFactory())
+            {
+                repository.DeletePricelistAssignments(ids);
+                CommitChanges(repository);
+                ResetCache();
+            }
+        }      
         #endregion
 
 
@@ -478,40 +392,13 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
-        private void GenericDelete(string[] ids, Func<IPricingRepository, string, Entity> getter)
-        {
-            using (var repository = _repositoryFactory())
-            {
-                foreach (var id in ids)
-                {
-                    var entity = getter(repository, id);
-                    repository.Remove(entity);
-                }
-                CommitChanges(repository);
-                ResetCache();
-            }
-        }
-
         private void ResetCache()
         {
             //Clear cache (Smart cache implementation) 
             _cacheManager.ClearRegion("PricingModuleRegion");
         }
 
-        private static void TryTransformSortingInfoColumnNames(IDictionary<string, string> transformationMap, SortInfo[] sortingInfos)
-        {
-            //Try to replace sorting columns names
-            foreach (var sortInfo in sortingInfos)
-            {
-                string newColumnName;
-                if (transformationMap.TryGetValue(sortInfo.SortColumn.ToLowerInvariant(), out newColumnName))
-                {
-                    sortInfo.SortColumn = newColumnName;
-                }
-            }
-        }
-
-
+       
     }
 
 

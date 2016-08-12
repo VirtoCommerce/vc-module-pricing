@@ -9,6 +9,7 @@ namespace VirtoCommerce.PricingModule.Web.Model
     public class Price : AuditableEntity
 	{
 		public string PricelistId { get; set; }
+        public string PriceListName { get; set; }
 		
 		public string Currency { get; set; }
 

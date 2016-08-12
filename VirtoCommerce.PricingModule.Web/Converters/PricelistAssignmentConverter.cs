@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Newtonsoft.Json;
 using Omu.ValueInjecter;
+using VirtoCommerce.CatalogModule.Web.Converters;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
@@ -17,6 +18,16 @@ namespace VirtoCommerce.PricingModule.Web.Converters
             var retVal = new webModel.PricelistAssignment();
             retVal.InjectFrom(assignment);
  
+            if(assignment.Catalog != null)
+            {
+                retVal.Catalog = assignment.Catalog.ToWebModel();
+            }
+            if(assignment.Pricelist != null)
+            {
+                assignment.Pricelist.Assignments = null;
+                assignment.Pricelist.Prices = null;
+                retVal.Pricelist = assignment.Pricelist.ToWebModel(); 
+            }
             retVal.DynamicExpression = etalonEpressionTree;
             if (!string.IsNullOrEmpty(assignment.PredicateVisualTreeSerialized))
             {

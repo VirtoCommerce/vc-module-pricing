@@ -9,6 +9,8 @@ namespace VirtoCommerce.PricingModule.Web.Model
 		public string CatalogId { get; set; }
         public Catalog Catalog { get; set; }
 		public string PricelistId { get; set; }
+        public Pricelist Pricelist { get; set; }
+
 		public string Name { get; set; }
 		public string Description { get; set; }
 

@@ -10,8 +10,7 @@
             take: 0
         }, function (data) {
             $scope.priceCount = data.totalCount;
-        }//, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); }
-        );
+        });
     }
 
     $scope.openBlade = function () {
