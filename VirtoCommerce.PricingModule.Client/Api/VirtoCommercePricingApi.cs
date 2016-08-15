@@ -86,7 +86,7 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns></returns>
-        void PricingModuleDeletePriceLists(List<string> ids);
+        void PricingModuleDeletePricelists(List<string> ids);
 
         /// <summary>
         /// Delete pricelists
@@ -97,7 +97,30 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns>ApiResponse of Object(void)</returns>
-        ApiResponse<Object> PricingModuleDeletePriceListsWithHttpInfo(List<string> ids);
+        ApiResponse<Object> PricingModuleDeletePricelistsWithHttpInfo(List<string> ids);
+        /// <summary>
+        /// Delete all prices for specified product in specified price list
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns></returns>
+        void PricingModuleDeleteProductPrices(string pricelistId, List<string> productIds);
+
+        /// <summary>
+        /// Delete all prices for specified product in specified price list
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        ApiResponse<Object> PricingModuleDeleteProductPricesWithHttpInfo(string pricelistId, List<string> productIds);
         /// <summary>
         /// Evaluate pricelists by given context
         /// </summary>
@@ -141,6 +164,27 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>ApiResponse of List&lt;Price&gt;</returns>
         ApiResponse<List<Price>> PricingModuleEvaluatePricesWithHttpInfo(PriceEvaluationContext evalContext);
         /// <summary>
+        /// Evaluate  product prices
+        /// </summary>
+        /// <remarks>
+        /// Get an array of valid product prices for each currency.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>List&lt;Price&gt;</returns>
+        List<Price> PricingModuleEvaluateProductPrices(string productId);
+
+        /// <summary>
+        /// Evaluate  product prices
+        /// </summary>
+        /// <remarks>
+        /// Get an array of valid product prices for each currency.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>ApiResponse of List&lt;Price&gt;</returns>
+        ApiResponse<List<Price>> PricingModuleEvaluateProductPricesWithHttpInfo(string productId);
+        /// <summary>
         /// Get a new pricelist assignment
         /// </summary>
         /// <remarks>
@@ -181,25 +225,6 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>ApiResponse of Pricelist</returns>
         ApiResponse<Pricelist> PricingModuleGetPriceListByIdWithHttpInfo(string id);
         /// <summary>
-        /// Get pricelists
-        /// </summary>
-        /// <remarks>
-        /// Get all pricelists for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>List&lt;Pricelist&gt;</returns>
-        List<Pricelist> PricingModuleGetPriceLists();
-
-        /// <summary>
-        /// Get pricelists
-        /// </summary>
-        /// <remarks>
-        /// Get all pricelists for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>ApiResponse of List&lt;Pricelist&gt;</returns>
-        ApiResponse<List<Pricelist>> PricingModuleGetPriceListsWithHttpInfo();
-        /// <summary>
         /// Get pricelist assignment
         /// </summary>
         /// <remarks>
@@ -221,29 +246,10 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>ApiResponse of PricelistAssignment</returns>
         ApiResponse<PricelistAssignment> PricingModuleGetPricelistAssignmentByIdWithHttpInfo(string id);
         /// <summary>
-        /// Get pricelist assignments
+        /// Get all price lists for product
         /// </summary>
         /// <remarks>
-        /// Get array of all pricelist assignments for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>List&lt;PricelistAssignment&gt;</returns>
-        List<PricelistAssignment> PricingModuleGetPricelistAssignments();
-
-        /// <summary>
-        /// Get pricelist assignments
-        /// </summary>
-        /// <remarks>
-        /// Get array of all pricelist assignments for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>ApiResponse of List&lt;PricelistAssignment&gt;</returns>
-        ApiResponse<List<PricelistAssignment>> PricingModuleGetPricelistAssignmentsWithHttpInfo();
-        /// <summary>
-        /// Get pricelists for a product
-        /// </summary>
-        /// <remarks>
-        /// Get all pricelists for given product.
+        /// Get all price lists for given product.
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
@@ -251,36 +257,110 @@ namespace VirtoCommerce.PricingModule.Client.Api
         List<Pricelist> PricingModuleGetProductPriceLists(string productId);
 
         /// <summary>
-        /// Get pricelists for a product
+        /// Get all price lists for product
         /// </summary>
         /// <remarks>
-        /// Get all pricelists for given product.
+        /// Get all price lists for given product.
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
         /// <returns>ApiResponse of List&lt;Pricelist&gt;</returns>
         ApiResponse<List<Pricelist>> PricingModuleGetProductPriceListsWithHttpInfo(string productId);
         /// <summary>
-        /// Get array of product prices
+        /// Search pricelist assignments
         /// </summary>
         /// <remarks>
-        /// Get an array of valid product prices for each currency.
+        /// Search price list assignments by given criteria
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>List&lt;Price&gt;</returns>
-        List<Price> PricingModuleGetProductPrices(string productId);
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>PricelistAssignment</returns>
+        PricelistAssignment PricingModuleSearchPricelistAssignments(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
 
         /// <summary>
-        /// Get array of product prices
+        /// Search pricelist assignments
         /// </summary>
         /// <remarks>
-        /// Get an array of valid product prices for each currency.
+        /// Search price list assignments by given criteria
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>ApiResponse of List&lt;Price&gt;</returns>
-        ApiResponse<List<Price>> PricingModuleGetProductPricesWithHttpInfo(string productId);
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ApiResponse of PricelistAssignment</returns>
+        ApiResponse<PricelistAssignment> PricingModuleSearchPricelistAssignmentsWithHttpInfo(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+        /// <summary>
+        /// Get pricelists
+        /// </summary>
+        /// <remarks>
+        /// Get all pricelists for all catalogs.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>PricelistSearchResult</returns>
+        PricelistSearchResult PricingModuleSearchPricelists(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+
+        /// <summary>
+        /// Get pricelists
+        /// </summary>
+        /// <remarks>
+        /// Get all pricelists for all catalogs.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ApiResponse of PricelistSearchResult</returns>
+        ApiResponse<PricelistSearchResult> PricingModuleSearchPricelistsWithHttpInfo(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+        /// <summary>
+        /// Search product prices
+        /// </summary>
+        /// <remarks>
+        /// Search product prices
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ProductPricesSearchResult</returns>
+        ProductPricesSearchResult PricingModuleSearchProductPrices(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+
+        /// <summary>
+        /// Search product prices
+        /// </summary>
+        /// <remarks>
+        /// Search product prices
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ApiResponse of ProductPricesSearchResult</returns>
+        ApiResponse<ProductPricesSearchResult> PricingModuleSearchProductPricesWithHttpInfo(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
         /// <summary>
         /// Update pricelist
         /// </summary>
@@ -324,28 +404,49 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>ApiResponse of Object(void)</returns>
         ApiResponse<Object> PricingModuleUpdatePriceListAssignmentWithHttpInfo(PricelistAssignment assignment);
         /// <summary>
-        /// Update prices
+        /// 
         /// </summary>
         /// <remarks>
-        /// Update prices of product for given pricelist.
+        /// 
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
-        void PricingModuleUpdateProductPriceLists(string productId, Pricelist priceList);
+        void PricingModuleUpdateProductPrices(ProductPrice productPrice, string productId);
 
         /// <summary>
-        /// Update prices
+        /// 
         /// </summary>
         /// <remarks>
-        /// Update prices of product for given pricelist.
+        /// 
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns>ApiResponse of Object(void)</returns>
-        ApiResponse<Object> PricingModuleUpdateProductPriceListsWithHttpInfo(string productId, Pricelist priceList);
+        ApiResponse<Object> PricingModuleUpdateProductPricesWithHttpInfo(ProductPrice productPrice, string productId);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns></returns>
+        void PricingModuleUpdateProductsPrices(List<ProductPrice> productPrices);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        ApiResponse<Object> PricingModuleUpdateProductsPricesWithHttpInfo(List<ProductPrice> productPrices);
         #endregion Synchronous Operations
         #region Asynchronous Operations
         /// <summary>
@@ -420,7 +521,7 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns>Task of void</returns>
-        System.Threading.Tasks.Task PricingModuleDeletePriceListsAsync(List<string> ids);
+        System.Threading.Tasks.Task PricingModuleDeletePricelistsAsync(List<string> ids);
 
         /// <summary>
         /// Delete pricelists
@@ -431,7 +532,30 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns>Task of ApiResponse</returns>
-        System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleDeletePriceListsAsyncWithHttpInfo(List<string> ids);
+        System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleDeletePricelistsAsyncWithHttpInfo(List<string> ids);
+        /// <summary>
+        /// Delete all prices for specified product in specified price list
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns>Task of void</returns>
+        System.Threading.Tasks.Task PricingModuleDeleteProductPricesAsync(string pricelistId, List<string> productIds);
+
+        /// <summary>
+        /// Delete all prices for specified product in specified price list
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns>Task of ApiResponse</returns>
+        System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleDeleteProductPricesAsyncWithHttpInfo(string pricelistId, List<string> productIds);
         /// <summary>
         /// Evaluate pricelists by given context
         /// </summary>
@@ -475,6 +599,27 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>Task of ApiResponse (List&lt;Price&gt;)</returns>
         System.Threading.Tasks.Task<ApiResponse<List<Price>>> PricingModuleEvaluatePricesAsyncWithHttpInfo(PriceEvaluationContext evalContext);
         /// <summary>
+        /// Evaluate  product prices
+        /// </summary>
+        /// <remarks>
+        /// Get an array of valid product prices for each currency.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>Task of List&lt;Price&gt;</returns>
+        System.Threading.Tasks.Task<List<Price>> PricingModuleEvaluateProductPricesAsync(string productId);
+
+        /// <summary>
+        /// Evaluate  product prices
+        /// </summary>
+        /// <remarks>
+        /// Get an array of valid product prices for each currency.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>Task of ApiResponse (List&lt;Price&gt;)</returns>
+        System.Threading.Tasks.Task<ApiResponse<List<Price>>> PricingModuleEvaluateProductPricesAsyncWithHttpInfo(string productId);
+        /// <summary>
         /// Get a new pricelist assignment
         /// </summary>
         /// <remarks>
@@ -515,25 +660,6 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>Task of ApiResponse (Pricelist)</returns>
         System.Threading.Tasks.Task<ApiResponse<Pricelist>> PricingModuleGetPriceListByIdAsyncWithHttpInfo(string id);
         /// <summary>
-        /// Get pricelists
-        /// </summary>
-        /// <remarks>
-        /// Get all pricelists for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of List&lt;Pricelist&gt;</returns>
-        System.Threading.Tasks.Task<List<Pricelist>> PricingModuleGetPriceListsAsync();
-
-        /// <summary>
-        /// Get pricelists
-        /// </summary>
-        /// <remarks>
-        /// Get all pricelists for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of ApiResponse (List&lt;Pricelist&gt;)</returns>
-        System.Threading.Tasks.Task<ApiResponse<List<Pricelist>>> PricingModuleGetPriceListsAsyncWithHttpInfo();
-        /// <summary>
         /// Get pricelist assignment
         /// </summary>
         /// <remarks>
@@ -555,29 +681,10 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>Task of ApiResponse (PricelistAssignment)</returns>
         System.Threading.Tasks.Task<ApiResponse<PricelistAssignment>> PricingModuleGetPricelistAssignmentByIdAsyncWithHttpInfo(string id);
         /// <summary>
-        /// Get pricelist assignments
+        /// Get all price lists for product
         /// </summary>
         /// <remarks>
-        /// Get array of all pricelist assignments for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of List&lt;PricelistAssignment&gt;</returns>
-        System.Threading.Tasks.Task<List<PricelistAssignment>> PricingModuleGetPricelistAssignmentsAsync();
-
-        /// <summary>
-        /// Get pricelist assignments
-        /// </summary>
-        /// <remarks>
-        /// Get array of all pricelist assignments for all catalogs.
-        /// </remarks>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of ApiResponse (List&lt;PricelistAssignment&gt;)</returns>
-        System.Threading.Tasks.Task<ApiResponse<List<PricelistAssignment>>> PricingModuleGetPricelistAssignmentsAsyncWithHttpInfo();
-        /// <summary>
-        /// Get pricelists for a product
-        /// </summary>
-        /// <remarks>
-        /// Get all pricelists for given product.
+        /// Get all price lists for given product.
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
@@ -585,36 +692,110 @@ namespace VirtoCommerce.PricingModule.Client.Api
         System.Threading.Tasks.Task<List<Pricelist>> PricingModuleGetProductPriceListsAsync(string productId);
 
         /// <summary>
-        /// Get pricelists for a product
+        /// Get all price lists for product
         /// </summary>
         /// <remarks>
-        /// Get all pricelists for given product.
+        /// Get all price lists for given product.
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
         /// <returns>Task of ApiResponse (List&lt;Pricelist&gt;)</returns>
         System.Threading.Tasks.Task<ApiResponse<List<Pricelist>>> PricingModuleGetProductPriceListsAsyncWithHttpInfo(string productId);
         /// <summary>
-        /// Get array of product prices
+        /// Search pricelist assignments
         /// </summary>
         /// <remarks>
-        /// Get an array of valid product prices for each currency.
+        /// Search price list assignments by given criteria
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>Task of List&lt;Price&gt;</returns>
-        System.Threading.Tasks.Task<List<Price>> PricingModuleGetProductPricesAsync(string productId);
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of PricelistAssignment</returns>
+        System.Threading.Tasks.Task<PricelistAssignment> PricingModuleSearchPricelistAssignmentsAsync(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
 
         /// <summary>
-        /// Get array of product prices
+        /// Search pricelist assignments
         /// </summary>
         /// <remarks>
-        /// Get an array of valid product prices for each currency.
+        /// Search price list assignments by given criteria
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>Task of ApiResponse (List&lt;Price&gt;)</returns>
-        System.Threading.Tasks.Task<ApiResponse<List<Price>>> PricingModuleGetProductPricesAsyncWithHttpInfo(string productId);
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ApiResponse (PricelistAssignment)</returns>
+        System.Threading.Tasks.Task<ApiResponse<PricelistAssignment>> PricingModuleSearchPricelistAssignmentsAsyncWithHttpInfo(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+        /// <summary>
+        /// Get pricelists
+        /// </summary>
+        /// <remarks>
+        /// Get all pricelists for all catalogs.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of PricelistSearchResult</returns>
+        System.Threading.Tasks.Task<PricelistSearchResult> PricingModuleSearchPricelistsAsync(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+
+        /// <summary>
+        /// Get pricelists
+        /// </summary>
+        /// <remarks>
+        /// Get all pricelists for all catalogs.
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ApiResponse (PricelistSearchResult)</returns>
+        System.Threading.Tasks.Task<ApiResponse<PricelistSearchResult>> PricingModuleSearchPricelistsAsyncWithHttpInfo(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+        /// <summary>
+        /// Search product prices
+        /// </summary>
+        /// <remarks>
+        /// Search product prices
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ProductPricesSearchResult</returns>
+        System.Threading.Tasks.Task<ProductPricesSearchResult> PricingModuleSearchProductPricesAsync(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
+
+        /// <summary>
+        /// Search product prices
+        /// </summary>
+        /// <remarks>
+        /// Search product prices
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ApiResponse (ProductPricesSearchResult)</returns>
+        System.Threading.Tasks.Task<ApiResponse<ProductPricesSearchResult>> PricingModuleSearchProductPricesAsyncWithHttpInfo(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null);
         /// <summary>
         /// Update pricelist
         /// </summary>
@@ -658,28 +839,49 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <returns>Task of ApiResponse</returns>
         System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleUpdatePriceListAssignmentAsyncWithHttpInfo(PricelistAssignment assignment);
         /// <summary>
-        /// Update prices
+        /// 
         /// </summary>
         /// <remarks>
-        /// Update prices of product for given pricelist.
+        /// 
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns>Task of void</returns>
-        System.Threading.Tasks.Task PricingModuleUpdateProductPriceListsAsync(string productId, Pricelist priceList);
+        System.Threading.Tasks.Task PricingModuleUpdateProductPricesAsync(ProductPrice productPrice, string productId);
 
         /// <summary>
-        /// Update prices
+        /// 
         /// </summary>
         /// <remarks>
-        /// Update prices of product for given pricelist.
+        /// 
         /// </remarks>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns>Task of ApiResponse</returns>
-        System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleUpdateProductPriceListsAsyncWithHttpInfo(string productId, Pricelist priceList);
+        System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleUpdateProductPricesAsyncWithHttpInfo(ProductPrice productPrice, string productId);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns>Task of void</returns>
+        System.Threading.Tasks.Task PricingModuleUpdateProductsPricesAsync(List<ProductPrice> productPrices);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns>Task of ApiResponse</returns>
+        System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleUpdateProductsPricesAsyncWithHttpInfo(List<ProductPrice> productPrices);
         #endregion Asynchronous Operations
     }
 
@@ -1197,9 +1399,9 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns></returns>
-        public void PricingModuleDeletePriceLists(List<string> ids)
+        public void PricingModuleDeletePricelists(List<string> ids)
         {
-             PricingModuleDeletePriceListsWithHttpInfo(ids);
+             PricingModuleDeletePricelistsWithHttpInfo(ids);
         }
 
         /// <summary>
@@ -1208,11 +1410,11 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns>ApiResponse of Object(void)</returns>
-        public ApiResponse<object> PricingModuleDeletePriceListsWithHttpInfo(List<string> ids)
+        public ApiResponse<object> PricingModuleDeletePricelistsWithHttpInfo(List<string> ids)
         {
             // verify the required parameter 'ids' is set
             if (ids == null)
-                throw new ApiException(400, "Missing required parameter 'ids' when calling VirtoCommercePricingApi->PricingModuleDeletePriceLists");
+                throw new ApiException(400, "Missing required parameter 'ids' when calling VirtoCommercePricingApi->PricingModuleDeletePricelists");
 
             var localVarPath = "/api/pricing/pricelists";
             var localVarPathParams = new Dictionary<string, string>();
@@ -1248,9 +1450,9 @@ namespace VirtoCommerce.PricingModule.Client.Api
             int localVarStatusCode = (int)localVarResponse.StatusCode;
 
             if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePriceLists: " + localVarResponse.Content, localVarResponse.Content);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePricelists: " + localVarResponse.Content, localVarResponse.Content);
             else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePriceLists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePricelists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
 
             
             return new ApiResponse<object>(localVarStatusCode,
@@ -1264,9 +1466,9 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns>Task of void</returns>
-        public async System.Threading.Tasks.Task PricingModuleDeletePriceListsAsync(List<string> ids)
+        public async System.Threading.Tasks.Task PricingModuleDeletePricelistsAsync(List<string> ids)
         {
-             await PricingModuleDeletePriceListsAsyncWithHttpInfo(ids);
+             await PricingModuleDeletePricelistsAsyncWithHttpInfo(ids);
 
         }
 
@@ -1276,11 +1478,11 @@ namespace VirtoCommerce.PricingModule.Client.Api
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="ids">An array of pricelist ids</param>
         /// <returns>Task of ApiResponse</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleDeletePriceListsAsyncWithHttpInfo(List<string> ids)
+        public async System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleDeletePricelistsAsyncWithHttpInfo(List<string> ids)
         {
             // verify the required parameter 'ids' is set
             if (ids == null)
-                throw new ApiException(400, "Missing required parameter 'ids' when calling VirtoCommercePricingApi->PricingModuleDeletePriceLists");
+                throw new ApiException(400, "Missing required parameter 'ids' when calling VirtoCommercePricingApi->PricingModuleDeletePricelists");
 
             var localVarPath = "/api/pricing/pricelists";
             var localVarPathParams = new Dictionary<string, string>();
@@ -1316,9 +1518,155 @@ namespace VirtoCommerce.PricingModule.Client.Api
             int localVarStatusCode = (int)localVarResponse.StatusCode;
 
             if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePriceLists: " + localVarResponse.Content, localVarResponse.Content);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePricelists: " + localVarResponse.Content, localVarResponse.Content);
             else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePriceLists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeletePricelists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            
+            return new ApiResponse<object>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                null);
+        }
+        /// <summary>
+        /// Delete all prices for specified product in specified price list 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns></returns>
+        public void PricingModuleDeleteProductPrices(string pricelistId, List<string> productIds)
+        {
+             PricingModuleDeleteProductPricesWithHttpInfo(pricelistId, productIds);
+        }
+
+        /// <summary>
+        /// Delete all prices for specified product in specified price list 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        public ApiResponse<object> PricingModuleDeleteProductPricesWithHttpInfo(string pricelistId, List<string> productIds)
+        {
+            // verify the required parameter 'pricelistId' is set
+            if (pricelistId == null)
+                throw new ApiException(400, "Missing required parameter 'pricelistId' when calling VirtoCommercePricingApi->PricingModuleDeleteProductPrices");
+            // verify the required parameter 'productIds' is set
+            if (productIds == null)
+                throw new ApiException(400, "Missing required parameter 'productIds' when calling VirtoCommercePricingApi->PricingModuleDeleteProductPrices");
+
+            var localVarPath = "/api/pricing/pricelists/{pricelistId}/products/prices";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (pricelistId != null) localVarPathParams.Add("pricelistId", ApiClient.ParameterToString(pricelistId)); // path parameter
+            if (productIds != null) localVarQueryParams.Add("productIds", ApiClient.ParameterToString(productIds)); // query parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
+                Method.DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeleteProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeleteProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            
+            return new ApiResponse<object>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                null);
+        }
+
+        /// <summary>
+        /// Delete all prices for specified product in specified price list 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns>Task of void</returns>
+        public async System.Threading.Tasks.Task PricingModuleDeleteProductPricesAsync(string pricelistId, List<string> productIds)
+        {
+             await PricingModuleDeleteProductPricesAsyncWithHttpInfo(pricelistId, productIds);
+
+        }
+
+        /// <summary>
+        /// Delete all prices for specified product in specified price list 
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="pricelistId"></param>
+        /// <param name="productIds"></param>
+        /// <returns>Task of ApiResponse</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleDeleteProductPricesAsyncWithHttpInfo(string pricelistId, List<string> productIds)
+        {
+            // verify the required parameter 'pricelistId' is set
+            if (pricelistId == null)
+                throw new ApiException(400, "Missing required parameter 'pricelistId' when calling VirtoCommercePricingApi->PricingModuleDeleteProductPrices");
+            // verify the required parameter 'productIds' is set
+            if (productIds == null)
+                throw new ApiException(400, "Missing required parameter 'productIds' when calling VirtoCommercePricingApi->PricingModuleDeleteProductPrices");
+
+            var localVarPath = "/api/pricing/pricelists/{pricelistId}/products/prices";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (pricelistId != null) localVarPathParams.Add("pricelistId", ApiClient.ParameterToString(pricelistId)); // path parameter
+            if (productIds != null) localVarQueryParams.Add("productIds", ApiClient.ParameterToString(productIds)); // query parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
+                Method.DELETE, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeleteProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleDeleteProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
 
             
             return new ApiResponse<object>(localVarStatusCode,
@@ -1662,6 +2010,150 @@ namespace VirtoCommerce.PricingModule.Client.Api
             
         }
         /// <summary>
+        /// Evaluate  product prices Get an array of valid product prices for each currency.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>List&lt;Price&gt;</returns>
+        public List<Price> PricingModuleEvaluateProductPrices(string productId)
+        {
+             ApiResponse<List<Price>> localVarResponse = PricingModuleEvaluateProductPricesWithHttpInfo(productId);
+             return localVarResponse.Data;
+        }
+
+        /// <summary>
+        /// Evaluate  product prices Get an array of valid product prices for each currency.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>ApiResponse of List&lt;Price&gt;</returns>
+        public ApiResponse<List<Price>> PricingModuleEvaluateProductPricesWithHttpInfo(string productId)
+        {
+            // verify the required parameter 'productId' is set
+            if (productId == null)
+                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleEvaluateProductPrices");
+
+            var localVarPath = "/api/products/{productId}/prices";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (productId != null) localVarPathParams.Add("productId", ApiClient.ParameterToString(productId)); // path parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleEvaluateProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleEvaluateProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<List<Price>>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (List<Price>)ApiClient.Deserialize(localVarResponse, typeof(List<Price>)));
+            
+        }
+
+        /// <summary>
+        /// Evaluate  product prices Get an array of valid product prices for each currency.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>Task of List&lt;Price&gt;</returns>
+        public async System.Threading.Tasks.Task<List<Price>> PricingModuleEvaluateProductPricesAsync(string productId)
+        {
+             ApiResponse<List<Price>> localVarResponse = await PricingModuleEvaluateProductPricesAsyncWithHttpInfo(productId);
+             return localVarResponse.Data;
+
+        }
+
+        /// <summary>
+        /// Evaluate  product prices Get an array of valid product prices for each currency.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productId">Product id</param>
+        /// <returns>Task of ApiResponse (List&lt;Price&gt;)</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<List<Price>>> PricingModuleEvaluateProductPricesAsyncWithHttpInfo(string productId)
+        {
+            // verify the required parameter 'productId' is set
+            if (productId == null)
+                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleEvaluateProductPrices");
+
+            var localVarPath = "/api/products/{productId}/prices";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (productId != null) localVarPathParams.Add("productId", ApiClient.ParameterToString(productId)); // path parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleEvaluateProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleEvaluateProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<List<Price>>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (List<Price>)ApiClient.Deserialize(localVarResponse, typeof(List<Price>)));
+            
+        }
+        /// <summary>
         /// Get a new pricelist assignment Get a new pricelist assignment object. Create new pricelist assignment, but does not save one.
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
@@ -1938,138 +2430,6 @@ namespace VirtoCommerce.PricingModule.Client.Api
             
         }
         /// <summary>
-        /// Get pricelists Get all pricelists for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>List&lt;Pricelist&gt;</returns>
-        public List<Pricelist> PricingModuleGetPriceLists()
-        {
-             ApiResponse<List<Pricelist>> localVarResponse = PricingModuleGetPriceListsWithHttpInfo();
-             return localVarResponse.Data;
-        }
-
-        /// <summary>
-        /// Get pricelists Get all pricelists for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>ApiResponse of List&lt;Pricelist&gt;</returns>
-        public ApiResponse<List<Pricelist>> PricingModuleGetPriceListsWithHttpInfo()
-        {
-
-            var localVarPath = "/api/pricing/pricelists";
-            var localVarPathParams = new Dictionary<string, string>();
-            var localVarQueryParams = new Dictionary<string, string>();
-            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
-            var localVarFormParams = new Dictionary<string, string>();
-            var localVarFileParams = new Dictionary<string, FileParameter>();
-            object localVarPostBody = null;
-
-            // to determine the Content-Type header
-            string[] localVarHttpContentTypes = new string[] {
-            };
-            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
-
-            // to determine the Accept header
-            string[] localVarHttpHeaderAccepts = new string[] {
-                "application/json", 
-                "text/json", 
-                "application/xml", 
-                "text/xml"
-            };
-            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
-            if (localVarHttpHeaderAccept != null)
-                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
-
-            // set "format" to json by default
-            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
-            localVarPathParams.Add("format", "json");
-
-
-            // make the HTTP request
-            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
-                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
-                localVarPathParams, localVarHttpContentType);
-
-            int localVarStatusCode = (int)localVarResponse.StatusCode;
-
-            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPriceLists: " + localVarResponse.Content, localVarResponse.Content);
-            else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPriceLists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
-
-            return new ApiResponse<List<Pricelist>>(localVarStatusCode,
-                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
-                (List<Pricelist>)ApiClient.Deserialize(localVarResponse, typeof(List<Pricelist>)));
-            
-        }
-
-        /// <summary>
-        /// Get pricelists Get all pricelists for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of List&lt;Pricelist&gt;</returns>
-        public async System.Threading.Tasks.Task<List<Pricelist>> PricingModuleGetPriceListsAsync()
-        {
-             ApiResponse<List<Pricelist>> localVarResponse = await PricingModuleGetPriceListsAsyncWithHttpInfo();
-             return localVarResponse.Data;
-
-        }
-
-        /// <summary>
-        /// Get pricelists Get all pricelists for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of ApiResponse (List&lt;Pricelist&gt;)</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<List<Pricelist>>> PricingModuleGetPriceListsAsyncWithHttpInfo()
-        {
-
-            var localVarPath = "/api/pricing/pricelists";
-            var localVarPathParams = new Dictionary<string, string>();
-            var localVarQueryParams = new Dictionary<string, string>();
-            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
-            var localVarFormParams = new Dictionary<string, string>();
-            var localVarFileParams = new Dictionary<string, FileParameter>();
-            object localVarPostBody = null;
-
-            // to determine the Content-Type header
-            string[] localVarHttpContentTypes = new string[] {
-            };
-            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
-
-            // to determine the Accept header
-            string[] localVarHttpHeaderAccepts = new string[] {
-                "application/json", 
-                "text/json", 
-                "application/xml", 
-                "text/xml"
-            };
-            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
-            if (localVarHttpHeaderAccept != null)
-                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
-
-            // set "format" to json by default
-            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
-            localVarPathParams.Add("format", "json");
-
-
-            // make the HTTP request
-            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
-                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
-                localVarPathParams, localVarHttpContentType);
-
-            int localVarStatusCode = (int)localVarResponse.StatusCode;
-
-            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPriceLists: " + localVarResponse.Content, localVarResponse.Content);
-            else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPriceLists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
-
-            return new ApiResponse<List<Pricelist>>(localVarStatusCode,
-                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
-                (List<Pricelist>)ApiClient.Deserialize(localVarResponse, typeof(List<Pricelist>)));
-            
-        }
-        /// <summary>
         /// Get pricelist assignment 
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
@@ -2214,139 +2574,7 @@ namespace VirtoCommerce.PricingModule.Client.Api
             
         }
         /// <summary>
-        /// Get pricelist assignments Get array of all pricelist assignments for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>List&lt;PricelistAssignment&gt;</returns>
-        public List<PricelistAssignment> PricingModuleGetPricelistAssignments()
-        {
-             ApiResponse<List<PricelistAssignment>> localVarResponse = PricingModuleGetPricelistAssignmentsWithHttpInfo();
-             return localVarResponse.Data;
-        }
-
-        /// <summary>
-        /// Get pricelist assignments Get array of all pricelist assignments for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>ApiResponse of List&lt;PricelistAssignment&gt;</returns>
-        public ApiResponse<List<PricelistAssignment>> PricingModuleGetPricelistAssignmentsWithHttpInfo()
-        {
-
-            var localVarPath = "/api/pricing/assignments";
-            var localVarPathParams = new Dictionary<string, string>();
-            var localVarQueryParams = new Dictionary<string, string>();
-            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
-            var localVarFormParams = new Dictionary<string, string>();
-            var localVarFileParams = new Dictionary<string, FileParameter>();
-            object localVarPostBody = null;
-
-            // to determine the Content-Type header
-            string[] localVarHttpContentTypes = new string[] {
-            };
-            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
-
-            // to determine the Accept header
-            string[] localVarHttpHeaderAccepts = new string[] {
-                "application/json", 
-                "text/json", 
-                "application/xml", 
-                "text/xml"
-            };
-            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
-            if (localVarHttpHeaderAccept != null)
-                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
-
-            // set "format" to json by default
-            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
-            localVarPathParams.Add("format", "json");
-
-
-            // make the HTTP request
-            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
-                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
-                localVarPathParams, localVarHttpContentType);
-
-            int localVarStatusCode = (int)localVarResponse.StatusCode;
-
-            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPricelistAssignments: " + localVarResponse.Content, localVarResponse.Content);
-            else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPricelistAssignments: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
-
-            return new ApiResponse<List<PricelistAssignment>>(localVarStatusCode,
-                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
-                (List<PricelistAssignment>)ApiClient.Deserialize(localVarResponse, typeof(List<PricelistAssignment>)));
-            
-        }
-
-        /// <summary>
-        /// Get pricelist assignments Get array of all pricelist assignments for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of List&lt;PricelistAssignment&gt;</returns>
-        public async System.Threading.Tasks.Task<List<PricelistAssignment>> PricingModuleGetPricelistAssignmentsAsync()
-        {
-             ApiResponse<List<PricelistAssignment>> localVarResponse = await PricingModuleGetPricelistAssignmentsAsyncWithHttpInfo();
-             return localVarResponse.Data;
-
-        }
-
-        /// <summary>
-        /// Get pricelist assignments Get array of all pricelist assignments for all catalogs.
-        /// </summary>
-        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <returns>Task of ApiResponse (List&lt;PricelistAssignment&gt;)</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<List<PricelistAssignment>>> PricingModuleGetPricelistAssignmentsAsyncWithHttpInfo()
-        {
-
-            var localVarPath = "/api/pricing/assignments";
-            var localVarPathParams = new Dictionary<string, string>();
-            var localVarQueryParams = new Dictionary<string, string>();
-            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
-            var localVarFormParams = new Dictionary<string, string>();
-            var localVarFileParams = new Dictionary<string, FileParameter>();
-            object localVarPostBody = null;
-
-            // to determine the Content-Type header
-            string[] localVarHttpContentTypes = new string[] {
-            };
-            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
-
-            // to determine the Accept header
-            string[] localVarHttpHeaderAccepts = new string[] {
-                "application/json", 
-                "text/json", 
-                "application/xml", 
-                "text/xml"
-            };
-            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
-            if (localVarHttpHeaderAccept != null)
-                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
-
-            // set "format" to json by default
-            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
-            localVarPathParams.Add("format", "json");
-
-
-            // make the HTTP request
-            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
-                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
-                localVarPathParams, localVarHttpContentType);
-
-            int localVarStatusCode = (int)localVarResponse.StatusCode;
-
-            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPricelistAssignments: " + localVarResponse.Content, localVarResponse.Content);
-            else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetPricelistAssignments: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
-
-            return new ApiResponse<List<PricelistAssignment>>(localVarStatusCode,
-                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
-                (List<PricelistAssignment>)ApiClient.Deserialize(localVarResponse, typeof(List<PricelistAssignment>)));
-            
-        }
-        /// <summary>
-        /// Get pricelists for a product Get all pricelists for given product.
+        /// Get all price lists for product Get all price lists for given product.
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
@@ -2358,7 +2586,7 @@ namespace VirtoCommerce.PricingModule.Client.Api
         }
 
         /// <summary>
-        /// Get pricelists for a product Get all pricelists for given product.
+        /// Get all price lists for product Get all price lists for given product.
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
@@ -2418,7 +2646,7 @@ namespace VirtoCommerce.PricingModule.Client.Api
         }
 
         /// <summary>
-        /// Get pricelists for a product Get all pricelists for given product.
+        /// Get all price lists for product Get all price lists for given product.
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
@@ -2431,7 +2659,7 @@ namespace VirtoCommerce.PricingModule.Client.Api
         }
 
         /// <summary>
-        /// Get pricelists for a product Get all pricelists for given product.
+        /// Get all price lists for product Get all price lists for given product.
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="productId">Product id</param>
@@ -2490,30 +2718,37 @@ namespace VirtoCommerce.PricingModule.Client.Api
             
         }
         /// <summary>
-        /// Get array of product prices Get an array of valid product prices for each currency.
+        /// Search pricelist assignments Search price list assignments by given criteria
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>List&lt;Price&gt;</returns>
-        public List<Price> PricingModuleGetProductPrices(string productId)
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>PricelistAssignment</returns>
+        public PricelistAssignment PricingModuleSearchPricelistAssignments(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
         {
-             ApiResponse<List<Price>> localVarResponse = PricingModuleGetProductPricesWithHttpInfo(productId);
+             ApiResponse<PricelistAssignment> localVarResponse = PricingModuleSearchPricelistAssignmentsWithHttpInfo(criteriaPriceListId, criteriaPriceListIds, criteriaKeyword, criteriaSort, criteriaSkip, criteriaTake);
              return localVarResponse.Data;
         }
 
         /// <summary>
-        /// Get array of product prices Get an array of valid product prices for each currency.
+        /// Search pricelist assignments Search price list assignments by given criteria
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>ApiResponse of List&lt;Price&gt;</returns>
-        public ApiResponse<List<Price>> PricingModuleGetProductPricesWithHttpInfo(string productId)
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ApiResponse of PricelistAssignment</returns>
+        public ApiResponse<PricelistAssignment> PricingModuleSearchPricelistAssignmentsWithHttpInfo(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
         {
-            // verify the required parameter 'productId' is set
-            if (productId == null)
-                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleGetProductPrices");
 
-            var localVarPath = "/api/products/{productId}/prices";
+            var localVarPath = "/api/pricing/assignments";
             var localVarPathParams = new Dictionary<string, string>();
             var localVarQueryParams = new Dictionary<string, string>();
             var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
@@ -2540,7 +2775,12 @@ namespace VirtoCommerce.PricingModule.Client.Api
             // set "format" to json by default
             // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
             localVarPathParams.Add("format", "json");
-            if (productId != null) localVarPathParams.Add("productId", ApiClient.ParameterToString(productId)); // path parameter
+            if (criteriaPriceListId != null) localVarQueryParams.Add("criteria.priceListId", ApiClient.ParameterToString(criteriaPriceListId)); // query parameter
+            if (criteriaPriceListIds != null) localVarQueryParams.Add("criteria.priceListIds", ApiClient.ParameterToString(criteriaPriceListIds)); // query parameter
+            if (criteriaKeyword != null) localVarQueryParams.Add("criteria.keyword", ApiClient.ParameterToString(criteriaKeyword)); // query parameter
+            if (criteriaSort != null) localVarQueryParams.Add("criteria.sort", ApiClient.ParameterToString(criteriaSort)); // query parameter
+            if (criteriaSkip != null) localVarQueryParams.Add("criteria.skip", ApiClient.ParameterToString(criteriaSkip)); // query parameter
+            if (criteriaTake != null) localVarQueryParams.Add("criteria.take", ApiClient.ParameterToString(criteriaTake)); // query parameter
 
 
             // make the HTTP request
@@ -2551,42 +2791,49 @@ namespace VirtoCommerce.PricingModule.Client.Api
             int localVarStatusCode = (int)localVarResponse.StatusCode;
 
             if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelistAssignments: " + localVarResponse.Content, localVarResponse.Content);
             else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelistAssignments: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
 
-            return new ApiResponse<List<Price>>(localVarStatusCode,
+            return new ApiResponse<PricelistAssignment>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
-                (List<Price>)ApiClient.Deserialize(localVarResponse, typeof(List<Price>)));
+                (PricelistAssignment)ApiClient.Deserialize(localVarResponse, typeof(PricelistAssignment)));
             
         }
 
         /// <summary>
-        /// Get array of product prices Get an array of valid product prices for each currency.
+        /// Search pricelist assignments Search price list assignments by given criteria
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>Task of List&lt;Price&gt;</returns>
-        public async System.Threading.Tasks.Task<List<Price>> PricingModuleGetProductPricesAsync(string productId)
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of PricelistAssignment</returns>
+        public async System.Threading.Tasks.Task<PricelistAssignment> PricingModuleSearchPricelistAssignmentsAsync(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
         {
-             ApiResponse<List<Price>> localVarResponse = await PricingModuleGetProductPricesAsyncWithHttpInfo(productId);
+             ApiResponse<PricelistAssignment> localVarResponse = await PricingModuleSearchPricelistAssignmentsAsyncWithHttpInfo(criteriaPriceListId, criteriaPriceListIds, criteriaKeyword, criteriaSort, criteriaSkip, criteriaTake);
              return localVarResponse.Data;
 
         }
 
         /// <summary>
-        /// Get array of product prices Get an array of valid product prices for each currency.
+        /// Search pricelist assignments Search price list assignments by given criteria
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <returns>Task of ApiResponse (List&lt;Price&gt;)</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<List<Price>>> PricingModuleGetProductPricesAsyncWithHttpInfo(string productId)
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ApiResponse (PricelistAssignment)</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<PricelistAssignment>> PricingModuleSearchPricelistAssignmentsAsyncWithHttpInfo(string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
         {
-            // verify the required parameter 'productId' is set
-            if (productId == null)
-                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleGetProductPrices");
 
-            var localVarPath = "/api/products/{productId}/prices";
+            var localVarPath = "/api/pricing/assignments";
             var localVarPathParams = new Dictionary<string, string>();
             var localVarQueryParams = new Dictionary<string, string>();
             var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
@@ -2613,7 +2860,12 @@ namespace VirtoCommerce.PricingModule.Client.Api
             // set "format" to json by default
             // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
             localVarPathParams.Add("format", "json");
-            if (productId != null) localVarPathParams.Add("productId", ApiClient.ParameterToString(productId)); // path parameter
+            if (criteriaPriceListId != null) localVarQueryParams.Add("criteria.priceListId", ApiClient.ParameterToString(criteriaPriceListId)); // query parameter
+            if (criteriaPriceListIds != null) localVarQueryParams.Add("criteria.priceListIds", ApiClient.ParameterToString(criteriaPriceListIds)); // query parameter
+            if (criteriaKeyword != null) localVarQueryParams.Add("criteria.keyword", ApiClient.ParameterToString(criteriaKeyword)); // query parameter
+            if (criteriaSort != null) localVarQueryParams.Add("criteria.sort", ApiClient.ParameterToString(criteriaSort)); // query parameter
+            if (criteriaSkip != null) localVarQueryParams.Add("criteria.skip", ApiClient.ParameterToString(criteriaSkip)); // query parameter
+            if (criteriaTake != null) localVarQueryParams.Add("criteria.take", ApiClient.ParameterToString(criteriaTake)); // query parameter
 
 
             // make the HTTP request
@@ -2624,13 +2876,355 @@ namespace VirtoCommerce.PricingModule.Client.Api
             int localVarStatusCode = (int)localVarResponse.StatusCode;
 
             if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelistAssignments: " + localVarResponse.Content, localVarResponse.Content);
             else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleGetProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelistAssignments: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
 
-            return new ApiResponse<List<Price>>(localVarStatusCode,
+            return new ApiResponse<PricelistAssignment>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
-                (List<Price>)ApiClient.Deserialize(localVarResponse, typeof(List<Price>)));
+                (PricelistAssignment)ApiClient.Deserialize(localVarResponse, typeof(PricelistAssignment)));
+            
+        }
+        /// <summary>
+        /// Get pricelists Get all pricelists for all catalogs.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>PricelistSearchResult</returns>
+        public PricelistSearchResult PricingModuleSearchPricelists(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+             ApiResponse<PricelistSearchResult> localVarResponse = PricingModuleSearchPricelistsWithHttpInfo(criteriaKeyword, criteriaSort, criteriaSkip, criteriaTake);
+             return localVarResponse.Data;
+        }
+
+        /// <summary>
+        /// Get pricelists Get all pricelists for all catalogs.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ApiResponse of PricelistSearchResult</returns>
+        public ApiResponse<PricelistSearchResult> PricingModuleSearchPricelistsWithHttpInfo(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+
+            var localVarPath = "/api/pricing/pricelists";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (criteriaKeyword != null) localVarQueryParams.Add("criteria.keyword", ApiClient.ParameterToString(criteriaKeyword)); // query parameter
+            if (criteriaSort != null) localVarQueryParams.Add("criteria.sort", ApiClient.ParameterToString(criteriaSort)); // query parameter
+            if (criteriaSkip != null) localVarQueryParams.Add("criteria.skip", ApiClient.ParameterToString(criteriaSkip)); // query parameter
+            if (criteriaTake != null) localVarQueryParams.Add("criteria.take", ApiClient.ParameterToString(criteriaTake)); // query parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelists: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<PricelistSearchResult>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (PricelistSearchResult)ApiClient.Deserialize(localVarResponse, typeof(PricelistSearchResult)));
+            
+        }
+
+        /// <summary>
+        /// Get pricelists Get all pricelists for all catalogs.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of PricelistSearchResult</returns>
+        public async System.Threading.Tasks.Task<PricelistSearchResult> PricingModuleSearchPricelistsAsync(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+             ApiResponse<PricelistSearchResult> localVarResponse = await PricingModuleSearchPricelistsAsyncWithHttpInfo(criteriaKeyword, criteriaSort, criteriaSkip, criteriaTake);
+             return localVarResponse.Data;
+
+        }
+
+        /// <summary>
+        /// Get pricelists Get all pricelists for all catalogs.
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ApiResponse (PricelistSearchResult)</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<PricelistSearchResult>> PricingModuleSearchPricelistsAsyncWithHttpInfo(string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+
+            var localVarPath = "/api/pricing/pricelists";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (criteriaKeyword != null) localVarQueryParams.Add("criteria.keyword", ApiClient.ParameterToString(criteriaKeyword)); // query parameter
+            if (criteriaSort != null) localVarQueryParams.Add("criteria.sort", ApiClient.ParameterToString(criteriaSort)); // query parameter
+            if (criteriaSkip != null) localVarQueryParams.Add("criteria.skip", ApiClient.ParameterToString(criteriaSkip)); // query parameter
+            if (criteriaTake != null) localVarQueryParams.Add("criteria.take", ApiClient.ParameterToString(criteriaTake)); // query parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelists: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchPricelists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<PricelistSearchResult>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (PricelistSearchResult)ApiClient.Deserialize(localVarResponse, typeof(PricelistSearchResult)));
+            
+        }
+        /// <summary>
+        /// Search product prices Search product prices
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ProductPricesSearchResult</returns>
+        public ProductPricesSearchResult PricingModuleSearchProductPrices(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+             ApiResponse<ProductPricesSearchResult> localVarResponse = PricingModuleSearchProductPricesWithHttpInfo(criteriaGroupByProducts, criteriaPriceListId, criteriaPriceListIds, criteriaProductId, criteriaProductIds, criteriaKeyword, criteriaSort, criteriaSkip, criteriaTake);
+             return localVarResponse.Data;
+        }
+
+        /// <summary>
+        /// Search product prices Search product prices
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>ApiResponse of ProductPricesSearchResult</returns>
+        public ApiResponse<ProductPricesSearchResult> PricingModuleSearchProductPricesWithHttpInfo(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+
+            var localVarPath = "/api/catalog/products/prices/search";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (criteriaGroupByProducts != null) localVarQueryParams.Add("criteria.groupByProducts", ApiClient.ParameterToString(criteriaGroupByProducts)); // query parameter
+            if (criteriaPriceListId != null) localVarQueryParams.Add("criteria.priceListId", ApiClient.ParameterToString(criteriaPriceListId)); // query parameter
+            if (criteriaPriceListIds != null) localVarQueryParams.Add("criteria.priceListIds", ApiClient.ParameterToString(criteriaPriceListIds)); // query parameter
+            if (criteriaProductId != null) localVarQueryParams.Add("criteria.productId", ApiClient.ParameterToString(criteriaProductId)); // query parameter
+            if (criteriaProductIds != null) localVarQueryParams.Add("criteria.productIds", ApiClient.ParameterToString(criteriaProductIds)); // query parameter
+            if (criteriaKeyword != null) localVarQueryParams.Add("criteria.keyword", ApiClient.ParameterToString(criteriaKeyword)); // query parameter
+            if (criteriaSort != null) localVarQueryParams.Add("criteria.sort", ApiClient.ParameterToString(criteriaSort)); // query parameter
+            if (criteriaSkip != null) localVarQueryParams.Add("criteria.skip", ApiClient.ParameterToString(criteriaSkip)); // query parameter
+            if (criteriaTake != null) localVarQueryParams.Add("criteria.take", ApiClient.ParameterToString(criteriaTake)); // query parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<ProductPricesSearchResult>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (ProductPricesSearchResult)ApiClient.Deserialize(localVarResponse, typeof(ProductPricesSearchResult)));
+            
+        }
+
+        /// <summary>
+        /// Search product prices Search product prices
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ProductPricesSearchResult</returns>
+        public async System.Threading.Tasks.Task<ProductPricesSearchResult> PricingModuleSearchProductPricesAsync(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+             ApiResponse<ProductPricesSearchResult> localVarResponse = await PricingModuleSearchProductPricesAsyncWithHttpInfo(criteriaGroupByProducts, criteriaPriceListId, criteriaPriceListIds, criteriaProductId, criteriaProductIds, criteriaKeyword, criteriaSort, criteriaSkip, criteriaTake);
+             return localVarResponse.Data;
+
+        }
+
+        /// <summary>
+        /// Search product prices Search product prices
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="criteriaGroupByProducts"> (optional)</param>
+        /// <param name="criteriaPriceListId"> (optional)</param>
+        /// <param name="criteriaPriceListIds"> (optional)</param>
+        /// <param name="criteriaProductId"> (optional)</param>
+        /// <param name="criteriaProductIds"> (optional)</param>
+        /// <param name="criteriaKeyword"> (optional)</param>
+        /// <param name="criteriaSort"> (optional)</param>
+        /// <param name="criteriaSkip"> (optional)</param>
+        /// <param name="criteriaTake"> (optional)</param>
+        /// <returns>Task of ApiResponse (ProductPricesSearchResult)</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<ProductPricesSearchResult>> PricingModuleSearchProductPricesAsyncWithHttpInfo(bool? criteriaGroupByProducts = null, string criteriaPriceListId = null, List<string> criteriaPriceListIds = null, string criteriaProductId = null, List<string> criteriaProductIds = null, string criteriaKeyword = null, string criteriaSort = null, int? criteriaSkip = null, int? criteriaTake = null)
+        {
+
+            var localVarPath = "/api/catalog/products/prices/search";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml"
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (criteriaGroupByProducts != null) localVarQueryParams.Add("criteria.groupByProducts", ApiClient.ParameterToString(criteriaGroupByProducts)); // query parameter
+            if (criteriaPriceListId != null) localVarQueryParams.Add("criteria.priceListId", ApiClient.ParameterToString(criteriaPriceListId)); // query parameter
+            if (criteriaPriceListIds != null) localVarQueryParams.Add("criteria.priceListIds", ApiClient.ParameterToString(criteriaPriceListIds)); // query parameter
+            if (criteriaProductId != null) localVarQueryParams.Add("criteria.productId", ApiClient.ParameterToString(criteriaProductId)); // query parameter
+            if (criteriaProductIds != null) localVarQueryParams.Add("criteria.productIds", ApiClient.ParameterToString(criteriaProductIds)); // query parameter
+            if (criteriaKeyword != null) localVarQueryParams.Add("criteria.keyword", ApiClient.ParameterToString(criteriaKeyword)); // query parameter
+            if (criteriaSort != null) localVarQueryParams.Add("criteria.sort", ApiClient.ParameterToString(criteriaSort)); // query parameter
+            if (criteriaSkip != null) localVarQueryParams.Add("criteria.skip", ApiClient.ParameterToString(criteriaSkip)); // query parameter
+            if (criteriaTake != null) localVarQueryParams.Add("criteria.take", ApiClient.ParameterToString(criteriaTake)); // query parameter
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
+                Method.GET, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchProductPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleSearchProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            return new ApiResponse<ProductPricesSearchResult>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                (ProductPricesSearchResult)ApiClient.Deserialize(localVarResponse, typeof(ProductPricesSearchResult)));
             
         }
         /// <summary>
@@ -2950,34 +3544,34 @@ namespace VirtoCommerce.PricingModule.Client.Api
                 null);
         }
         /// <summary>
-        /// Update prices Update prices of product for given pricelist.
+        ///  
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns></returns>
-        public void PricingModuleUpdateProductPriceLists(string productId, Pricelist priceList)
+        public void PricingModuleUpdateProductPrices(ProductPrice productPrice, string productId)
         {
-             PricingModuleUpdateProductPriceListsWithHttpInfo(productId, priceList);
+             PricingModuleUpdateProductPricesWithHttpInfo(productPrice, productId);
         }
 
         /// <summary>
-        /// Update prices Update prices of product for given pricelist.
+        ///  
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns>ApiResponse of Object(void)</returns>
-        public ApiResponse<object> PricingModuleUpdateProductPriceListsWithHttpInfo(string productId, Pricelist priceList)
+        public ApiResponse<object> PricingModuleUpdateProductPricesWithHttpInfo(ProductPrice productPrice, string productId)
         {
+            // verify the required parameter 'productPrice' is set
+            if (productPrice == null)
+                throw new ApiException(400, "Missing required parameter 'productPrice' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPrices");
             // verify the required parameter 'productId' is set
             if (productId == null)
-                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPriceLists");
-            // verify the required parameter 'priceList' is set
-            if (priceList == null)
-                throw new ApiException(400, "Missing required parameter 'priceList' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPriceLists");
+                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPrices");
 
-            var localVarPath = "/api/catalog/products/{productId}/pricelists";
+            var localVarPath = "/api/products/{productId}/prices";
             var localVarPathParams = new Dictionary<string, string>();
             var localVarQueryParams = new Dictionary<string, string>();
             var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
@@ -3006,13 +3600,13 @@ namespace VirtoCommerce.PricingModule.Client.Api
             // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
             localVarPathParams.Add("format", "json");
             if (productId != null) localVarPathParams.Add("productId", ApiClient.ParameterToString(productId)); // path parameter
-            if (priceList.GetType() != typeof(byte[]))
+            if (productPrice.GetType() != typeof(byte[]))
             {
-                localVarPostBody = ApiClient.Serialize(priceList); // http body (model) parameter
+                localVarPostBody = ApiClient.Serialize(productPrice); // http body (model) parameter
             }
             else
             {
-                localVarPostBody = priceList; // byte array
+                localVarPostBody = productPrice; // byte array
             }
 
 
@@ -3024,9 +3618,9 @@ namespace VirtoCommerce.PricingModule.Client.Api
             int localVarStatusCode = (int)localVarResponse.StatusCode;
 
             if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPriceLists: " + localVarResponse.Content, localVarResponse.Content);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPrices: " + localVarResponse.Content, localVarResponse.Content);
             else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPriceLists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
 
             
             return new ApiResponse<object>(localVarStatusCode,
@@ -3035,35 +3629,35 @@ namespace VirtoCommerce.PricingModule.Client.Api
         }
 
         /// <summary>
-        /// Update prices Update prices of product for given pricelist.
+        ///  
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns>Task of void</returns>
-        public async System.Threading.Tasks.Task PricingModuleUpdateProductPriceListsAsync(string productId, Pricelist priceList)
+        public async System.Threading.Tasks.Task PricingModuleUpdateProductPricesAsync(ProductPrice productPrice, string productId)
         {
-             await PricingModuleUpdateProductPriceListsAsyncWithHttpInfo(productId, priceList);
+             await PricingModuleUpdateProductPricesAsyncWithHttpInfo(productPrice, productId);
 
         }
 
         /// <summary>
-        /// Update prices Update prices of product for given pricelist.
+        ///  
         /// </summary>
         /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
-        /// <param name="productId">Product id</param>
-        /// <param name="priceList">Pricelist with new product prices</param>
+        /// <param name="productPrice"></param>
+        /// <param name="productId"></param>
         /// <returns>Task of ApiResponse</returns>
-        public async System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleUpdateProductPriceListsAsyncWithHttpInfo(string productId, Pricelist priceList)
+        public async System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleUpdateProductPricesAsyncWithHttpInfo(ProductPrice productPrice, string productId)
         {
+            // verify the required parameter 'productPrice' is set
+            if (productPrice == null)
+                throw new ApiException(400, "Missing required parameter 'productPrice' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPrices");
             // verify the required parameter 'productId' is set
             if (productId == null)
-                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPriceLists");
-            // verify the required parameter 'priceList' is set
-            if (priceList == null)
-                throw new ApiException(400, "Missing required parameter 'priceList' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPriceLists");
+                throw new ApiException(400, "Missing required parameter 'productId' when calling VirtoCommercePricingApi->PricingModuleUpdateProductPrices");
 
-            var localVarPath = "/api/catalog/products/{productId}/pricelists";
+            var localVarPath = "/api/products/{productId}/prices";
             var localVarPathParams = new Dictionary<string, string>();
             var localVarQueryParams = new Dictionary<string, string>();
             var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
@@ -3092,13 +3686,13 @@ namespace VirtoCommerce.PricingModule.Client.Api
             // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
             localVarPathParams.Add("format", "json");
             if (productId != null) localVarPathParams.Add("productId", ApiClient.ParameterToString(productId)); // path parameter
-            if (priceList.GetType() != typeof(byte[]))
+            if (productPrice.GetType() != typeof(byte[]))
             {
-                localVarPostBody = ApiClient.Serialize(priceList); // http body (model) parameter
+                localVarPostBody = ApiClient.Serialize(productPrice); // http body (model) parameter
             }
             else
             {
-                localVarPostBody = priceList; // byte array
+                localVarPostBody = productPrice; // byte array
             }
 
 
@@ -3110,9 +3704,167 @@ namespace VirtoCommerce.PricingModule.Client.Api
             int localVarStatusCode = (int)localVarResponse.StatusCode;
 
             if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPriceLists: " + localVarResponse.Content, localVarResponse.Content);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPrices: " + localVarResponse.Content, localVarResponse.Content);
             else if (localVarStatusCode == 0)
-                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPriceLists: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            
+            return new ApiResponse<object>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                null);
+        }
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns></returns>
+        public void PricingModuleUpdateProductsPrices(List<ProductPrice> productPrices)
+        {
+             PricingModuleUpdateProductsPricesWithHttpInfo(productPrices);
+        }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        public ApiResponse<object> PricingModuleUpdateProductsPricesWithHttpInfo(List<ProductPrice> productPrices)
+        {
+            // verify the required parameter 'productPrices' is set
+            if (productPrices == null)
+                throw new ApiException(400, "Missing required parameter 'productPrices' when calling VirtoCommercePricingApi->PricingModuleUpdateProductsPrices");
+
+            var localVarPath = "/api/products/prices";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml", 
+                "application/x-www-form-urlencoded"
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (productPrices.GetType() != typeof(byte[]))
+            {
+                localVarPostBody = ApiClient.Serialize(productPrices); // http body (model) parameter
+            }
+            else
+            {
+                localVarPostBody = productPrices; // byte array
+            }
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)ApiClient.CallApi(localVarPath,
+                Method.PUT, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductsPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductsPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
+
+            
+            return new ApiResponse<object>(localVarStatusCode,
+                localVarResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+                null);
+        }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns>Task of void</returns>
+        public async System.Threading.Tasks.Task PricingModuleUpdateProductsPricesAsync(List<ProductPrice> productPrices)
+        {
+             await PricingModuleUpdateProductsPricesAsyncWithHttpInfo(productPrices);
+
+        }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <exception cref="VirtoCommerce.PricingModule.Client.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="productPrices"></param>
+        /// <returns>Task of ApiResponse</returns>
+        public async System.Threading.Tasks.Task<ApiResponse<object>> PricingModuleUpdateProductsPricesAsyncWithHttpInfo(List<ProductPrice> productPrices)
+        {
+            // verify the required parameter 'productPrices' is set
+            if (productPrices == null)
+                throw new ApiException(400, "Missing required parameter 'productPrices' when calling VirtoCommercePricingApi->PricingModuleUpdateProductsPrices");
+
+            var localVarPath = "/api/products/prices";
+            var localVarPathParams = new Dictionary<string, string>();
+            var localVarQueryParams = new Dictionary<string, string>();
+            var localVarHeaderParams = new Dictionary<string, string>(Configuration.DefaultHeader);
+            var localVarFormParams = new Dictionary<string, string>();
+            var localVarFileParams = new Dictionary<string, FileParameter>();
+            object localVarPostBody = null;
+
+            // to determine the Content-Type header
+            string[] localVarHttpContentTypes = new string[] {
+                "application/json", 
+                "text/json", 
+                "application/xml", 
+                "text/xml", 
+                "application/x-www-form-urlencoded"
+            };
+            string localVarHttpContentType = ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+
+            // to determine the Accept header
+            string[] localVarHttpHeaderAccepts = new string[] {
+            };
+            string localVarHttpHeaderAccept = ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            if (localVarHttpHeaderAccept != null)
+                localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
+
+            // set "format" to json by default
+            // e.g. /pet/{petId}.{format} becomes /pet/{petId}.json
+            localVarPathParams.Add("format", "json");
+            if (productPrices.GetType() != typeof(byte[]))
+            {
+                localVarPostBody = ApiClient.Serialize(productPrices); // http body (model) parameter
+            }
+            else
+            {
+                localVarPostBody = productPrices; // byte array
+            }
+
+
+            // make the HTTP request
+            IRestResponse localVarResponse = (IRestResponse)await ApiClient.CallApiAsync(localVarPath,
+                Method.PUT, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
+                localVarPathParams, localVarHttpContentType);
+
+            int localVarStatusCode = (int)localVarResponse.StatusCode;
+
+            if (localVarStatusCode >= 400 && (localVarStatusCode != 404 || Configuration.ThrowExceptionWhenStatusCodeIs404))
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductsPrices: " + localVarResponse.Content, localVarResponse.Content);
+            else if (localVarStatusCode == 0)
+                throw new ApiException(localVarStatusCode, "Error calling PricingModuleUpdateProductsPrices: " + localVarResponse.ErrorMessage, localVarResponse.ErrorMessage);
 
             
             return new ApiResponse<object>(localVarStatusCode,

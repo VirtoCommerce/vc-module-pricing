@@ -24,6 +24,12 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public string PricelistId { get; set; }
 
         /// <summary>
+        /// Gets or Sets PriceListName
+        /// </summary>
+        [DataMember(Name="priceListName", EmitDefaultValue=false)]
+        public string PriceListName { get; set; }
+
+        /// <summary>
         /// Gets or Sets Currency
         /// </summary>
         [DataMember(Name="currency", EmitDefaultValue=false)]
@@ -95,6 +101,7 @@ namespace VirtoCommerce.PricingModule.Client.Model
             var sb = new StringBuilder();
             sb.Append("class Price {\n");
             sb.Append("  PricelistId: ").Append(PricelistId).Append("\n");
+            sb.Append("  PriceListName: ").Append(PriceListName).Append("\n");
             sb.Append("  Currency: ").Append(Currency).Append("\n");
             sb.Append("  ProductId: ").Append(ProductId).Append("\n");
             sb.Append("  Sale: ").Append(Sale).Append("\n");
@@ -145,6 +152,11 @@ namespace VirtoCommerce.PricingModule.Client.Model
                     this.PricelistId == other.PricelistId ||
                     this.PricelistId != null &&
                     this.PricelistId.Equals(other.PricelistId)
+                ) && 
+                (
+                    this.PriceListName == other.PriceListName ||
+                    this.PriceListName != null &&
+                    this.PriceListName.Equals(other.PriceListName)
                 ) && 
                 (
                     this.Currency == other.Currency ||
@@ -212,6 +224,9 @@ namespace VirtoCommerce.PricingModule.Client.Model
 
                 if (this.PricelistId != null)
                     hash = hash * 59 + this.PricelistId.GetHashCode();
+
+                if (this.PriceListName != null)
+                    hash = hash * 59 + this.PriceListName.GetHashCode();
 
                 if (this.Currency != null)
                     hash = hash * 59 + this.Currency.GetHashCode();

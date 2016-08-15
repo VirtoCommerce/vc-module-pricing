@@ -12,29 +12,22 @@ using Newtonsoft.Json.Converters;
 namespace VirtoCommerce.PricingModule.Client.Model
 {
     /// <summary>
-    /// ProductPrice
+    /// PropertyDisplayName
     /// </summary>
     [DataContract]
-    public partial class ProductPrice :  IEquatable<ProductPrice>
+    public partial class PropertyDisplayName :  IEquatable<PropertyDisplayName>
     {
         /// <summary>
-        /// Gets or Sets ProductId
+        /// Gets or Sets Name
         /// </summary>
-        [DataMember(Name="productId", EmitDefaultValue=false)]
-        public string ProductId { get; set; }
+        [DataMember(Name="name", EmitDefaultValue=false)]
+        public string Name { get; set; }
 
         /// <summary>
-        /// Gets or Sets Product
+        /// Gets or Sets LanguageCode
         /// </summary>
-        [DataMember(Name="product", EmitDefaultValue=false)]
-        public Product Product { get; set; }
-
-        /// <summary>
-        /// List prices for the products. It includes tiered prices also. (Depending on the quantity, for example)
-        /// </summary>
-        /// <value>List prices for the products. It includes tiered prices also. (Depending on the quantity, for example)</value>
-        [DataMember(Name="prices", EmitDefaultValue=false)]
-        public List<Price> Prices { get; set; }
+        [DataMember(Name="languageCode", EmitDefaultValue=false)]
+        public string LanguageCode { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -43,10 +36,9 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class ProductPrice {\n");
-            sb.Append("  ProductId: ").Append(ProductId).Append("\n");
-            sb.Append("  Product: ").Append(Product).Append("\n");
-            sb.Append("  Prices: ").Append(Prices).Append("\n");
+            sb.Append("class PropertyDisplayName {\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  LanguageCode: ").Append(LanguageCode).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -68,15 +60,15 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public override bool Equals(object obj)
         {
             // credit: http://stackoverflow.com/a/10454552/677735
-            return this.Equals(obj as ProductPrice);
+            return this.Equals(obj as PropertyDisplayName);
         }
 
         /// <summary>
-        /// Returns true if ProductPrice instances are equal
+        /// Returns true if PropertyDisplayName instances are equal
         /// </summary>
-        /// <param name="other">Instance of ProductPrice to be compared</param>
+        /// <param name="other">Instance of PropertyDisplayName to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(ProductPrice other)
+        public bool Equals(PropertyDisplayName other)
         {
             // credit: http://stackoverflow.com/a/10454552/677735
             if (other == null)
@@ -84,19 +76,14 @@ namespace VirtoCommerce.PricingModule.Client.Model
 
             return 
                 (
-                    this.ProductId == other.ProductId ||
-                    this.ProductId != null &&
-                    this.ProductId.Equals(other.ProductId)
+                    this.Name == other.Name ||
+                    this.Name != null &&
+                    this.Name.Equals(other.Name)
                 ) && 
                 (
-                    this.Product == other.Product ||
-                    this.Product != null &&
-                    this.Product.Equals(other.Product)
-                ) && 
-                (
-                    this.Prices == other.Prices ||
-                    this.Prices != null &&
-                    this.Prices.SequenceEqual(other.Prices)
+                    this.LanguageCode == other.LanguageCode ||
+                    this.LanguageCode != null &&
+                    this.LanguageCode.Equals(other.LanguageCode)
                 );
         }
 
@@ -112,14 +99,11 @@ namespace VirtoCommerce.PricingModule.Client.Model
                 int hash = 41;
                 // Suitable nullity checks etc, of course :)
 
-                if (this.ProductId != null)
-                    hash = hash * 59 + this.ProductId.GetHashCode();
+                if (this.Name != null)
+                    hash = hash * 59 + this.Name.GetHashCode();
 
-                if (this.Product != null)
-                    hash = hash * 59 + this.Product.GetHashCode();
-
-                if (this.Prices != null)
-                    hash = hash * 59 + this.Prices.GetHashCode();
+                if (this.LanguageCode != null)
+                    hash = hash * 59 + this.LanguageCode.GetHashCode();
 
                 return hash;
             }

@@ -12,29 +12,22 @@ using Newtonsoft.Json.Converters;
 namespace VirtoCommerce.PricingModule.Client.Model
 {
     /// <summary>
-    /// ProductPrice
+    /// ProductPricesSearchResult
     /// </summary>
     [DataContract]
-    public partial class ProductPrice :  IEquatable<ProductPrice>
+    public partial class ProductPricesSearchResult :  IEquatable<ProductPricesSearchResult>
     {
         /// <summary>
-        /// Gets or Sets ProductId
+        /// Gets or Sets TotalCount
         /// </summary>
-        [DataMember(Name="productId", EmitDefaultValue=false)]
-        public string ProductId { get; set; }
+        [DataMember(Name="totalCount", EmitDefaultValue=false)]
+        public long? TotalCount { get; set; }
 
         /// <summary>
-        /// Gets or Sets Product
+        /// Gets or Sets ProductPrices
         /// </summary>
-        [DataMember(Name="product", EmitDefaultValue=false)]
-        public Product Product { get; set; }
-
-        /// <summary>
-        /// List prices for the products. It includes tiered prices also. (Depending on the quantity, for example)
-        /// </summary>
-        /// <value>List prices for the products. It includes tiered prices also. (Depending on the quantity, for example)</value>
-        [DataMember(Name="prices", EmitDefaultValue=false)]
-        public List<Price> Prices { get; set; }
+        [DataMember(Name="productPrices", EmitDefaultValue=false)]
+        public List<ProductPrice> ProductPrices { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -43,10 +36,9 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class ProductPrice {\n");
-            sb.Append("  ProductId: ").Append(ProductId).Append("\n");
-            sb.Append("  Product: ").Append(Product).Append("\n");
-            sb.Append("  Prices: ").Append(Prices).Append("\n");
+            sb.Append("class ProductPricesSearchResult {\n");
+            sb.Append("  TotalCount: ").Append(TotalCount).Append("\n");
+            sb.Append("  ProductPrices: ").Append(ProductPrices).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -68,15 +60,15 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public override bool Equals(object obj)
         {
             // credit: http://stackoverflow.com/a/10454552/677735
-            return this.Equals(obj as ProductPrice);
+            return this.Equals(obj as ProductPricesSearchResult);
         }
 
         /// <summary>
-        /// Returns true if ProductPrice instances are equal
+        /// Returns true if ProductPricesSearchResult instances are equal
         /// </summary>
-        /// <param name="other">Instance of ProductPrice to be compared</param>
+        /// <param name="other">Instance of ProductPricesSearchResult to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(ProductPrice other)
+        public bool Equals(ProductPricesSearchResult other)
         {
             // credit: http://stackoverflow.com/a/10454552/677735
             if (other == null)
@@ -84,19 +76,14 @@ namespace VirtoCommerce.PricingModule.Client.Model
 
             return 
                 (
-                    this.ProductId == other.ProductId ||
-                    this.ProductId != null &&
-                    this.ProductId.Equals(other.ProductId)
+                    this.TotalCount == other.TotalCount ||
+                    this.TotalCount != null &&
+                    this.TotalCount.Equals(other.TotalCount)
                 ) && 
                 (
-                    this.Product == other.Product ||
-                    this.Product != null &&
-                    this.Product.Equals(other.Product)
-                ) && 
-                (
-                    this.Prices == other.Prices ||
-                    this.Prices != null &&
-                    this.Prices.SequenceEqual(other.Prices)
+                    this.ProductPrices == other.ProductPrices ||
+                    this.ProductPrices != null &&
+                    this.ProductPrices.SequenceEqual(other.ProductPrices)
                 );
         }
 
@@ -112,14 +99,11 @@ namespace VirtoCommerce.PricingModule.Client.Model
                 int hash = 41;
                 // Suitable nullity checks etc, of course :)
 
-                if (this.ProductId != null)
-                    hash = hash * 59 + this.ProductId.GetHashCode();
+                if (this.TotalCount != null)
+                    hash = hash * 59 + this.TotalCount.GetHashCode();
 
-                if (this.Product != null)
-                    hash = hash * 59 + this.Product.GetHashCode();
-
-                if (this.Prices != null)
-                    hash = hash * 59 + this.Prices.GetHashCode();
+                if (this.ProductPrices != null)
+                    hash = hash * 59 + this.ProductPrices.GetHashCode();
 
                 return hash;
             }

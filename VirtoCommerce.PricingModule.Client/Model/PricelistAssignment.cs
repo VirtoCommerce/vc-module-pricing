@@ -18,22 +18,28 @@ namespace VirtoCommerce.PricingModule.Client.Model
     public partial class PricelistAssignment :  IEquatable<PricelistAssignment>
     {
         /// <summary>
-        /// Gets or Sets CatalogName
-        /// </summary>
-        [DataMember(Name="catalogName", EmitDefaultValue=false)]
-        public string CatalogName { get; set; }
-
-        /// <summary>
         /// Gets or Sets CatalogId
         /// </summary>
         [DataMember(Name="catalogId", EmitDefaultValue=false)]
         public string CatalogId { get; set; }
 
         /// <summary>
+        /// Gets or Sets Catalog
+        /// </summary>
+        [DataMember(Name="catalog", EmitDefaultValue=false)]
+        public Catalog Catalog { get; set; }
+
+        /// <summary>
         /// Gets or Sets PricelistId
         /// </summary>
         [DataMember(Name="pricelistId", EmitDefaultValue=false)]
         public string PricelistId { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Pricelist
+        /// </summary>
+        [DataMember(Name="pricelist", EmitDefaultValue=false)]
+        public Pricelist Pricelist { get; set; }
 
         /// <summary>
         /// Gets or Sets Name
@@ -113,9 +119,10 @@ namespace VirtoCommerce.PricingModule.Client.Model
         {
             var sb = new StringBuilder();
             sb.Append("class PricelistAssignment {\n");
-            sb.Append("  CatalogName: ").Append(CatalogName).Append("\n");
             sb.Append("  CatalogId: ").Append(CatalogId).Append("\n");
+            sb.Append("  Catalog: ").Append(Catalog).Append("\n");
             sb.Append("  PricelistId: ").Append(PricelistId).Append("\n");
+            sb.Append("  Pricelist: ").Append(Pricelist).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Priority: ").Append(Priority).Append("\n");
@@ -164,19 +171,24 @@ namespace VirtoCommerce.PricingModule.Client.Model
 
             return 
                 (
-                    this.CatalogName == other.CatalogName ||
-                    this.CatalogName != null &&
-                    this.CatalogName.Equals(other.CatalogName)
-                ) && 
-                (
                     this.CatalogId == other.CatalogId ||
                     this.CatalogId != null &&
                     this.CatalogId.Equals(other.CatalogId)
                 ) && 
                 (
+                    this.Catalog == other.Catalog ||
+                    this.Catalog != null &&
+                    this.Catalog.Equals(other.Catalog)
+                ) && 
+                (
                     this.PricelistId == other.PricelistId ||
                     this.PricelistId != null &&
                     this.PricelistId.Equals(other.PricelistId)
+                ) && 
+                (
+                    this.Pricelist == other.Pricelist ||
+                    this.Pricelist != null &&
+                    this.Pricelist.Equals(other.Pricelist)
                 ) && 
                 (
                     this.Name == other.Name ||
@@ -247,14 +259,17 @@ namespace VirtoCommerce.PricingModule.Client.Model
                 int hash = 41;
                 // Suitable nullity checks etc, of course :)
 
-                if (this.CatalogName != null)
-                    hash = hash * 59 + this.CatalogName.GetHashCode();
-
                 if (this.CatalogId != null)
                     hash = hash * 59 + this.CatalogId.GetHashCode();
 
+                if (this.Catalog != null)
+                    hash = hash * 59 + this.Catalog.GetHashCode();
+
                 if (this.PricelistId != null)
                     hash = hash * 59 + this.PricelistId.GetHashCode();
+
+                if (this.Pricelist != null)
+                    hash = hash * 59 + this.Pricelist.GetHashCode();
 
                 if (this.Name != null)
                     hash = hash * 59 + this.Name.GetHashCode();

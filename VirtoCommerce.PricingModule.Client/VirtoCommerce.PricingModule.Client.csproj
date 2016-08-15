@@ -60,13 +60,36 @@
     <Compile Include="Client\ApiResponse.cs" />
     <Compile Include="Client\Configuration.cs" />
     <Compile Include="Client\IApiAccessor.cs" />
+    <Compile Include="Model\Asset.cs" />
+    <Compile Include="Model\Catalog.cs" />
+    <Compile Include="Model\CatalogLanguage.cs" />
+    <Compile Include="Model\Category.cs" />
+    <Compile Include="Model\CategoryLink.cs" />
     <Compile Include="Model\ConditionExpressionTree.cs" />
     <Compile Include="Model\DynamicExpression.cs" />
+    <Compile Include="Model\EditorialReview.cs" />
+    <Compile Include="Model\Image.cs" />
+    <Compile Include="Model\Outline.cs" />
+    <Compile Include="Model\OutlineItem.cs" />
     <Compile Include="Model\Price.cs" />
     <Compile Include="Model\PriceEvaluationContext.cs" />
     <Compile Include="Model\Pricelist.cs" />
     <Compile Include="Model\PricelistAssignment.cs" />
+    <Compile Include="Model\PricelistAssignmentsSearchCriteria.cs" />
+    <Compile Include="Model\PricelistSearchCriteria.cs" />
+    <Compile Include="Model\PricelistSearchResult.cs" />
+    <Compile Include="Model\PricesSearchCriteria.cs" />
+    <Compile Include="Model\Product.cs" />
+    <Compile Include="Model\ProductAssociation.cs" />
     <Compile Include="Model\ProductPrice.cs" />
+    <Compile Include="Model\ProductPricesSearchResult.cs" />
+    <Compile Include="Model\Property.cs" />
+    <Compile Include="Model\PropertyAttribute.cs" />
+    <Compile Include="Model\PropertyDictionaryValue.cs" />
+    <Compile Include="Model\PropertyDisplayName.cs" />
+    <Compile Include="Model\PropertyValue.cs" />
+    <Compile Include="Model\SeoInfo.cs" />
+    <Compile Include="Model\SortInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -12,29 +12,34 @@ using Newtonsoft.Json.Converters;
 namespace VirtoCommerce.PricingModule.Client.Model
 {
     /// <summary>
-    /// ProductPrice
+    /// PropertyAttribute
     /// </summary>
     [DataContract]
-    public partial class ProductPrice :  IEquatable<ProductPrice>
+    public partial class PropertyAttribute :  IEquatable<PropertyAttribute>
     {
         /// <summary>
-        /// Gets or Sets ProductId
+        /// Gets or Sets Id
         /// </summary>
-        [DataMember(Name="productId", EmitDefaultValue=false)]
-        public string ProductId { get; set; }
+        [DataMember(Name="id", EmitDefaultValue=false)]
+        public string Id { get; set; }
 
         /// <summary>
-        /// Gets or Sets Product
+        /// Gets or Sets Property
         /// </summary>
-        [DataMember(Name="product", EmitDefaultValue=false)]
-        public Product Product { get; set; }
+        [DataMember(Name="property", EmitDefaultValue=false)]
+        public Property Property { get; set; }
 
         /// <summary>
-        /// List prices for the products. It includes tiered prices also. (Depending on the quantity, for example)
+        /// Gets or Sets Value
         /// </summary>
-        /// <value>List prices for the products. It includes tiered prices also. (Depending on the quantity, for example)</value>
-        [DataMember(Name="prices", EmitDefaultValue=false)]
-        public List<Price> Prices { get; set; }
+        [DataMember(Name="value", EmitDefaultValue=false)]
+        public string Value { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Name
+        /// </summary>
+        [DataMember(Name="name", EmitDefaultValue=false)]
+        public string Name { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -43,10 +48,11 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class ProductPrice {\n");
-            sb.Append("  ProductId: ").Append(ProductId).Append("\n");
-            sb.Append("  Product: ").Append(Product).Append("\n");
-            sb.Append("  Prices: ").Append(Prices).Append("\n");
+            sb.Append("class PropertyAttribute {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  Property: ").Append(Property).Append("\n");
+            sb.Append("  Value: ").Append(Value).Append("\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -68,15 +74,15 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public override bool Equals(object obj)
         {
             // credit: http://stackoverflow.com/a/10454552/677735
-            return this.Equals(obj as ProductPrice);
+            return this.Equals(obj as PropertyAttribute);
         }
 
         /// <summary>
-        /// Returns true if ProductPrice instances are equal
+        /// Returns true if PropertyAttribute instances are equal
         /// </summary>
-        /// <param name="other">Instance of ProductPrice to be compared</param>
+        /// <param name="other">Instance of PropertyAttribute to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(ProductPrice other)
+        public bool Equals(PropertyAttribute other)
         {
             // credit: http://stackoverflow.com/a/10454552/677735
             if (other == null)
@@ -84,19 +90,24 @@ namespace VirtoCommerce.PricingModule.Client.Model
 
             return 
                 (
-                    this.ProductId == other.ProductId ||
-                    this.ProductId != null &&
-                    this.ProductId.Equals(other.ProductId)
+                    this.Id == other.Id ||
+                    this.Id != null &&
+                    this.Id.Equals(other.Id)
                 ) && 
                 (
-                    this.Product == other.Product ||
-                    this.Product != null &&
-                    this.Product.Equals(other.Product)
+                    this.Property == other.Property ||
+                    this.Property != null &&
+                    this.Property.Equals(other.Property)
                 ) && 
                 (
-                    this.Prices == other.Prices ||
-                    this.Prices != null &&
-                    this.Prices.SequenceEqual(other.Prices)
+                    this.Value == other.Value ||
+                    this.Value != null &&
+                    this.Value.Equals(other.Value)
+                ) && 
+                (
+                    this.Name == other.Name ||
+                    this.Name != null &&
+                    this.Name.Equals(other.Name)
                 );
         }
 
@@ -112,14 +123,17 @@ namespace VirtoCommerce.PricingModule.Client.Model
                 int hash = 41;
                 // Suitable nullity checks etc, of course :)
 
-                if (this.ProductId != null)
-                    hash = hash * 59 + this.ProductId.GetHashCode();
+                if (this.Id != null)
+                    hash = hash * 59 + this.Id.GetHashCode();
 
-                if (this.Product != null)
-                    hash = hash * 59 + this.Product.GetHashCode();
+                if (this.Property != null)
+                    hash = hash * 59 + this.Property.GetHashCode();
 
-                if (this.Prices != null)
-                    hash = hash * 59 + this.Prices.GetHashCode();
+                if (this.Value != null)
+                    hash = hash * 59 + this.Value.GetHashCode();
+
+                if (this.Name != null)
+                    hash = hash * 59 + this.Name.GetHashCode();
 
                 return hash;
             }

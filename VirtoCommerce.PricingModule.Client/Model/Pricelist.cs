@@ -37,18 +37,18 @@ namespace VirtoCommerce.PricingModule.Client.Model
         public string Currency { get; set; }
 
         /// <summary>
-        /// List of Products prices. It includes tiered prices also
-        /// </summary>
-        /// <value>List of Products prices. It includes tiered prices also</value>
-        [DataMember(Name="productPrices", EmitDefaultValue=false)]
-        public List<ProductPrice> ProductPrices { get; set; }
-
-        /// <summary>
         /// Assignments define condition and rules to use the price list
         /// </summary>
         /// <value>Assignments define condition and rules to use the price list</value>
         [DataMember(Name="assignments", EmitDefaultValue=false)]
         public List<PricelistAssignment> Assignments { get; set; }
+
+        /// <summary>
+        /// List of prices belongs to price list.
+        /// </summary>
+        /// <value>List of prices belongs to price list.</value>
+        [DataMember(Name="prices", EmitDefaultValue=false)]
+        public List<Price> Prices { get; set; }
 
         /// <summary>
         /// Gets or Sets CreatedDate
@@ -91,8 +91,8 @@ namespace VirtoCommerce.PricingModule.Client.Model
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  Currency: ").Append(Currency).Append("\n");
-            sb.Append("  ProductPrices: ").Append(ProductPrices).Append("\n");
             sb.Append("  Assignments: ").Append(Assignments).Append("\n");
+            sb.Append("  Prices: ").Append(Prices).Append("\n");
             sb.Append("  CreatedDate: ").Append(CreatedDate).Append("\n");
             sb.Append("  ModifiedDate: ").Append(ModifiedDate).Append("\n");
             sb.Append("  CreatedBy: ").Append(CreatedBy).Append("\n");
@@ -150,14 +150,14 @@ namespace VirtoCommerce.PricingModule.Client.Model
                     this.Currency.Equals(other.Currency)
                 ) && 
                 (
-                    this.ProductPrices == other.ProductPrices ||
-                    this.ProductPrices != null &&
-                    this.ProductPrices.SequenceEqual(other.ProductPrices)
-                ) && 
-                (
                     this.Assignments == other.Assignments ||
                     this.Assignments != null &&
                     this.Assignments.SequenceEqual(other.Assignments)
+                ) && 
+                (
+                    this.Prices == other.Prices ||
+                    this.Prices != null &&
+                    this.Prices.SequenceEqual(other.Prices)
                 ) && 
                 (
                     this.CreatedDate == other.CreatedDate ||
@@ -207,11 +207,11 @@ namespace VirtoCommerce.PricingModule.Client.Model
                 if (this.Currency != null)
                     hash = hash * 59 + this.Currency.GetHashCode();
 
-                if (this.ProductPrices != null)
-                    hash = hash * 59 + this.ProductPrices.GetHashCode();
-
                 if (this.Assignments != null)
                     hash = hash * 59 + this.Assignments.GetHashCode();
+
+                if (this.Prices != null)
+                    hash = hash * 59 + this.Prices.GetHashCode();
 
                 if (this.CreatedDate != null)
                     hash = hash * 59 + this.CreatedDate.GetHashCode();
