@@ -59,8 +59,8 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
    
 		private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
         {
-            var priceListsResult = _pricingSearchService.SearchPricelists(new Domain.Pricing.Model.Search.PricingSearchCriteria { Take = int.MaxValue });
-            var assignmentsResult = _pricingSearchService.SearchPricelistAssignments(new Domain.Pricing.Model.Search.PricingSearchCriteria { Take = int.MaxValue });
+            var priceListsResult = _pricingSearchService.SearchPricelists(new Domain.Pricing.Model.Search.PricelistSearchCriteria { Take = int.MaxValue });
+            var assignmentsResult = _pricingSearchService.SearchPricelistAssignments(new Domain.Pricing.Model.Search.PricelistAssignmentsSearchCriteria { Take = int.MaxValue });
             var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , priceListsResult.TotalCount)};
 			progressCallback(progressInfo);
             var retVal = new BackupObject

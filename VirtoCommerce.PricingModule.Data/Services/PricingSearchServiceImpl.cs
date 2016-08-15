@@ -100,7 +100,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
-        public PricingSearchResult<coreModel.Pricelist> SearchPricelists(PricingSearchCriteria criteria)
+        public PricingSearchResult<coreModel.Pricelist> SearchPricelists(PricelistSearchCriteria criteria)
         {
             var retVal = new PricingSearchResult<coreModel.Pricelist>();
             using (var repository = _repositoryFactory())
@@ -133,12 +133,18 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
        
 
-        public PricingSearchResult<coreModel.PricelistAssignment> SearchPricelistAssignments(PricingSearchCriteria criteria)
+        public PricingSearchResult<coreModel.PricelistAssignment> SearchPricelistAssignments(PricelistAssignmentsSearchCriteria criteria)
         {
             var retVal = new PricingSearchResult<coreModel.PricelistAssignment>();
             using (var repository = _repositoryFactory())
             {
                 var query = repository.PricelistAssignments;
+
+                if(!criteria.PriceListIds.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
+                }
+
                 if (!string.IsNullOrEmpty(criteria.Keyword))
                 {
                     query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));

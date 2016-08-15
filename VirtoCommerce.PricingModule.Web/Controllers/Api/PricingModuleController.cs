@@ -113,16 +113,21 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Get all pricelists for all catalogs.</remarks>
         [HttpGet]
-        [ResponseType(typeof(webModel.Pricelist[]))]
+        [ResponseType(typeof(webModel.PricelistSearchResult))]
         [Route("api/pricing/pricelists")]
-        public IHttpActionResult SearchPricelists([FromUri]coreModel.Search.PricingSearchCriteria criteria)
+        public IHttpActionResult SearchPricelists([FromUri]coreModel.Search.PricelistSearchCriteria criteria)
         {
             if (criteria == null)
             {
-                criteria = new Domain.Pricing.Model.Search.PricingSearchCriteria();
+                criteria = new Domain.Pricing.Model.Search.PricelistSearchCriteria();
             }
-            var result = _pricingSearchService.SearchPricelists(criteria).Results.Select(x => x.ToWebModel());
-            return Ok(result);
+            var result = _pricingSearchService.SearchPricelists(criteria);
+            var retVal = new webModel.PricelistSearchResult
+            {
+                TotalCount = result.TotalCount,
+                 Pricelists = result.Results.Select(x=>x.ToWebModel()).ToList()
+            };
+            return Ok(retVal);
         }
 
         /// <summary>
@@ -130,16 +135,21 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Search price list assignments by given criteria</remarks>
         [HttpGet]
-        [ResponseType(typeof(webModel.PricelistAssignment[]))]
+        [ResponseType(typeof(webModel.PricelistAssignment))]
         [Route("api/pricing/assignments")]
-        public IHttpActionResult SearchPricelistAssignments([FromUri]coreModel.Search.PricingSearchCriteria criteria)
+        public IHttpActionResult SearchPricelistAssignments([FromUri]coreModel.Search.PricelistAssignmentsSearchCriteria criteria)
         {
             if (criteria == null)
             {
-                criteria = new Domain.Pricing.Model.Search.PricingSearchCriteria();
+                criteria = new Domain.Pricing.Model.Search.PricelistAssignmentsSearchCriteria();
             }
-            var result = _pricingSearchService.SearchPricelistAssignments(criteria).Results.Select(x => x.ToWebModel(_extensionManager.ConditionExpressionTree));
-            return Ok(result);
+            var result = _pricingSearchService.SearchPricelistAssignments(criteria);
+            var retVal = new webModel.PricelistAssignmentSearchResult
+            {
+                TotalCount = result.TotalCount,
+                Assignments = result.Results.Select(x => x.ToWebModel(_extensionManager.ConditionExpressionTree)).ToList()
+            };
+            return Ok(retVal);
         }
 
         /// <summary>
@@ -300,7 +310,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         {         
             var productPrices = _pricingSearchService.SearchPrices(new Domain.Pricing.Model.Search.PricesSearchCriteria { Take = int.MaxValue, ProductId = productId }).Results
                                                       .Select(x=> x.ToWebModel()).ToArray();
-            var priceLists = _pricingSearchService.SearchPricelists(new coreModel.Search.PricingSearchCriteria { Take = int.MaxValue }).Results
+            var priceLists = _pricingSearchService.SearchPricelists(new coreModel.Search.PricelistSearchCriteria { Take = int.MaxValue }).Results
                                                   .Select(x=>x.ToWebModel()).ToArray();
             foreach(var pricelist in priceLists)
             {

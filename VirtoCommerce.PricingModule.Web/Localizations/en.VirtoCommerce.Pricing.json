@@ -105,13 +105,16 @@
                     "name": "Price List",
                     "currency": "Currency",
                     "priority": "Priority",
-                    "prices-count":  "Count"
-                }
+                    "prices-count": "Prices count"
+                },
+                "no-assignments": "Catalog does not have assigned price lists. Please assign a price list by following this link ",
+                "manage-pricelists": "Manage pricing"
+
             }
         },
         "widgets": {
             "assignments": {
-                "title": "Assigned catalog"
+                "title": "Assignments"
             },
             "itemPricesWidget": {
                 "title": "Price",

@@ -5,7 +5,7 @@
 
     blade.refresh = function (parentRefresh) {
         if (blade.isNew) {
-            assignments.getNew(initializeBlade, function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+            assignments.getNew(initializeBlade);
         } else {
             assignments.get({ id: blade.currentEntityId }, initializeBlade, function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
             if (parentRefresh && angular.isFunction(blade.parentBlade.refresh)) {
@@ -16,7 +16,8 @@
 
     function initializeBlade(data) {
         if (blade.isNew) {
-            data = angular.extend(blade.data, data);
+        	data = angular.extend(blade.data, data);
+        	blade.data.pricelistId = blade.pricelistId;
         }
 
         if (data.dynamicExpression) {
@@ -147,6 +148,8 @@
 
     // actions on load
     $scope.catalogs = catalogs.query();
-    $scope.pricelists = pricelists.query();
+    pricelists.search({ take: 1000 }, function (result) {
+    	$scope.pricelists = result.pricelists;
+    });
     blade.refresh();
 }]);

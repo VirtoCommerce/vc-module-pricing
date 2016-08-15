@@ -28,6 +28,7 @@
 		var productPricelistsBlade = {
 			id: "itemPricelists",
 			itemId: blade.itemId,
+			item: blade.item,
 			parentWidgetRefresh: refresh,
 			title: blade.title,
 			subtitle: 'pricing.blades.item-pricelists-list.subtitle',

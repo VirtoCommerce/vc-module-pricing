@@ -7,7 +7,21 @@
     	blade.isLoading = true;
     	prices.getProductPricelists({ id: blade.itemId }, function (pricelists) {
     		blade.isLoading = false;
-    		blade.currentEntities = pricelists;
+    		blade.currentEntities = [];
+    		_.each(pricelists, function (x) {
+    			var assignments = _.filter(x.assignments, function (assignment) {
+    				return assignment.catalogId == blade.item.catalogId;
+    			});
+				//Make pricelist for each assignment assigned to product catalog
+    			_.each(assignments, function (assignment) {
+    				var pricelist = {
+    					priority: assignment.priority
+    				};
+    				angular.extend(pricelist, x);
+    				pricelist.assignments = [assignment];
+    				blade.currentEntities.push(pricelist);
+    			});
+    		});
 
     		if (!pricelists.length) {
     			var newPricelistBlade = {

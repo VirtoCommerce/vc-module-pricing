@@ -9,12 +9,14 @@
         });
     }])
     .factory('virtoCommerce.pricingModule.pricelists', ['$resource', function ($resource) {
-        return $resource('api/pricing/pricelists/:id', {}, {
+    	return $resource('api/pricing/pricelists/:id', {}, {
+    		search: { url: 'api/pricing/pricelists' },
             update: { method: 'PUT' }
         });
     }])
     .factory('virtoCommerce.pricingModule.pricelistAssignments', ['$resource', function ($resource) {
-        return $resource('api/pricing/assignments/:id', { id: '@Id' }, {
+    	return $resource('api/pricing/assignments/:id', { id: '@Id' }, {
+    		search: { url: 'api/pricing/assignments' },
             getNew: { url: 'api/pricing/assignments/new' },
             update: { method: 'PUT' }
         });

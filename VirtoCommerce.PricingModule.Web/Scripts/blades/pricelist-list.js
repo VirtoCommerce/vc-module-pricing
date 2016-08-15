@@ -6,13 +6,14 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
 
     blade.refresh = function () {
         blade.isLoading = true;
-        return pricelists.query({
+        return pricelists.search({
             sort: uiGridHelper.getSortExpression($scope),
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
             blade.isLoading = false;
-            blade.currentEntities = data;
+            blade.currentEntities = data.pricelists;
+            $scope.pageSettings.totalItems = data.totalCount;
             return data;
         }).$promise;
     };
@@ -101,12 +102,20 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
     }
     ];
 
+    var filter = $scope.filter = {};
+    filter.criteriaChanged = function () {
+    	if ($scope.pageSettings.currentPage > 1) {
+    		$scope.pageSettings.currentPage = 1;
+    	} else {
+    		blade.refresh();
+    	}
+    };
+
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
         uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
             uiGridHelper.bindRefreshOnSortChanged($scope);
         });
-
         bladeUtils.initializePagination($scope);
     };
 

@@ -6,16 +6,17 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
     var bladeNavigationService = bladeUtils.bladeNavigationService;
 
     blade.refresh = function () {
-        blade.isLoading = true;
-
-        assignments.query({
+    	blade.isLoading = true;
+    	assignments.search({
+			pricelistId : blade.pricelistId,
             sort: uiGridHelper.getSortExpression($scope),
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
             blade.isLoading = false;
             $scope.pageSettings.totalItems = data.length;
-            blade.currentEntities = data;
+            blade.currentEntities = data.assignments;
+            $scope.pageSettings.totalItems = data.totalCount;
         }, function (error) {
             bladeNavigationService.setError('Error ' + error.status, blade);
         });
@@ -25,14 +26,15 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
         $scope.selectedNodeId = node.id;
         
         var newBlade = {
-            id: 'listItemChild',
+            id: 'pricelistAssignmentDetail',
             controller: 'virtoCommerce.pricingModule.assignmentDetailController',
             template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/assignment-detail.tpl.html'
         };
 
         if (isNew) {
             angular.extend(newBlade, {
-                isNew: true,
+            	isNew: true,
+				pricelistId : blade.pricelistId,
                 data: node,
                 title: 'pricing.blades.assignment-detail.new-title'
             });
@@ -107,6 +109,14 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
         }
     ];
 
+    var filter = $scope.filter = {};
+    filter.criteriaChanged = function () {
+    	if ($scope.pageSettings.currentPage > 1) {
+    		$scope.pageSettings.currentPage = 1;
+    	} else {
+    		blade.refresh();
+    	}
+    };
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
         uiGridHelper.initialize($scope, gridOptions, function (gridApi) {

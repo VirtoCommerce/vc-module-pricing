@@ -118,7 +118,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Domain, Version=2.15.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.16.0-rc2\lib\net451\VirtoCommerce.Domain.dll</HintPath>
+      <HintPath>..\packages\VirtoCommerce.Domain.2.16.0-rc3\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.11.4.0, Culture=neutral, processorArchitecture=MSIL">
@@ -152,8 +152,6 @@
   <ItemGroup>
     <Content Include="Scripts\blades\assignment-detail.js" />
     <Content Include="Scripts\blades\assignment-detail.tpl.html" />
-    <Content Include="Scripts\blades\pricelist-assignment-list.js" />
-    <Content Include="Scripts\blades\pricelist-assignment-list.tpl.html" />
     <Content Include="Scripts\blades\pricelist-item-list.js" />
     <Content Include="Scripts\blades\assignment-list.js" />
     <Content Include="Scripts\blades\pricelist-list.js" />
@@ -183,6 +181,8 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\Api\PricingModuleController.cs" />
+    <Compile Include="Model\PricelistAssignmentSearchResult.cs" />
+    <Compile Include="Model\PricelistSearchResult.cs" />
     <Compile Include="Model\ProductPricesSearchResult.cs" />
     <Compile Include="Security\PricingPredefinedPermissions.cs" />
     <Compile Include="Converters\PricelistAssignmentConverter.cs" />
