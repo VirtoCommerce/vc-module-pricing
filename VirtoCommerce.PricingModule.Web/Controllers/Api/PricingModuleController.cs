@@ -79,8 +79,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// Get pricelist assignment
         /// </summary>
         /// <param name="id">Pricelist assignment id</param>
-        /// <response code="200"></response>
-        /// <response code="404">Pricelist assignment not found.</response>
         [HttpGet]
         [ResponseType(typeof(webModel.PricelistAssignment))]
         [Route("api/pricing/assignments/{id}")]
@@ -89,7 +87,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             var assignment = _pricingService.GetPricelistAssignmentsById(new[] { id }).FirstOrDefault();
             var result = assignment != null ? assignment.ToWebModel(_extensionManager.ConditionExpressionTree) : null;
             return result != null ? Ok(result) : (IHttpActionResult)NotFound();
-        }   
+        }
 
         /// <summary>
         /// Get a new pricelist assignment
@@ -106,7 +104,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 DynamicExpression = _extensionManager.ConditionExpressionTree
             };
             return Ok(result);
-        }      
+        }
 
         /// <summary>
         /// Get pricelists
@@ -119,13 +117,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         {
             if (criteria == null)
             {
-                criteria = new Domain.Pricing.Model.Search.PricelistSearchCriteria();
+                criteria = new coreModel.Search.PricelistSearchCriteria();
             }
             var result = _pricingSearchService.SearchPricelists(criteria);
             var retVal = new webModel.PricelistSearchResult
             {
                 TotalCount = result.TotalCount,
-                 Pricelists = result.Results.Select(x=>x.ToWebModel()).ToList()
+                Pricelists = result.Results.Select(x => x.ToWebModel()).ToList()
             };
             return Ok(retVal);
         }
@@ -135,7 +133,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Search price list assignments by given criteria</remarks>
         [HttpGet]
-        [ResponseType(typeof(webModel.PricelistAssignment))]
+        [ResponseType(typeof(webModel.PricelistAssignmentSearchResult))]
         [Route("api/pricing/assignments")]
         public IHttpActionResult SearchPricelistAssignments([FromUri]coreModel.Search.PricelistAssignmentsSearchCriteria criteria)
         {
@@ -161,7 +159,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/catalog/products/prices/search")]
         public IHttpActionResult SearchProductPrices([FromUri]coreModel.Search.PricesSearchCriteria criteria)
         {
-            if(criteria == null)
+            if (criteria == null)
             {
                 criteria = new Domain.Pricing.Model.Search.PricesSearchCriteria();
             }
@@ -170,7 +168,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 TotalCount = result.TotalCount,
                 ProductPrices = new List<webModel.ProductPrice>()
-
             };
 
             foreach (var productPricesGroup in result.Results.GroupBy(x => x.ProductId))
@@ -196,7 +193,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Get an array of valid product prices for each currency.</remarks>
         /// <param name="productId">Product id</param>
-        /// <response code="200"></response>
         [HttpGet]
         [ResponseType(typeof(webModel.Price[]))]
         [Route("api/products/{productId}/prices")]
@@ -204,7 +200,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         {
             var priceEvalContext = new coreModel.PriceEvaluationContext { ProductIds = new[] { productId } };
             var product = _itemService.GetByIds(new[] { productId }, Domain.Catalog.Model.ItemResponseGroup.ItemInfo).FirstOrDefault();
-            if(product != null)
+            if (product != null)
             {
                 priceEvalContext.CatalogId = product.CatalogId;
             }
@@ -231,7 +227,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// Update pricelist assignment
         /// </summary>
         /// <param name="assignment">PricelistAssignment</param>
-        /// <response code="204">Operation completed.</response>
         /// <todo>Return no any reason if can't update</todo>
         [HttpPut]
         [ResponseType(typeof(void))]
@@ -242,14 +237,14 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             _pricingService.SavePricelistAssignments(new[] { assignment.ToCoreModel(_expressionSerializer) });
             return StatusCode(HttpStatusCode.NoContent);
         }
-        
+
         [HttpPut]
         [ResponseType(typeof(void))]
         [Route("api/products/prices")]
         [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
         public IHttpActionResult UpdateProductsPrices(webModel.ProductPrice[] productPrices)
         {
-            var result = _pricingSearchService.SearchPrices(new Domain.Pricing.Model.Search.PricesSearchCriteria { Take = int.MaxValue, ProductIds = productPrices.Select(x=>x.ProductId).ToArray() });
+            var result = _pricingSearchService.SearchPrices(new Domain.Pricing.Model.Search.PricesSearchCriteria { Take = int.MaxValue, ProductIds = productPrices.Select(x => x.ProductId).ToArray() });
             var targetPricesGroups = result.Results.GroupBy(x => x.PricelistId);
             var sourcePricesGroups = productPrices.SelectMany(x => x.Prices).Select(x => x.ToCoreModel()).GroupBy(x => x.PricelistId);
 
@@ -302,17 +297,16 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Get all price lists for given product.</remarks>
         /// <param name="productId">Product id</param>
-        /// <response code="200"></response>
         [HttpGet]
         [ResponseType(typeof(webModel.Pricelist[]))]
         [Route("api/catalog/products/{productId}/pricelists")]
         public IHttpActionResult GetProductPriceLists(string productId)
-        {         
+        {
             var productPrices = _pricingSearchService.SearchPrices(new Domain.Pricing.Model.Search.PricesSearchCriteria { Take = int.MaxValue, ProductId = productId }).Results
-                                                      .Select(x=> x.ToWebModel()).ToArray();
+                                                      .Select(x => x.ToWebModel()).ToArray();
             var priceLists = _pricingSearchService.SearchPricelists(new coreModel.Search.PricelistSearchCriteria { Take = int.MaxValue }).Results
-                                                  .Select(x=>x.ToWebModel()).ToArray();
-            foreach(var pricelist in priceLists)
+                                                  .Select(x => x.ToWebModel()).ToArray();
+            foreach (var pricelist in priceLists)
             {
                 pricelist.Prices = productPrices.Where(x => x.PricelistId == pricelist.Id).ToList();
             }
@@ -323,8 +317,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// Get pricelist
         /// </summary>
         /// <param name="id">Pricelist id</param>
-        /// <response code="200"></response>
-        /// <response code="404">Pricelist not found.</response>
         [HttpGet]
         [ResponseType(typeof(webModel.Pricelist))]
         [Route("api/pricing/pricelists/{id}")]
@@ -333,11 +325,11 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             webModel.Pricelist result = null;
             var pricelist = _pricingService.GetPricelistsById(new[] { id }).FirstOrDefault();
             if (pricelist != null)
-            {             
+            {
                 result = pricelist.ToWebModel(_extensionManager.ConditionExpressionTree);
             }
             return result != null ? Ok(result) : (IHttpActionResult)NotFound();
-        }      
+        }
 
 
         /// <summary>
@@ -350,15 +342,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         public IHttpActionResult CreatePriceList(webModel.Pricelist priceList)
         {
             var corePriceList = priceList.ToCoreModel(_expressionSerializer);
-           _pricingService.SavePricelists(new[] { corePriceList });           
-            var result = corePriceList.ToWebModel();
-            return Ok(result);
+            _pricingService.SavePricelists(new[] { corePriceList });
+            return Ok(corePriceList.ToWebModel());
         }
 
         /// <summary>
         /// Update pricelist
         /// </summary>
-        /// <response code="204">Operation completed.</response>
         [HttpPut]
         [ResponseType(typeof(void))]
         [Route("api/pricing/pricelists")]
@@ -369,13 +359,12 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             _pricingService.SavePricelists(new[] { corePriceList });
             return StatusCode(HttpStatusCode.NoContent);
         }
-        
+
         /// <summary>
         /// Delete pricelist assignments
         /// </summary>
         /// <remarks>Delete pricelist assignment by given array of ids.</remarks>
         /// <param name="ids">An array of pricelist assignment ids</param>
-        /// <response code="204">Operation completed.</response>
         /// <todo>Return no any reason if can't update</todo>
         [HttpDelete]
         [ResponseType(typeof(void))]
@@ -409,7 +398,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Delete pricelists by given array of pricelist ids.</remarks>
         /// <param name="ids">An array of pricelist ids</param>
-        /// <response code="204">Operation completed.</response>
         [HttpDelete]
         [ResponseType(typeof(void))]
         [Route("api/pricing/pricelists")]
