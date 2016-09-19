@@ -43,6 +43,7 @@
     $scope.isValid = function () {
         return formScope && formScope.$valid &&
              _.all(blade.currentEntities, $scope.isListPriceValid) &&
+             _.all(blade.currentEntities, $scope.isSalePriceValid) &&
              _.all(blade.currentEntities, $scope.isUniqueQty) &&
             (blade.currentEntities.length == 0 || _.some(blade.currentEntities, function (x) { return x.minQuantity == 1; }));
     }
@@ -130,6 +131,10 @@
 
     $scope.isListPriceValid = function (data) {
         return data.list > 0;
+    }
+
+    $scope.isSalePriceValid = function (data) {
+        return _.isUndefined(data.sale) || data.list >= data.sale;
     }
 
     $scope.isUniqueQty = function (data) {

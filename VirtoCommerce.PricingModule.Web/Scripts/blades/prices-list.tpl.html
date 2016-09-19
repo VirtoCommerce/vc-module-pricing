@@ -35,7 +35,7 @@
                                 </td>
                                 <td class="table-col">
                                     <div class="form-input __mini">
-                                        <input money ng-model="data.sale">
+                                        <input money ng-model="data.sale" ng-class="{'ng-invalid': !isSalePriceValid(data)}" placeholder="{{'platform.placeholders.n-a' | translate}}">
                                     </div>
                                 </td>
                                 <td class="table-col">
