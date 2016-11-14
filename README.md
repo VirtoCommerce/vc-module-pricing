@@ -9,7 +9,7 @@ Key features:
 
 
 # Documentation
-User guide: <a href="http://docs.virtocommerce.com/x/yAHr" target="_blank">Price Lists</a>
+User guide: <a href="https://virtocommerce.com/docs/vc2userguide/price-lists" target="_blank">Price Lists</a>
 
 Developer guide:
 
