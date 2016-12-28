@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.CatalogModule.Web.Model;
+using VirtoCommerce.Domain.Pricing.Model;
 
 namespace VirtoCommerce.PricingModule.Web.Model
 {

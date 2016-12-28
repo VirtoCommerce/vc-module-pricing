@@ -9,34 +9,29 @@ using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
-using VirtoCommerce.PricingModule.Data.Converters;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using dataModel = VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricingSearchServiceImpl :  IPricingSearchService
+    public class PricingSearchServiceImpl : IPricingSearchService
     {
         private readonly Func<IPricingRepository> _repositoryFactory;
-        private readonly IItemService _productService;
         private readonly ICatalogSearchService _catalogSearchService;
-        private readonly ICatalogService _catalogService;
-        private readonly IExpressionSerializer _expressionSerializer;
+        private readonly IPricingService _pricingService;
         private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
-        public PricingSearchServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, IExpressionSerializer expressionSerializer, ICatalogService catalogService, ICatalogSearchService catalogSearchService)
+        public PricingSearchServiceImpl(Func<IPricingRepository> repositoryFactory, ICatalogSearchService catalogSearchService, IPricingService pricingService)
         {
             _repositoryFactory = repositoryFactory;
-            _productService = productService;
-            _expressionSerializer = expressionSerializer;
-            _catalogService = catalogService;
             _catalogSearchService = catalogSearchService;
             _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List);
+            _pricingService = pricingService;
         }
 
 
         #region IPricingSearchService Members
- 
+
         public PricingSearchResult<coreModel.Price> SearchPrices(PricesSearchCriteria criteria)
         {
             var retVal = new PricingSearchResult<coreModel.Price>();
@@ -86,16 +81,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     retVal.TotalCount = query.Count();
                     query = query.Skip(criteria.Skip).Take(criteria.Take);
                 }
-               
-                var pricesIds = query.Select(x => x.Id).ToArray();
-                var prices = repository.GetPricesByIds(pricesIds);
-                if (products.IsNullOrEmpty())
-                {
-                    products = _productService.GetByIds(prices.Select(x=>x.ProductId).Distinct().ToArray(), ItemResponseGroup.ItemInfo);
-                }
-                retVal.Results = prices.Select(x => x.ToCoreModel(products)).AsQueryable()
-                                       .OrderBySortInfos(sortInfos)
-                                       .ToList();
+
+                var pricesIds = query.Select(x => x.Id).ToList();
+                retVal.Results = _pricingService.GetPricesById(pricesIds.ToArray())
+                                            .OrderBy(x => pricesIds.IndexOf(x.Id))
+                                            .ToList();
             }
             return retVal;
         }
@@ -105,7 +95,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             var retVal = new PricingSearchResult<coreModel.Pricelist>();
             using (var repository = _repositoryFactory())
             {
-                var query = repository.Pricelists;        
+                var query = repository.Pricelists;
                 if (!string.IsNullOrEmpty(criteria.Keyword))
                 {
                     query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
@@ -122,16 +112,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 retVal.TotalCount = query.Count();
                 query = query.Skip(criteria.Skip).Take(criteria.Take);
 
-                var pricelistsIds = query.Select(x => x.Id).ToArray();
-                retVal.Results = repository.GetPricelistByIds(pricelistsIds)
-                                           .Select(x => x.ToCoreModel()).AsQueryable()
-                                           .OrderBySortInfos(sortInfos)
-                                           .ToList();
+                var pricelistsIds = query.Select(x => x.Id).ToList();
+                retVal.Results = _pricingService.GetPricelistsById(pricelistsIds.ToArray())
+                                                .OrderBy(x => pricelistsIds.IndexOf(x.Id)).ToList();
             }
             return retVal;
         }
 
-       
+
 
         public PricingSearchResult<coreModel.PricelistAssignment> SearchPricelistAssignments(PricelistAssignmentsSearchCriteria criteria)
         {
@@ -140,7 +128,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 var query = repository.PricelistAssignments;
 
-                if(!criteria.PriceListIds.IsNullOrEmpty())
+                if (!criteria.PriceListIds.IsNullOrEmpty())
                 {
                     query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
                 }
@@ -161,11 +149,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 retVal.TotalCount = query.Count();
                 query = query.Skip(criteria.Skip).Take(criteria.Take);
 
-                var pricelistAssignmentsIds = query.Select(x => x.Id).ToArray();
-                retVal.Results = repository.GetPricelistAssignmentsById(pricelistAssignmentsIds)
-                                           .Select(x => x.ToCoreModel(_catalogService.GetCatalogsList().ToArray())).AsQueryable()
-                                           .OrderBySortInfos(sortInfos)
-                                           .ToList();
+                var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
+                retVal.Results = _pricingService.GetPricelistAssignmentsById(pricelistAssignmentsIds.ToArray())
+                                                .OrderBy(x => pricelistAssignmentsIds.IndexOf(x.Id))
+                                                .ToList();
             }
             return retVal;
         }
@@ -187,4 +174,4 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
     }
 }
-    
+

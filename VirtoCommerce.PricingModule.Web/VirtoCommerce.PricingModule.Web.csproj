@@ -115,24 +115,24 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="VirtoCommerce.CatalogModule.Web.Core, Version=2.15.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.CatalogModule.Web.Core.2.15.10\lib\net451\VirtoCommerce.CatalogModule.Web.Core.dll</HintPath>
+    <Reference Include="VirtoCommerce.CatalogModule.Web.Core, Version=2.16.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.CatalogModule.Web.Core.2.16.0\lib\net461\VirtoCommerce.CatalogModule.Web.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Domain, Version=2.19.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.Domain.2.19.2\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Core, Version=2.12.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.12.4\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
+    <Reference Include="VirtoCommerce.Platform.Core, Version=2.12.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.12.5\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Core.Web, Version=2.12.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Core.Web.2.12.4\lib\net461\VirtoCommerce.Platform.Core.Web.dll</HintPath>
+    <Reference Include="VirtoCommerce.Platform.Core.Web, Version=2.12.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Core.Web.2.12.5\lib\net461\VirtoCommerce.Platform.Core.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Data, Version=2.12.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Data.2.12.4\lib\net461\VirtoCommerce.Platform.Data.dll</HintPath>
+    <Reference Include="VirtoCommerce.Platform.Data, Version=2.12.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Data.2.12.5\lib\net461\VirtoCommerce.Platform.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -183,17 +183,10 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\Api\PricingModuleController.cs" />
-    <Compile Include="Model\PricelistAssignmentSearchResult.cs" />
-    <Compile Include="Model\PricelistSearchResult.cs" />
-    <Compile Include="Model\ProductPricesSearchResult.cs" />
+    <Compile Include="JsonConverters\PolymorphicPricingJsonConverter.cs" />
     <Compile Include="Security\PricingPredefinedPermissions.cs" />
-    <Compile Include="Converters\PricelistAssignmentConverter.cs" />
-    <Compile Include="Converters\PriceListConverter.cs" />
-    <Compile Include="Converters\PriceConverter.cs" />
     <Compile Include="ExportImport\PricingExportImport.cs" />
     <Compile Include="Model\ProductPrice.cs" />
-    <Compile Include="Model\Price.cs" />
-    <Compile Include="Model\Pricelist.cs" />
     <Compile Include="Model\PricelistAssignment.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

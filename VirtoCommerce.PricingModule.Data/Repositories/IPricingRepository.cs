@@ -11,13 +11,13 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 {
 	public interface IPricingRepository : IRepository
 	{
-		IQueryable<Pricelist> Pricelists { get; }
-		IQueryable<Price> Prices { get; }
-		IQueryable<PricelistAssignment> PricelistAssignments { get; }
+		IQueryable<PricelistEntity> Pricelists { get; }
+		IQueryable<PriceEntity> Prices { get; }
+		IQueryable<PricelistAssignmentEntity> PricelistAssignments { get; }
 
-		Price[] GetPricesByIds(string[] priceIds);
-		Pricelist[] GetPricelistByIds(string[] pricelistIds);
-		PricelistAssignment[] GetPricelistAssignmentsById(string[] assignmentsId);
+		PriceEntity[] GetPricesByIds(string[] priceIds);
+		PricelistEntity[] GetPricelistByIds(string[] pricelistIds);
+		PricelistAssignmentEntity[] GetPricelistAssignmentsById(string[] assignmentsId);
 
         void DeletePrices(string[] ids);
         void DeletePricelists(string[] ids);

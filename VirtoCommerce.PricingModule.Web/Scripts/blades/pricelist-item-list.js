@@ -13,7 +13,7 @@
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
-            blade.currentEntities = data.productPrices;
+            blade.currentEntities = data.results;
             $scope.pageSettings.totalItems = data.totalCount;
 
             blade.isLoading = false;
@@ -91,7 +91,7 @@
             productIds: _.pluck(products, 'id')
         }, function (data) {
             var newItems = _.filter(products, function (product) {
-                return _.all(data.productPrices, function (x) {
+                return _.all(data.results, function (x) {
                     return x.productId != product.id;
                 })
             });

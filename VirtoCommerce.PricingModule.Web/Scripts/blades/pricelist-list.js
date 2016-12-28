@@ -12,7 +12,7 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
             blade.isLoading = false;
-            blade.currentEntities = data.pricelists;
+            blade.currentEntities = data.results;
             $scope.pageSettings.totalItems = data.totalCount;
             return data;
         }).$promise;

@@ -21,44 +21,44 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Price>().HasKey(x => x.Id).Property(x => x.Id);
-            modelBuilder.Entity<Price>().HasRequired(x => x.Pricelist).WithMany(x => x.Prices).HasForeignKey(x => x.PricelistId);
-            modelBuilder.Entity<Price>().ToTable("Price");
+            modelBuilder.Entity<PriceEntity>().HasKey(x => x.Id).Property(x => x.Id);
+            modelBuilder.Entity<PriceEntity>().HasRequired(x => x.Pricelist).WithMany(x => x.Prices).HasForeignKey(x => x.PricelistId);
+            modelBuilder.Entity<PriceEntity>().ToTable("Price");
 
-            modelBuilder.Entity<Pricelist>().HasKey(x => x.Id).Property(x => x.Id);
-            modelBuilder.Entity<Pricelist>().ToTable("Pricelist");
+            modelBuilder.Entity<PricelistEntity>().HasKey(x => x.Id).Property(x => x.Id);
+            modelBuilder.Entity<PricelistEntity>().ToTable("Pricelist");
 
-            modelBuilder.Entity<PricelistAssignment>().HasKey(x => x.Id).Property(x => x.Id);
-            modelBuilder.Entity<PricelistAssignment>().HasRequired(x => x.Pricelist).WithMany(x => x.Assignments).HasForeignKey(x => x.PricelistId);
-            modelBuilder.Entity<PricelistAssignment>().ToTable("PricelistAssignment");
+            modelBuilder.Entity<PricelistAssignmentEntity>().HasKey(x => x.Id).Property(x => x.Id);
+            modelBuilder.Entity<PricelistAssignmentEntity>().HasRequired(x => x.Pricelist).WithMany(x => x.Assignments).HasForeignKey(x => x.PricelistId);
+            modelBuilder.Entity<PricelistAssignmentEntity>().ToTable("PricelistAssignment");
 
             base.OnModelCreating(modelBuilder);
         }
 
         #region IPricingRepository Members
 
-        public IQueryable<Pricelist> Pricelists
+        public IQueryable<PricelistEntity> Pricelists
         {
-            get { return GetAsQueryable<Pricelist>(); }
+            get { return GetAsQueryable<PricelistEntity>(); }
         }
 
-        public IQueryable<Price> Prices
+        public IQueryable<PriceEntity> Prices
         {
-            get { return GetAsQueryable<Price>(); }
+            get { return GetAsQueryable<PriceEntity>(); }
         }
 
-        public IQueryable<PricelistAssignment> PricelistAssignments
+        public IQueryable<PricelistAssignmentEntity> PricelistAssignments
         {
-            get { return GetAsQueryable<PricelistAssignment>(); }
+            get { return GetAsQueryable<PricelistAssignmentEntity>(); }
         }
 
-        public Price[] GetPricesByIds(string[] priceIds)
+        public PriceEntity[] GetPricesByIds(string[] priceIds)
         {
             var retVal = Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToArray();
             return retVal;
         }
 
-        public Pricelist[] GetPricelistByIds(string[] priceListIds)
+        public PricelistEntity[] GetPricelistByIds(string[] priceListIds)
         {
             var retVal = Pricelists.Include(x => x.Assignments)
                                   .Where(x => priceListIds.Contains(x.Id))
@@ -66,7 +66,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return retVal;
         }
 
-        public PricelistAssignment[] GetPricelistAssignmentsById(string[] assignmentsIds)
+        public PricelistAssignmentEntity[] GetPricelistAssignmentsById(string[] assignmentsIds)
         {
             var retVal = PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsIds.Contains(x.Id)).ToArray();
             return retVal;

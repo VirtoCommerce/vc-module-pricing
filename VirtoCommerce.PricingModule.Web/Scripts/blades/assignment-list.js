@@ -15,7 +15,7 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
         }, function (data) {
             blade.isLoading = false;
             $scope.pageSettings.totalItems = data.length;
-            blade.currentEntities = data.assignments;
+            blade.currentEntities = data.results;
             $scope.pageSettings.totalItems = data.totalCount;
         });
     };
