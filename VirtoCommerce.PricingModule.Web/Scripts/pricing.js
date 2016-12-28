@@ -5,7 +5,7 @@ if (AppDependencies != undefined) {
     AppDependencies.push(moduleName);
 }
 
-angular.module(moduleName, [])
+angular.module(moduleName, ['ui.grid.cellNav', 'ui.grid.edit'])
 .config(
   ['$stateProvider', function ($stateProvider) {
       $stateProvider
