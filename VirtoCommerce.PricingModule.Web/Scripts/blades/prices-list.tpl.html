@@ -75,28 +75,20 @@
 </div>
 
 <script type="text/ng-template" id="ui-grid/vc-cellTextEditor">
-    <div class="ui-grid-cell-contents">
-        <div class="table-col">
-            <div class="form-input __mini">
-                <input money required ng-model="MODEL_COL_FIELD" ui-grid-editor ng-class="{'ng-invalid': !grid.appScope.isListPriceValid(row.entity)}" />
-            </div>
-        </div>
+    <div class="form-editor">
+        <input class="form-input" money required ng-model="MODEL_COL_FIELD" ui-grid-editor ng-class="{'ng-invalid': !grid.appScope.isListPriceValid(row.entity)}" />
     </div>
 </script>
 <script type="text/ng-template" id="sale-cellTextEditor">
-    <div class="table-col">
-        <div class="form-input __mini">
-            <input money ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid': !grid.appScope.isSalePriceValid(row.entity)}" placeholder="{{'platform.placeholders.n-a' | translate}}">
-        </div>
+    <div class="form-editor">
+        <input class="form-input" money ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid': !grid.appScope.isSalePriceValid(row.entity)}" placeholder="{{'platform.placeholders.n-a' | translate}}">
     </div>
 </script>
 
 <script type="text/ng-template" id="minQuantity-cellTextEditor">
-    <td class="table-col">
-        <div class="form-input __mini __number">
-            <input smart-float num-type="integer" required ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid': !grid.appScope.isUniqueQty(row.entity)}">
-        </div>
-    </td>
+    <div class="form-editor">
+        <input class="form-input" smart-float num-type="integer" required ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid': !grid.appScope.isUniqueQty(row.entity)}">
+    </div>
 </script>
 
 <script type="text/ng-template" id="list.row.html">
