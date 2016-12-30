@@ -128,14 +128,31 @@
 
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
-            var readOnlyFields = ['createdDate', 'currency', 'id', 'modifiedBy', 'modifiedDate', 'pricelistId', 'productId'];
-            _.each($scope.gridOptions.columnDefs, function (x) {
-                if (!x.wasPredefined && readOnlyFields.indexOf(x.name) > -1) {
-                    x.enableCellEdit = false;
+        var readOnlyFields = ['createdDate', 'currency', 'id', 'modifiedBy', 'modifiedDate', 'pricelistId', 'productId'];
+        var initialColumnsCount = gridOptions.columnDefs.length;
+
+        function processEditableColumns(gridOptions) {
+            _.each(gridOptions.columnDefs, function (x) {
+                if (!x.wasPredefined) {
+                    if (readOnlyFields.indexOf(x.name) < 0) {
+                        x.cellTemplate = 'ui-grid/cellTitleValidator'
+                    } else {
+                        x.enableCellEdit = false;
+                    }
                 }
             });
+        }
+
+        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
+            gridApi.grid.registerDataChangeCallback(function (grid) {
+                processEditableColumns(grid.options);
+            }, [uiGridHelper.uiGridConstants.dataChange.ROW]);
         });
+
+        // columnDefs were loaded from saved state. Update column defs
+        if ($scope.gridOptions.columnDefs.length > initialColumnsCount) {
+            processEditableColumns($scope.gridOptions);
+        }
     };
 
     uiGridValidateService.setValidator('listValidator', function (argument) {
