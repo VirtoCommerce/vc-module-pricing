@@ -1,5 +1,6 @@
 ﻿angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'uiGridValidateService', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, uiGridValidateService) {
+    $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
 
