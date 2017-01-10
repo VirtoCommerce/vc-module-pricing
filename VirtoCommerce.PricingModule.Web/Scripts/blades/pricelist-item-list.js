@@ -24,7 +24,7 @@
         $scope.selectedNodeId = node.productId;
 
         var newBlade = {
-            id: 'pricelistChildChild',
+            id: 'itemPrices',
             itemId: node.productId,
             priceListId: blade.currentEntityId,
             data: node,

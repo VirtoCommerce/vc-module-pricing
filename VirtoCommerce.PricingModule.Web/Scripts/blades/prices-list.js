@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'uiGridValidateService', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, uiGridValidateService) {
+.controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.priceValidatorsService', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, priceValidatorsService) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
@@ -17,7 +17,7 @@
         blade.currentEntities = angular.copy(blade.data.prices);
         blade.origEntity = blade.data.prices;
         blade.isLoading = false;
-        blade.selectedAll = false;
+        priceValidatorsService.setAllPrices(blade.currentEntities);
     };
 
     blade.onClose = function (closeCallback) {
@@ -83,7 +83,6 @@
             name: "platform.commands.reset", icon: 'fa fa-undo',
             executeMethod: function () {
                 angular.copy(blade.origEntity, blade.currentEntities);
-                blade.selectedAll = false;
             },
             canExecuteMethod: isDirty,
             permission: blade.updatePermission
@@ -114,70 +113,59 @@
         targetList.push(newEntity);
     }
 
-
-    $scope.isListPriceValid = function (data) {
-        return data.list > 0;
-    }
-
-    $scope.isSalePriceValid = function (data) {
-        return _.isUndefined(data.sale) || data.list >= data.sale;
-    }
-
-    $scope.isUniqueQty = function (data) {
-        return Math.round(data.minQuantity) > 0 && _.all(blade.currentEntities, function (x) { return x === data || Math.round(x.minQuantity) !== Math.round(data.minQuantity) });
-    }
-
-    // ui-grid
-    $scope.setGridOptions = function (gridOptions) {
-        var readOnlyFields = ['createdDate', 'currency', 'id', 'modifiedBy', 'modifiedDate', 'pricelistId', 'productId'];
-        var initialColumnsCount = gridOptions.columnDefs.length;
-
-        function processEditableColumns(gridOptions) {
-            _.each(gridOptions.columnDefs, function (x) {
-                if (!x.wasPredefined) {
-                    if (readOnlyFields.indexOf(x.name) < 0) {
-                        x.cellTemplate = 'ui-grid/cellTitleValidator'
-                    } else {
-                        x.enableCellEdit = false;
-                    }
-                }
-            });
-        }
-
-        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
-            gridApi.grid.registerDataChangeCallback(function (grid) {
-                processEditableColumns(grid.options);
-            }, [uiGridHelper.uiGridConstants.dataChange.ROW]);
-        });
-
-        // columnDefs were loaded from saved state. Update column defs
-        if ($scope.gridOptions.columnDefs.length > initialColumnsCount) {
-            processEditableColumns($scope.gridOptions);
-        }
-    };
-
-    uiGridValidateService.setValidator('listValidator', function (argument) {
-        return function (oldValue, newValue, rowEntity, colDef) {
-            // We should not test for existence here
-            return _.isUndefined(newValue) || $scope.isListPriceValid(rowEntity);
-        };
-    },
-    function (argument) { return 'List price is invalid '; });
-
-    uiGridValidateService.setValidator('saleValidator', function (argument) {
-        return function (oldValue, newValue, rowEntity, colDef) {
-            return $scope.isSalePriceValid(rowEntity);
-        };
-    },
-    function (argument) { return 'Sale price should not exceed List price'; });
-
-    uiGridValidateService.setValidator('minQuantityValidator', function () {
-        return function (oldValue, newValue, rowEntity, colDef) {
-            return $scope.isUniqueQty(rowEntity);
-        };
-    },
-    function () { return 'Quantity value should be unique'; });
+    $scope.isListPriceValid = priceValidatorsService.isListPriceValid;
+    $scope.isSalePriceValid = priceValidatorsService.isSalePriceValid;
+    $scope.isUniqueQty = priceValidatorsService.isUniqueQty;
 
     // actions on load
     blade.refresh();
-}]);
+}])
+
+.factory('virtoCommerce.pricingModule.priceValidatorsService', [function () {
+    var allPrices = {};
+    return {
+        setAllPrices: function (data) {
+            allPrices = data;
+        },
+        isListPriceValid: function (data) {
+            return data.list > 0;
+        },
+        isSalePriceValid: function (data) {
+            return _.isUndefined(data.sale) || data.list >= data.sale;
+        },
+        isUniqueQty: function (data) {
+            return Math.round(data.minQuantity) > 0 && _.all(allPrices, function (x) { return x === data || Math.round(x.minQuantity) !== Math.round(data.minQuantity) });
+        }
+    };
+}])
+
+.run(
+  ['platformWebApp.gridOptionsService', 'virtoCommerce.pricingModule.priceValidatorsService', 'uiGridValidateService', function (gridOptionsService, priceValidatorsService, uiGridValidateService) {
+      // ui-grid extensibility demo using gridOptionsService:
+      //gridOptionsService.registerOptions('itemPrices',
+      //  { enableGridMenu: false },
+      //  ['currency', 'modifiedDate'],
+      //  [
+      //    { name: 'currency', editableCellTemplate: 'default-cellTextEditor', validators: { required: true }, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true },
+      //    { name: 'effectiveValue', displayName: 'test value', editableCellTemplate: 'default-cellTextEditor', validators: { required: true }, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true }
+      //  ]);
+
+      uiGridValidateService.setValidator('listValidator', function (argument) {
+          return function (oldValue, newValue, rowEntity, colDef) {
+              // We should not test for existence here
+              return _.isUndefined(newValue) || priceValidatorsService.isListPriceValid(rowEntity);
+          };
+      }, function (argument) { return 'List price is invalid '; });
+
+      uiGridValidateService.setValidator('saleValidator', function (argument) {
+          return function (oldValue, newValue, rowEntity, colDef) {
+              return priceValidatorsService.isSalePriceValid(rowEntity);
+          };
+      }, function (argument) { return 'Sale price should not exceed List price'; });
+
+      uiGridValidateService.setValidator('minQuantityValidator', function () {
+          return function (oldValue, newValue, rowEntity, colDef) {
+              return priceValidatorsService.isUniqueQty(rowEntity);
+          };
+      }, function () { return 'Quantity value should be unique'; });
+  }]);
