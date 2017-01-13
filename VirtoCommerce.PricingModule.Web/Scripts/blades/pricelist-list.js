@@ -32,11 +32,11 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
                 title: 'pricing.blades.pricelist-detail.title-new',
                 isNew: true,
                 saveCallback: function (newPricelist) {
-                	newBlade.isNew = false;
-                	blade.refresh().then(function () {
-                		newBlade.currentEntityId = newPricelist.id;
-                		bladeNavigationService.showBlade(newBlade, blade);
-                	});
+                    newBlade.isNew = false;
+                    blade.refresh().then(function () {
+                        newBlade.currentEntityId = newPricelist.id;
+                        bladeNavigationService.showBlade(newBlade, blade);
+                    });
                 }
                 // onChangesConfirmedFn: callback,
             });
@@ -91,7 +91,7 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
             return true;
         },
         permission: 'pricing:create'
-    },   
+    },
     {
         name: "platform.commands.delete", icon: 'fa fa-trash-o',
         executeMethod: function () {
@@ -104,18 +104,23 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
 
     var filter = $scope.filter = {};
     filter.criteriaChanged = function () {
-    	if ($scope.pageSettings.currentPage > 1) {
-    		$scope.pageSettings.currentPage = 1;
-    	} else {
-    		blade.refresh();
-    	}
+        if ($scope.pageSettings.currentPage > 1) {
+            $scope.pageSettings.currentPage = 1;
+        } else {
+            blade.refresh();
+        }
     };
 
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
-            uiGridHelper.bindRefreshOnSortChanged($scope);
-        });
+        $scope.gridOptions = gridOptions;
+
+        gridOptions.onRegisterApi = function (gridApi) {
+            gridApi.core.on.sortChanged($scope, function () {
+                if (!blade.isLoading) blade.refresh();
+            });
+        };
+
         bladeUtils.initializePagination($scope);
     };
 

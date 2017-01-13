@@ -182,9 +182,14 @@
 
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
-            uiGridHelper.bindRefreshOnSortChanged($scope);
-        });
+        $scope.gridOptions = gridOptions;
+
+        gridOptions.onRegisterApi = function (gridApi) {
+            gridApi.core.on.sortChanged($scope, function () {
+                if (!blade.isLoading) blade.refresh();
+            });
+        };
+
         bladeUtils.initializePagination($scope);
     };
 

@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.priceValidatorsService', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, priceValidatorsService) {
+.controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.gridOptionsService', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, priceValidatorsService, gridOptionsService) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
@@ -116,6 +116,28 @@
     $scope.isListPriceValid = priceValidatorsService.isListPriceValid;
     $scope.isSalePriceValid = priceValidatorsService.isSalePriceValid;
     $scope.isUniqueQty = priceValidatorsService.isUniqueQty;
+
+    // ui-grid
+    $scope.setGridOptions = function (gridOptions) {
+        $scope.gridOptions = gridOptions;
+
+        angular.extend(gridOptions, gridOptionsService.optionMap[blade.id]);
+
+        // remove the columns that were registered for removing
+        _.each(gridOptionsService.removeColumnNamesMap[blade.id], function (x) {
+            var foundDef = _.findWhere(gridOptions.columnDefs, { name: x });
+            if (foundDef) {
+                gridOptions.columnDefs.splice(gridOptions.columnDefs.indexOf(foundDef), 1);
+            }
+        });
+
+        // add registered columns from service
+        _.each(gridOptionsService.addColumnsMap[blade.id], function (x) {
+            gridOptions.columnDefs.push(x);
+        });
+        
+        return gridOptions;
+    };
 
     // actions on load
     blade.refresh();

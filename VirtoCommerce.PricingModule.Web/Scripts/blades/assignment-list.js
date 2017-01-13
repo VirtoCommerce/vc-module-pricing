@@ -6,9 +6,9 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
     var bladeNavigationService = bladeUtils.bladeNavigationService;
 
     blade.refresh = function () {
-    	blade.isLoading = true;
-    	assignments.search({
-			pricelistId : blade.pricelistId,
+        blade.isLoading = true;
+        assignments.search({
+            pricelistId: blade.pricelistId,
             sort: uiGridHelper.getSortExpression($scope),
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
@@ -22,7 +22,7 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
 
     $scope.selectNode = function (node, isNew) {
         $scope.selectedNodeId = node.id;
-        
+
         var newBlade = {
             id: 'pricelistAssignmentDetail',
             controller: 'virtoCommerce.pricingModule.assignmentDetailController',
@@ -31,8 +31,8 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
 
         if (isNew) {
             angular.extend(newBlade, {
-            	isNew: true,
-				pricelistId : blade.pricelistId,
+                isNew: true,
+                pricelistId: blade.pricelistId,
                 data: node,
                 title: 'pricing.blades.assignment-detail.new-title'
             });
@@ -109,17 +109,21 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
 
     var filter = $scope.filter = {};
     filter.criteriaChanged = function () {
-    	if ($scope.pageSettings.currentPage > 1) {
-    		$scope.pageSettings.currentPage = 1;
-    	} else {
-    		blade.refresh();
-    	}
+        if ($scope.pageSettings.currentPage > 1) {
+            $scope.pageSettings.currentPage = 1;
+        } else {
+            blade.refresh();
+        }
     };
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
-            uiGridHelper.bindRefreshOnSortChanged($scope);
-        });
+        $scope.gridOptions = gridOptions;
+
+        gridOptions.onRegisterApi = function (gridApi) {
+            gridApi.core.on.sortChanged($scope, function () {
+                if (!blade.isLoading) blade.refresh();
+            });
+        };
 
         bladeUtils.initializePagination($scope);
     };
