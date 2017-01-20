@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.gridOptionsService', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, priceValidatorsService, gridOptionsService) {
+.controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.ui-grid.extension', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, priceValidatorsService, gridOptionExtension) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
@@ -118,24 +118,9 @@
     $scope.isUniqueQty = priceValidatorsService.isUniqueQty;
 
     // ui-grid
-    $scope.setGridOptions = function (gridOptions) {
+    $scope.setGridOptions = function (gridId, gridOptions) {
         $scope.gridOptions = gridOptions;
-
-        angular.extend(gridOptions, gridOptionsService.optionMap[blade.id]);
-
-        // remove the columns that were registered for removing
-        _.each(gridOptionsService.removeColumnNamesMap[blade.id], function (x) {
-            var foundDef = _.findWhere(gridOptions.columnDefs, { name: x });
-            if (foundDef) {
-                gridOptions.columnDefs.splice(gridOptions.columnDefs.indexOf(foundDef), 1);
-            }
-        });
-
-        // add registered columns from service
-        _.each(gridOptionsService.addColumnsMap[blade.id], function (x) {
-            gridOptions.columnDefs.push(x);
-        });
-        
+        gridOptionExtension.tryExtendGridOptions(gridId, gridOptions);
         return gridOptions;
     };
 
@@ -162,16 +147,8 @@
 }])
 
 .run(
-  ['platformWebApp.gridOptionsService', 'virtoCommerce.pricingModule.priceValidatorsService', 'uiGridValidateService', function (gridOptionsService, priceValidatorsService, uiGridValidateService) {
-      // ui-grid extensibility demo using gridOptionsService:
-      //gridOptionsService.registerOptions('itemPrices',
-      //  { enableGridMenu: false },
-      //  ['currency', 'modifiedDate'],
-      //  [
-      //    { name: 'currency', editableCellTemplate: 'default-cellTextEditor', validators: { required: true }, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true },
-      //    { name: 'effectiveValue', displayName: 'test value', editableCellTemplate: 'default-cellTextEditor', validators: { required: true }, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true }
-      //  ]);
-
+  ['platformWebApp.ui-grid.extension', 'virtoCommerce.pricingModule.priceValidatorsService', 'uiGridValidateService', function (gridOptionExtension, priceValidatorsService, uiGridValidateService) {
+     
       uiGridValidateService.setValidator('listValidator', function (argument) {
           return function (oldValue, newValue, rowEntity, colDef) {
               // We should not test for existence here
