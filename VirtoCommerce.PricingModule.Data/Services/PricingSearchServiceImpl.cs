@@ -108,7 +108,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var query = repository.Pricelists;        
                 if (!string.IsNullOrEmpty(criteria.Keyword))
                 {
-                    query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
+                    query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
                 }
 
                 var sortInfos = criteria.SortInfos;
