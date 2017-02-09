@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.prices', function ($scope, bladeNavigationService, uiGridConstants, uiGridHelper, prices) {
+.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', function ($scope, bladeNavigationService, uiGridConstants, prices) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
 
@@ -70,7 +70,7 @@
 
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions);
+        $scope.gridOptions = gridOptions;
     };
 
     blade.refresh();

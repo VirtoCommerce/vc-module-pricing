@@ -6,13 +6,11 @@ using CacheManager.Core;
 using Common.Logging;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Common;
-using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
-using VirtoCommerce.PricingModule.Data.Converters;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using dataModel = VirtoCommerce.PricingModule.Data.Model;
@@ -54,7 +52,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 using (var repository = _repositoryFactory())
                 {
-                    var allAssignments = repository.PricelistAssignments.Include(x => x.Pricelist).ToArray().Select(x => x.ToCoreModel()).ToArray();
+                    var allAssignments = repository.PricelistAssignments.Include(x => x.Pricelist).ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
                     foreach (var assignment in allAssignments)
                     {
                         try
@@ -151,7 +149,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
-                prices = query.ToArray().Select(x => x.ToCoreModel()).ToArray();
+                prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
             }
 
             foreach(var productId in evalContext.ProductIds)
@@ -206,15 +204,25 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             coreModel.Price[] result = null;
             if (ids != null)
-            {
-                dataModel.Price[] dbPrices;
-
+            {              
                 using (var repository = _repositoryFactory())
                 {
-                    dbPrices = repository.GetPricesByIds(ids);               
+                    result = repository.GetPricesByIds(ids).Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();               
                 }
-                var products = _productService.GetByIds(dbPrices.Select(x => x.ProductId).ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
-                result = dbPrices.Select(x => x.ToCoreModel(products)).ToArray();
+                //Need load and populate products to each price
+                var products = _productService.GetByIds(result.Select(x => x.ProductId).ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
+                foreach (var price in result)
+                {
+                    price.Product = products.FirstOrDefault(x => x.Id == price.ProductId);
+                    if(price.Product != null)
+                    {
+                        price.Product.Assets = null;
+                        price.Product.Properties = null;
+                        price.Product.PropertyValues = null;
+                        price.Product.Catalog = null;
+                        price.Product.Category = null;
+                    }
+                }
             }
             return result;
         }
@@ -224,12 +232,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
             coreModel.PricelistAssignment[] result = null;
             if (ids != null)
             {
-                dataModel.PricelistAssignment[] dbAssignments;
                 using (var repository = _repositoryFactory())
                 {
-                    dbAssignments = repository.GetPricelistAssignmentsById(ids);
+                    result = repository.GetPricelistAssignmentsById(ids).Select(x=> x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
                 }
-                result = dbAssignments.Select(x => x.ToCoreModel(_catalogService.GetCatalogsList())).ToArray();
+                var allCatalogs = _catalogService.GetCatalogsList();
+                foreach (var assignment in result)
+                {
+                    assignment.Catalog = allCatalogs.FirstOrDefault(x => x.Id == assignment.CatalogId);
+                }
             }
             return result;
         }
@@ -241,7 +252,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 using (var repository = _repositoryFactory())
                 {
-                    result = repository.GetPricelistByIds(ids).Select(x => x.ToCoreModel()).ToArray();
+                    result = repository.GetPricelistByIds(ids).Select(x => x.ToModel(AbstractTypeFactory<coreModel.Pricelist>.TryCreateInstance())).ToArray();
                 }
             }
             return result;
@@ -262,14 +273,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
                     if(GetPricelistsById(new[] { defaultPriceListId }).IsNullOrEmpty())
                     {
-                        var defaultPriceList = new coreModel.Pricelist
-                        {
-                            Id = defaultPriceListId,
-                            Currency = priceWithoutPricelistGroup.Key,
-                            Name = defaultPriceListId,
-                            Description = defaultPriceListId
-                        }.ToDataModel(pkMap);
-                        repository.Add(defaultPriceList);
+                        var defaultPriceList = AbstractTypeFactory<coreModel.Pricelist>.TryCreateInstance();
+                        defaultPriceList.Id = defaultPriceListId;
+                        defaultPriceList.Currency = priceWithoutPricelistGroup.Key;
+                        defaultPriceList.Name = defaultPriceListId;
+                        defaultPriceList.Description = defaultPriceListId;
+                        repository.Add(AbstractTypeFactory<dataModel.PricelistEntity>.TryCreateInstance().FromModel(defaultPriceList, pkMap));
                     }
                     foreach(var priceWithoutPricelist in priceWithoutPricelistGroup)
                     {
@@ -279,7 +288,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 foreach (var price in prices)
                 {
-                    var sourceEntity = price.ToDataModel(pkMap);
+                    var sourceEntity = AbstractTypeFactory<dataModel.PriceEntity>.TryCreateInstance().FromModel(price, pkMap);
                     var targetEntity = alreadyExistPricesEntities.FirstOrDefault(x => x.Id == price.Id);
                     if (targetEntity != null)
                     {
@@ -308,7 +317,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                                                      .Where(x => pricelistsIds.Contains(x.Id)).ToArray();
                 foreach (var pricelist in priceLists)
                 {
-                    var sourceEntity = pricelist.ToDataModel(pkMap);
+                    var sourceEntity = AbstractTypeFactory<dataModel.PricelistEntity>.TryCreateInstance().FromModel(pricelist, pkMap);
                     var targetEntity = alreadyExistEntities.FirstOrDefault(x => x.Id == pricelist.Id);
                     if (targetEntity != null)
                     {
@@ -336,7 +345,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var alreadyExistEntities = repository.PricelistAssignments.Where(x => assignmentsIds.Contains(x.Id)).ToArray();
                 foreach (var assignment in assignments)
                 {
-                    var sourceEntity = assignment.ToDataModel(pkMap);
+                    var sourceEntity = AbstractTypeFactory<dataModel.PricelistAssignmentEntity>.TryCreateInstance().FromModel(assignment, pkMap);
                     var targetEntity = alreadyExistEntities.FirstOrDefault(x => x.Id == assignment.Id);
                     if (targetEntity != null)
                     {

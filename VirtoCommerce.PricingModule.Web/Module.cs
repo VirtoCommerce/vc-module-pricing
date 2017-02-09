@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Http;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.ExportImport;
@@ -11,6 +12,7 @@ using VirtoCommerce.Platform.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule.Web.ExportImport;
+using VirtoCommerce.PricingModule.Web.JsonConverters;
 using dataModel = VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Web
@@ -41,11 +43,21 @@ namespace VirtoCommerce.PricingModule.Web
             var extensionManager = new DefaultPricingExtensionManagerImpl();
             _container.RegisterInstance<IPricingExtensionManager>(extensionManager);
 
-            _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(), new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { typeof(dataModel.Price).Name }, _container.Resolve<IUserNameResolver>()))));
+            _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(), new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { typeof(dataModel.PriceEntity).Name }, _container.Resolve<IUserNameResolver>()))));
             _container.RegisterType<IPricingService, PricingServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
         }
 
+        public override void PostInitialize()
+        {
+
+            //Next lines allow to use polymorph types in API controller methods
+            var httpConfiguration = _container.Resolve<HttpConfiguration>();
+            var storeJsonConverter = _container.Resolve<PolymorphicPricingJsonConverter>();
+            httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(storeJsonConverter);
+
+            base.PostInitialize();
+        }
         #endregion
 
         #region ISupportExportImportModule Members

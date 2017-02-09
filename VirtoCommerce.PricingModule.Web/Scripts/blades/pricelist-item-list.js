@@ -13,7 +13,7 @@
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
-            blade.currentEntities = data.productPrices;
+            blade.currentEntities = data.results;
             $scope.pageSettings.totalItems = data.totalCount;
 
             blade.isLoading = false;
@@ -24,7 +24,7 @@
         $scope.selectedNodeId = node.productId;
 
         var newBlade = {
-            id: 'pricelistChildChild',
+            id: 'itemPrices',
             itemId: node.productId,
             priceListId: blade.currentEntityId,
             data: node,
@@ -91,7 +91,7 @@
             productIds: _.pluck(products, 'id')
         }, function (data) {
             var newItems = _.filter(products, function (product) {
-                return _.all(data.productPrices, function (x) {
+                return _.all(data.results, function (x) {
                     return x.productId != product.id;
                 })
             });
@@ -182,9 +182,14 @@
 
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
-        uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
-            uiGridHelper.bindRefreshOnSortChanged($scope);
-        });
+        $scope.gridOptions = gridOptions;
+
+        gridOptions.onRegisterApi = function (gridApi) {
+            gridApi.core.on.sortChanged($scope, function () {
+                if (!blade.isLoading) blade.refresh();
+            });
+        };
+
         bladeUtils.initializePagination($scope);
     };
 

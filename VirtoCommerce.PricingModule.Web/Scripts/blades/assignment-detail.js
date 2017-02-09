@@ -149,7 +149,7 @@
     // actions on load
     $scope.catalogs = catalogs.query();
     pricelists.search({ take: 1000 }, function (result) {
-    	$scope.pricelists = result.pricelists;
+    	$scope.pricelists = result.results;
     });
     blade.refresh();
 }]);
