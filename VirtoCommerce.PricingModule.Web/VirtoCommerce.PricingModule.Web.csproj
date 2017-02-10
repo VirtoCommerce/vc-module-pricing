@@ -33,7 +33,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\VirtoCommerce.PricingModule.Web.XML</DocumentationFile>
+    <DocumentationFile>bin\VirtoCommerce.PricingModule.Web.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -43,7 +43,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\VirtoCommerce.PricingModule.Web.XML</DocumentationFile>
+    <DocumentationFile>bin\VirtoCommerce.PricingModule.Web.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -140,6 +140,7 @@
     <None Include="app.config" />
     <Content Include="Content\logo.png" />
     <Content Include="Localizations\en.VirtoCommerce.Pricing.json" />
+    <None Include="module.ignore" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
