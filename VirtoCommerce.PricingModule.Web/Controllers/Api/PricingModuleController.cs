@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Newtonsoft.Json;
 using VirtoCommerce.CatalogModule.Web.Converters;
 using VirtoCommerce.Domain.Catalog.Services;
+using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
@@ -27,14 +29,12 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         private readonly IItemService _itemService;
         private readonly ICatalogService _catalogService;
         private readonly IPricingExtensionManager _extensionManager;
-        private readonly IExpressionSerializer _expressionSerializer;
         private readonly IBlobUrlResolver _blobUrlResolver;
 
 
-        public PricingModuleController(IPricingService pricingService, IItemService itemService, ICatalogService catalogService, IPricingExtensionManager extensionManager, IExpressionSerializer expressionSerializer, IPricingSearchService pricingSearchService, IBlobUrlResolver blobUrlResolver)
+        public PricingModuleController(IPricingService pricingService, IItemService itemService, ICatalogService catalogService, IPricingExtensionManager extensionManager, IPricingSearchService pricingSearchService, IBlobUrlResolver blobUrlResolver)
         {
             _extensionManager = extensionManager;
-            _expressionSerializer = expressionSerializer;
             _pricingService = pricingService;
             _itemService = itemService;
             _catalogService = catalogService;
@@ -76,17 +76,12 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <param name="id">Pricelist assignment id</param>
         [HttpGet]
-        [ResponseType(typeof(webModel.PricelistAssignment))]
+        [ResponseType(typeof(PricelistAssignment))]
         [Route("api/pricing/assignments/{id}")]
         public IHttpActionResult GetPricelistAssignmentById(string id)
         {
-            webModel.PricelistAssignment result = null;
             var assignment = _pricingService.GetPricelistAssignmentsById(new[] { id }).FirstOrDefault();
-            if(assignment != null)
-            {
-                result = AbstractTypeFactory<webModel.PricelistAssignment>.TryCreateInstance().FromModel(assignment, _extensionManager.ConditionExpressionTree);
-            }          
-            return Ok(result);
+            return Ok(assignment);
         }
 
         /// <summary>
@@ -94,14 +89,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Get a new pricelist assignment object. Create new pricelist assignment, but does not save one.</remarks>
         [HttpGet]
-        [ResponseType(typeof(webModel.PricelistAssignment))]
+        [ResponseType(typeof(PricelistAssignment))]
         [Route("api/pricing/assignments/new")]
         public IHttpActionResult GetNewPricelistAssignments()
         {
-            var result = AbstractTypeFactory<webModel.PricelistAssignment>.TryCreateInstance();
+            var result = AbstractTypeFactory<PricelistAssignment>.TryCreateInstance();
             result.Priority = 1;
-            result.DynamicExpression = _extensionManager.ConditionExpressionTree;
-          
+            result.DynamicExpression = _extensionManager.ConditionExpressionTree;          
             return Ok(result);
         }
 
@@ -127,7 +121,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Search price list assignments by given criteria</remarks>
         [HttpGet]
-        [ResponseType(typeof(PricingSearchResult<Pricelist>))]
+        [ResponseType(typeof(PricingSearchResult<PricelistAssignment>))]
         [Route("api/pricing/assignments")]
         public IHttpActionResult SearchPricelistAssignments([FromUri]PricelistAssignmentsSearchCriteria criteria)
         {
@@ -159,6 +153,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 Results = new List<webModel.ProductPrice>()
             };
 
+            var products = _itemService.GetByIds(result.Results.Select(x=>x.ProductId).Distinct().ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
             foreach (var productPricesGroup in result.Results.GroupBy(x => x.ProductId))
             {
                 var productPrice = new webModel.ProductPrice
@@ -166,7 +161,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                     ProductId = productPricesGroup.Key,
                     Prices = productPricesGroup.ToList()
                 };
-                var product = productPricesGroup.Select(x => x.Product).FirstOrDefault(x => x != null);
+                var product = products.FirstOrDefault(x => x.Id == productPricesGroup.Key);
                 if (product != null)
                 {
                     productPrice.Product = product.ToWebModel(_blobUrlResolver);
@@ -201,15 +196,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <param name="assignment">PricelistAssignment</param>
         [HttpPost]
-        [ResponseType(typeof(webModel.PricelistAssignment))]
+        [ResponseType(typeof(PricelistAssignment))]
         [Route("api/pricing/assignments")]
         [CheckPermission(Permission = PricingPredefinedPermissions.Create)]
-        public IHttpActionResult CreatePricelistAssignment(webModel.PricelistAssignment assignment)
+        public IHttpActionResult CreatePricelistAssignment(PricelistAssignment assignment)
         {
-            var coreAssignment = assignment.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance(), _expressionSerializer);
-            _pricingService.SavePricelistAssignments(new[] { coreAssignment });
-            var result = assignment.FromModel(coreAssignment, _extensionManager.ConditionExpressionTree);
-            return Ok(result);
+            _pricingService.SavePricelistAssignments(new[] { assignment });
+            return Ok(assignment);
         }
 
         /// <summary>
@@ -221,10 +214,9 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ResponseType(typeof(void))]
         [Route("api/pricing/assignments")]
         [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
-        public IHttpActionResult UpdatePriceListAssignment(webModel.PricelistAssignment assignment)
+        public IHttpActionResult UpdatePriceListAssignment(PricelistAssignment assignment)
         {
-            var coreAssignment = assignment.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance(), _expressionSerializer);
-            _pricingService.SavePricelistAssignments(new[] { coreAssignment });
+            _pricingService.SavePricelistAssignments(new[] { assignment });
             return StatusCode(HttpStatusCode.NoContent);
         }
 

@@ -68,8 +68,8 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
             var assignmentsResult = _pricingSearchService.SearchPricelistAssignments(new Domain.Pricing.Model.Search.PricelistAssignmentsSearchCriteria { Take = int.MaxValue });
             foreach (var assignment in assignmentsResult.Results)
             {
-                assignment.Catalog = null;
                 assignment.Pricelist = null;
+                assignment.DynamicExpression = null;
             }
             var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , priceListsResult.TotalCount)};
 			progressCallback(progressInfo);
@@ -87,8 +87,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
                 var result = _pricingSearchService.SearchPrices(new Domain.Pricing.Model.Search.PricesSearchCriteria { Take = int.MaxValue, PriceListId = priceList.Id });
                 foreach (var price in result.Results)
                 {
-                    price.Pricelist = null;
-                    price.Product = null;
+                    price.Pricelist = null;               
                 }
                 retVal.Prices.AddRange(result.Results);
             }

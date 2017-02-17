@@ -13,7 +13,7 @@ namespace VirtoCommerce.PricingModule.Web.JsonConverters
 {
     public class PolymorphicPricingJsonConverter : JsonConverter
     {
-        private static Type[] _knowTypes = new[] { typeof(Price), typeof(Pricelist), typeof(PricelistAssignment), typeof(webModel.PricelistAssignment),
+        private static Type[] _knowTypes = new[] { typeof(Price), typeof(Pricelist), typeof(PricelistAssignment), 
                                                    typeof(PricesSearchCriteria), typeof(PricelistAssignmentsSearchCriteria), typeof(PricelistSearchCriteria) };
 
         public PolymorphicPricingJsonConverter()
@@ -33,34 +33,8 @@ namespace VirtoCommerce.PricingModule.Web.JsonConverters
             object retVal = null;
             var obj = JObject.Load(reader);
 
-            if (typeof(Price).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<Price>.TryCreateInstance();
-            }
-            else if (typeof(Pricelist).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<Pricelist>.TryCreateInstance();
-            }
-            else if (typeof(webModel.PricelistAssignment).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<webModel.PricelistAssignment>.TryCreateInstance();
-            }
-            else if (typeof(PricelistAssignment).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<PricelistAssignment>.TryCreateInstance();
-            }          
-            else if (typeof(PricesSearchCriteria).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<PricesSearchCriteria>.TryCreateInstance();
-            }
-            else if (typeof(PricelistAssignmentsSearchCriteria).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<PricelistAssignmentsSearchCriteria>.TryCreateInstance();
-            }
-            else if (typeof(PricelistSearchCriteria).IsAssignableFrom(objectType))
-            {
-                retVal = AbstractTypeFactory<PricelistSearchCriteria>.TryCreateInstance();
-            }
+            var tryCreateInstance = typeof(AbstractTypeFactory<>).MakeGenericType(objectType).GetMethods().FirstOrDefault(x => x.Name.EqualsInvariant("TryCreateInstance") && x.GetParameters().Count() == 0);
+            retVal = tryCreateInstance.Invoke(null, null);
 
             serializer.Populate(obj.CreateReader(), retVal);
             return retVal;

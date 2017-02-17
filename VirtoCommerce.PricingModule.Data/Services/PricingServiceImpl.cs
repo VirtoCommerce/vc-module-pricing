@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using CacheManager.Core;
 using Common.Logging;
+using Newtonsoft.Json;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Pricing.Services;
@@ -21,21 +22,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
     {
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly IItemService _productService;
-        private readonly ICatalogSearchService _catalogSearchService;
-        private readonly ICatalogService _catalogService;
         private readonly ILog _logger;
         private readonly ICacheManager<object> _cacheManager;
         private readonly IExpressionSerializer _expressionSerializer;
+        private readonly IPricingExtensionManager _extensionManager;
 
-        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer, ICatalogService catalogService, ICatalogSearchService catalogSearchService)
+        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer, 
+                                  IPricingExtensionManager extensionManager)
         {
             _repositoryFactory = repositoryFactory;
             _productService = productService;
             _logger = logger;
             _cacheManager = cacheManager;
             _expressionSerializer = expressionSerializer;
-            _catalogService = catalogService;
-            _catalogSearchService = catalogSearchService;
+            _extensionManager = extensionManager;
         }
    
         #region IPricingService Members
@@ -208,21 +208,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 using (var repository = _repositoryFactory())
                 {
                     result = repository.GetPricesByIds(ids).Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();               
-                }
-                //Need load and populate products to each price
-                var products = _productService.GetByIds(result.Select(x => x.ProductId).ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
-                foreach (var price in result)
-                {
-                    price.Product = products.FirstOrDefault(x => x.Id == price.ProductId);
-                    if(price.Product != null)
-                    {
-                        price.Product.Assets = null;
-                        price.Product.Properties = null;
-                        price.Product.PropertyValues = null;
-                        price.Product.Catalog = null;
-                        price.Product.Category = null;
-                    }
-                }
+                }             
             }
             return result;
         }
@@ -235,11 +221,34 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 using (var repository = _repositoryFactory())
                 {
                     result = repository.GetPricelistAssignmentsById(ids).Select(x=> x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
-                }
-                var allCatalogs = _catalogService.GetCatalogsList();
-                foreach (var assignment in result)
+                }             
+            }
+
+            //Prepare expression tree for resulting assignments and include available  nodes to expression tree
+            foreach(var assignment in result)
+            {
+                var defaultExpressionTree = _extensionManager.ConditionExpressionTree;
+                //Set default expression tree first
+                assignment.DynamicExpression = defaultExpressionTree;
+                if (!string.IsNullOrEmpty(assignment.PredicateVisualTreeSerialized))
                 {
-                    assignment.Catalog = allCatalogs.FirstOrDefault(x => x.Id == assignment.CatalogId);
+                    assignment.DynamicExpression = JsonConvert.DeserializeObject<ConditionExpressionTree>(assignment.PredicateVisualTreeSerialized);
+                    if (defaultExpressionTree != null)
+                    {
+                        //Copy available elements from default tree because they not persisted
+                        var sourceBlocks = ((DynamicExpression)defaultExpressionTree).Traverse(x => x.Children);
+                        var targetBlocks = ((DynamicExpression)assignment.DynamicExpression).Traverse(x => x.Children).ToList();
+
+                        foreach (var sourceBlock in sourceBlocks)
+                        {
+                            foreach (var targetBlock in targetBlocks.Where(x => x.Id == sourceBlock.Id))
+                            {
+                                targetBlock.AvailableChildren = sourceBlock.AvailableChildren;
+                            }
+                        }
+                        //copy available elements from default expression tree
+                        assignment.DynamicExpression.AvailableChildren = defaultExpressionTree.AvailableChildren;
+                    }
                 }
             }
             return result;
@@ -345,6 +354,22 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var alreadyExistEntities = repository.PricelistAssignments.Where(x => assignmentsIds.Contains(x.Id)).ToArray();
                 foreach (var assignment in assignments)
                 {
+                    //Serialize condition expression 
+                    if (assignment.DynamicExpression != null && assignment.DynamicExpression.Children != null)
+                    {
+                        var conditionExpression = assignment.DynamicExpression.GetConditionExpression();
+                        assignment.ConditionExpression = _expressionSerializer.SerializeExpression(conditionExpression);
+
+                        //Clear availableElements in expression (for decrease size)
+                        assignment.DynamicExpression.AvailableChildren = null;
+                        var allBlocks = ((DynamicExpression)assignment.DynamicExpression).Traverse(x => x.Children);
+                        foreach (var block in allBlocks)
+                        {
+                            block.AvailableChildren = null;
+                        }
+                        assignment.PredicateVisualTreeSerialized = JsonConvert.SerializeObject(assignment.DynamicExpression);
+                    }
+
                     var sourceEntity = AbstractTypeFactory<dataModel.PricelistAssignmentEntity>.TryCreateInstance().FromModel(assignment, pkMap);
                     var targetEntity = alreadyExistEntities.FirstOrDefault(x => x.Id == assignment.Id);
                     if (targetEntity != null)
