@@ -260,7 +260,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             _pricingService.SavePrices(changedPrices.ToArray());
             if (!deletedPrices.IsNullOrEmpty())
             {
-                _pricingService.DeletePrices(changedPrices.Select(x => x.Id).ToArray());
+                _pricingService.DeletePrices(deletedPrices.Select(x => x.Id).ToArray());
             }
             return StatusCode(HttpStatusCode.NoContent);
         }
