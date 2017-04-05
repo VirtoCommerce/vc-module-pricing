@@ -5,6 +5,7 @@ using System.Linq;
 using CacheManager.Core;
 using Common.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Pricing.Services;
@@ -186,7 +187,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     {
                         foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
                         {
-                            var variationPrice = (coreModel.Price)inheritedPrice.Clone();
+                            var jObject = JObject.FromObject(inheritedPrice);
+                            var variationPrice = (coreModel.Price)jObject.ToObject(inheritedPrice.GetType());
                             //For correct override price in possible update 
                             variationPrice.Id = null;
                             variationPrice.ProductId = variation.Id;
