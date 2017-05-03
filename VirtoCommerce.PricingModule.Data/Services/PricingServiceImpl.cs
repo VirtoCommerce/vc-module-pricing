@@ -45,7 +45,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         /// </summary>
         /// <param name="evalContext"></param>
         /// <returns></returns>
-        public IEnumerable<coreModel.Pricelist> EvaluatePriceLists(coreModel.PriceEvaluationContext evalContext)
+        public virtual IEnumerable<coreModel.Pricelist> EvaluatePriceLists(coreModel.PriceEvaluationContext evalContext)
         {
             var retVal = new List<coreModel.Pricelist>();
 
@@ -125,7 +125,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         /// </summary>
         /// <param name="evalContext"></param>
         /// <returns></returns>
-        public IEnumerable<coreModel.Price> EvaluateProductPrices(coreModel.PriceEvaluationContext evalContext)
+        public virtual IEnumerable<coreModel.Price> EvaluateProductPrices(coreModel.PriceEvaluationContext evalContext)
         {
             if (evalContext == null)
             {
@@ -215,7 +215,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        public coreModel.PricelistAssignment[] GetPricelistAssignmentsById(string[] ids)
+        public virtual coreModel.PricelistAssignment[] GetPricelistAssignmentsById(string[] ids)
         {
             coreModel.PricelistAssignment[] result = null;
             if (ids != null)
@@ -256,7 +256,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        public coreModel.Pricelist[] GetPricelistsById(string[] ids)
+        public virtual coreModel.Pricelist[] GetPricelistsById(string[] ids)
         {
             coreModel.Pricelist[] result = null;
             if (ids != null)
@@ -269,7 +269,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        public void SavePrices(coreModel.Price[] prices)
+        public virtual void SavePrices(coreModel.Price[] prices)
         {
             var pkMap = new PrimaryKeyResolvingMap();
             using (var repository = _repositoryFactory())
@@ -317,7 +317,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
         }
 
-        public void SavePricelists(coreModel.Pricelist[] priceLists)
+        public virtual void SavePricelists(coreModel.Pricelist[] priceLists)
         {
             var pkMap = new PrimaryKeyResolvingMap();
             using (var repository = _repositoryFactory())
@@ -346,7 +346,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
         }
 
-        public void SavePricelistAssignments(coreModel.PricelistAssignment[] assignments)
+        public virtual void SavePricelistAssignments(coreModel.PricelistAssignment[] assignments)
         {
             var pkMap = new PrimaryKeyResolvingMap();
             using (var repository = _repositoryFactory())
@@ -409,7 +409,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
         }
 
-        public void DeletePricelistsAssignments(string[] ids)
+        public virtual void DeletePricelistsAssignments(string[] ids)
         {
             using (var repository = _repositoryFactory())
             {
