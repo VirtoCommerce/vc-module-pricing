@@ -1,6 +1,6 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.assignmentListController', ['$scope', 'virtoCommerce.pricingModule.pricelistAssignments', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils',
-function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
+.controller('virtoCommerce.pricingModule.assignmentListController', ['$scope', 'virtoCommerce.pricingModule.pricelistAssignments', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'virtoCommerce.catalogModule.catalogs',
+function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
     var bladeNavigationService = bladeUtils.bladeNavigationService;
@@ -13,10 +13,22 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils) {
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
-            blade.isLoading = false;
-            $scope.pageSettings.totalItems = data.length;
-            blade.currentEntities = data.results;
-            $scope.pageSettings.totalItems = data.totalCount;
+            catalogs.getCatalogs({
+                sort: uiGridHelper.getSortExpression($scope),
+                start: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+                count: $scope.pageSettings.itemsPerPageCount
+            }, function (results) {
+                blade.isLoading = false;
+                $scope.pageSettings.totalItems = data.length;
+                $scope.pageSettings.totalItems = data.totalCount;
+
+                var priceAssignments = data.results;
+                _.each(priceAssignments, function (x) {
+                    x.catalog = _.findWhere(results, { id: x.catalogId }).name;
+                });
+
+                blade.currentEntities = priceAssignments;
+            });
         });
     };
 
