@@ -9,7 +9,7 @@
                     { name: 'actions', displayName: '', enableColumnResizing: false, enableSorting: false, width: 30, cellTemplate: 'list-actions.cell.html', pinnedLeft:true },
                     { name: 'name', displayName: 'pricing.blades.pricelist-list.labels.name' },
                     { name: 'currency', displayName: 'pricing.blades.pricelist-list.labels.currency', width: 87 },
-                    { name: 'modifiedDate', displayName: 'pricing.blades.pricelist-list.labels.last-modified', width: 87, cellTemplate: 'am-time-ago.cell.html' }
+                    { name: 'modifiedDate', displayName: 'pricing.blades.pricelist-list.labels.last-modified', width: 87 }
                 ]})">
             <div class="table-wrapper" ng-if="blade.currentEntities.length">
                 <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-move-columns ui-grid-pinning ui-grid-height></div>
@@ -31,7 +31,4 @@
     <div class="ui-grid-actions" left-click-menu="grid.appScope.contextMenuEntity = row.entity" data-target="prl_menu">
         <i class="fa fa-ellipsis-v"></i>
     </div>
-</script>
-<script type="text/ng-template" id="am-time-ago.cell.html">
-    <span class="table-date" am-time-ago="COL_FIELD"></span>
 </script>

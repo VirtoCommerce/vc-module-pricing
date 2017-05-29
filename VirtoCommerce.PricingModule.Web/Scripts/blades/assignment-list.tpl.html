@@ -12,7 +12,7 @@
                         { name: 'pricelist.name', displayName: 'pricing.blades.assignment-list.labels.pricelist' },
                         { name: 'pricelist.currency', displayName: 'pricing.blades.assignment-list.labels.pricelist-currency' },
                         { name: 'priority', displayName: 'pricing.blades.assignment-list.labels.priority', width: 72, sort: { direction: uiGridConstants.DESC } },
-                        { name: 'modifiedDate', displayName: 'pricing.blades.assignment-list.labels.last-modified', width: 87, cellTemplate: 'am-time-ago.cell.html' },
+                        { name: 'modifiedDate', displayName: 'pricing.blades.assignment-list.labels.last-modified', width: 87 },
                         { name: 'modifiedBy', displayName: 'pricing.blades.assignment-list.labels.modified-by', width: 87, headerTooltip: true }
                     ]})">
             <div class="table-wrapper" ng-if="blade.currentEntities.length">
@@ -35,7 +35,4 @@
     <div class="ui-grid-actions" left-click-menu="grid.appScope.contextMenuEntity = row.entity" data-target="pas_menu">
         <i class="fa fa-ellipsis-v"></i>
     </div>
-</script>
-<script type="text/ng-template" id="am-time-ago.cell.html">
-    <span class="table-date" am-time-ago="COL_FIELD"></span>
 </script>
