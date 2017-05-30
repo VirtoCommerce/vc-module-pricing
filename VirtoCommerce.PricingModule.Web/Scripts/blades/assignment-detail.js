@@ -106,8 +106,6 @@
         $scope.datepickers[which] = true;
     };
 
-    $scope.format = 'shortDate';
-
     // Dynamic ExpressionBlock
     function extendElementBlock(expressionBlock) {
         var retVal = dynamicExpressionService.expressions[expressionBlock.id];

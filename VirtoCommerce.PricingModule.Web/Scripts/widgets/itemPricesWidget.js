@@ -12,7 +12,7 @@
 				var allPrices = _.union(_.pluck(productPrices, 'list'), _.pluck(productPrices, 'sale'));
 				var minprice = _.min(allPrices);
 				var maxprice = _.max(allPrices);
-				var currency = _.any(productPrices) ? ' ' + productPrices[0].currency : '';
+				var currency = _.any(productPrices) ? productPrices[0].currency : '';
 				minprice = $filter('currency')(minprice, currency, 2);
 				maxprice = $filter('currency')(maxprice, currency, 2);
 				$scope.priceLabel = (minprice == maxprice ? minprice : minprice + ' - ' + maxprice);
