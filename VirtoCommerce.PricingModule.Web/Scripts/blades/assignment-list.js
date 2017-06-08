@@ -13,13 +13,10 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
             skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
             take: $scope.pageSettings.itemsPerPageCount
         }, function (data) {
-            catalogs.getCatalogs({
-                sort: uiGridHelper.getSortExpression($scope),
-                start: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-                count: $scope.pageSettings.itemsPerPageCount
-            }, function (results) {
+            //Loading catalogs for assignments because they do not contains them
+            //Need to display name of catalog in assignments grid
+            catalogs.getCatalogs(function (results) {
                 blade.isLoading = false;
-                $scope.pageSettings.totalItems = data.length;
                 $scope.pageSettings.totalItems = data.totalCount;
 
                 var priceAssignments = data.results;
