@@ -99,6 +99,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\PricingRepositoryImpl.cs" />
     <Compile Include="Repositories\IPricingRepository.cs" />
+    <Compile Include="Search\ProductPriceDocumentBuilder.cs" />
+    <Compile Include="Search\ProductPriceDocumentChangesProvider.cs" />
     <Compile Include="Services\PricingSearchServiceImpl.cs" />
     <Compile Include="Services\PricingServiceImpl.cs" />
   </ItemGroup>

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.Domain.Pricing.Services;
+using VirtoCommerce.Domain.Search;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
@@ -10,6 +13,7 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Repositories;
+using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule.Web.ExportImport;
 using VirtoCommerce.PricingModule.Web.JsonConverters;
@@ -50,13 +54,37 @@ namespace VirtoCommerce.PricingModule.Web
 
         public override void PostInitialize()
         {
+            base.PostInitialize();
 
-            //Next lines allow to use polymorph types in API controller methods
+            // Next lines allow to use polymorph types in API controller methods
             var httpConfiguration = _container.Resolve<HttpConfiguration>();
             var storeJsonConverter = _container.Resolve<PolymorphicPricingJsonConverter>();
             httpConfiguration.Formatters.JsonFormatter.SerializerSettings.Converters.Add(storeJsonConverter);
 
-            base.PostInitialize();
+            #region Search
+
+            var productIndexingConfigurations = _container.Resolve<IndexDocumentConfiguration[]>();
+            if (productIndexingConfigurations != null)
+            {
+                var productPriceDocumentSource = new IndexDocumentSource
+                {
+                    ChangesProvider = _container.Resolve<ProductPriceDocumentChangesProvider>(),
+                    DocumentBuilder = _container.Resolve<ProductPriceDocumentBuilder>(),
+                };
+
+                // TODO: Use VirtoCommerce.Domain.Search.Constants.ProductDocumentType
+                foreach (var configuration in productIndexingConfigurations.Where(c => c.DocumentType == "Product"))
+                {
+                    if (configuration.RelatedSources == null)
+                    {
+                        configuration.RelatedSources = new List<IndexDocumentSource>();
+                    }
+
+                    configuration.RelatedSources.Add(productPriceDocumentSource);
+                }
+            }
+
+            #endregion
         }
         #endregion
 
