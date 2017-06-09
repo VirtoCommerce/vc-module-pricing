@@ -160,8 +160,8 @@
     $scope.getPriceRange = function (priceGroup) {
         var retVal;
         var allPrices = _.union(_.pluck(priceGroup.prices, 'list'), _.pluck(priceGroup.prices, 'sale'));
-        var minprice = $filter('number')(_.min(allPrices), 2);
-        var maxprice = $filter('number')(_.max(allPrices), 2);
+        var minprice = $filter('currency')(_.min(allPrices), '', 2);
+        var maxprice = $filter('currency')(_.max(allPrices), '', 2);
         retVal = (minprice == maxprice ? minprice : minprice + '-' + maxprice);
 
         //else {
