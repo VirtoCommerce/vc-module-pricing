@@ -72,8 +72,7 @@ namespace VirtoCommerce.PricingModule.Web
                     DocumentBuilder = _container.Resolve<ProductPriceDocumentBuilder>(),
                 };
 
-                // TODO: Use VirtoCommerce.Domain.Search.Constants.ProductDocumentType
-                foreach (var configuration in productIndexingConfigurations.Where(c => c.DocumentType == "Product"))
+                foreach (var configuration in productIndexingConfigurations.Where(c => c.DocumentType == KnownDocumentTypes.Product))
                 {
                     if (configuration.RelatedSources == null)
                     {
@@ -86,6 +85,7 @@ namespace VirtoCommerce.PricingModule.Web
 
             #endregion
         }
+
         #endregion
 
         #region ISupportExportImportModule Members
@@ -107,9 +107,10 @@ namespace VirtoCommerce.PricingModule.Web
             get
             {
                 var settingManager = _container.Resolve<ISettingsManager>();
-                return settingManager.GetValue("Pricing.ExportImport.Description", String.Empty);
+                return settingManager.GetValue("Pricing.ExportImport.Description", string.Empty);
             }
         }
+
         #endregion
     }
 }
