@@ -32,7 +32,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         #region IPricingSearchService Members
 
-        public PricingSearchResult<coreModel.Price> SearchPrices(PricesSearchCriteria criteria)
+        public virtual PricingSearchResult<coreModel.Price> SearchPrices(PricesSearchCriteria criteria)
         {
             var retVal = new PricingSearchResult<coreModel.Price>();
             ICollection<CatalogProduct> products = new List<CatalogProduct>();
@@ -90,7 +90,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
-        public PricingSearchResult<coreModel.Pricelist> SearchPricelists(PricelistSearchCriteria criteria)
+        public virtual PricingSearchResult<coreModel.Pricelist> SearchPricelists(PricelistSearchCriteria criteria)
         {
             var retVal = new PricingSearchResult<coreModel.Pricelist>();
             using (var repository = _repositoryFactory())
@@ -121,7 +121,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
 
 
-        public PricingSearchResult<coreModel.PricelistAssignment> SearchPricelistAssignments(PricelistAssignmentsSearchCriteria criteria)
+        public virtual PricingSearchResult<coreModel.PricelistAssignment> SearchPricelistAssignments(PricelistAssignmentsSearchCriteria criteria)
         {
             var retVal = new PricingSearchResult<coreModel.PricelistAssignment>();
             using (var repository = _repositoryFactory())
