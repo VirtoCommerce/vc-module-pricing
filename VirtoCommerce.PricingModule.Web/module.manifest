@@ -16,7 +16,7 @@
     <owners>
         <owner>Virto Commerce</owner>
     </owners>
-    <projectUrl>https://virtocommerce.com/virto-pricing-module</projectUrl>
+    <projectUrl>https://virtocommerce.com/apps/extensions/virto-pricing-module</projectUrl>
     <iconUrl>https://github.com/VirtoCommerce/vc-module-pricing/raw/master/VirtoCommerce.PricingModule.Web/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
     <copyright>Copyright © 2011-2016 Virto Commerce. All rights reserved</copyright>
