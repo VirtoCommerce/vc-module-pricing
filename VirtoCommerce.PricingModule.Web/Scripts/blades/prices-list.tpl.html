@@ -13,7 +13,8 @@
                         { name: 'list', displayName: 'pricing.blades.prices-list.labels.list-price', editableCellTemplate: 'list-cellTextEditor', validators: {required: true, listValidator: true}, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true },
                         { name: 'sale', displayName: 'pricing.blades.prices-list.labels.sale-price', editableCellTemplate: 'sale-cellTextEditor', validators: {saleValidator: true}, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true },
                         { name: 'minQuantity', displayName: 'pricing.blades.prices-list.labels.min-quantity', editableCellTemplate: 'minQuantity-cellTextEditor', validators: {required: true, minQuantityValidator: true}, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true, sort: { direction: uiGridConstants.ASC } },
-                        { name: 'modifiedDate', displayName: 'pricing.blades.prices-list.labels.last-modified', cellTemplate: 'am-time-ago.cell.html' }
+                        { name: 'modifiedDate', displayName: 'pricing.blades.prices-list.labels.last-modified' },
+                        { name: 'effectiveValue', type: 'currency', visible: false }
                     ]})">
                 <div class="table-wrapper" ng-if="blade.currentEntities.length" ng-init="setForm(formScope);">
                     <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-validate ui-grid-auto-resize ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-move-columns ui-grid-height></div>
@@ -61,9 +62,4 @@
 </script>
 <script type="text/ng-template" id="list.row.html">
     <div ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ui-grid-one-bind-id-grid="rowRenderIndex + '-' + col.uid + '-cell'" class="ui-grid-cell" ng-class="{'ui-grid-row-header-cell': col.isRowHeader }" role="{{col.isRowHeader ? 'rowheader' : 'gridcell' }}" ui-grid-cell></div>
-</script>
-<script type="text/ng-template" id="am-time-ago.cell.html">
-    <div class="ui-grid-cell-contents">
-        <span class="table-date" am-time-ago="COL_FIELD"></span>
-    </div>
 </script>
