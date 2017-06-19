@@ -32,14 +32,19 @@ namespace VirtoCommerce.PricingModule.Data.Search
         {
             var document = new IndexDocument(productId);
 
-            foreach (var price in prices)
+            if (prices != null)
             {
-                document.Add(new IndexDocumentField($"price_{price.Currency}_{price.PricelistId}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true });
+                foreach (var price in prices)
+                {
+                    document.Add(new IndexDocumentField($"price_{price.Currency}_{price.PricelistId}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true });
 
-                // now save additional pricing fields for convinient user searches, store price with currency and without one
-                document.Add(new IndexDocumentField($"price_{price.Currency}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
-                document.Add(new IndexDocumentField("price", price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+                    // Save additional pricing fields for convinient user searches, store price with currency and without one
+                    document.Add(new IndexDocumentField($"price_{price.Currency}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+                    document.Add(new IndexDocumentField("price", price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+                }
             }
+
+            document.Add(new IndexDocumentField("is", prices?.Count > 0 ? "priced" : "unpriced") { IsRetrievable = true, IsFilterable = true, IsCollection = true });
 
             return document;
         }
