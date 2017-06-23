@@ -66,8 +66,6 @@ namespace VirtoCommerce.PricingModule.Data.Search
                         ChangeDate = o.ModifiedDate ?? o.CreatedDate,
                         ChangeType = IndexDocumentChangeType.Modified,
                     })
-                    .GroupBy(o => o.DocumentId)
-                    .Select(g => g.OrderByDescending(o => o.ChangeDate).First())
                     .ToArray();
             }
 
