@@ -12,12 +12,12 @@ using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Repositories;
+using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule.Web.ExportImport;
 using VirtoCommerce.PricingModule.Web.JsonConverters;
-using dataModel = VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Web
 {
@@ -47,7 +47,9 @@ namespace VirtoCommerce.PricingModule.Web
             var extensionManager = new DefaultPricingExtensionManagerImpl();
             _container.RegisterInstance<IPricingExtensionManager>(extensionManager);
 
-            _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>(), new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { typeof(dataModel.PriceEntity).Name }, _container.Resolve<IUserNameResolver>()))));
+            _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionStringName, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>()
+                , new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(PriceEntity) }, _container.Resolve<IUserNameResolver>()))));
+
             _container.RegisterType<IPricingService, PricingServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
         }
@@ -63,6 +65,7 @@ namespace VirtoCommerce.PricingModule.Web
 
             #region Search
 
+            // Add price document source to the product indexing configuration
             var productIndexingConfigurations = _container.Resolve<IndexDocumentConfiguration[]>();
             if (productIndexingConfigurations != null)
             {

@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Domain.Search;
 using VirtoCommerce.Platform.Core.ChangeLog;
+using VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentChangesProvider : IIndexDocumentChangesProvider
     {
-        public const string ChangeLogObjectType = "PriceEntity";
+        public const string ChangeLogObjectType = nameof(PriceEntity);
 
         private readonly IChangeLogService _changeLogService;
         private readonly IPricingService _pricingService;
@@ -21,7 +22,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             _pricingService = pricingService;
         }
 
-        public Task<long> GetTotalChangesCountAsync(DateTime? startDate, DateTime? endDate)
+        public virtual Task<long> GetTotalChangesCountAsync(DateTime? startDate, DateTime? endDate)
         {
             long result;
 
@@ -39,7 +40,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             return Task.FromResult(result);
         }
 
-        public Task<IList<IndexDocumentChange>> GetChangesAsync(DateTime? startDate, DateTime? endDate, long skip, long take)
+        public virtual Task<IList<IndexDocumentChange>> GetChangesAsync(DateTime? startDate, DateTime? endDate, long skip, long take)
         {
             IList<IndexDocumentChange> result;
 

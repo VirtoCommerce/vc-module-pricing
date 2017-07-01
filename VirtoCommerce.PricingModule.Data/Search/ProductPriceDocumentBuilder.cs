@@ -16,7 +16,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             _pricingService = pricingService;
         }
 
-        public Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
+        public virtual Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
         {
             var prices = GetProductPrices(documentIds);
 
@@ -27,6 +27,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
             return Task.FromResult(result);
         }
+
 
         protected virtual IndexDocument CreateDocument(string productId, IList<Price> prices)
         {
