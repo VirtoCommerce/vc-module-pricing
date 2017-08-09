@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
-using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
+using System.Data.SqlClient;
+using System.Linq;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.PricingModule.Data.Model;
-using System;
 
 namespace VirtoCommerce.PricingModule.Data.Repositories
 {
@@ -35,22 +36,9 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             base.OnModelCreating(modelBuilder);
         }
 
-        #region IPricingRepository Members
-
-        public IQueryable<PricelistEntity> Pricelists
-        {
-            get { return GetAsQueryable<PricelistEntity>(); }
-        }
-
-        public IQueryable<PriceEntity> Prices
-        {
-            get { return GetAsQueryable<PriceEntity>(); }
-        }
-
-        public IQueryable<PricelistAssignmentEntity> PricelistAssignments
-        {
-            get { return GetAsQueryable<PricelistAssignmentEntity>(); }
-        }
+        public IQueryable<PricelistEntity> Pricelists => GetAsQueryable<PricelistEntity>();
+        public IQueryable<PriceEntity> Prices => GetAsQueryable<PriceEntity>();
+        public IQueryable<PricelistAssignmentEntity> PricelistAssignments => GetAsQueryable<PricelistAssignmentEntity>();
 
         public PriceEntity[] GetPricesByIds(string[] priceIds)
         {
@@ -70,30 +58,46 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         {
             var retVal = PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsIds.Contains(x.Id)).ToArray();
             return retVal;
-        }     
-
+        }
 
         public void DeletePrices(string[] ids)
         {
-            var queryPattern = @"DELETE FROM Price WHERE Id IN ({0})";
-            var query = string.Format(queryPattern, string.Join(", ", ids.Select(x => string.Format("'{0}'", x))));
-            ObjectContext.ExecuteStoreCommand(query);
+            ExecuteStoreCommand("DELETE FROM Price WHERE Id IN ({0})", ids);
         }
 
         public void DeletePricelists(string[] ids)
         {
-            var queryPattern = @"DELETE FROM Pricelist WHERE Id IN ({0})";
-            var query = string.Format(queryPattern, string.Join(", ", ids.Select(x => string.Format("'{0}'", x))));
-            ObjectContext.ExecuteStoreCommand(query);
+            ExecuteStoreCommand("DELETE FROM Pricelist WHERE Id IN ({0})", ids);
         }
-        
+
         public void DeletePricelistAssignments(string[] ids)
         {
-            var queryPattern = @"DELETE FROM PricelistAssignment WHERE Id IN ({0})";
-            var query = string.Format(queryPattern, string.Join(", ", ids.Select(x => string.Format("'{0}'", x))));
-            ObjectContext.ExecuteStoreCommand(query);
+            ExecuteStoreCommand("DELETE FROM PricelistAssignment WHERE Id IN ({0})", ids);
         }
-        #endregion
-    }
 
+
+        protected virtual void ExecuteStoreCommand(string commandTemplate, IEnumerable<string> parameterValues)
+        {
+            var command = CreateCommand(commandTemplate, parameterValues);
+            ObjectContext.ExecuteStoreCommand(command.Text, command.Parameters);
+        }
+
+        protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
+        {
+            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v)).ToArray();
+            var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
+
+            return new Command
+            {
+                Text = string.Format(commandTemplate, parameterNames),
+                Parameters = parameters.OfType<object>().ToArray(),
+            };
+        }
+
+        protected class Command
+        {
+            public string Text { get; set; }
+            public object[] Parameters { get; set; }
+        }
+    }
 }
