@@ -192,6 +192,25 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Evaluate product prices for demand catalog
+        /// </summary>
+        /// <remarks>Get an array of valid product prices for each currency.</remarks>
+        /// <param name="productId">Product id</param>
+        /// <param name="catalogId">Catalog id</param>
+        [HttpGet]
+        [ResponseType(typeof(Price[]))]
+        [Route("api/products/{productId}/{catalogId}/pricesWidget")]
+        public IHttpActionResult EvaluateProductPrices(string productId, string catalogId)
+        {
+            var priceEvalContext = new PriceEvaluationContext
+            {
+                ProductIds = new[] { productId },
+                CatalogId = catalogId
+            };
+            return EvaluatePrices(priceEvalContext);
+        }
+
+        /// <summary>
         /// Create pricelist assignment
         /// </summary>
         /// <param name="assignment">PricelistAssignment</param>

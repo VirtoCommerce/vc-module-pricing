@@ -3,8 +3,8 @@
 	var blade = $scope.blade;
 
 	function refresh() {
-		$scope.loading = true;
-		return prices.getProductPrices({ id: blade.itemId }, function (productPrices) {
+	    $scope.loading = true;
+	    return prices.getProductPricesForWidget({ id: blade.itemId, catalogId: blade.catalog.id }, function (productPrices) {
 			$scope.loading = false;
 			if (productPrices.length) {
 				productPrices = _.groupBy(productPrices, 'currency');
