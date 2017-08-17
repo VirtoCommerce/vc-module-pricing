@@ -1,10 +1,11 @@
-﻿<div class="blade-content">
+﻿<div class="blade-content __medium-wide">
     <div class="blade-inner">
         <div class="inner-block" ng-init="setGridOptions({
                     data: 'blade.currentEntities',
                     rowTemplate: 'list.row.html',
                     columnDefs: [
                         { name: 'name', displayName: 'pricing.blades.item-pricelists-list.labels.name', cellTooltip: true},
+                        { name: 'catalog', displayName: 'pricing.blades.assignment-list.labels.catalog', cellTooltip: true},
                         { name: 'currency', displayName: 'pricing.blades.item-pricelists-list.labels.currency', width: 70},
                         { name: 'priority', displayName: 'pricing.blades.item-pricelists-list.labels.priority', width: 70},
                         { name: 'prices.length', displayName: 'pricing.blades.item-pricelists-list.labels.prices-count', width: 70}

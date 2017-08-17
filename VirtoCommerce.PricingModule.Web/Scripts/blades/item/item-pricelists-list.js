@@ -1,27 +1,31 @@
 ﻿angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', function ($scope, bladeNavigationService, uiGridConstants, prices) {
+.controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
 
     blade.refresh = function () {
     	blade.isLoading = true;
     	prices.getProductPricelists({ id: blade.itemId }, function (pricelists) {
-    		blade.isLoading = false;
-    		blade.currentEntities = [];
-    		_.each(pricelists, function (x) {
-    			var assignments = _.filter(x.assignments, function (assignment) {
-    				return assignment.catalogId == blade.item.catalogId;
-    			});
-				//Make pricelist for each assignment assigned to product catalog
-    			_.each(assignments, function (assignment) {
-    				var pricelist = {
-    					priority: assignment.priority
-    				};
-    				angular.extend(pricelist, x);
-    				pricelist.assignments = [assignment];
-    				blade.currentEntities.push(pricelist);
-    			});
-    		});
+    	    //Loading catalogs for pricelists because they do not contains them
+    	    //Need to display name of catalog in product item pricelists grid
+    	    catalogs.getCatalogs(function (catalogsList) {
+    	        blade.isLoading = false;
+    	        blade.currentEntities = [];
+    	        _.each(pricelists, function (x) {
+    	            if (x.prices.length > 0) {
+    	                //Make pricelist for each assignment assigned to product catalog
+    	                _.each(x.assignments, function (assignment) {
+    	                    var pricelist = {
+    	                        priority: assignment.priority
+    	                    };
+    	                    angular.extend(pricelist, x);
+    	                    pricelist.assignments = [assignment];
+    	                    pricelist.catalog = _.findWhere(catalogsList, { id: assignment.catalogId }).name;
+    	                    blade.currentEntities.push(pricelist);
+    	                });
+    	            }
+    	        });
+    	    });
 
     		if (!pricelists.length) {
     			var newPricelistBlade = {
@@ -36,7 +40,6 @@
     			};
     			bladeNavigationService.showBlade(newPricelistBlade, blade);
     		}
-
     	});
     }
 
