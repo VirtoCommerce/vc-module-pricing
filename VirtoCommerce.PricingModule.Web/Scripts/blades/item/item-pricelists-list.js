@@ -13,16 +13,18 @@
     	        blade.currentEntities = [];
     	        _.each(pricelists, function (x) {
     	            if (x.prices.length > 0) {
-    	                //Make pricelist for each assignment assigned to product catalog
-    	                _.each(x.assignments, function (assignment) {
-    	                    var pricelist = {
-    	                        priority: assignment.priority
-    	                    };
-    	                    angular.extend(pricelist, x);
-    	                    pricelist.assignments = [assignment];
-    	                    pricelist.catalog = _.findWhere(catalogsList, { id: assignment.catalogId }).name;
-    	                    blade.currentEntities.push(pricelist);
-    	                });
+    	                var pricelist = {
+    	                    priority: _.max(x.assignments, function (assignment) { return assignment.priority; }).priority
+    	                };
+    	                angular.extend(pricelist, x);
+    	                pricelist.assignments = [x.assignment];
+
+    	                var catalogsId = _.pluck(x.assignments, 'catalogId');
+    	                var catalogsName = _.map(catalogsId, function (catalogId) {
+    	                    return _.findWhere(catalogsList, { id: catalogId }).name;
+                        });
+    	                pricelist.catalog = catalogsName.join(', ');
+    	                blade.currentEntities.push(pricelist);
     	            }
     	        });
     	    });
