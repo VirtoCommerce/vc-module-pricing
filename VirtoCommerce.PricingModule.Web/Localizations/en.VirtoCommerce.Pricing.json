@@ -109,7 +109,20 @@
                 },
                 "no-assignments": "Catalog does not have assigned price lists. Please assign a price list by following this link ",
                 "manage-pricelists": "Manage pricing"
-
+            },
+            "item-prices": {
+                "title": "Prices for {{name}}",
+                "subtitle": "Edit prices",
+                "head-label": "Price list for new price",
+                "pricelist-select-placeholder": "Select a pricelist to add new price...",
+                "labels": {
+                    "name": "Price List",
+                    "currency": "Currency",
+                    "catalog": "Catalog",
+                    "list-price": "List price",
+                    "sale-price": "Sale price",
+                    "min-quantity": "Min. quantity"
+                }
             }
         },
         "widgets": {
@@ -136,6 +149,10 @@
             "pricelist-item-list-delete": {
                 "title": "Delete confirmation",
                 "message": "Are you sure you want to delete ALL prices for selected Products in this Price list?"
+            },
+            "item-prices-delete": {
+                "title": "Delete confirmation",
+                "message": "Are you sure you want to delete selected Prices?"
             },
             "prices-save": {
                 "title": "Save changes",

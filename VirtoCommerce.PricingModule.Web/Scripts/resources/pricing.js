@@ -6,7 +6,8 @@
             getProductPricesForWidget: { url: 'api/products/:id/:catalogId/pricesWidget', isArray: true },
             getProductPricelists: { url: 'api/catalog/products/:id/pricelists', isArray: true },
             update: { method: 'PUT' },
-            remove: { method: 'DELETE', url: 'api/pricing/pricelists/:priceListId/products/prices' }
+            remove: { method: 'DELETE', url: 'api/pricing/pricelists/:priceListId/products/prices' },
+            removePrice: { method: 'DELETE', url: 'api/pricing/products/prices' }
         });
     }])
     .factory('virtoCommerce.pricingModule.pricelists', ['$resource', function ($resource) {

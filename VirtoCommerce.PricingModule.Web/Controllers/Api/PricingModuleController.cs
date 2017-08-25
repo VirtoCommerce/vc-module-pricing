@@ -386,6 +386,21 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Delete price by ids
+        /// </summary>
+        /// <param name="priceIds"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [ResponseType(typeof(void))]
+        [Route("api/pricing/products/prices")]
+        [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
+        public IHttpActionResult DeleteProductPrice([FromUri]string[] priceIds)
+        {
+            _pricingService.DeletePrices(priceIds);
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
         /// Delete pricelists  
         /// </summary>
         /// <remarks>Delete pricelists by given array of pricelist ids.</remarks>

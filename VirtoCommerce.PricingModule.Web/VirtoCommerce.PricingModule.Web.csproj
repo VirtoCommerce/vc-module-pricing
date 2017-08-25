@@ -159,6 +159,8 @@
   <ItemGroup>
     <Content Include="Scripts\blades\assignment-detail.js" />
     <Content Include="Scripts\blades\assignment-detail.tpl.html" />
+    <Content Include="Scripts\blades\item\item-prices.tpl.html" />
+    <Content Include="Scripts\blades\item\item-prices.js" />
     <Content Include="Scripts\blades\pricelist-item-list.js" />
     <Content Include="Scripts\blades\assignment-list.js" />
     <Content Include="Scripts\blades\pricelist-list.js" />
