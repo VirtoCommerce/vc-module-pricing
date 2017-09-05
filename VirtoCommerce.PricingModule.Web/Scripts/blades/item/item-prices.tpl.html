@@ -30,7 +30,7 @@
                         { name: 'catalog', displayName: 'pricing.blades.item-prices.labels.catalog', cellTooltip: true},
                         { name: 'list', displayName: 'pricing.blades.item-prices.labels.list-price', editableCellTemplate: 'list-cellTextEditor', validators: {required: true, listValidator: true}, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true },
                         { name: 'sale', displayName: 'pricing.blades.item-prices.labels.sale-price', editableCellTemplate: 'sale-cellTextEditor', validators: {saleValidator: true}, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true },
-                        { name: 'minQuantity', displayName: 'pricing.blades.item-prices.labels.min-quantity', editableCellTemplate: 'minQuantity-cellTextEditor', validators: {required: true, minQuantityValidator: true}, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true, sort: { direction: uiGridConstants.ASC } }
+                        { name: 'minQuantity', displayName: 'pricing.blades.item-prices.labels.min-quantity', editableCellTemplate: 'minQuantity-cellTextEditor', validators: {required: true, minQuantityForPricelistValidator: true}, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true, sort: { direction: uiGridConstants.ASC } }
                     ]})">
                 <div class="table-wrapper" ng-if="blade.currentEntities.length" ng-init="setForm(formScope);">
                     <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-validate ui-grid-auto-resize ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-move-columns ui-grid-height></div>
@@ -79,7 +79,7 @@
 </script>
 <script type="text/ng-template" id="minQuantity-cellTextEditor">
     <div class="form-editor form-input">
-        <input class="form-input" smart-float num-type="integer" required ng-model="MODEL_COL_FIELD" ui-grid-editor ng-class="{'ng-invalid': !grid.appScope.isUniqueQty(row.entity)}">
+        <input class="form-input" smart-float num-type="integer" required ng-model="MODEL_COL_FIELD" ui-grid-editor ng-class="{'ng-invalid': !grid.appScope.isUniqueQtyForPricelist(row.entity)}">
     </div>
 </script>
 <script type="text/ng-template" id="list.row.html">

@@ -48,6 +48,7 @@
 
                     blade.currentEntities = angular.copy(blade.origEntity);
                     blade.isLoading = false;
+                    priceValidatorsService.setAllPrices(blade.currentEntities);
                 });
             });
         }
@@ -92,7 +93,7 @@
             return $scope.formScope && $scope.formScope.$valid &&
                  _.all(blade.currentEntities, $scope.isListPriceValid) &&
                  _.all(blade.currentEntities, $scope.isSalePriceValid) &&
-                 _.all(blade.currentEntities, $scope.isUniqueQty) &&
+                 _.all(blade.currentEntities, $scope.isUniqueQtyForPricelist) &&
                 (blade.currentEntities.length == 0 || _.some(blade.currentEntities, function (x) { return x.minQuantity == 1; }));
         }
 
@@ -182,7 +183,7 @@
 
         $scope.isListPriceValid = priceValidatorsService.isListPriceValid;
         $scope.isSalePriceValid = priceValidatorsService.isSalePriceValid;
-        $scope.isUniqueQty = priceValidatorsService.isUniqueQty;
+        $scope.isUniqueQtyForPricelist = priceValidatorsService.isUniqueQtyForPricelist;
 
         // ui-grid
         $scope.setGridOptions = function (gridId, gridOptions) {

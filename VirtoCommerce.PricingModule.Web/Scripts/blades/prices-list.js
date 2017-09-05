@@ -142,6 +142,10 @@
         },
         isUniqueQty: function (data) {
             return Math.round(data.minQuantity) > 0 && _.all(allPrices, function (x) { return x === data || Math.round(x.minQuantity) !== Math.round(data.minQuantity) });
+        },
+        isUniqueQtyForPricelist: function (data) {
+            var result = Math.round(data.minQuantity) > 0 && _.all(_.where(allPrices, { pricelistId: data.pricelistId }), function (x) { return x === data || Math.round(x.minQuantity) !== Math.round(data.minQuantity) });
+            return result;
         }
     };
 }])
@@ -165,6 +169,12 @@
       uiGridValidateService.setValidator('minQuantityValidator', function () {
           return function (oldValue, newValue, rowEntity, colDef) {
               return priceValidatorsService.isUniqueQty(rowEntity);
+          };
+      }, function () { return 'Quantity value should be unique'; });
+
+      uiGridValidateService.setValidator('minQuantityForPricelistValidator', function () {
+          return function (oldValue, newValue, rowEntity, colDef) {
+              return priceValidatorsService.isUniqueQtyForPricelist(rowEntity);
           };
       }, function () { return 'Quantity value should be unique'; });
   }]);
