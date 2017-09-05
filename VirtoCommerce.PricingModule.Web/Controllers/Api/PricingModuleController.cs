@@ -393,7 +393,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpDelete]
         [ResponseType(typeof(void))]
         [Route("api/pricing/products/prices")]
-        [CheckPermission(Permission = PricingPredefinedPermissions.Update)]
+        [CheckPermission(Permission = PricingPredefinedPermissions.Delete)]
         public IHttpActionResult DeleteProductPrice([FromUri]string[] priceIds)
         {
             _pricingService.DeletePrices(priceIds);
