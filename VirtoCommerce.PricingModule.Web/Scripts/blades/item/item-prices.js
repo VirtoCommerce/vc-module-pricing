@@ -175,7 +175,7 @@
 
             var newPrice = {
                 productId: blade.itemId,
-                list: 0,
+                list: '',
                 minQuantity: 1,
                 currency: targetPricelist.currency,
                 pricelistId: targetPricelist.id,
