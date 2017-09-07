@@ -21,7 +21,8 @@
                             id: pricelist.id,
                             code: pricelist.name,
                             currency: pricelist.currency,
-                            assignments: pricelist.assignments
+                            assignments: pricelist.assignments,
+                            displayName: pricelist.name + ' - ' + pricelist.currency
                         };
                     });
                     blade.selectedPricelist = _.first(blade.pricelistList);

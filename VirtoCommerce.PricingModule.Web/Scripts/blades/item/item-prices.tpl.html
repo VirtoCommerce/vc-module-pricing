@@ -4,9 +4,9 @@
 
         <div class="form-input">
             <ui-select ng-model="blade.selectedPricelist" class="head-select" required>
-                <ui-select-match placeholder="{{'pricing.blades.item-prices.pricelist-select-placeholder' | translate}}">{{$select.selected.code}}</ui-select-match>
+                <ui-select-match placeholder="{{'pricing.blades.item-prices.pricelist-select-placeholder' | translate}}">{{$select.selected.displayName}}</ui-select-match>
                 <ui-select-choices repeat="x in blade.pricelistList | filter: $select.search">
-                    <span ng-bind-html="x.code | highlight: $select.search"></span>
+                    <span ng-bind-html="x.displayName | highlight: $select.search"></span>
                 </ui-select-choices>
             </ui-select>
 
