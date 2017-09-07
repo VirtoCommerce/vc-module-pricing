@@ -46,9 +46,9 @@
                         });
                     });
 
+                    priceValidatorsService.setAllPrices(blade.currentEntities);
                     blade.currentEntities = angular.copy(blade.origEntity);
                     blade.isLoading = false;
-                    priceValidatorsService.setAllPrices(blade.currentEntities);
                 });
             });
         }
@@ -164,6 +164,9 @@
         ];
 
         blade.addNewPrice = function (targetPricelist) {
+            //populate prices data for correct work of validation service
+            priceValidatorsService.setAllPrices(blade.currentEntities);
+
             var catalogsId = _.pluck(targetPricelist.assignments, 'catalogId');
             var catalogsName = _.map(catalogsId, function (catalogId) {
                 return _.findWhere($scope.catalogsList, { id: catalogId }).name;
@@ -179,6 +182,7 @@
                 catalog: catalogsName.join(', ')
             };
             blade.currentEntities.push(newPrice);
+            $scope.validateGridData();
         }
 
         $scope.isListPriceValid = priceValidatorsService.isListPriceValid;
@@ -187,9 +191,33 @@
 
         // ui-grid
         $scope.setGridOptions = function (gridId, gridOptions) {
+            gridOptions.onRegisterApi = function (gridApi) {
+                $scope.gridApi = gridApi;
+
+                gridApi.edit.on.afterCellEdit($scope, function () {
+                    //to process validation for all rows in grid.
+                    //e.g. if we have two rows with the same count of min qty, both of this rows will be marked as error.
+                    //when we change data to valid in one row, another one should became valid too.
+                    //more info about ui-grid validation: https://github.com/angular-ui/ui-grid/issues/4152
+                    $scope.validateGridData();
+                });
+
+                $scope.validateGridData();
+            };
+
             $scope.gridOptions = gridOptions;
             gridOptionExtension.tryExtendGridOptions(gridId, gridOptions);
             return gridOptions;
+        };
+
+        $scope.validateGridData = function () {
+            if ($scope.gridApi) {
+                angular.forEach(blade.currentEntities, function (rowEntity) {
+                    angular.forEach($scope.gridOptions.columnDefs, function (colDef) {
+                        $scope.gridApi.grid.validate.runValidators(rowEntity, colDef, rowEntity[colDef.name], undefined, $scope.gridApi.grid)
+                    });
+                });
+            }
         };
 
         blade.refresh();
