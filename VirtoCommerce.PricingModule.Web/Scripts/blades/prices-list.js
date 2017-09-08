@@ -160,7 +160,7 @@
             allPrices = data;
         },
         isListPriceValid: function (data) {
-            return data.list > 0;
+            return data.list >= 0;
         },
         isSalePriceValid: function (data) {
             return _.isUndefined(data.sale) || data.list >= data.sale;
