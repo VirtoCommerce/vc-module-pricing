@@ -26,18 +26,17 @@
             return;
 
         var productPricelistsBlade = {
-            id: "itemPricelists",
-            itemId: blade.itemId,
-            item: blade.item,
-            parentWidgetRefresh: refresh,
-            title: blade.title,
-            subtitle: 'pricing.blades.item-pricelists-list.subtitle',
-            controller: 'virtoCommerce.pricingModule.itemPricelistsListController',
-            template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/item/item-pricelists-list.tpl.html'
+          id: "itemPrices",
+          itemId: blade.itemId,
+          item: blade.item,
+          parentWidgetRefresh: refresh,
+          title: 'pricing.blades.item-prices.title',
+          titleValues: { name: blade.item.name },
+          subtitle: 'pricing.blades.item-prices.subtitle',
+          controller: 'virtoCommerce.pricingModule.itemPriceListController',
+          template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/blades/item/item-prices.tpl.html'
         };
         bladeNavigationService.showBlade(productPricelistsBlade, blade);
-
-
     };
 
     $scope.$watch("widget.blade.catalog.id", function (id) {

@@ -4,7 +4,7 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
     var blade = $scope.blade;
     var bladeNavigationService = bladeUtils.bladeNavigationService;
 
-    blade.refresh = function () {
+    blade.refresh = function (parentRefresh) {
         blade.isLoading = true;
         return pricelists.search({
             sort: uiGridHelper.getSortExpression($scope),
@@ -14,6 +14,11 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
             blade.isLoading = false;
             blade.currentEntities = data.results;
             $scope.pageSettings.totalItems = data.totalCount;
+
+            if (parentRefresh === true && blade.parentRefresh) {
+                blade.parentRefresh();
+            }
+
             return data;
         }).$promise;
     };
@@ -33,7 +38,7 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
                 isNew: true,
                 saveCallback: function (newPricelist) {
                     newBlade.isNew = false;
-                    blade.refresh().then(function () {
+                    blade.refresh(true).then(function () {
                         newBlade.currentEntityId = newPricelist.id;
                         bladeNavigationService.showBlade(newBlade, blade);
                     });
@@ -64,7 +69,7 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
                 if (remove) {
                     bladeNavigationService.closeChildrenBlades(blade, function () {
                         pricelists.remove({ ids: _.pluck(list, 'id') },
-                            blade.refresh,
+                            blade.refresh(true),
                             function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
                     });
                 }
