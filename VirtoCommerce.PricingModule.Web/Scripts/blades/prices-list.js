@@ -109,8 +109,9 @@
     ];
 
     function addNewPrice(targetList) {
-        var newEntity = { productId: blade.itemId, list: 0, minQuantity: 1, currency: blade.currency, priceListId: blade.priceListId };
+        var newEntity = { productId: blade.itemId, list: '', minQuantity: 1, currency: blade.currency, priceListId: blade.priceListId };
         targetList.push(newEntity);
+        $scope.validateGridData();
     }
 
     $scope.isListPriceValid = priceValidatorsService.isListPriceValid;
@@ -119,9 +120,33 @@
 
     // ui-grid
     $scope.setGridOptions = function (gridId, gridOptions) {
+        gridOptions.onRegisterApi = function (gridApi) {
+            $scope.gridApi = gridApi;
+
+            gridApi.edit.on.afterCellEdit($scope, function () {
+                //to process validation for all rows in grid.
+                //e.g. if we have two rows with the same count of min qty, both of this rows will be marked as error.
+                //when we change data to valid in one row, another one should became valid too.
+                //more info about ui-grid validation: https://github.com/angular-ui/ui-grid/issues/4152
+                $scope.validateGridData();
+            });
+
+            $scope.validateGridData();
+        };
+
         $scope.gridOptions = gridOptions;
         gridOptionExtension.tryExtendGridOptions(gridId, gridOptions);
         return gridOptions;
+    };
+
+    $scope.validateGridData = function () {
+        if ($scope.gridApi) {
+            angular.forEach(blade.currentEntities, function (rowEntity) {
+                angular.forEach($scope.gridOptions.columnDefs, function (colDef) {
+                    $scope.gridApi.grid.validate.runValidators(rowEntity, colDef, rowEntity[colDef.name], undefined, $scope.gridApi.grid)
+                });
+            });
+        }
     };
 
     // actions on load
