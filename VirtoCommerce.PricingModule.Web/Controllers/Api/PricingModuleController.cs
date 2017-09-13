@@ -200,7 +200,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpGet]
         [ResponseType(typeof(Price[]))]
         [Route("api/products/{productId}/{catalogId}/pricesWidget")]
-        public IHttpActionResult EvaluateProductPrices(string productId, string catalogId)
+        public IHttpActionResult EvaluateProductPricesForCatalog(string productId, string catalogId)
         {
             var priceEvalContext = new PriceEvaluationContext
             {
