@@ -1,6 +1,6 @@
 ﻿<div class="blade-static __expanded">
     <div class="form-group">
-        <label class="form-label head-label">{{'pricing.blades.item-prices.head-label' | translate}} <a href="" ng-click="createNewPricelist()" class="form-edit" va-permission="pricing:read"><i class="form-ico fa fa-pencil"></i></a></label>
+        <label class="form-label head-label">{{'pricing.blades.item-prices.head-label' | translate}} <a href="" ng-click="createNewPricelist()" class="form-edit" va-permission="pricing:read"><em class="form-ico fa fa-pencil"></em></a></label>
 
         <div class="form-input">
             <ui-select ng-model="blade.selectedPricelist" class="head-select" required>
@@ -10,7 +10,7 @@
                 </ui-select-choices>
             </ui-select>
 
-            <button class="btn head-button" type="button" ng-disabled="!blade.selectedPricelist" ng-click="blade.addNewPrice(blade.selectedPricelist)">Add new price</button>
+            <button class="btn add-price-button" type="button" ng-disabled="!blade.selectedPricelist" ng-click="blade.addNewPrice(blade.selectedPricelist)">Add new price</button>
         </div>
     </div>
 </div>

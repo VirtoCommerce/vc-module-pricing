@@ -47,8 +47,8 @@
                         });
                     });
 
-                    priceValidatorsService.setAllPrices(blade.currentEntities);
                     blade.currentEntities = angular.copy(blade.origEntity);
+                    priceValidatorsService.setAllPrices(blade.currentEntities);
                     blade.isLoading = false;
                 });
             });

@@ -7,7 +7,7 @@
     width: calc(100% - 120px);
 }
 
-button.btn.head-button {
+button.btn.add-price-button {
     background: #43b0e6;
     color: #fff;
     height: 30px;
@@ -15,6 +15,6 @@ button.btn.head-button {
     padding: 0 10px;
 }
 
-    button.btn.head-button:hover {
+    button.btn.add-price-button:hover {
         background: #43b0e6;
     }
