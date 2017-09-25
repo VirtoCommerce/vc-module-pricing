@@ -22,7 +22,7 @@ Installing the module:
 # Available resources
 * Module related service implementations as a <a href="https://www.nuget.org/packages/VirtoCommerce.PricingModule.Data" target="_blank">NuGet package</a>
 * API client as a <a href="https://www.nuget.org/packages/VirtoCommerce.PricingModule.Client" target="_blank">NuGet package</a>
-* API client documentation http://demo.virtocommerce.com/admin/docs/ui/index#!/Pricing_module
+* API client documentation http://admin-demo.virtocommerce.com/docs/ui/index#!/Pricing_module
 
 # License
 Copyright (c) Virtosoftware Ltd.  All rights reserved.
