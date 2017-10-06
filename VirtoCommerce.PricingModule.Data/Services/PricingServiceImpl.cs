@@ -54,7 +54,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 using (var repository = _repositoryFactory())
                 {
                     var allAssignments = repository.PricelistAssignments.Include(x => x.Pricelist).ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
-                    foreach (var assignment in allAssignments)
+                    foreach (var assignment in allAssignments.Where(x => !string.IsNullOrEmpty(x.ConditionExpression)))
                     {
                         try
                         {
