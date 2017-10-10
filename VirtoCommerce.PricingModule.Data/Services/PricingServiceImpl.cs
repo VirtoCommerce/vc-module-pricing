@@ -54,7 +54,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 using (var repository = _repositoryFactory())
                 {
                     var allAssignments = repository.PricelistAssignments.Include(x => x.Pricelist).ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
-                    foreach (var assignment in allAssignments)
+                    foreach (var assignment in allAssignments.Where(x => !string.IsNullOrEmpty(x.ConditionExpression)))
                     {
                         try
                         {
@@ -222,34 +222,34 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 using (var repository = _repositoryFactory())
                 {
-                    result = repository.GetPricelistAssignmentsById(ids).Select(x=> x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
-                }             
-            }
+                    result = repository.GetPricelistAssignmentsById(ids).Select(x => x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
+                }
 
-            //Prepare expression tree for resulting assignments and include available  nodes to expression tree
-            foreach(var assignment in result)
-            {
-                var defaultExpressionTree = _extensionManager.ConditionExpressionTree;
-                //Set default expression tree first
-                assignment.DynamicExpression = defaultExpressionTree;
-                if (!string.IsNullOrEmpty(assignment.PredicateVisualTreeSerialized))
+                //Prepare expression tree for resulting assignments and include available  nodes to expression tree
+                foreach (var assignment in result)
                 {
-                    assignment.DynamicExpression = JsonConvert.DeserializeObject<ConditionExpressionTree>(assignment.PredicateVisualTreeSerialized);
-                    if (defaultExpressionTree != null)
+                    var defaultExpressionTree = _extensionManager.ConditionExpressionTree;
+                    //Set default expression tree first
+                    assignment.DynamicExpression = defaultExpressionTree;
+                    if (!string.IsNullOrEmpty(assignment.PredicateVisualTreeSerialized))
                     {
-                        //Copy available elements from default tree because they not persisted
-                        var sourceBlocks = ((DynamicExpression)defaultExpressionTree).Traverse(x => x.Children);
-                        var targetBlocks = ((DynamicExpression)assignment.DynamicExpression).Traverse(x => x.Children).ToList();
-
-                        foreach (var sourceBlock in sourceBlocks)
+                        assignment.DynamicExpression = JsonConvert.DeserializeObject<ConditionExpressionTree>(assignment.PredicateVisualTreeSerialized);
+                        if (defaultExpressionTree != null)
                         {
-                            foreach (var targetBlock in targetBlocks.Where(x => x.Id == sourceBlock.Id))
+                            //Copy available elements from default tree because they not persisted
+                            var sourceBlocks = ((DynamicExpression)defaultExpressionTree).Traverse(x => x.Children);
+                            var targetBlocks = ((DynamicExpression)assignment.DynamicExpression).Traverse(x => x.Children).ToList();
+
+                            foreach (var sourceBlock in sourceBlocks)
                             {
-                                targetBlock.AvailableChildren = sourceBlock.AvailableChildren;
+                                foreach (var targetBlock in targetBlocks.Where(x => x.Id == sourceBlock.Id))
+                                {
+                                    targetBlock.AvailableChildren = sourceBlock.AvailableChildren;
+                                }
                             }
+                            //copy available elements from default expression tree
+                            assignment.DynamicExpression.AvailableChildren = defaultExpressionTree.AvailableChildren;
                         }
-                        //copy available elements from default expression tree
-                        assignment.DynamicExpression.AvailableChildren = defaultExpressionTree.AvailableChildren;
                     }
                 }
             }
