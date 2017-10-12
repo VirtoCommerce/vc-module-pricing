@@ -87,9 +87,12 @@
                     "price-list": "Price list",
                     "catalog": "Catalog",
                     "priority": "Priority",
+                    "priority-description": "The higher will be used first",
                     "description": "Description",
-                    "enable-date": "Enable date (leave blank if always available)",
-                    "expiration-date": "Expiration date (leave blank if always available)",
+                    "enable-date": "Enable date",
+                    "enable-date-description": "Leave blank if always available",
+                    "expiration-date": "Expiration date",
+                    "expiration-date-description": "Leave blank if always available",
                     "eligible-shoppers": "Eligible shoppers"
                 },
                 "placeholders": {
