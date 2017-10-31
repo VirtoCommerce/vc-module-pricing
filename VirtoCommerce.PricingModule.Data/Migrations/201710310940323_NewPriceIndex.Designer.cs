@@ -13,7 +13,7 @@ namespace VirtoCommerce.PricingModule.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201710310827507_NewPriceIndex"; }
+            get { return "201710310940323_NewPriceIndex"; }
         }
         
         string IMigrationMetadata.Source

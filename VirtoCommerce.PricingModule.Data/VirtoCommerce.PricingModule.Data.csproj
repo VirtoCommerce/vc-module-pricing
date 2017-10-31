@@ -92,9 +92,9 @@
     <Compile Include="Migrations\201505131253288_DropDescriminator.Designer.cs">
       <DependentUpon>201505131253288_DropDescriminator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710310827507_NewPriceIndex.cs" />
-    <Compile Include="Migrations\201710310827507_NewPriceIndex.Designer.cs">
-      <DependentUpon>201710310827507_NewPriceIndex.cs</DependentUpon>
+    <Compile Include="Migrations\201710310940323_NewPriceIndex.cs" />
+    <Compile Include="Migrations\201710310940323_NewPriceIndex.Designer.cs">
+      <DependentUpon>201710310940323_NewPriceIndex.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\PriceEntity.cs" />
@@ -119,8 +119,8 @@
     <EmbeddedResource Include="Migrations\201504291837167_Initial.resx">
       <DependentUpon>201504291837167_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710310827507_NewPriceIndex.resx">
-      <DependentUpon>201710310827507_NewPriceIndex.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201710310940323_NewPriceIndex.resx">
+      <DependentUpon>201710310940323_NewPriceIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
