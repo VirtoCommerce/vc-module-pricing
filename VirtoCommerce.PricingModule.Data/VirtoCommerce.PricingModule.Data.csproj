@@ -70,17 +70,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.23.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.23.0\lib\net461\VirtoCommerce.Domain.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="VirtoCommerce.Domain, Version=2.24.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.24.14\lib\net461\VirtoCommerce.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Core, Version=2.13.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.13.9\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="VirtoCommerce.Platform.Core, Version=2.13.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.13.17\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Data, Version=2.13.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Data.2.13.9\lib\net461\VirtoCommerce.Platform.Data.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="VirtoCommerce.Platform.Data, Version=2.13.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Data.2.13.17\lib\net461\VirtoCommerce.Platform.Data.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +91,10 @@
     <Compile Include="Migrations\201505131253288_DropDescriminator.cs" />
     <Compile Include="Migrations\201505131253288_DropDescriminator.Designer.cs">
       <DependentUpon>201505131253288_DropDescriminator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710310827507_NewPriceIndex.cs" />
+    <Compile Include="Migrations\201710310827507_NewPriceIndex.Designer.cs">
+      <DependentUpon>201710310827507_NewPriceIndex.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\PriceEntity.cs" />
@@ -117,6 +118,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201504291837167_Initial.resx">
       <DependentUpon>201504291837167_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710310827507_NewPriceIndex.resx">
+      <DependentUpon>201710310827507_NewPriceIndex.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
