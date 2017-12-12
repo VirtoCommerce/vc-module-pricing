@@ -156,19 +156,32 @@ namespace VirtoCommerce.PricingModule.Data.Services
             foreach(var productId in evalContext.ProductIds)
             {
                 var productPrices = prices.Where(x => x.ProductId == productId);
-                //Order by priority
-                foreach (var currencyPricesGroup in productPrices.GroupBy(x => x.Currency))
+
+                if (evalContext.GetPricePerCurrencyByPriority)
                 {
-                    var groupPrices = currencyPricesGroup.OrderBy(x => Math.Min(x.Sale ?? x.List, x.List));
-                    if (!evalContext.PricelistIds.IsNullOrEmpty())
+                    //Order by priority
+                    foreach (var currencyPricesGroup in productPrices.GroupBy(x => x.Currency))
                     {
-                        //return only prices from one prioritized price list
-                        var prioritedPriceListId = evalContext.PricelistIds.FirstOrDefault(x => groupPrices.Any(y => y.PricelistId == x));
-                        if(prioritedPriceListId != null)
+                        var groupPrices = currencyPricesGroup.OrderBy(x => Math.Min(x.Sale ?? x.List, x.List));
+                        if (!evalContext.PricelistIds.IsNullOrEmpty())
                         {
-                            retVal.AddRange(groupPrices.Where(x => x.PricelistId == prioritedPriceListId));
-                        }                      
+                            //return only prices from one prioritized price list
+                            var prioritedPriceListId =
+                                evalContext.PricelistIds.FirstOrDefault(x => groupPrices.Any(y => y.PricelistId == x));
+                            if (prioritedPriceListId != null)
+                            {
+                                retVal.AddRange(groupPrices.Where(x => x.PricelistId == prioritedPriceListId));
+                            }
+                        }
                     }
+                }
+                else
+                {
+                    // Get all prices, ordered by currency and priority.
+                    var orderedPrices = productPrices.OrderBy(x => x.Currency)
+                        .ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
+
+                    retVal.AddRange(orderedPrices);
                 }
             }    
                  
