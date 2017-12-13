@@ -156,13 +156,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
             foreach(var productId in evalContext.ProductIds)
             {
                 var productPrices = prices.Where(x => x.ProductId == productId);
-
+                //Need to filter the prices which belongs only to given price lists
+                if (!evalContext.PricelistIds.IsNullOrEmpty())
+                {
+                    productPrices = productPrices.Where(x=> evalContext.PricelistIds.Contains(x.PricelistId));
+                }
                 if (evalContext.ReturnAllMatchedPrices)
                 {
-                    // Get all prices, ordered by currency and priority.
-                    var orderedPrices = productPrices.OrderBy(x => x.Currency)
-                        .ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
-
+                    // Get all prices, ordered by currency and amount.
+                    var orderedPrices = productPrices.OrderBy(x => x.Currency).ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
                     retVal.AddRange(orderedPrices);
                 }
                 else
