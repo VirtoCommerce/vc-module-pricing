@@ -120,8 +120,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
         }
 
         /// <summary>
-        /// Evaluation product prices. For the one product will be returned only prices from a single price list for each currency. 
-        /// Appropriate price list will be selected based  on price list index position  in evaluation context.
+        /// Evaluation product prices.
+        /// Will get either all prices or one price per currency depending on the settings in evalContext.
         /// </summary>
         /// <param name="evalContext"></param>
         /// <returns></returns>
@@ -157,7 +157,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 var productPrices = prices.Where(x => x.ProductId == productId);
 
-                if (evalContext.GetPricePerCurrencyByPriority)
+                if (evalContext.ReturnAllMatchedPrices)
+                {
+                    // Get all prices, ordered by currency and priority.
+                    var orderedPrices = productPrices.OrderBy(x => x.Currency)
+                        .ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
+
+                    retVal.AddRange(orderedPrices);
+                }
+                else
                 {
                     //Order by priority
                     foreach (var currencyPricesGroup in productPrices.GroupBy(x => x.Currency))
@@ -174,14 +182,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
                             }
                         }
                     }
-                }
-                else
-                {
-                    // Get all prices, ordered by currency and priority.
-                    var orderedPrices = productPrices.OrderBy(x => x.Currency)
-                        .ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
-
-                    retVal.AddRange(orderedPrices);
                 }
             }    
                  
