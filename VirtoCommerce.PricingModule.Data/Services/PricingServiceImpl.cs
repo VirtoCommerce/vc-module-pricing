@@ -171,8 +171,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         if (!evalContext.PricelistIds.IsNullOrEmpty())
                         {
                             //return only prices from one prioritized price list
-                            var prioritedPriceListId =
-                                evalContext.PricelistIds.FirstOrDefault(x => groupPrices.Any(y => y.PricelistId == x));
+                            var prioritedPriceListId = evalContext.PricelistIds.FirstOrDefault(x => groupPrices.Any(y => y.PricelistId == x));
                             if (prioritedPriceListId != null)
                             {
                                 retVal.AddRange(groupPrices.Where(x => x.PricelistId == prioritedPriceListId));
