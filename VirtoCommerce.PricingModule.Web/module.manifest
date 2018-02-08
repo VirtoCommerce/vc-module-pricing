@@ -19,7 +19,7 @@
     <projectUrl>https://virtocommerce.com/apps/extensions/virto-pricing-module</projectUrl>
     <iconUrl>https://github.com/VirtoCommerce/vc-module-pricing/raw/master/VirtoCommerce.PricingModule.Web/Content/logo.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2017 Virto Commerce. All rights reserved</copyright>
+    <copyright>Copyright © 2011-2018 Virto Commerce. All rights reserved</copyright>
     <tags>price pricelist merchandise</tags>
 
     <assemblyFile>VirtoCommerce.PricingModule.Web.dll</assemblyFile>
