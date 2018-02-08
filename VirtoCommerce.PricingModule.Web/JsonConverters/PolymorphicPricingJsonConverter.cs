@@ -13,7 +13,8 @@ namespace VirtoCommerce.PricingModule.Web.JsonConverters
 {
     public class PolymorphicPricingJsonConverter : JsonConverter
     {
-        private static Type[] _knowTypes = new[] { typeof(Price), typeof(Pricelist), typeof(PricelistAssignment), 
+        private static Type[] _knowTypes = new[] { typeof(Price), typeof(Pricelist), typeof(PricelistAssignment),
+                                                   typeof(PriceEvaluationContext),
                                                    typeof(PricesSearchCriteria), typeof(PricelistAssignmentsSearchCriteria), typeof(PricelistSearchCriteria) };
 
         public PolymorphicPricingJsonConverter()
