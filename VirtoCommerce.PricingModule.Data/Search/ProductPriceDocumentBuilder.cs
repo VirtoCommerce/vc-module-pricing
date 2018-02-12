@@ -55,7 +55,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
         {
             var evalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             evalContext.ProductIds = productIds.ToArray();
-            
+
             return _pricingService.EvaluateProductPrices(evalContext).ToList();
         }
     }

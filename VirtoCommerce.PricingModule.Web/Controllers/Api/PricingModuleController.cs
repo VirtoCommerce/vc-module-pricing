@@ -91,7 +91,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         {
             var result = AbstractTypeFactory<PricelistAssignment>.TryCreateInstance();
             result.Priority = 1;
-            result.DynamicExpression = _extensionManager.ConditionExpressionTree;          
+            result.DynamicExpression = _extensionManager.ConditionExpressionTree;
             return Ok(result);
         }
 
@@ -108,7 +108,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 criteria = new PricelistSearchCriteria();
             }
-            var result = _pricingSearchService.SearchPricelists(criteria);         
+            var result = _pricingSearchService.SearchPricelists(criteria);
             return Ok(result);
         }
 
@@ -125,7 +125,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 criteria = new PricelistAssignmentsSearchCriteria();
             }
-            var result = _pricingSearchService.SearchPricelistAssignments(criteria);  
+            var result = _pricingSearchService.SearchPricelistAssignments(criteria);
             return Ok(result);
         }
 
@@ -149,7 +149,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 Results = new List<webModel.ProductPrice>()
             };
 
-            var products = _itemService.GetByIds(result.Results.Select(x=>x.ProductId).Distinct().ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
+            var products = _itemService.GetByIds(result.Results.Select(x => x.ProductId).Distinct().ToArray(), Domain.Catalog.Model.ItemResponseGroup.ItemInfo);
             foreach (var productPricesGroup in result.Results.GroupBy(x => x.ProductId))
             {
                 var productPrice = new webModel.ProductPrice
@@ -180,7 +180,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         {
             var priceEvalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             priceEvalContext.ProductIds = new[] { productId };
-                        
+
             var product = _itemService.GetByIds(new[] { productId }, Domain.Catalog.Model.ItemResponseGroup.ItemInfo).FirstOrDefault();
             if (product != null)
             {
@@ -203,7 +203,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             var priceEvalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             priceEvalContext.ProductIds = new[] { productId };
             priceEvalContext.CatalogId = catalogId;
-            
+
             return EvaluatePrices(priceEvalContext);
         }
 
@@ -318,7 +318,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/{id}")]
         public IHttpActionResult GetPriceListById(string id)
         {
-            var pricelist = _pricingService.GetPricelistsById(new[] { id }).FirstOrDefault();           
+            var pricelist = _pricingService.GetPricelistsById(new[] { id }).FirstOrDefault();
             return Ok(pricelist);
         }
 
@@ -331,7 +331,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists")]
         [CheckPermission(Permission = PricingPredefinedPermissions.Create)]
         public IHttpActionResult CreatePriceList(Pricelist priceList)
-        {         
+        {
             _pricingService.SavePricelists(new[] { priceList });
             return Ok(priceList);
         }
