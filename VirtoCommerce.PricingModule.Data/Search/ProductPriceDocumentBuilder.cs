@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Domain.Search;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
@@ -52,7 +53,9 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
         protected virtual IList<Price> GetProductPrices(IList<string> productIds)
         {
-            var evalContext = new PriceEvaluationContext { ProductIds = productIds.ToArray() };
+            var evalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
+            evalContext.ProductIds = productIds.ToArray();
+
             return _pricingService.EvaluateProductPrices(evalContext).ToList();
         }
     }
