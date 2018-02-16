@@ -59,6 +59,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     products = catalogSearchResult.Products;
                 }
 
+                if (criteria.Modified.HasValue)
+                {
+                    query = query.Where(x => x.ModifiedDate >= criteria.Modified);
+                }
+
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
