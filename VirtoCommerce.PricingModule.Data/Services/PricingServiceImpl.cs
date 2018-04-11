@@ -152,7 +152,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
             }
 
-            var pricelistIds = evalContext.PricelistIds?.ToList();
+            var priceListOrdererList = evalContext.PricelistIds?.ToList();
 
             foreach (var productId in evalContext.ProductIds)
             {
@@ -163,30 +163,29 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var orderedPrices = productPrices.OrderBy(x => x.Currency).ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
                     retVal.AddRange(orderedPrices);
                 }
-                else if (!pricelistIds.IsNullOrEmpty())
+                else if (!priceListOrdererList.IsNullOrEmpty())
                 {
-                    // Group by Currency and by MinQuantity
-                    foreach (var currencyPricesGroup in productPrices.GroupBy(x => x.Currency))
-                    {
-                        // as pricelistIds are sorted by priority (descending), prioritizedPricelistIdx will store "index of Pricelist with minimal acceptable priority"
-                        var prioritizedPricelistIdx = int.MaxValue;
-                        // take prices with lower MinQuantity first
-                        foreach (var quantityPricesGroup in currencyPricesGroup.GroupBy(x => x.MinQuantity).OrderBy(x => x.Key))
-                        {
-                            // minimal price from most prioritized Pricelist
-                            var price = quantityPricesGroup.Where(x => pricelistIds.Contains(x.PricelistId))
-                                .OrderBy(x => pricelistIds.FindIndex(y => y == x.PricelistId))
-                                .ThenBy(x => Math.Min(x.Sale ?? x.List, x.List))
-                                .FirstOrDefault();
+                    // as priceListOrdererList is sorted by priority (descending), we save PricelistId's index as Priority
+                    var priceTuples = productPrices
+                        .Select(x => new { Price = x, x.Currency, x.MinQuantity, Priority = priceListOrdererList.IndexOf(x.PricelistId) })
+                        .Where(x => x.Priority > -1);
 
-                            if (price != null)
+                    // Group by Currency and by MinQuantity
+                    foreach (var pricesGroupByCurrency in priceTuples.GroupBy(x => x.Currency))
+                    {
+                        var minAcceptablePriority = int.MaxValue;
+                        // take prices with lower MinQuantity first
+                        foreach (var pricesGroupByMinQuantity in pricesGroupByCurrency.GroupBy(x => x.MinQuantity).OrderBy(x => x.Key))
+                        {
+                            // take minimal price from most prioritized Pricelist
+                            var groupAcceptablePrice = pricesGroupByMinQuantity.OrderBy(x => x.Priority)
+                                                                            .ThenBy(x => Math.Min(x.Price.Sale ?? x.Price.List, x.Price.List))
+                                                                            .First();
+
+                            if (minAcceptablePriority >= groupAcceptablePrice.Priority)
                             {
-                                var currentPricelistIdx = pricelistIds.FindIndex(y => y == price.PricelistId);
-                                if (prioritizedPricelistIdx >= currentPricelistIdx)
-                                {
-                                    prioritizedPricelistIdx = currentPricelistIdx;
-                                    retVal.Add(price);
-                                }
+                                minAcceptablePriority = groupAcceptablePrice.Priority;
+                                retVal.Add(groupAcceptablePrice.Price);
                             }
                         }
                     }
