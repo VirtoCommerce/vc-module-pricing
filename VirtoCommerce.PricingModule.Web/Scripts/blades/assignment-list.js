@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.assignmentListController', ['$scope', 'virtoCommerce.pricingModule.pricelistAssignments', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'virtoCommerce.catalogModule.catalogs',
 function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
@@ -21,7 +21,10 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
 
                 var priceAssignments = data.results;
                 _.each(priceAssignments, function (x) {
-                    x.catalog = _.findWhere(results, { id: x.catalogId }).name;
+                    var catalog = _.findWhere(results, { id: x.catalogId });
+                    if (catalog) {
+                        x.catalog = catalog.name;
+                    }
                 });
 
                 blade.currentEntities = priceAssignments;
