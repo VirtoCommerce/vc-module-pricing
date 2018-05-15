@@ -6,6 +6,7 @@ using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.PricingModule.Web.ExportImport
 {
@@ -20,11 +21,32 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
     {
         private readonly IPricingService _pricingService;
         private readonly IPricingSearchService _pricingSearchService;
+        private readonly ISettingsManager _settingsManager;
 
-        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService)
+        private int? _batchSize;
+
+        public PricingExportImport(
+            IPricingService pricingService,
+            IPricingSearchService pricingSearchService,
+            ISettingsManager settingsManager
+            )
         {
             _pricingService = pricingService;
             _pricingSearchService = pricingSearchService;
+            _settingsManager = settingsManager;
+        }
+
+        private int BatchSize
+        {
+            get
+            {
+                if (_batchSize == null)
+                {
+                    _batchSize = _settingsManager.GetValue("Pricing.ExportImport.PageSize", 50);
+                }
+
+                return (int) _batchSize;
+            }
         }
 
         public void DoExport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
@@ -45,10 +67,9 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
             _pricingService.SavePricelistAssignments(backupObject.Assignments.ToArray());
 
             progressInfo.TotalCount = backupObject.Prices.Count();
-            var chunkSize = 500;
-            for (int i = 0; i <= backupObject.Prices.Count(); i += chunkSize)
+            for (int i = 0; i <= backupObject.Prices.Count(); i += BatchSize)
             {
-                var prices = backupObject.Prices.Skip(i).Take(chunkSize).ToArray();
+                var prices = backupObject.Prices.Skip(i).Take(BatchSize).ToArray();
                 _pricingService.SavePrices(prices);
                 progressInfo.ProcessedCount += prices.Count();
                 progressInfo.Description = string.Format("Prices: {0} of {1} importing...", progressInfo.ProcessedCount, progressInfo.TotalCount);

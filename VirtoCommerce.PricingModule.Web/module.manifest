@@ -41,6 +41,13 @@
                 <title>Export/Import description</title>
                 <description>Module description in platform export/import wizard</description>
             </setting>
+            <setting>
+                <name>Pricing.ExportImport.PageSize</name>
+                <valueType>integer</valueType>
+                <defaultValue>50</defaultValue>
+                <title>The page size being used for Export / Import</title>
+                <description>High value may will cause slow performance</description>
+            </setting>
         </group>
     </settings>
 
