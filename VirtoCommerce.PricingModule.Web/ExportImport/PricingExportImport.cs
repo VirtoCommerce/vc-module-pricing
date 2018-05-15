@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,17 +29,17 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
         public void DoExport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
-  			var backupObject = GetBackupObject(progressCallback);
+            var backupObject = GetBackupObject(progressCallback);
             backupObject.SerializeJson(backupStream);
         }
 
         public void DoImport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
             var backupObject = backupStream.DeserializeJson<BackupObject>();
-	    	var progressInfo = new ExportImportProgressInfo();
+            var progressInfo = new ExportImportProgressInfo();
 
-			progressInfo.Description = String.Format("{0} price lists importing...", backupObject.Pricelists.Count());
-			progressCallback(progressInfo);
+            progressInfo.Description = String.Format("{0} price lists importing...", backupObject.Pricelists.Count());
+            progressCallback(progressInfo);
 
             _pricingService.SavePricelists(backupObject.Pricelists.ToArray());
             _pricingService.SavePricelistAssignments(backupObject.Assignments.ToArray());
@@ -55,9 +55,8 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
                 progressCallback(progressInfo);
             }
         }
-
    
-		private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
+        private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
         {
             var priceListsResult = _pricingSearchService.SearchPricelists(new Domain.Pricing.Model.Search.PricelistSearchCriteria { Take = int.MaxValue });
             //remove redundant info to decrease serialization size
@@ -72,7 +71,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
                 assignment.DynamicExpression = null;
             }
             var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , priceListsResult.TotalCount)};
-			progressCallback(progressInfo);
+            progressCallback(progressInfo);
             var retVal = new BackupObject
             {
                 Pricelists = priceListsResult.Results,
