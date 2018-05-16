@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +6,7 @@ using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.Settings;
 
 namespace VirtoCommerce.PricingModule.Web.ExportImport
 {
@@ -20,44 +21,63 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
     {
         private readonly IPricingService _pricingService;
         private readonly IPricingSearchService _pricingSearchService;
+        private readonly ISettingsManager _settingsManager;
 
-        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService)
+        private int? _batchSize;
+
+        public PricingExportImport(
+            IPricingService pricingService,
+            IPricingSearchService pricingSearchService,
+            ISettingsManager settingsManager
+            )
         {
             _pricingService = pricingService;
             _pricingSearchService = pricingSearchService;
+            _settingsManager = settingsManager;
+        }
+
+        private int BatchSize
+        {
+            get
+            {
+                if (_batchSize == null)
+                {
+                    _batchSize = _settingsManager.GetValue("Pricing.ExportImport.PageSize", 50);
+                }
+
+                return (int) _batchSize;
+            }
         }
 
         public void DoExport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
-  			var backupObject = GetBackupObject(progressCallback);
+            var backupObject = GetBackupObject(progressCallback);
             backupObject.SerializeJson(backupStream);
         }
 
         public void DoImport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
             var backupObject = backupStream.DeserializeJson<BackupObject>();
-	    	var progressInfo = new ExportImportProgressInfo();
+            var progressInfo = new ExportImportProgressInfo();
 
-			progressInfo.Description = String.Format("{0} price lists importing...", backupObject.Pricelists.Count());
-			progressCallback(progressInfo);
+            progressInfo.Description = String.Format("{0} price lists importing...", backupObject.Pricelists.Count());
+            progressCallback(progressInfo);
 
             _pricingService.SavePricelists(backupObject.Pricelists.ToArray());
             _pricingService.SavePricelistAssignments(backupObject.Assignments.ToArray());
 
             progressInfo.TotalCount = backupObject.Prices.Count();
-            var chunkSize = 500;
-            for (int i = 0; i <= backupObject.Prices.Count(); i += chunkSize)
+            for (int i = 0; i <= backupObject.Prices.Count(); i += BatchSize)
             {
-                var prices = backupObject.Prices.Skip(i).Take(chunkSize).ToArray();
+                var prices = backupObject.Prices.Skip(i).Take(BatchSize).ToArray();
                 _pricingService.SavePrices(prices);
                 progressInfo.ProcessedCount += prices.Count();
                 progressInfo.Description = string.Format("Prices: {0} of {1} importing...", progressInfo.ProcessedCount, progressInfo.TotalCount);
                 progressCallback(progressInfo);
             }
         }
-
    
-		private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
+        private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
         {
             var priceListsResult = _pricingSearchService.SearchPricelists(new Domain.Pricing.Model.Search.PricelistSearchCriteria { Take = int.MaxValue });
             //remove redundant info to decrease serialization size
@@ -72,7 +92,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
                 assignment.DynamicExpression = null;
             }
             var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , priceListsResult.TotalCount)};
-			progressCallback(progressInfo);
+            progressCallback(progressInfo);
             var retVal = new BackupObject
             {
                 Pricelists = priceListsResult.Results,
