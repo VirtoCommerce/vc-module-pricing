@@ -38,7 +38,7 @@ namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
             }
         }
 
-        public IEnumerable<T> FetchArray<T>(string property) where T : class
+        public IEnumerable<T> FetchArray<T>(string property)
         {
             bool continuation = false;
 
@@ -58,7 +58,7 @@ namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
                         Reader.Read();
                     }
 
-                    if (Reader.TokenType == JsonToken.StartObject)
+                    if (Reader.TokenType != JsonToken.EndArray && Reader.TokenType != JsonToken.PropertyName)
                     {
                         continuation = true;
                         var obj = serializer.Deserialize<T>(Reader);

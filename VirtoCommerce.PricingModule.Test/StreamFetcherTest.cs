@@ -124,6 +124,78 @@ namespace VirtoCommerce.PricingModule.Tests
             }
         }
 
+        [Fact]
+        public void MultiTypesTest()
+        {
+            var data = Serialize(
+                new
+                {
+                    a = 1,
+                    b = new N { name = "name1" },
+                    c = new[]
+                    {
+                        new N { name = "name2" },
+                        new N { name = "name3" }
+                    },
+                    d = "test",
+                    e = new[] { 123, 321 },
+                    f = new[] { "test2", "test3" }
+                });
+
+            using (var fetcher = GetFactory().Create(GetStreamFromString(data)))
+            {
+                var a = fetcher.FetchSingle<int>("a");
+
+                var b = fetcher.FetchSingle<N>("b");
+
+                var c = fetcher.FetchArray<N>("c").ToList();
+
+                var d = fetcher.FetchSingle<string>("d");
+
+                var e = fetcher.FetchArray<int>("e").ToList();
+
+                var f = fetcher.FetchArray<string>("f").ToList();
+
+                Assert.Equal(1, a);
+
+                Assert.Equal("name1", b.name);
+
+                Assert.Equal(2, c.Count);
+                Assert.Equal("name3", c[1].name);
+
+                Assert.Equal("test", d);
+
+                Assert.Equal(123, e[0]);
+                Assert.Equal(2, e.Count);
+
+                Assert.Equal(2, f.Count);
+                Assert.Equal("test3", f[1]);
+            }
+        }
+
+        [Fact]
+        public void SkipOnePrepertyTest()
+        {
+            var data = Serialize(
+                new
+                {
+                    a = 1,
+                    b = new N { name = "name1" },
+                    c = new[]
+                    {
+                        new N { name = "name2" },
+                        new N { name = "name3" }
+                    }});
+
+            using (var fetcher = GetFactory().Create(GetStreamFromString(data)))
+            {
+                var c = fetcher.FetchArray<N>("c").ToList();
+
+                Assert.Equal(2, c.Count);
+                Assert.Equal("name3", c[1].name);
+            }
+        }
+
         private Stream GetStreamFromString(string value)
         {
             var stream = new MemoryStream();
