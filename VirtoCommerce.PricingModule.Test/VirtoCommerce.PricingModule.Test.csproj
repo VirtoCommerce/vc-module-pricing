@@ -112,6 +112,8 @@
     <Compile Include="MigrationScenarios.cs" />
     <Compile Include="PriceScenarios.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FetchersResolverTest.cs" />
+    <Compile Include="StreamFetcherTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
