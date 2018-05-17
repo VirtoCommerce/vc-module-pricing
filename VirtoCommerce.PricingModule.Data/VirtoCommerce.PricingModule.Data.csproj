@@ -107,6 +107,7 @@
     <Compile Include="Search\ProductPriceDocumentChangesProvider.cs" />
     <Compile Include="Services\PricingSearchServiceImpl.cs" />
     <Compile Include="Services\PricingServiceImpl.cs" />
+    <Compile Include="StreamJsonFetcher\IFetcherResolver.cs" />
     <Compile Include="StreamJsonFetcher\JsonSerializerFactory.cs" />
     <Compile Include="StreamJsonFetcher\PrimitiveFetcherResolver.cs" />
     <Compile Include="StreamJsonFetcher\PrimitivesFetcher\IFetcher.cs" />
