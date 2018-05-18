@@ -1,14 +1,12 @@
-using System;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using VirtoCommerce.PricingModule.Data.StreamJsonFetcher;
-using VirtoCommerce.PricingModule.Data.StreamJsonFetcher.PrimitivesFetcher;
 using Xunit;
 
 namespace VirtoCommerce.PricingModule.Tests
 {
-    
+
     public class StreamFetcherTest
     {
 
@@ -213,12 +211,7 @@ namespace VirtoCommerce.PricingModule.Tests
 
         private static StreamFetcherFactory GetFactory()
         {
-            return new StreamFetcherFactory(GetJsonSerializerFactory(), GetResolver());
-        }
-
-        private static PrimitiveFetcherResolver GetResolver()
-        {
-            return new PrimitiveFetcherResolver(new ValueTypeFetcherFactory(GetJsonSerializerFactory()));
+            return new StreamFetcherFactory(GetJsonSerializerFactory());
         }
 
         private static JsonSerializerFactory GetJsonSerializerFactory()

@@ -25,11 +25,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
         private int? _batchSize;
 
-        public PricingExportImport(
-            IPricingService pricingService,
-            IPricingSearchService pricingSearchService,
-            ISettingsManager settingsManager
-            )
+        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService, ISettingsManager settingsManager)
         {
             _pricingService = pricingService;
             _pricingSearchService = pricingSearchService;

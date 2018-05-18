@@ -3,26 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
-using VirtoCommerce.PricingModule.Data.StreamJsonFetcher.PrimitivesFetcher;
 
-[assembly:InternalsVisibleTo("VirtoCommerce.PricingModule.Test")]
+[assembly: InternalsVisibleTo("VirtoCommerce.PricingModule.Test")]
 namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
 {
     internal class StreamFetcher : IDisposable
     {
-        private readonly JsonSerializerFactory _serializerFactory;
+        private readonly JsonSerializer _serializer;
         private readonly Stream _stream;
-        private readonly IFetcherResolver _resolver;
 
         private JsonTextReader _jsonTextReader;
         private StreamReader _streamReader;
         
 
-        public StreamFetcher(JsonSerializerFactory jsonSerializerFactory, Stream stream, IFetcherResolver resolver)
+        public StreamFetcher(JsonSerializerFactory jsonSerializerFactory, Stream stream)
         {
-            _serializerFactory = jsonSerializerFactory;
+            _serializer = jsonSerializerFactory.Create();
             _stream = stream;
-            _resolver = resolver;
         }
 
         private JsonTextReader Reader
@@ -42,8 +39,6 @@ namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
         {
             bool continuation = false;
 
-            var serializer = _serializerFactory.Create();
-
             while (Reader.Read())
             {
                 if (Reader.TokenType == JsonToken.PropertyName || continuation)
@@ -61,7 +56,7 @@ namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
                     if (Reader.TokenType != JsonToken.EndArray && Reader.TokenType != JsonToken.PropertyName)
                     {
                         continuation = true;
-                        var obj = serializer.Deserialize<T>(Reader);
+                        var obj = _serializer.Deserialize<T>(Reader);
 
                         yield return obj;
                     }
@@ -85,7 +80,7 @@ namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
                         Reader.Read();
                     }
 
-                    return _resolver.Resolve<T>().Fetch(Reader);
+                    return _serializer.Deserialize<T>(Reader);
                 }
             }
 

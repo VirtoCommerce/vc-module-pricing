@@ -6,17 +6,15 @@ namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
     {
 
         private readonly JsonSerializerFactory _jsonSerializerFactory;
-        private readonly PrimitiveFetcherResolver _resolver;
 
-        public StreamFetcherFactory(JsonSerializerFactory jsonSerializerFactory, PrimitiveFetcherResolver resolver)
+        public StreamFetcherFactory(JsonSerializerFactory jsonSerializerFactory)
         {
             _jsonSerializerFactory = jsonSerializerFactory;
-            _resolver = resolver;
         }
 
         public StreamFetcher Create(Stream stream)
         {
-            var fethcher = new StreamFetcher(_jsonSerializerFactory, stream, _resolver);
+            var fethcher = new StreamFetcher(_jsonSerializerFactory, stream);
 
             return fethcher;
         }
