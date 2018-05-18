@@ -4,10 +4,9 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
-[assembly: InternalsVisibleTo("VirtoCommerce.PricingModule.Test")]
 namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
 {
-    internal class StreamFetcher : IDisposable
+    public class StreamFetcher : IDisposable
     {
         private readonly JsonSerializer _serializer;
         private readonly Stream _stream;

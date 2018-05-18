@@ -2,7 +2,7 @@ using System.IO;
 
 namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
 {
-    internal class StreamFetcherFactory
+    public class StreamFetcherFactory
     {
 
         private readonly JsonSerializerFactory _jsonSerializerFactory;

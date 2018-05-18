@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
 {
-    internal class JsonSerializerFactory
+    public class JsonSerializerFactory
     {
         public JsonSerializer Create()
         {
