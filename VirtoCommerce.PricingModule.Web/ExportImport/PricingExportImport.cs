@@ -7,6 +7,7 @@ using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.PricingModule.Data.StreamJsonFetcher;
 
 namespace VirtoCommerce.PricingModule.Web.ExportImport
 {
@@ -22,14 +23,16 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
         private readonly IPricingService _pricingService;
         private readonly IPricingSearchService _pricingSearchService;
         private readonly ISettingsManager _settingsManager;
+        private readonly StreamFetcherFactory _streamFetcherFactory;
 
         private int? _batchSize;
 
-        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService, ISettingsManager settingsManager)
+        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService, ISettingsManager settingsManager, StreamFetcherFactory fetcherFactory)
         {
             _pricingService = pricingService;
             _pricingSearchService = pricingSearchService;
             _settingsManager = settingsManager;
+            _streamFetcherFactory = fetcherFactory;
         }
 
         private int BatchSize
@@ -53,24 +56,63 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
         public void DoImport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
-            var backupObject = backupStream.DeserializeJson<BackupObject>();
             var progressInfo = new ExportImportProgressInfo();
 
-            progressInfo.Description = String.Format("{0} price lists importing...", backupObject.Pricelists.Count());
-            progressCallback(progressInfo);
-
-            _pricingService.SavePricelists(backupObject.Pricelists.ToArray());
-            _pricingService.SavePricelistAssignments(backupObject.Assignments.ToArray());
-
-            progressInfo.TotalCount = backupObject.Prices.Count();
-            for (int i = 0; i <= backupObject.Prices.Count(); i += BatchSize)
+            using (var fetcher = _streamFetcherFactory.Create(backupStream))
             {
-                var prices = backupObject.Prices.Skip(i).Take(BatchSize).ToArray();
-                _pricingService.SavePrices(prices);
-                progressInfo.ProcessedCount += prices.Count();
-                progressInfo.Description = string.Format("Prices: {0} of {1} importing...", progressInfo.ProcessedCount, progressInfo.TotalCount);
+                var pricelists = fetcher.FetchArray<Pricelist>("Pricelists").ToArray();
+
+
+                progressInfo.Description = $"{pricelists.Count()} price lists importing...";
                 progressCallback(progressInfo);
+
+                _pricingService.SavePricelists(pricelists);
+
+                var prices = fetcher.FetchArray<Price>("Prices");
+
+                var chunkPrices = new List<Price>();
+
+                foreach (var price in prices)
+                {
+                    if (chunkPrices.Count < BatchSize)
+                    {
+                        chunkPrices.Add(price);
+                    }
+                    else
+                    {
+                        ShowPricesProgressInfo(progressCallback, progressInfo, chunkPrices.Count);
+
+                        SavePricesAndClearCollection(chunkPrices);
+                    }
+                }
+
+                if (chunkPrices.Count > 0)
+                {
+                    ShowPricesProgressInfo(progressCallback, progressInfo, chunkPrices.Count);
+
+                    SavePricesAndClearCollection(chunkPrices);
+                }
+
+                var assignments = fetcher.FetchArray<PricelistAssignment>("Assignments").ToArray();
+
+                progressInfo.Description = $"{assignments.Count()} assignments importing...";
+                progressCallback(progressInfo);
+
+                _pricingService.SavePricelistAssignments(assignments);
             }
+        }
+
+        private void SavePricesAndClearCollection(ICollection<Price> prices)
+        {
+            _pricingService.SavePrices(prices.ToArray());
+            prices.Clear();
+        }
+
+        private void ShowPricesProgressInfo(Action<ExportImportProgressInfo> progressCallback, ExportImportProgressInfo progressInfo, int chunkCount)
+        {
+            progressInfo.ProcessedCount += chunkCount;
+            progressInfo.Description = $"Prices: {progressInfo.ProcessedCount} importing...";
+            progressCallback(progressInfo);
         }
    
         private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
