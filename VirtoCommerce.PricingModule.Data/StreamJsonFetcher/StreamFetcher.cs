@@ -80,11 +80,11 @@ namespace VirtoCommerce.PricingModule.Data.StreamJsonFetcher
                         Reader.Read();
                     }
 
-                    return _serializer.Deserialize<T>(Reader);
+                    break;
                 }
             }
 
-            throw new InvalidOperationException();
+            return _serializer.Deserialize<T>(Reader);
         }
 
         public void Dispose()

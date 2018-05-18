@@ -172,7 +172,7 @@ namespace VirtoCommerce.PricingModule.Tests
         }
 
         [Fact]
-        public void SkipOnePrepertyTest()
+        public void SkipPrepertiesTest()
         {
             var data = Serialize(
                 new
