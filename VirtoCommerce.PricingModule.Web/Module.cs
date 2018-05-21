@@ -8,7 +8,6 @@ using VirtoCommerce.Domain.Search;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
-using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
@@ -17,7 +16,6 @@ using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
-using VirtoCommerce.PricingModule.Data.StreamJsonFetcher;
 using VirtoCommerce.PricingModule.Web.ExportImport;
 using VirtoCommerce.PricingModule.Web.JsonConverters;
 
@@ -54,9 +52,6 @@ namespace VirtoCommerce.PricingModule.Web
 
             _container.RegisterType<IPricingService, PricingServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
-
-            _container.RegisterType<StreamFetcherFactory>();
-            _container.RegisterType<JsonSerializerFactory>();
         }
 
         public override void PostInitialize()
