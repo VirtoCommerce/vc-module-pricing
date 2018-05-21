@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Settings;
-using VirtoCommerce.PricingModule.Data.StreamJsonFetcher;
 
 namespace VirtoCommerce.PricingModule.Web.ExportImport
 {
@@ -23,16 +23,22 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
         private readonly IPricingService _pricingService;
         private readonly IPricingSearchService _pricingSearchService;
         private readonly ISettingsManager _settingsManager;
-        private readonly StreamFetcherFactory _streamFetcherFactory;
+        private readonly JsonSerializer _jsonSerializer;
 
         private int? _batchSize;
 
-        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService, ISettingsManager settingsManager, StreamFetcherFactory fetcherFactory)
+        public PricingExportImport(IPricingService pricingService, IPricingSearchService pricingSearchService, ISettingsManager settingsManager)
         {
             _pricingService = pricingService;
             _pricingSearchService = pricingSearchService;
             _settingsManager = settingsManager;
-            _streamFetcherFactory = fetcherFactory;
+
+            _jsonSerializer = new JsonSerializer
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore
+            };
         }
 
         private int BatchSize
@@ -54,51 +60,74 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
             backupObject.SerializeJson(backupStream);
         }
 
-        public void DoImport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
+        public void DoImport(Stream stream, Action<ExportImportProgressInfo> progressCallback)
         {
             var progressInfo = new ExportImportProgressInfo();
 
-            using (var fetcher = _streamFetcherFactory.Create(backupStream))
+            using (var streamReader = new StreamReader(stream))
+            using (var reader = new JsonTextReader(streamReader))
             {
-                var pricelists = fetcher.FetchArray<Pricelist>("Pricelists").ToArray();
-
-
-                progressInfo.Description = $"{pricelists.Count()} price lists importing...";
-                progressCallback(progressInfo);
-
-                _pricingService.SavePricelists(pricelists);
-
-                var prices = fetcher.FetchArray<Price>("Prices");
-
-                var chunkPrices = new List<Price>();
-
-                foreach (var price in prices)
+                while (reader.Read())
                 {
-                    if (chunkPrices.Count < BatchSize)
+                    if (reader.TokenType == JsonToken.PropertyName)
                     {
-                        chunkPrices.Add(price);
-                    }
-                    else
-                    {
-                        ShowPricesProgressInfo(progressCallback, progressInfo, chunkPrices.Count);
+                        var readerValue = reader.Value.ToString();
 
-                        SavePricesAndClearCollection(chunkPrices);
+                        if (readerValue == "Pricelists")
+                        {
+                            reader.Read();
+
+                            var pricelists = _jsonSerializer.Deserialize<Pricelist[]>(reader);
+
+                            progressInfo.Description = $"{pricelists.Count()} price lists importing...";
+                            progressCallback(progressInfo);
+
+                            _pricingService.SavePricelists(pricelists);
+
+                        } else if (readerValue == "Prices")
+                        {
+                            reader.Read();
+
+                            if (reader.TokenType == JsonToken.StartArray)
+                            {
+                                reader.Read();
+
+                                var pricesChunk = new List<Price>();
+
+                                while (reader.TokenType != JsonToken.EndArray)
+                                {
+                                    var price = _jsonSerializer.Deserialize<Price>(reader);
+                                    pricesChunk.Add(price);
+
+                                    reader.Read();
+
+                                    if (pricesChunk.Count <= BatchSize || reader.TokenType == JsonToken.EndArray )
+                                    {
+
+                                        progressInfo.ProcessedCount += pricesChunk.Count;
+                                        progressInfo.Description = $"Prices: {progressInfo.ProcessedCount} importing...";
+                                        progressCallback(progressInfo);
+
+                                        _pricingService.SavePrices(pricesChunk.ToArray());
+
+                                        pricesChunk.Clear();
+                                    }
+                                }
+                            }
+                        } else if (readerValue == "Assignments")
+                        {
+
+                            reader.Read();
+
+                            var assignments = _jsonSerializer.Deserialize<PricelistAssignment[]>(reader);
+
+                            progressInfo.Description = $"{assignments.Count()} assignments importing...";
+                            progressCallback(progressInfo);
+
+                            _pricingService.SavePricelistAssignments(assignments);
+                        }
                     }
                 }
-
-                if (chunkPrices.Count > 0)
-                {
-                    ShowPricesProgressInfo(progressCallback, progressInfo, chunkPrices.Count);
-
-                    SavePricesAndClearCollection(chunkPrices);
-                }
-
-                var assignments = fetcher.FetchArray<PricelistAssignment>("Assignments").ToArray();
-
-                progressInfo.Description = $"{assignments.Count()} assignments importing...";
-                progressCallback(progressInfo);
-
-                _pricingService.SavePricelistAssignments(assignments);
             }
         }
 
