@@ -101,7 +101,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                                     reader.Read();
 
-                                    if (pricesChunk.Count <= BatchSize || reader.TokenType == JsonToken.EndArray )
+                                    if (pricesChunk.Count >= BatchSize || reader.TokenType == JsonToken.EndArray )
                                     {
 
                                         progressInfo.ProcessedCount += pricesChunk.Count;
