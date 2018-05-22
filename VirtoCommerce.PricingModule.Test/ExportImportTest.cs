@@ -9,11 +9,11 @@ using Xunit;
 
 namespace VirtoCommerce.PricingModule.Tests
 {
-    public class ImportTest
+    public class ExportImportTest
     {
 
         [Fact]
-        public void TestSimpleImport()
+        public void TestArbitraryImport()
         {
             var data = GetSampleDataStream();
 
@@ -21,13 +21,15 @@ namespace VirtoCommerce.PricingModule.Tests
 
             var settingsManager = GetSettingsManager();
 
-            settingsManager.Setup(s => s.GetValue(It.IsAny<string>(), It.IsAny<int>())).Returns(1);
+            settingsManager.Setup(s => s.GetValue(It.IsAny<string>(), It.IsAny<int>())).Returns(2);
 
             var importProcessor = GetImportExportProcessor(pricingService.Object, settingsManager.Object);
 
             importProcessor.DoImport(data, GetProgressCallback);
 
             pricingService.Verify(p => p.SavePrices(It.IsAny<Price[]>()), Times.Exactly(2));
+            pricingService.Verify(p => p.SavePricelists(It.IsAny<Pricelist[]>()), Times.Exactly(1));
+            pricingService.Verify(p => p.SavePricelistAssignments(It.IsAny<PricelistAssignment[]>()), Times.Exactly(1));
         }
 
         private PricingExportImport GetImportExportProcessor(IPricingService pricingService, ISettingsManager settingsManager)
@@ -67,16 +69,7 @@ namespace VirtoCommerce.PricingModule.Tests
         private Stream GetSampleDataStream()
         {
             var data = @"{
-            ""Pricelists"": [
-            {
-                ""Name"": ""ClothingEUR"",
-                ""sCurrency"": ""EUR"",
-                ""CreatedDate"": ""2015 -10-06T22:39:49.997"",
-                ""ModifiedDate"": ""2015 -10-06T22:39:49.997"",
-                ""CreatedBy"": ""unknown"",
-                ""ModifiedBy"": ""unknown"",
-                ""Id"": ""39e18ca8ea254296a78d47f3f90d649d""
-            }], ""Prices"": [
+            ""Prices"": [
             {
                 ""PricelistId"": ""39e18ca8ea254296a78d47f3f90d649d"",
                 ""Currency"": ""EUR"",
@@ -100,6 +93,18 @@ namespace VirtoCommerce.PricingModule.Tests
                 ""ModifiedDate"": ""2015-10-06T22:39:49.997"",
                 ""ModifiedBy"": ""unknown"",
                 ""Id"": ""9352d110ba58478398cc88c5f11440fb""
+            },
+            {
+                ""PricelistId"": ""39e18ca8ea254296a78d47f3f90d649d"",
+                ""Currency"": ""EUR"",
+                ""ProductId"": ""31bb21bf0b144b68a9d731374c1a95e8"",
+                ""List"": 28.00,
+                ""MinQuantity"": 1,
+                ""EffectiveValue"": 28.00,
+                ""CreatedDate"": ""0001-01-01T00:00:00"",
+                ""ModifiedDate"": ""2015-10-06T22:39:49.997"",
+                ""ModifiedBy"": ""unknown"",
+                ""Id"": ""d8e00b05241b463cbda119cbd11972c5""
             }], ""Assignments"": [
                 {
                 ""CatalogId"": ""b61aa9d1d0024bc4be12d79bf5786e9f"",
@@ -114,7 +119,16 @@ namespace VirtoCommerce.PricingModule.Tests
                 ""ModifiedBy"": ""unknown"",
                ""Id"": ""2e282397bc9f4541a15c6ddf953e72bd""
             }
-            ]
+            ], ""Pricelists"": [
+            {
+                ""Name"": ""ClothingEUR"",
+                ""sCurrency"": ""EUR"",
+                ""CreatedDate"": ""2015 -10-06T22:39:49.997"",
+                ""ModifiedDate"": ""2015 -10-06T22:39:49.997"",
+                ""CreatedBy"": ""unknown"",
+                ""ModifiedBy"": ""unknown"",
+                ""Id"": ""39e18ca8ea254296a78d47f3f90d649d""
+            }]
             }";
 
             return GetStreamFromString(data);
