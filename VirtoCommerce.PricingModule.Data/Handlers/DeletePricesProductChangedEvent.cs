@@ -33,7 +33,7 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
             return Task.CompletedTask;
         }
 
-        private void DeletePrices(GenericChangedEntry<CatalogProduct> changedEntry)
+        protected virtual void DeletePrices(GenericChangedEntry<CatalogProduct> changedEntry)
         {
             if (changedEntry.EntryState == EntryState.Deleted)
             {
