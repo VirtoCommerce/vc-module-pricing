@@ -14,18 +14,20 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
 
         private readonly IPricingService _pricingService;
 
-        public DeletePricesProductChangedEvent(IPricingSearchService pricingSearchService, IPricingService pricingService)
+        public DeletePricesProductChangedEvent(IPricingService pricingService)
         {
             _pricingService = pricingService;
         }
 
-        public virtual async Task Handle(ProductChangedEvent message)
+        public virtual Task Handle(ProductChangedEvent message)
         {
 
             foreach (var changedEntry in message.ChangedEntries.ToList())
             {
                 DeletePrices(changedEntry);
             }
+
+            return Task.CompletedTask;
         }
 
         private void DeletePrices(GenericChangedEntry<CatalogProduct> changedEntry)
