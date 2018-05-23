@@ -1,18 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using Microsoft.Practices.Unity;
+using VirtoCommerce.Domain.Catalog.Events;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Domain.Search;
+using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
-using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Repositories;
+using VirtoCommerce.PricingModule.Data.Handlers;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
@@ -53,6 +55,10 @@ namespace VirtoCommerce.PricingModule.Web
 
             _container.RegisterType<IPricingService, PricingServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
+
+            var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
+
+            eventHandlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, token) => await _container.Resolve<DeletePricesProductChangedEvent>().Handle(message));
         }
 
         public override void PostInitialize()
