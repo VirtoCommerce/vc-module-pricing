@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using VirtoCommerce.Domain.Pricing.Model;
+using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
@@ -50,14 +52,97 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
                     _batchSize = _settingsManager.GetValue("Pricing.ExportImport.PageSize", 50);
                 }
 
-                return (int) _batchSize;
+                return (int)_batchSize;
             }
         }
 
         public void DoExport(Stream backupStream, Action<ExportImportProgressInfo> progressCallback)
         {
-            var backupObject = GetBackupObject(progressCallback);
-            backupObject.SerializeJson(backupStream);
+            var progressInfo = new ExportImportProgressInfo { Description = "loading data..." };
+            progressCallback(progressInfo);
+
+            using (var sw = new StreamWriter(backupStream, Encoding.UTF8))
+            using (var writer = new JsonTextWriter(sw))
+            {
+                writer.WriteStartObject();
+
+                progressInfo.Description = "Price lists exporting...";
+                progressCallback(progressInfo);
+
+                #region Export price lists
+                var totalCount = _pricingSearchService.SearchPricelists(new PricelistSearchCriteria { Take = 0 }).TotalCount;
+                writer.WritePropertyName("PricelistsTotalCount");
+                writer.WriteValue(totalCount);
+
+                writer.WritePropertyName("Pricelists");
+                writer.WriteStartArray();
+
+                for (var i = 0; i < totalCount; i += BatchSize)
+                {
+                    var searchResponse = _pricingSearchService.SearchPricelists(new PricelistSearchCriteria { Skip = i, Take = BatchSize });
+                    foreach (var priceList in searchResponse.Results)
+                    {
+                        priceList.Assignments = null;
+                        _jsonSerializer.Serialize(writer, priceList);
+                    }
+                    writer.Flush();
+                    progressInfo.Description = $"{ Math.Min(totalCount, i + BatchSize) } of { totalCount } price lists have been exported";
+                    progressCallback(progressInfo);
+                }
+                writer.WriteEndArray();
+                #endregion
+
+                #region Export price list assignments
+                totalCount = _pricingSearchService.SearchPricelistAssignments(new PricelistAssignmentsSearchCriteria { Take = 0 }).TotalCount;
+                writer.WritePropertyName("AssignmentsTotalCount");
+                writer.WriteValue(totalCount);
+
+                writer.WritePropertyName("Assignments");
+                writer.WriteStartArray();
+
+                for (var i = 0; i < totalCount; i += BatchSize)
+                {
+                    var searchResponse = _pricingSearchService.SearchPricelistAssignments(new PricelistAssignmentsSearchCriteria { Skip = i, Take = BatchSize });
+                    foreach (var assignment in searchResponse.Results)
+                    {
+                        assignment.Pricelist = null;
+                        assignment.DynamicExpression = null;
+
+                        _jsonSerializer.Serialize(writer, assignment);
+                    }
+                    writer.Flush();
+                    progressInfo.Description = $"{ Math.Min(totalCount, i + BatchSize) } of { totalCount } price lits assignments have been exported";
+                    progressCallback(progressInfo);
+                }
+                writer.WriteEndArray();
+                #endregion
+
+                #region Export prices
+                totalCount = _pricingSearchService.SearchPrices(new PricesSearchCriteria { Take = 0 }).TotalCount;
+                writer.WritePropertyName("PricesTotalCount");
+                writer.WriteValue(totalCount);
+
+                writer.WritePropertyName("Prices");
+                writer.WriteStartArray();
+
+                for (var i = 0; i < totalCount; i += BatchSize)
+                {
+                    var searchResponse = _pricingSearchService.SearchPrices(new PricesSearchCriteria { Skip = i, Take = BatchSize });
+                    foreach (var price in searchResponse.Results)
+                    {
+                        price.Pricelist = null;
+                        _jsonSerializer.Serialize(writer, price);
+                    }
+                    writer.Flush();
+                    progressInfo.Description = $"{ Math.Min(totalCount, i + BatchSize) } of { totalCount } prices have been exported";
+                    progressCallback(progressInfo);
+                }
+                writer.WriteEndArray();
+                #endregion
+
+                writer.WriteEndObject();
+                writer.Flush();
+            }
         }
 
         public void DoImport(Stream stream, Action<ExportImportProgressInfo> progressCallback)
@@ -84,7 +169,8 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                             _pricingService.SavePricelists(pricelists);
 
-                        } else if (readerValue == "Prices")
+                        }
+                        else if (readerValue == "Prices")
                         {
                             reader.Read();
 
@@ -101,20 +187,19 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                                     reader.Read();
 
-                                    if (pricesChunk.Count >= BatchSize || reader.TokenType == JsonToken.EndArray )
+                                    if (pricesChunk.Count >= BatchSize || reader.TokenType == JsonToken.EndArray)
                                     {
-
-                                        progressInfo.ProcessedCount += pricesChunk.Count;
-                                        progressInfo.Description = $"Prices: {progressInfo.ProcessedCount} importing...";
-                                        progressCallback(progressInfo);
-
                                         _pricingService.SavePrices(pricesChunk.ToArray());
+                                        progressInfo.ProcessedCount += pricesChunk.Count;
+                                        progressInfo.Description = $"Prices: {progressInfo.ProcessedCount} have been imported";
+                                        progressCallback(progressInfo);
 
                                         pricesChunk.Clear();
                                     }
                                 }
                             }
-                        } else if (readerValue == "Assignments")
+                        }
+                        else if (readerValue == "Assignments")
                         {
 
                             reader.Read();
@@ -130,56 +215,5 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
                 }
             }
         }
-
-        private void SavePricesAndClearCollection(ICollection<Price> prices)
-        {
-            _pricingService.SavePrices(prices.ToArray());
-            prices.Clear();
-        }
-
-        private void ShowPricesProgressInfo(Action<ExportImportProgressInfo> progressCallback, ExportImportProgressInfo progressInfo, int chunkCount)
-        {
-            progressInfo.ProcessedCount += chunkCount;
-            progressInfo.Description = $"Prices: {progressInfo.ProcessedCount} importing...";
-            progressCallback(progressInfo);
-        }
-   
-        private BackupObject GetBackupObject(Action<ExportImportProgressInfo> progressCallback)
-        {
-            var priceListsResult = _pricingSearchService.SearchPricelists(new Domain.Pricing.Model.Search.PricelistSearchCriteria { Take = int.MaxValue });
-            //remove redundant info to decrease serialization size
-            foreach(var priceList in priceListsResult.Results)
-            {
-                priceList.Assignments = null;
-            }
-            var assignmentsResult = _pricingSearchService.SearchPricelistAssignments(new Domain.Pricing.Model.Search.PricelistAssignmentsSearchCriteria { Take = int.MaxValue });
-            foreach (var assignment in assignmentsResult.Results)
-            {
-                assignment.Pricelist = null;
-                assignment.DynamicExpression = null;
-            }
-            var progressInfo = new ExportImportProgressInfo { Description = String.Format("{0} price lists loading..." , priceListsResult.TotalCount)};
-            progressCallback(progressInfo);
-            var retVal = new BackupObject
-            {
-                Pricelists = priceListsResult.Results,
-                Assignments = assignmentsResult.Results,
-                Prices = new List<Price>()
-            };
-
-            foreach(var priceList in retVal.Pricelists)
-            {
-                progressInfo.Description = String.Format("Loading {0} prices ...", priceList.Name);
-                progressCallback(progressInfo);
-                var result = _pricingSearchService.SearchPrices(new Domain.Pricing.Model.Search.PricesSearchCriteria { Take = int.MaxValue, PriceListId = priceList.Id });
-                foreach (var price in result.Results)
-                {
-                    price.Pricelist = null;               
-                }
-                retVal.Prices.AddRange(result.Results);
-            }
-            return retVal;
-        }
-
     }
 }
