@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -68,6 +68,25 @@ namespace VirtoCommerce.PricingModule.Data.Search
                         ChangeType = IndexDocumentChangeType.Modified,
                     })
                     .ToArray();
+
+                // Get prices that expired or became active since the end of previous run.
+                // Only processed at the first run of a new day.
+                if (operations.Length == 0)
+                { 
+                    endDate = endDate ?? DateTime.UtcNow;
+                    if (startDate.GetValueOrDefault().Date != endDate.GetValueOrDefault().Date)
+                    {
+                        var changed = _pricingService
+                            .GetChangedPricesBetween(startDate, endDate, (int)skip, (int)take);
+                        
+                        result = changed.Select(x => new IndexDocumentChange
+                        {
+                            DocumentId = x.ProductId,
+                            ChangeDate = endDate.Value,
+                            ChangeType = IndexDocumentChangeType.Modified
+                        }).ToArray();
+                    }
+                }
             }
 
             return Task.FromResult(result);

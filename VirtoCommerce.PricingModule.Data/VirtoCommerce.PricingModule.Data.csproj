@@ -70,9 +70,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.24.28.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.24.28\lib\net461\VirtoCommerce.Domain.dll</HintPath>
-    </Reference>
     <Reference Include="VirtoCommerce.Platform.Core, Version=2.13.21.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.Platform.Core.2.13.21\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
     </Reference>
@@ -96,6 +93,10 @@
     <Compile Include="Migrations\201710310940323_NewPriceIndex.Designer.cs">
       <DependentUpon>201710310940323_NewPriceIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201809260746118_PriceStartDateEndDate.cs" />
+    <Compile Include="Migrations\201809260746118_PriceStartDateEndDate.Designer.cs">
+      <DependentUpon>201809260746118_PriceStartDateEndDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\PriceEntity.cs" />
     <Compile Include="Model\PricelistEntity.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Repositories\IPricingRepository.cs" />
     <Compile Include="Search\ProductPriceDocumentBuilder.cs" />
     <Compile Include="Search\ProductPriceDocumentChangesProvider.cs" />
+    <Compile Include="Services\PriceExtensions.cs" />
     <Compile Include="Services\PricingSearchServiceImpl.cs" />
     <Compile Include="Services\PricingServiceImpl.cs" />
   </ItemGroup>
@@ -122,8 +124,16 @@
     <EmbeddedResource Include="Migrations\201710310940323_NewPriceIndex.resx">
       <DependentUpon>201710310940323_NewPriceIndex.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809260746118_PriceStartDateEndDate.resx">
+      <DependentUpon>201809260746118_PriceStartDateEndDate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\vc-module-core\VirtoCommerce.Domain\VirtoCommerce.Domain.csproj">
+      <Project>{67c58a78-ddea-4fa3-a969-1cab582918e4}</Project>
+      <Name>VirtoCommerce.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201505131253288_DropDescriminator.resx">
       <DependentUpon>201505131253288_DropDescriminator.cs</DependentUpon>

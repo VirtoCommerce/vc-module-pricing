@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
+using System.Reflection;
 using CacheManager.Core;
 using Common.Logging;
 using Newtonsoft.Json;
@@ -28,7 +30,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly IExpressionSerializer _expressionSerializer;
         private readonly IPricingExtensionManager _extensionManager;
 
-        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer, 
+        public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer,
                                   IPricingExtensionManager extensionManager)
         {
             _repositoryFactory = repositoryFactory;
@@ -38,7 +40,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _expressionSerializer = expressionSerializer;
             _extensionManager = extensionManager;
         }
-   
+
         #region IPricingService Members
         /// <summary>
         /// Evaluate pricelists for special context. All resulting pricelists ordered by priority
@@ -135,27 +137,38 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 throw new MissingFieldException("ProductIds");
             }
-
+            
             var retVal = new List<coreModel.Price>();
             coreModel.Price[] prices;
             using (var repository = _repositoryFactory())
             {
                 //Get a price range satisfying by passing context
                 var query = repository.Prices.Include(x => x.Pricelist)
-                                             .Where(x => evalContext.ProductIds.Contains(x.ProductId))
-                                             .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
+                    .Where(x => evalContext.ProductIds.Contains(x.ProductId))
+                    .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
+
+                evalContext.CertainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+
+                query = query
+                    .Where(x => (x.StartDate <= evalContext.CertainDate && x.EndDate > evalContext.CertainDate)
+                             || (x.StartDate <= evalContext.CertainDate && x.EndDate == null)
+                             || (x.StartDate == null && x.EndDate > evalContext.CertainDate));
 
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
-                prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
+                prices = query
+                    .ToArray()
+                    .Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance()))
+                    .FilterByMostRelevant(evalContext.CertainDate.GetValueOrDefault())
+                    .ToArray();
             }
 
-            foreach(var productId in evalContext.ProductIds)
+            foreach (var productId in evalContext.ProductIds)
             {
-                var productPrices = prices.Where(x => x.ProductId == productId);              
+                var productPrices = prices.Where(x => x.ProductId == productId);
                 if (evalContext.ReturnAllMatchedPrices)
                 {
                     // Get all prices, ordered by currency and amount.
@@ -179,8 +192,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         }
                     }
                 }
-            }    
-                 
+            }
+
             //Then variation inherited prices
             if (_productService != null)
             {
@@ -206,20 +219,41 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     }
                 }
             }
-                    
+
             return retVal;
         }
+
+        public IEnumerable<coreModel.Price> GetChangedPricesBetween(DateTime? begin, DateTime? end, int skip, int take)
+        {
+            coreModel.Price[] prices;
             
+            using (var repository = _repositoryFactory())
+            {
+                var query = repository.Prices
+                    .Where(x => x.StartDate < end && x.StartDate > begin)
+                    .Where(x => x.EndDate < end && x.EndDate > begin);
+                
+                prices = query
+                    .Skip(skip)
+                    .Take(take)
+                    .ToArray()
+                    .Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance()))
+                    .ToArray();
+            }
+
+            return prices;
+        }
+
 
         public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
             coreModel.Price[] result = null;
             if (ids != null)
-            {              
+            {
                 using (var repository = _repositoryFactory())
                 {
-                    result = repository.GetPricesByIds(ids).Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();               
-                }             
+                    result = repository.GetPricesByIds(ids).Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
+                }
             }
             return result;
         }
@@ -288,10 +322,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var alreadyExistPricesEntities = repository.Prices.Where(x => pricesIds.Contains(x.Id)).ToArray();
 
                 //Create default priceLists for prices without pricelist 
-                foreach(var priceWithoutPricelistGroup in prices.Where(x => x.PricelistId == null).GroupBy(x=>x.Currency))
+                foreach (var priceWithoutPricelistGroup in prices.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
                 {
                     var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
-                    if(GetPricelistsById(new[] { defaultPriceListId }).IsNullOrEmpty())
+                    if (GetPricelistsById(new[] { defaultPriceListId }).IsNullOrEmpty())
                     {
                         var defaultPriceList = AbstractTypeFactory<coreModel.Pricelist>.TryCreateInstance();
                         defaultPriceList.Id = defaultPriceListId;
@@ -300,7 +334,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         defaultPriceList.Description = defaultPriceListId;
                         repository.Add(AbstractTypeFactory<dataModel.PricelistEntity>.TryCreateInstance().FromModel(defaultPriceList, pkMap));
                     }
-                    foreach(var priceWithoutPricelist in priceWithoutPricelistGroup)
+                    foreach (var priceWithoutPricelist in priceWithoutPricelistGroup)
                     {
                         priceWithoutPricelist.PricelistId = defaultPriceListId;
                     }
@@ -316,7 +350,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         sourceEntity.Patch(targetEntity);
                     }
                     else
-                    {                     
+                    {
                         repository.Add(sourceEntity);
                     }
                 }
@@ -333,7 +367,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var changeTracker = GetChangeTracker(repository))
             {
                 var pricelistsIds = priceLists.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistEntities = repository.Pricelists.Include(x=>x.Assignments)
+                var alreadyExistEntities = repository.Pricelists.Include(x => x.Assignments)
                                                      .Where(x => pricelistsIds.Contains(x.Id)).ToArray();
                 foreach (var pricelist in priceLists)
                 {
@@ -426,7 +460,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 CommitChanges(repository);
                 ResetCache();
             }
-        }      
+        }
         #endregion
 
 
@@ -443,7 +477,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _cacheManager.ClearRegion("PricingModuleRegion");
         }
 
-       
+
     }
 
 
