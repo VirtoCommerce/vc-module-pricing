@@ -223,28 +223,31 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
-        public IEnumerable<coreModel.Price> GetChangedPricesBetween(DateTime? begin, DateTime? end, int skip, int take)
+        public IEnumerable<coreModel.PriceCalendarChange> GetCalendarChanges(DateTime? lastEvaluationTimestamp, DateTime? evaluationTimestamp, int skip, int take)
         {
-            coreModel.Price[] prices;
-            
+            coreModel.PriceCalendarChange[] retVal;
             using (var repository = _repositoryFactory())
             {
                 var query = repository.Prices
-                    .Where(x => x.StartDate < end && x.StartDate > begin)
-                    .Where(x => x.EndDate < end && x.EndDate > begin);
-                
-                prices = query
+                    .Where(x => (x.EndDate < evaluationTimestamp && x.EndDate > lastEvaluationTimestamp)
+                                || (x.StartDate <= evaluationTimestamp && x.StartDate > lastEvaluationTimestamp))
+
+                    .OrderBy(x => x.ProductId)
                     .Skip(skip)
                     .Take(take)
-                    .ToArray()
-                    .Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance()))
-                    .ToArray();
+                    .Select(x=> x.ProductId)
+                    .GroupBy(x => x);
+
+                retVal = query.ToArray()
+                    .Select(x => new coreModel.PriceCalendarChange
+                    {
+                        ProductId = x.Key
+                    }).ToArray();
             }
 
-            return prices;
+            return retVal;
         }
-
-
+        
         public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
             coreModel.Price[] result = null;

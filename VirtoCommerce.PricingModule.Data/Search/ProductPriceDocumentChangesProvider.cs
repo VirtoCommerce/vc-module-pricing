@@ -76,10 +76,10 @@ namespace VirtoCommerce.PricingModule.Data.Search
                     endDate = endDate ?? DateTime.UtcNow;
                     if (startDate.GetValueOrDefault().Date != endDate.GetValueOrDefault().Date)
                     {
-                        var changed = _pricingService
-                            .GetChangedPricesBetween(startDate, endDate, (int)skip, (int)take);
-                        
-                        result = changed.Select(x => new IndexDocumentChange
+                        var calendarChanges = _pricingService
+                            .GetCalendarChanges(startDate, endDate, (int)skip, (int)take);
+
+                        result = calendarChanges.Select(x => new IndexDocumentChange
                         {
                             DocumentId = x.ProductId,
                             ChangeDate = endDate.Value,
