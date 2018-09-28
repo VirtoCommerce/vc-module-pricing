@@ -1,4 +1,4 @@
-﻿<div class="blade-static __expanded">
+<div class="blade-static __expanded">
     <div class="form-group">
         <label class="form-label head-label">{{'pricing.blades.item-prices.head-label' | translate}} <a href="" ng-click="createNewPricelist()" class="form-edit" va-permission="pricing:read"><em class="form-ico fa fa-pencil"></em></a></label>
 
@@ -17,7 +17,7 @@
 <div class="blade-content __large-wide">
     <div class="blade-inner">
         <div class="inner-block">
-                <form name="formScope" ng-init="setGridOptions('item-prices-grid', {
+            <form name="formScope" ng-init="setGridOptions('item-prices-grid', {
                     data: 'blade.currentEntities',
                     rowHeight: 60,
                     rowTemplate: 'list.row.html',
@@ -30,7 +30,9 @@
                         { name: 'catalog', displayName: 'pricing.blades.item-prices.labels.catalog', cellTooltip: true},
                         { name: 'list', displayName: 'pricing.blades.item-prices.labels.list-price', editableCellTemplate: 'list-cellTextEditor', validators: {listValidator: true, required: true}, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true, enableHiding: false },
                         { name: 'sale', displayName: 'pricing.blades.item-prices.labels.sale-price', editableCellTemplate: 'sale-cellTextEditor', validators: {saleValidator: true}, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true },
-                        { name: 'minQuantity', displayName: 'pricing.blades.item-prices.labels.min-quantity', editableCellTemplate: 'minQuantity-cellTextEditor', validators: {minQuantityForPricelistValidator: true, required: true}, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true, enableHiding: false }
+                        { name: 'minQuantity', displayName: 'pricing.blades.item-prices.labels.min-quantity', editableCellTemplate: 'minQuantity-cellTextEditor', validators: {minQuantityForPricelistValidator: true, required: true}, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true, enableHiding: false },
+                        { name: 'startDate', displayName: 'pricing.blades.item-prices.labels.startDate', cellTooltip: true, cellTemplate: 'ui-grid/dateCellTemplate',editableCellTemplate: 'date-cellTextEditor', enableCellEdit: true },
+                        { name: 'endDate', displayName: 'pricing.blades.item-prices.labels.endDate', cellTooltip: true, cellTemplate: 'ui-grid/dateCellTemplate', editableCellTemplate: 'date-cellTextEditor', enableCellEdit: true }                        
                     ]})">
                 <div class="table-wrapper" ng-if="blade.currentEntities.length" ng-init="setForm(formScope);">
                     <div ui-grid="gridOptions" ui-grid-cellNav ui-grid-edit ui-grid-validate ui-grid-auto-resize ui-grid-save-state ui-grid-selection ui-grid-resize-columns ui-grid-move-columns ui-grid-height></div>
@@ -59,6 +61,20 @@
         <div class="form-editor form-input">
             <input class="ng-valid form-input" money ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" placeholder="{{'platform.placeholders.n-a' | translate}}" readonly="readonly" />
         </div>
+    </div>
+</script>
+<!-- Date Cell Read -->
+<script type="text/ng-template" id="ui-grid/dateCellTemplate">
+    <div class="ui-grid-cell-contents" title="{{grid.validate.getTitleFormattedErrors(row.entity,col.colDef)}}">
+        <div class="form-editor form-input">
+            <input class="ng-valid form-input" date ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" placeholder="yyyy-mm-ddThh:mm:ss" readonly="readonly" />
+        </div>
+    </div>
+</script>
+<!-- Date Cell Write -->
+<script type="text/ng-template" id="date-cellTextEditor">
+    <div class="form-editor form-input">
+        <input type="text" class="form-input" date ng-model="MODEL_COL_FIELD" ui-grid-editor placeholder="yyyy-mm-ddThh:mm:ss">
     </div>
 </script>
 
