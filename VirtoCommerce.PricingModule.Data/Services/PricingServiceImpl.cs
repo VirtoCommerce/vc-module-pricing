@@ -137,7 +137,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 throw new MissingFieldException("ProductIds");
             }
-            
+
             var retVal = new List<coreModel.Price>();
             coreModel.Price[] prices;
             using (var repository = _repositoryFactory())
@@ -223,31 +223,43 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
-        public IEnumerable<coreModel.PriceCalendarChange> GetCalendarChanges(DateTime? lastEvaluationTimestamp, DateTime? evaluationTimestamp, int skip, int take)
+        // todo skip / take nullable
+        public virtual IEnumerable<coreModel.PriceCalendarChange> GetCalendarChanges(DateTime? lastEvaluationTimestamp, DateTime? evaluationTimestamp, int? skip, int? take)
         {
-            coreModel.PriceCalendarChange[] retVal;
             using (var repository = _repositoryFactory())
             {
+                repository.DisableChangesTracking();
+
+                // Increase command timeout to allow lengthy queries.
+                var efContext = (ObjectContext)
+                    repository.UnitOfWork.GetType().GetProperty("ObjectContext", BindingFlags.NonPublic | BindingFlags.Instance)
+                        .GetValue(repository.UnitOfWork);
+                efContext.CommandTimeout = int.MaxValue;
+
                 var query = repository.Prices
                     .Where(x => (x.EndDate < evaluationTimestamp && x.EndDate > lastEvaluationTimestamp)
                                 || (x.StartDate <= evaluationTimestamp && x.StartDate > lastEvaluationTimestamp))
+                    .OrderBy(x => x.ProductId) as IQueryable<dataModel.PriceEntity>;
 
-                    .OrderBy(x => x.ProductId)
-                    .Skip(skip)
-                    .Take(take)
-                    .Select(x=> x.ProductId)
-                    .GroupBy(x => x);
+                if (skip != null)
+                    query = query.Skip(skip.Value);
+                if (take != null)
+                    query = query.Take(take.Value);
 
-                retVal = query.ToArray()
-                    .Select(x => new coreModel.PriceCalendarChange
+                var groupedQuery = query
+                 .Select(x => x.ProductId)
+                 .GroupBy(x => x);
+                
+                foreach (var calendarChange in groupedQuery.AsNoTracking())
+                {
+                    yield return new coreModel.PriceCalendarChange
                     {
-                        ProductId = x.Key
-                    }).ToArray();
+                        ProductId = calendarChange.Key
+                    };
+                }
             }
-
-            return retVal;
         }
-        
+
         public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
             coreModel.Price[] result = null;
