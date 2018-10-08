@@ -223,7 +223,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return retVal;
         }
 
-        // todo skip / take nullable
         public virtual IEnumerable<coreModel.PriceCalendarChange> GetCalendarChanges(DateTime? lastEvaluationTimestamp, DateTime? evaluationTimestamp, int? skip, int? take)
         {
             using (var repository = _repositoryFactory())
@@ -235,6 +234,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     repository.UnitOfWork.GetType().GetProperty("ObjectContext", BindingFlags.NonPublic | BindingFlags.Instance)
                         .GetValue(repository.UnitOfWork);
                 efContext.CommandTimeout = int.MaxValue;
+
+                lastEvaluationTimestamp = lastEvaluationTimestamp ?? DateTime.MinValue;
 
                 var query = repository.Prices
                     .Where(x => (x.EndDate < evaluationTimestamp && x.EndDate > lastEvaluationTimestamp)
@@ -249,7 +250,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var groupedQuery = query
                  .Select(x => x.ProductId)
                  .GroupBy(x => x);
-                
+
                 foreach (var calendarChange in groupedQuery.AsNoTracking())
                 {
                     yield return new coreModel.PriceCalendarChange

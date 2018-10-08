@@ -9,7 +9,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
     {
         public static IEnumerable<Price> FilterByMostRelevant(this IEnumerable<Price> prices, DateTime certainDate)
         {
-            foreach (var pricesForProduct in prices.GroupBy(x => x.ProductId))
+            if (prices == null) yield break;
+
+            foreach (var pricesForProduct in prices
+                .Where(x => x != null)
+                .GroupBy(x => x.ProductId))
             {
                 var orderedPrices = pricesForProduct
                     // Startdate closest to certainDate is more important.
