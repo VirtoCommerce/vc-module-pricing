@@ -23,6 +23,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricingServiceImpl : ServiceBase, IPricingService
     {
+        /// <summary>
+        /// Feature flag to allow time filtering on price level.
+        /// </summary>
+        public bool AllowTimeFilters { get; set; }
+
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly IItemService _productService;
         private readonly ILog _logger;
@@ -147,23 +152,27 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     .Where(x => evalContext.ProductIds.Contains(x.ProductId))
                     .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
 
-                evalContext.CertainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+                if (AllowTimeFilters)
+                {
+                    evalContext.CertainDate = evalContext.CertainDate ?? DateTime.UtcNow;
 
-                query = query
-                    .Where(x => (x.StartDate <= evalContext.CertainDate && x.EndDate > evalContext.CertainDate)
-                             || (x.StartDate <= evalContext.CertainDate && x.EndDate == null)
-                             || (x.StartDate == null && x.EndDate > evalContext.CertainDate));
+                    query = query
+                        .Where(x => (x.StartDate <= evalContext.CertainDate && x.EndDate > evalContext.CertainDate)
+                                 || (x.StartDate <= evalContext.CertainDate && x.EndDate == null)
+                                 || (x.StartDate == null && x.EndDate > evalContext.CertainDate));
+                }
 
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
-                prices = query
-                    .ToArray()
-                    .Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance()))
-                    .FilterByMostRelevant(evalContext.CertainDate.GetValueOrDefault())
-                    .ToArray();
+                prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
+
+                if (AllowTimeFilters)
+                {
+                    prices = FilterTimeOverlappingPrices(prices, evalContext.CertainDate.Value).ToArray();
+                }
             }
 
             foreach (var productId in evalContext.ProductIds)
@@ -225,6 +234,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         public virtual IEnumerable<coreModel.PriceCalendarChange> GetCalendarChanges(DateTime? lastEvaluationTimestamp, DateTime? evaluationTimestamp, int? skip, int? take)
         {
+            if (!AllowTimeFilters)
+            {
+                yield break;
+            }
+
             using (var repository = _repositoryFactory())
             {
                 repository.DisableChangesTracking();
@@ -479,7 +493,25 @@ namespace VirtoCommerce.PricingModule.Data.Services
         }
         #endregion
 
+        protected virtual IEnumerable<coreModel.Price> FilterTimeOverlappingPrices(IEnumerable<coreModel.Price> prices, DateTime certainDate)
+        {
+            if (prices == null) yield break;
 
+            foreach (var pricesForProduct in prices
+                .Where(x => x != null)
+                .GroupBy(x => x.ProductId))
+            {
+                var orderedPrices = pricesForProduct
+                    // Startdate closest to certainDate is more important.
+                    .OrderBy(x => certainDate.Subtract(x.StartDate.GetValueOrDefault()).TotalSeconds)
+                    // Enddate closest to certainDate is more important.
+                    .ThenBy(x => x.EndDate.GetValueOrDefault().Subtract(certainDate).TotalSeconds);
+
+                var filteredPrice = orderedPrices.FirstOrDefault();
+                if (filteredPrice != null)
+                    yield return filteredPrice;
+            }
+        }
 
         private static string GetDefaultPriceListName(string currency)
         {
@@ -492,9 +524,5 @@ namespace VirtoCommerce.PricingModule.Data.Services
             //Clear cache (Smart cache implementation) 
             _cacheManager.ClearRegion("PricingModuleRegion");
         }
-
-
     }
-
-
 }

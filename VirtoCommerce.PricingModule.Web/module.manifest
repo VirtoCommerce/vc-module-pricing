@@ -41,6 +41,13 @@
                 <title>Export/Import description</title>
                 <description>Module description in platform export/import wizard</description>
             </setting>
+            <setting>
+                <name>Pricing.Prices.AllowTimeFilter</name>
+                <valueType>boolean</valueType>
+                <defaultValue>false</defaultValue>
+                <title>Allow price time filters</title>
+                <description>Allow time filtering on the price level and not only on the price list assignment level</description>
+            </setting>
         </group>
     </settings>
 

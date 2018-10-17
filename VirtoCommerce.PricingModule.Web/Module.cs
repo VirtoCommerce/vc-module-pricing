@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -45,13 +45,17 @@ namespace VirtoCommerce.PricingModule.Web
 
         public override void Initialize()
         {
+            var settingsManager = _container.Resolve<ISettingsManager>();
+            var allowTimeFilters = settingsManager.GetValue("Pricing.Prices.AllowTimeFilter", false);
+
             var extensionManager = new DefaultPricingExtensionManagerImpl();
             _container.RegisterInstance<IPricingExtensionManager>(extensionManager);
 
             _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>()
                 , new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(PriceEntity) }))));
 
-            _container.RegisterType<IPricingService, PricingServiceImpl>();
+            _container.RegisterType<IPricingService, PricingServiceImpl>(
+                new InjectionProperty(nameof(PricingServiceImpl.AllowTimeFilters), allowTimeFilters));
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
         }
 
