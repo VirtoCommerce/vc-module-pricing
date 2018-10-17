@@ -244,10 +244,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 repository.DisableChangesTracking();
 
                 // Increase command timeout to allow lengthy queries.
-                var efContext = (ObjectContext)
-                    repository.UnitOfWork.GetType().GetProperty("ObjectContext", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .GetValue(repository.UnitOfWork);
-                efContext.CommandTimeout = int.MaxValue;
+                repository.UnitOfWork.CommandTimeout = TimeSpan.MaxValue;
 
                 lastEvaluationTimestamp = lastEvaluationTimestamp ?? DateTime.MinValue;
 
