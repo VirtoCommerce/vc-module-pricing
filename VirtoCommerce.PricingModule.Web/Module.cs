@@ -56,6 +56,8 @@ namespace VirtoCommerce.PricingModule.Web
 
             _container.RegisterType<IPricingService, PricingServiceImpl>(
                 new InjectionProperty(nameof(PricingServiceImpl.AllowTimeFilters), allowTimeFilters));
+            _container.RegisterType<IPricingChangesService, PricingChangesServiceImpl>(
+                new InjectionProperty(nameof(PricingChangesServiceImpl.AllowTimeFilters), allowTimeFilters));
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
         }
 

@@ -110,6 +110,7 @@
     <Compile Include="Search\ProductPriceDocumentBuilder.cs" />
     <Compile Include="Search\ProductPriceDocumentChangesProvider.cs" />
     <Compile Include="Services\PricingSearchServiceImpl.cs" />
+    <Compile Include="Services\PricingChangesServiceImpl.cs" />
     <Compile Include="Services\PricingServiceImpl.cs" />
   </ItemGroup>
   <ItemGroup>

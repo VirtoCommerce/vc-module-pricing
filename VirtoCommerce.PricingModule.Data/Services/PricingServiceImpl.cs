@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
 using System.Linq;
-using System.Reflection;
 using CacheManager.Core;
 using Common.Logging;
 using Newtonsoft.Json;
@@ -230,46 +228,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             return retVal;
-        }
-
-        public virtual IEnumerable<coreModel.PriceCalendarChange> GetCalendarChanges(DateTime? lastEvaluationTimestamp, DateTime? evaluationTimestamp, int? skip, int? take)
-        {
-            if (!AllowTimeFilters)
-            {
-                yield break;
-            }
-
-            using (var repository = _repositoryFactory())
-            {
-                repository.DisableChangesTracking();
-
-                // Increase command timeout to allow lengthy queries.
-                repository.UnitOfWork.CommandTimeout = TimeSpan.MaxValue;
-
-                lastEvaluationTimestamp = lastEvaluationTimestamp ?? DateTime.MinValue;
-
-                var query = repository.Prices
-                    .Where(x => (x.EndDate < evaluationTimestamp && x.EndDate > lastEvaluationTimestamp)
-                                || (x.StartDate <= evaluationTimestamp && x.StartDate > lastEvaluationTimestamp))
-                    .OrderBy(x => x.ProductId) as IQueryable<dataModel.PriceEntity>;
-
-                if (skip != null)
-                    query = query.Skip(skip.Value);
-                if (take != null)
-                    query = query.Take(take.Value);
-
-                var groupedQuery = query
-                 .Select(x => x.ProductId)
-                 .GroupBy(x => x);
-
-                foreach (var calendarChange in groupedQuery.AsNoTracking())
-                {
-                    yield return new coreModel.PriceCalendarChange
-                    {
-                        ProductId = calendarChange.Key
-                    };
-                }
-            }
         }
 
         public virtual coreModel.Price[] GetPricesById(string[] ids)

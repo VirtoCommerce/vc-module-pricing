@@ -15,11 +15,14 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
         private readonly IChangeLogService _changeLogService;
         private readonly IPricingService _pricingService;
+        private readonly IPricingChangesService _pricingChangesService;
 
-        public ProductPriceDocumentChangesProvider(IChangeLogService changeLogService, IPricingService pricingService)
+        public ProductPriceDocumentChangesProvider(IChangeLogService changeLogService, IPricingService pricingService,
+            IPricingChangesService pricingChangesService)
         {
             _changeLogService = changeLogService;
             _pricingService = pricingService;
+            _pricingChangesService = pricingChangesService;
         }
 
         public virtual Task<long> GetTotalChangesCountAsync(DateTime? startDate, DateTime? endDate)
@@ -76,7 +79,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
                     endDate = endDate ?? DateTime.UtcNow;
                     if (startDate.GetValueOrDefault().Date != endDate.GetValueOrDefault().Date)
                     {
-                        var calendarChanges = _pricingService
+                        var calendarChanges = _pricingChangesService
                             .GetCalendarChanges(startDate, endDate, (int)skip, (int)take);
 
                         result = calendarChanges.Select(x => new IndexDocumentChange
