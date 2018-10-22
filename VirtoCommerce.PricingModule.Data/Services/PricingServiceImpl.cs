@@ -21,11 +21,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricingServiceImpl : ServiceBase, IPricingService
     {
-        /// <summary>
-        /// Feature flag to allow time filtering on price level.
-        /// </summary>
-        public bool AllowTimeFilters { get; set; }
-
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly IItemService _productService;
         private readonly ILog _logger;
@@ -141,10 +136,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 throw new MissingFieldException("ProductIds");
             }
 
-            // Detect if we need price time filtering, without changing the context's state (breaking change).
-            var certainDate = AllowTimeFilters
-                ? evalContext.CertainDate ?? DateTime.UtcNow
-                : (DateTime?)null;
+            // Support price time filtering, without changing the context's state (breaking change).
+            var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
 
             var retVal = new List<coreModel.Price>();
             coreModel.Price[] prices;
@@ -153,15 +146,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 //Get a price range satisfying by passing context
                 var query = repository.Prices.Include(x => x.Pricelist)
                     .Where(x => evalContext.ProductIds.Contains(x.ProductId))
-                    .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
-
-                if (certainDate != null)
-                {
-                    query = query
-                        .Where(x => (x.StartDate <= evalContext.CertainDate && x.EndDate > evalContext.CertainDate)
-                                 || (x.StartDate <= evalContext.CertainDate && x.EndDate == null)
-                                 || (x.StartDate == null && x.EndDate > evalContext.CertainDate));
-                }
+                    .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0)
+                    .Where(x => (x.StartDate <= evalContext.CertainDate && x.EndDate > evalContext.CertainDate)
+                                || (x.StartDate <= evalContext.CertainDate && x.EndDate == null)
+                                || (x.StartDate == null && x.EndDate > evalContext.CertainDate));
 
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
@@ -169,11 +157,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
                 prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
-
-                if (certainDate != null)
-                {
-                    prices = FilterTimeOverlappingPrices(prices, evalContext.CertainDate.Value).ToArray();
-                }
+                prices = FilterTimeOverlappingPrices(prices, evalContext.CertainDate.Value).ToArray();
             }
 
             foreach (var productId in evalContext.ProductIds)

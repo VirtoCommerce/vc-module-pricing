@@ -54,10 +54,8 @@ namespace VirtoCommerce.PricingModule.Web
             _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>()
                 , new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(PriceEntity) }))));
 
-            _container.RegisterType<IPricingService, PricingServiceImpl>(
-                new InjectionProperty(nameof(PricingServiceImpl.AllowTimeFilters), allowTimeFilters));
-            _container.RegisterType<IPricingChangesService, PricingChangesServiceImpl>(
-                new InjectionProperty(nameof(PricingChangesServiceImpl.AllowTimeFilters), allowTimeFilters));
+            _container.RegisterType<IPricingService, PricingServiceImpl>();
+            _container.RegisterType<IPricingChangesService, PricingChangesServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
         }
 

@@ -13,11 +13,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricingChangesServiceImpl : ServiceBase, IPricingChangesService
     {
-        /// <summary>
-        /// Feature flag to allow time filtering on price level.
-        /// </summary>
-        public bool AllowTimeFilters { get; set; }
-
         private readonly Func<IPricingRepository> _repositoryFactory;
 
         public PricingChangesServiceImpl(Func<IPricingRepository> repositoryFactory)
@@ -31,11 +26,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
             DateTime? lastEvaluationTimestamp = null, DateTime? evaluationTimestamp = null,
             int? skip = null, int? take = null)
         {
-            if (!AllowTimeFilters)
-            {
-                yield break;
-            }
-
             coreModel.PriceCalendarChange[] page = null;
 
             using (var repository = _repositoryFactory())
