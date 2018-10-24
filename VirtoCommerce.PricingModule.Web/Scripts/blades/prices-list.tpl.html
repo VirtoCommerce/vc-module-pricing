@@ -14,6 +14,8 @@
                         { name: 'sale', displayName: 'pricing.blades.prices-list.labels.sale-price', editableCellTemplate: 'sale-cellTextEditor', validators: {saleValidator: true}, cellTemplate: 'priceCellTitleValidator', enableCellEdit: true },
                         { name: 'minQuantity', displayName: 'pricing.blades.prices-list.labels.min-quantity', editableCellTemplate: 'minQuantity-cellTextEditor', validators: {required: true, minQuantityValidator: true}, cellTemplate: 'ui-grid/cellTitleValidator', enableCellEdit: true, sort: { direction: uiGridConstants.ASC } },
                         { name: 'modifiedDate', displayName: 'pricing.blades.prices-list.labels.last-modified' },
+                        { name: 'startDate', displayName: 'pricing.blades.prices-list.labels.startDate', cellTemplate: 'ui-grid/cellTitleValidator', editableCellTemplate: 'date-cellTextEditor', cellTooltip: true, enableCellEdit: true, visible: false },
+                        { name: 'endDate', displayName: 'pricing.blades.prices-list.labels.endDate', cellTemplate: 'ui-grid/cellTitleValidator', editableCellTemplate: 'date-cellTextEditor', cellTooltip: true, enableCellEdit: true, visible: false },
                         { name: 'effectiveValue', type: 'currency', visible: false }
                     ]})">
                 <div class="table-wrapper" ng-if="blade.currentEntities.length" ng-init="setForm(formScope);">
@@ -39,6 +41,13 @@
         </div>
     </div>
 </script>
+<script type="text/ng-template" id="ui-grid/dateCellTemplate">
+    <div class="ui-grid-cell-contents" title="{{grid.validate.getTitleFormattedErrors(row.entity,col.colDef)}}">
+        <div class="form-editor form-input">
+            <input class="ng-valid form-input" date ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" placeholder="yyyy-mm-ddThh:mm:ss" readonly="readonly" />
+        </div>
+    </div>
+</script>
 
 <script type="text/ng-template" id="default-cellTextEditor">
     <div class="form-editor form-input">
@@ -58,6 +67,11 @@
 <script type="text/ng-template" id="minQuantity-cellTextEditor">
     <div class="form-editor form-input">
         <input class="form-input" smart-float num-type="integer" required ng-model="MODEL_COL_FIELD" ui-grid-editor ng-class="{'ng-invalid': !grid.appScope.isUniqueQty(row.entity)}">
+    </div>
+</script>
+<script type="text/ng-template" id="date-cellTextEditor">
+    <div class="form-editor form-input">
+        <input type="text" class="form-input" date ng-model="MODEL_COL_FIELD" ui-grid-editor placeholder="yyyy-mm-ddThh:mm:ss">
     </div>
 </script>
 <script type="text/ng-template" id="list.row.html">

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using VirtoCommerce.Domain.Pricing.Model;
@@ -23,6 +23,10 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
 		public decimal MinQuantity { get; set; }
 
+	    public DateTime? StartDate { get; set; }
+
+	    public DateTime? EndDate { get; set; }
+
         #region Navigation Properties
         [Index("ProductIdAndPricelistId", 2)]
         public string PricelistId { get; set; }
@@ -45,6 +49,8 @@ namespace VirtoCommerce.PricingModule.Data.Model
             price.PricelistId = this.PricelistId;
             price.ProductId = this.ProductId;
             price.Sale = this.Sale;
+            price.StartDate = this.StartDate;
+            price.EndDate = this.EndDate;
 
             if (this.Pricelist != null)
             {
@@ -69,6 +75,8 @@ namespace VirtoCommerce.PricingModule.Data.Model
             this.PricelistId = price.PricelistId;
             this.ProductId = price.ProductId;
             this.Sale = price.Sale;
+            this.StartDate = price.StartDate;
+            this.EndDate = price.EndDate;
 
             return this;
         }
@@ -81,7 +89,9 @@ namespace VirtoCommerce.PricingModule.Data.Model
             target.ProductId = this.ProductId;
             target.List = this.List;
             target.Sale = this.Sale;
-            target.MinQuantity = this.MinQuantity;        
+            target.MinQuantity = this.MinQuantity;
+            target.StartDate = this.StartDate;
+            target.EndDate = this.EndDate;
         }
 
 

@@ -135,14 +135,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 throw new MissingFieldException("ProductIds");
             }
 
+            // Support price time filtering, without changing the context's state (breaking change).
+            var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+
             var retVal = new List<coreModel.Price>();
             coreModel.Price[] prices;
             using (var repository = _repositoryFactory())
             {
                 //Get a price range satisfying by passing context
                 var query = repository.Prices.Include(x => x.Pricelist)
-                                             .Where(x => evalContext.ProductIds.Contains(x.ProductId))
-                                             .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
+                    .Where(x => evalContext.ProductIds.Contains(x.ProductId))
+                    .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0)
+                    .Where(x => (x.StartDate <= evalContext.CertainDate && x.EndDate > evalContext.CertainDate)
+                                || (x.StartDate <= evalContext.CertainDate && x.EndDate == null)
+                                || (x.StartDate == null && x.EndDate > evalContext.CertainDate));
 
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
@@ -150,9 +156,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
                 prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
+                prices = FilterTimeOverlappingPrices(prices, evalContext.CertainDate.Value).ToArray();
             }
-
-            var priceListOrdererList = evalContext.PricelistIds?.ToList();
 
             foreach (var productId in evalContext.ProductIds)
             {
@@ -220,7 +225,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             return retVal;
         }
-
 
         public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
@@ -440,7 +444,22 @@ namespace VirtoCommerce.PricingModule.Data.Services
         }
         #endregion
 
+        protected virtual IEnumerable<coreModel.Price> FilterTimeOverlappingPrices(IEnumerable<coreModel.Price> prices, DateTime certainDate)
+        {
+            if (prices == null) yield break;
 
+            foreach (var pricesForProduct in prices
+                .Where(x => x != null)
+                .GroupBy(x => x.ProductId))
+            {
+                yield return pricesForProduct
+                    // Startdate closest to certainDate is more important.
+                    .OrderBy(x => certainDate.Subtract(x.StartDate.GetValueOrDefault()).TotalSeconds)
+                    // Enddate closest to certainDate is more important.
+                    .ThenBy(x => x.EndDate.GetValueOrDefault().Subtract(certainDate).TotalSeconds)
+                    .First();
+            }
+        }
 
         private static string GetDefaultPriceListName(string currency)
         {
@@ -454,8 +473,5 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _cacheManager.ClearRegion("PricingModuleRegion");
         }
 
-
     }
-
-
 }

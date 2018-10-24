@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,11 +15,14 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
         private readonly IChangeLogService _changeLogService;
         private readonly IPricingService _pricingService;
+        private readonly IPricingChangesService _pricingChangesService;
 
-        public ProductPriceDocumentChangesProvider(IChangeLogService changeLogService, IPricingService pricingService)
+        public ProductPriceDocumentChangesProvider(IChangeLogService changeLogService, IPricingService pricingService,
+            IPricingChangesService pricingChangesService)
         {
             _changeLogService = changeLogService;
             _pricingService = pricingService;
+            _pricingChangesService = pricingChangesService;
         }
 
         public virtual Task<long> GetTotalChangesCountAsync(DateTime? startDate, DateTime? endDate)
@@ -68,6 +71,25 @@ namespace VirtoCommerce.PricingModule.Data.Search
                         ChangeType = IndexDocumentChangeType.Modified,
                     })
                     .ToArray();
+
+                // Get prices that expired or became active since the end of previous run.
+                // Only processed at the first run of a new day.
+                if (operations.Length == 0)
+                { 
+                    endDate = endDate ?? DateTime.UtcNow;
+                    if (startDate.GetValueOrDefault().Date != endDate.GetValueOrDefault().Date)
+                    {
+                        var calendarChanges = _pricingChangesService
+                            .GetCalendarChanges(startDate, endDate, (int)skip, (int)take);
+
+                        result = calendarChanges.Select(x => new IndexDocumentChange
+                        {
+                            DocumentId = x.ProductId,
+                            ChangeDate = endDate.Value,
+                            ChangeType = IndexDocumentChangeType.Modified
+                        }).ToArray();
+                    }
+                }
             }
 
             return Task.FromResult(result);
