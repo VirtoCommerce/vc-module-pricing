@@ -47,8 +47,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
         /// <returns></returns>
         public virtual IEnumerable<coreModel.Pricelist> EvaluatePriceLists(coreModel.PriceEvaluationContext evalContext)
         {
-            var retVal = new List<coreModel.Pricelist>();
-
             Func<coreModel.PricelistAssignment[]> assignemntsGetters = () =>
             {
                 using (var repository = _repositoryFactory())
@@ -95,8 +93,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 //filter by date expiration
                 query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
             }
-            var assignments = query.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).ToArray();
-            retVal.AddRange(assignments.Where(x => x.Condition == null).Select(x => x.Pricelist));
+
+            var assignments = query.ToArray();
+            var assignmentsToReturn = assignments.Where(x => x.Condition == null).ToList();
 
             foreach (var assignment in assignments.Where(x => x.Condition != null))
             {
@@ -104,9 +103,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     if (assignment.Condition(evalContext))
                     {
-                        if (retVal.All(p => p.Id != assignment.Pricelist.Id))
+                        if (assignmentsToReturn.All(x => x.PricelistId != assignment.PricelistId))
                         {
-                            retVal.Add(assignment.Pricelist);
+                            assignmentsToReturn.Add(assignment);
                         }
                     }
                 }
@@ -116,7 +115,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
             }
 
-            return retVal;
+            return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
         }
 
         /// <summary>
@@ -169,19 +168,29 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var orderedPrices = productPrices.OrderBy(x => x.Currency).ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
                     retVal.AddRange(orderedPrices);
                 }
-                else
+                else if (!priceListOrdererList.IsNullOrEmpty())
                 {
-                    //Order by priority
-                    foreach (var currencyPricesGroup in productPrices.GroupBy(x => x.Currency))
+                    // as priceListOrdererList is sorted by priority (descending), we save PricelistId's index as Priority
+                    var priceTuples = productPrices
+                        .Select(x => new { Price = x, x.Currency, x.MinQuantity, Priority = priceListOrdererList.IndexOf(x.PricelistId) })
+                        .Where(x => x.Priority > -1);
+
+                    // Group by Currency and by MinQuantity
+                    foreach (var pricesGroupByCurrency in priceTuples.GroupBy(x => x.Currency))
                     {
-                        var groupPrices = currencyPricesGroup.OrderBy(x => Math.Min(x.Sale ?? x.List, x.List));
-                        if (!evalContext.PricelistIds.IsNullOrEmpty())
+                        var minAcceptablePriority = int.MaxValue;
+                        // take prices with lower MinQuantity first
+                        foreach (var pricesGroupByMinQuantity in pricesGroupByCurrency.GroupBy(x => x.MinQuantity).OrderBy(x => x.Key))
                         {
-                            //return only prices from one prioritized price list
-                            var prioritedPriceListId = evalContext.PricelistIds.FirstOrDefault(x => groupPrices.Any(y => y.PricelistId == x));
-                            if (prioritedPriceListId != null)
+                            // take minimal price from most prioritized Pricelist
+                            var groupAcceptablePrice = pricesGroupByMinQuantity.OrderBy(x => x.Priority)
+                                                                            .ThenBy(x => Math.Min(x.Price.Sale ?? x.Price.List, x.Price.List))
+                                                                            .First();
+
+                            if (minAcceptablePriority >= groupAcceptablePrice.Priority)
                             {
-                                retVal.AddRange(groupPrices.Where(x => x.PricelistId == prioritedPriceListId));
+                                minAcceptablePriority = groupAcceptablePrice.Priority;
+                                retVal.Add(groupAcceptablePrice.Price);
                             }
                         }
                     }
@@ -463,5 +472,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
             //Clear cache (Smart cache implementation) 
             _cacheManager.ClearRegion("PricingModuleRegion");
         }
+
     }
 }
