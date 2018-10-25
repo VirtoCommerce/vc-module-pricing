@@ -2,27 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using VirtoCommerce.Domain.Pricing.Services;
+using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Search;
-using VirtoCommerce.Platform.Core.ChangeLog;
+using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Model;
+using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentChangesProvider : IIndexDocumentChangesProvider
     {
-        public const string ChangeLogObjectType = nameof(PriceEntity);
+        private readonly Func<IPricingRepository> _repositoryFactory;
+        private readonly Func<IPlatformRepository> _platformRepositoryFactory;
+        private readonly ISettingsManager _settingsManager;
+        private const string _changeLogObjectType = nameof(PriceEntity);
+        private static TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);
 
-        private readonly IChangeLogService _changeLogService;
-        private readonly IPricingService _pricingService;
-        private readonly IPricingChangesService _pricingChangesService;
 
-        public ProductPriceDocumentChangesProvider(IChangeLogService changeLogService, IPricingService pricingService,
-            IPricingChangesService pricingChangesService)
+        public ProductPriceDocumentChangesProvider(Func<IPricingRepository> repositoryFactory, Func<IPlatformRepository> platformRepositoryFactory, ISettingsManager settingsManager)
         {
-            _changeLogService = changeLogService;
-            _pricingService = pricingService;
-            _pricingChangesService = pricingChangesService;
+            _repositoryFactory = repositoryFactory;
+            _platformRepositoryFactory = platformRepositoryFactory;
+            _settingsManager = settingsManager;
         }
 
         public virtual Task<long> GetTotalChangesCountAsync(DateTime? startDate, DateTime? endDate)
@@ -37,12 +40,11 @@ namespace VirtoCommerce.PricingModule.Data.Search
             else
             {
                 // Get changes count from operation log
-                result = _changeLogService.FindChangeHistory(ChangeLogObjectType, startDate, endDate).Count();
+                result = InnerSearchChanges(startDate, endDate).TotalCount;
             }
 
             return Task.FromResult(result);
         }
-
         public virtual Task<IList<IndexDocumentChange>> GetChangesAsync(DateTime? startDate, DateTime? endDate, long skip, long take)
         {
             IList<IndexDocumentChange> result;
@@ -53,54 +55,47 @@ namespace VirtoCommerce.PricingModule.Data.Search
             }
             else
             {
-                // Get changes from operation log
-                var operations = _changeLogService.FindChangeHistory(ChangeLogObjectType, startDate, endDate)
-                    .Skip((int)skip)
-                    .Take((int)take)
-                    .ToArray();
-
-                var priceIds = operations.Select(c => c.ObjectId).ToArray();
-                var priceIdsAndProductIds = GetProductIds(priceIds);
-
-                result = operations
-                    .Where(o => priceIdsAndProductIds.ContainsKey(o.ObjectId))
-                    .Select(o => new IndexDocumentChange
-                    {
-                        DocumentId = priceIdsAndProductIds[o.ObjectId],
-                        ChangeDate = o.ModifiedDate ?? o.CreatedDate,
-                        ChangeType = IndexDocumentChangeType.Modified,
-                    })
-                    .ToArray();
-
-                // Get prices that expired or became active since the end of previous run.
-                // Only processed at the first run of a new day.
-                if (operations.Length == 0)
-                { 
-                    endDate = endDate ?? DateTime.UtcNow;
-                    if (startDate.GetValueOrDefault().Date != endDate.GetValueOrDefault().Date)
-                    {
-                        var calendarChanges = _pricingChangesService
-                            .GetCalendarChanges(startDate, endDate, (int)skip, (int)take);
-
-                        result = calendarChanges.Select(x => new IndexDocumentChange
-                        {
-                            DocumentId = x.ProductId,
-                            ChangeDate = endDate.Value,
-                            ChangeType = IndexDocumentChangeType.Modified
-                        }).ToArray();
-                    }
-                }
+                result = InnerSearchChanges(startDate, endDate, (int)skip, (int)take).Results.ToList();
             }
 
             return Task.FromResult(result);
         }
 
-
-        protected virtual IDictionary<string, string> GetProductIds(string[] priceIds)
+        protected virtual GenericSearchResult<IndexDocumentChange> InnerSearchChanges(DateTime? startDate, DateTime? endDate, int skip = 0, int take = 0)
         {
-            // TODO: How to get product for deleted price?
-            var prices = _pricingService.GetPricesById(priceIds);
-            var result = prices.ToDictionary(p => p.Id, p => p.ProductId);
+            var result = new GenericSearchResult<IndexDocumentChange>();
+            var workSkip = 0;
+            var workTake = 0;
+
+            using (var platformRepository = _platformRepositoryFactory())
+            using (var repository = _repositoryFactory())
+            {
+                var operationLogChangesQuery = platformRepository.OperationLogs.Where(x => x.ObjectType == _changeLogObjectType && (startDate == null || x.ModifiedDate >= startDate) && (endDate == null || x.ModifiedDate <= endDate))
+                                                                 .OrderBy(x => x.ModifiedDate);
+                result.TotalCount = operationLogChangesQuery.Count();
+                workSkip = Math.Min(result.TotalCount, skip);
+                workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
+                if (workTake > 0)
+                {
+                    var changedPriceEntriesIds = operationLogChangesQuery.Skip(workSkip).Take(workTake).Select(x => x.ObjectId).ToArray();
+                    result.Results.AddRange(repository.GetPricesByIds(changedPriceEntriesIds).Select(x => new IndexDocumentChange { DocumentId = x.ProductId, ChangeType = IndexDocumentChangeType.Modified }));
+                }
+                //Re-index calendar prices only once in defined time interval
+                var lastIndexDate = _settingsManager.GetValue("VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar", (DateTime?)null) ?? DateTime.MinValue;
+                if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval)
+                {
+                    workSkip = skip - workSkip;
+                    workTake = take - workTake;
+
+                    var calendarChangesQuery = repository.Prices.Where(x => (x.StartDate <= endDate) && (x.EndDate >= startDate)).Select(x => x.ProductId).Distinct();
+                    result.TotalCount += calendarChangesQuery.Count();
+                    if (workTake > 0)
+                    {
+                        _settingsManager.SetValue("VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar", DateTime.UtcNow);
+                        result.Results.AddRange(calendarChangesQuery.OrderBy(x => x).Skip(workSkip).Take(workTake).Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified }).ToArray());
+                    }
+                }
+            }
             return result;
         }
     }

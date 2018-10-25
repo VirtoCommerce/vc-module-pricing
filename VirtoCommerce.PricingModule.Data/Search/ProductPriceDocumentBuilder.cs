@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.Domain.Pricing.Model;
@@ -55,7 +56,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
         {
             var evalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             evalContext.ProductIds = productIds.ToArray();
-
+            evalContext.CertainDate = DateTime.UtcNow;
             return _pricingService.EvaluateProductPrices(evalContext).ToList();
         }
     }

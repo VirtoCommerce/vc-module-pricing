@@ -54,7 +54,6 @@ namespace VirtoCommerce.PricingModule.Web
                 , new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(PriceEntity) }))));
 
             _container.RegisterType<IPricingService, PricingServiceImpl>();
-            _container.RegisterType<IPricingChangesService, PricingChangesServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
         }
 
