@@ -24,7 +24,7 @@ namespace VirtoCommerce.PricingModule.Web
     public class Module : ModuleBase, ISupportExportImportModule
     {
         private readonly string _connectionString = ConfigurationHelper.GetConnectionStringValue("VirtoCommerce.Pricing") ?? ConfigurationHelper.GetConnectionStringValue("VirtoCommerce");
-        private readonly IUnityContainer _container; 
+        private readonly IUnityContainer _container;
 
         public Module(IUnityContainer container)
         {
@@ -53,8 +53,10 @@ namespace VirtoCommerce.PricingModule.Web
             _container.RegisterType<IPricingRepository>(new InjectionFactory(c => new PricingRepositoryImpl(_connectionString, new EntityPrimaryKeyGeneratorInterceptor(), _container.Resolve<AuditableInterceptor>()
                 , new ChangeLogInterceptor(_container.Resolve<Func<IPlatformRepository>>(), ChangeLogPolicy.Cumulative, new[] { nameof(PriceEntity) }))));
 
+            _container.RegisterType<IPricingPriorityFilterPolicy, DefaultPricingPriorityFilterPolicy>();
             _container.RegisterType<IPricingService, PricingServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
+            _container.RegisterType<IPricingDocumentChangesProvider, ProductPriceDocumentChangesProvider>();
         }
 
         public override void PostInitialize()
@@ -74,7 +76,7 @@ namespace VirtoCommerce.PricingModule.Web
             {
                 var productPriceDocumentSource = new IndexDocumentSource
                 {
-                    ChangesProvider = _container.Resolve<ProductPriceDocumentChangesProvider>(),
+                    ChangesProvider = _container.Resolve<IPricingDocumentChangesProvider>(),
                     DocumentBuilder = _container.Resolve<ProductPriceDocumentBuilder>(),
                 };
 

@@ -12,7 +12,7 @@ using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
-    public class ProductPriceDocumentChangesProvider : IIndexDocumentChangesProvider
+    public class ProductPriceDocumentChangesProvider : IPricingDocumentChangesProvider
     {
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly Func<IPlatformRepository> _platformRepositoryFactory;
@@ -82,7 +82,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 }
                 //Re-index calendar prices only once in defined time interval
                 var lastIndexDate = _settingsManager.GetValue("VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar", (DateTime?)null) ?? DateTime.MinValue;
-                if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval)
+                if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval && startDate != null && endDate != null)
                 {
                     workSkip = skip - workSkip;
                     workTake = take - workTake;
