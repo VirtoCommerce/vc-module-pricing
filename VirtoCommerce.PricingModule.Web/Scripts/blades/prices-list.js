@@ -149,6 +149,13 @@
         }
     };
 
+    $scope.datepickers = {};
+    $scope.open = function ($event, which) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.datepickers[which] = true;
+    };
+
     // actions on load
     blade.refresh();
 }])

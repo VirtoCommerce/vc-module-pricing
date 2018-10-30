@@ -1,4 +1,4 @@
-﻿<div class="blade-content __medium-wide">
+<div class="blade-content __medium-wide">
     <div class="blade-inner">
         <div class="inner-block">
             <form name="formScope" ng-init="setGridOptions('pricelist-grid', {
@@ -70,8 +70,11 @@
     </div>
 </script>
 <script type="text/ng-template" id="date-cellTextEditor">
-    <div class="form-editor form-input">
-        <input type="text" class="form-input" date ng-model="MODEL_COL_FIELD" ui-grid-editor placeholder="yyyy-mm-ddThh:mm:ss">
+    <div class="form-editor form-input __calendar">
+        <input type="text" class="form-input" date ng-model="MODEL_COL_FIELD" placeholder="yyyy-mm-ddThh:mm:ss" datepicker-popup is-open="grid.appScope.datepickers[col.colDef.name]">
+        <button class="btn" type="button" ng-click="grid.appScope.open($event, col.colDef.name)">
+            <i class="btn-ico fa fa-calendar"></i>
+        </button>
     </div>
 </script>
 <script type="text/ng-template" id="list.row.html">
