@@ -22,6 +22,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 throw new ArgumentNullException(nameof(evalContext));
             }
 
+            // If no certain date is set, default to now, because that's probably the intention of the requester
+            // and it's backwards compatible.
+            var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+
             var result = new List<Price>();
             if (evalContext.ReturnAllMatchedPrices)
             {
@@ -44,10 +48,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         // take prices with lower MinQuantity first
                         foreach (var pricesGroupByMinQuantity in pricesGroupByCurrency.GroupBy(x => x.MinQuantity).OrderBy(x => x.Key))
                         {
-                            // take minimal price from most prioritized Pricelist
-                            var groupAcceptablePrice = pricesGroupByMinQuantity.OrderBy(x => x.Priority)
-                                                                            .ThenBy(x => Math.Min(x.Price.Sale ?? x.Price.List, x.Price.List))
-                                                                            .First();
+                            // Take start/end date most close to certainDate, because that price is more specific in time.
+                            // Take minimal price from most prioritized Pricelist.
+                            var groupAcceptablePrice = pricesGroupByMinQuantity
+                                .OrderBy(x => x.Priority)
+                                .ThenBy(x => certainDate.Subtract(x.Price.StartDate.GetValueOrDefault(DateTime.MinValue)).TotalSeconds)
+                                .ThenBy(x => x.Price.EndDate.GetValueOrDefault(DateTime.MaxValue).Subtract(certainDate).TotalSeconds)
+                                .ThenBy(x => Math.Min(x.Price.Sale ?? x.Price.List, x.Price.List))
+                                .First();
 
                             if (minAcceptablePriority >= groupAcceptablePrice.Priority)
                             {

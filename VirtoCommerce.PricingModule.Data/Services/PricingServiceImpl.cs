@@ -90,11 +90,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 //filter by currency
                 query = query.Where(x => x.Pricelist.Currency == evalContext.Currency.ToString());
             }
-            if (evalContext.CertainDate != null)
-            {
-                //filter by date expiration
-                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
-            }
+
+            // Filter by date expiration
+            // Always filter on date, so that we limit the results to process.
+            var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+            query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
+                && (x.EndDate == null || x.EndDate > certainDate));
 
             var assignments = query.ToArray();
             var assignmentsToReturn = assignments.Where(x => x.Condition == null).ToList();
