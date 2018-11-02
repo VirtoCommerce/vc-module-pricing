@@ -91,11 +91,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => x.Pricelist.Currency == evalContext.Currency.ToString());
             }
 
-            // Filter by date expiration
-            // Always filter on date, so that we limit the results to process.
-            var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
-            query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
-                && (x.EndDate == null || x.EndDate > certainDate));
+            if (evalContext.CertainDate != null)
+            {
+                //filter by date expiration
+                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
+            }
 
             var assignments = query.ToArray();
             var assignmentsToReturn = assignments.Where(x => x.Condition == null).ToList();
@@ -152,11 +152,13 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
-                if (evalContext.CertainDate != null)
-                {
-                    query = query.Where(x => (x.StartDate == null || x.StartDate <= evalContext.CertainDate) && (x.EndDate == null || x.EndDate > evalContext.CertainDate));
-                }
-                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
+
+                // Filter by date expiration
+                // Always filter on date, so that we limit the results to process.
+                var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+                query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
+                    && (x.EndDate == null || x.EndDate > certainDate));
+
                 prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
             }
 
