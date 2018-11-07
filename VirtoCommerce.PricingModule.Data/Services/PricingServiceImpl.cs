@@ -27,9 +27,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly ICacheManager<object> _cacheManager;
         private readonly IExpressionSerializer _expressionSerializer;
         private readonly IPricingExtensionManager _extensionManager;
+        private readonly IPricingPriorityFilterPolicy _pricingPriorityFilterPolicy;
 
         public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer,
-                                  IPricingExtensionManager extensionManager)
+                                  IPricingExtensionManager extensionManager, IPricingPriorityFilterPolicy pricingFilterPolicy)
         {
             _repositoryFactory = repositoryFactory;
             _productService = productService;
@@ -37,6 +38,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _cacheManager = cacheManager;
             _expressionSerializer = expressionSerializer;
             _extensionManager = extensionManager;
+            _pricingPriorityFilterPolicy = pricingFilterPolicy;
         }
 
         #region IPricingService Members
@@ -88,10 +90,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 //filter by currency
                 query = query.Where(x => x.Pricelist.Currency == evalContext.Currency.ToString());
             }
+
             if (evalContext.CertainDate != null)
             {
                 //filter by date expiration
-                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
+                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate > evalContext.CertainDate));
             }
 
             var assignments = query.ToArray();
@@ -144,53 +147,24 @@ namespace VirtoCommerce.PricingModule.Data.Services
                                              .Where(x => evalContext.ProductIds.Contains(x.ProductId))
                                              .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
 
+
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
-                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
+
+                // Filter by date expiration
+                // Always filter on date, so that we limit the results to process.
+                var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+                query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
+                    && (x.EndDate == null || x.EndDate > certainDate));
+
                 prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
             }
 
             var priceListOrdererList = evalContext.PricelistIds?.ToList();
-
-            foreach (var productId in evalContext.ProductIds)
-            {
-                var productPrices = prices.Where(x => x.ProductId == productId);
-                if (evalContext.ReturnAllMatchedPrices)
-                {
-                    // Get all prices, ordered by currency and amount.
-                    var orderedPrices = productPrices.OrderBy(x => x.Currency).ThenBy(x => Math.Min(x.Sale ?? x.List, x.List));
-                    retVal.AddRange(orderedPrices);
-                }
-                else if (!priceListOrdererList.IsNullOrEmpty())
-                {
-                    // as priceListOrdererList is sorted by priority (descending), we save PricelistId's index as Priority
-                    var priceTuples = productPrices
-                        .Select(x => new { Price = x, x.Currency, x.MinQuantity, Priority = priceListOrdererList.IndexOf(x.PricelistId) })
-                        .Where(x => x.Priority > -1);
-
-                    // Group by Currency and by MinQuantity
-                    foreach (var pricesGroupByCurrency in priceTuples.GroupBy(x => x.Currency))
-                    {
-                        var minAcceptablePriority = int.MaxValue;
-                        // take prices with lower MinQuantity first
-                        foreach (var pricesGroupByMinQuantity in pricesGroupByCurrency.GroupBy(x => x.MinQuantity).OrderBy(x => x.Key))
-                        {
-                            // take minimal price from most prioritized Pricelist
-                            var groupAcceptablePrice = pricesGroupByMinQuantity.OrderBy(x => x.Priority)
-                                                                            .ThenBy(x => Math.Min(x.Price.Sale ?? x.Price.List, x.Price.List))
-                                                                            .First();
-
-                            if (minAcceptablePriority >= groupAcceptablePrice.Priority)
-                            {
-                                minAcceptablePriority = groupAcceptablePrice.Priority;
-                                retVal.Add(groupAcceptablePrice.Price);
-                            }
-                        }
-                    }
-                }
-            }
+            //Apply pricing  filtration strategy for found prices
+            retVal.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
 
             //Then variation inherited prices
             if (_productService != null)
@@ -453,9 +427,5 @@ namespace VirtoCommerce.PricingModule.Data.Services
             //Clear cache (Smart cache implementation) 
             _cacheManager.ClearRegion("PricingModuleRegion");
         }
-
-
     }
-
-
 }

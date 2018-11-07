@@ -53,8 +53,8 @@
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Omu.ValueInjecter, Version=2.3.3.0, Culture=neutral, PublicKeyToken=c7694541b0ac80e4, processorArchitecture=MSIL">
@@ -70,11 +70,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.24.28.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.24.28\lib\net461\VirtoCommerce.Domain.dll</HintPath>
+    <Reference Include="VirtoCommerce.Domain, Version=2.25.16.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.25.16\lib\net461\VirtoCommerce.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Core, Version=2.13.21.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.13.21\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
+    <Reference Include="VirtoCommerce.Platform.Core, Version=2.13.26.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.13.26\lib\net461\VirtoCommerce.Platform.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="VirtoCommerce.Platform.Data, Version=2.13.17.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.Platform.Data.2.13.17\lib\net461\VirtoCommerce.Platform.Data.dll</HintPath>
@@ -96,6 +97,10 @@
     <Compile Include="Migrations\201710310940323_NewPriceIndex.Designer.cs">
       <DependentUpon>201710310940323_NewPriceIndex.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201809260746118_PriceStartDateEndDate.cs" />
+    <Compile Include="Migrations\201809260746118_PriceStartDateEndDate.Designer.cs">
+      <DependentUpon>201809260746118_PriceStartDateEndDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\PriceEntity.cs" />
     <Compile Include="Model\PricelistEntity.cs" />
@@ -105,11 +110,16 @@
     <Compile Include="Repositories\IPricingRepository.cs" />
     <Compile Include="Search\ProductPriceDocumentBuilder.cs" />
     <Compile Include="Search\ProductPriceDocumentChangesProvider.cs" />
+    <Compile Include="Search\IPricingDocumentChangesProvider.cs" />
+    <Compile Include="Services\IPricingPriorityFilterPolicy.cs" />
+    <Compile Include="Services\DefaultPricingPriorityFilterPolicy.cs" />
     <Compile Include="Services\PricingSearchServiceImpl.cs" />
     <Compile Include="Services\PricingServiceImpl.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -122,8 +132,10 @@
     <EmbeddedResource Include="Migrations\201710310940323_NewPriceIndex.resx">
       <DependentUpon>201710310940323_NewPriceIndex.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809260746118_PriceStartDateEndDate.resx">
+      <DependentUpon>201809260746118_PriceStartDateEndDate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201505131253288_DropDescriminator.resx">
       <DependentUpon>201505131253288_DropDescriminator.cs</DependentUpon>

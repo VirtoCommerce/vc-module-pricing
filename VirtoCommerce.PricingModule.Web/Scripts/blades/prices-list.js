@@ -149,6 +149,13 @@
         }
     };
 
+    $scope.datepickers = {};
+    $scope.open = function ($event, which) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.datepickers[which] = true;
+    };
+
     // actions on load
     blade.refresh();
 }])
@@ -166,10 +173,15 @@
             return _.isUndefined(data.sale) || data.list >= data.sale;
         },
         isUniqueQty: function (data) {
-            return Math.round(data.minQuantity) > 0 && _.all(allPrices, function (x) { return x === data || Math.round(x.minQuantity) !== Math.round(data.minQuantity) });
+            // Disable unique quantity test when time filtering is used.
+            if (data.startDate || data.endData) {
+                return true;
+            }
+            return Math.round(data.minQuantity) > 0 && _.all(allPrices, function (x) { return x === data || Math.round(x.minQuantity) !== Math.round(data.minQuantity) || x.startDate || x.EndDate; });
         },
         isUniqueQtyForPricelist: function (data) {
-            return _.filter(allPrices, function (price) { return price.pricelistId == data.pricelistId && price.minQuantity == data.minQuantity }).length == 1;
+            // Disable unique quantity test when time filtering is used.
+            return _.filter(allPrices, function (price) { return price.pricelistId == data.pricelistId && price.minQuantity == data.minQuantity && !price.startDate && !price.EndDate && !data.startDate && !data.endDate; }).length <= 1;
         }
     };
 }])
