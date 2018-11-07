@@ -141,6 +141,7 @@
     <Content Include="Content\logo.png" />
     <Content Include="Localizations\en.VirtoCommerce.Pricing.json" />
     <Content Include="Localizations\de.VirtoCommerce.Pricing.json" />
+    <Content Include="Localizations\ru.VirtoCommerce.Pricing.json" />
     <None Include="module.ignore" />
     <Content Include="module.manifest">
       <SubType>Designer</SubType>

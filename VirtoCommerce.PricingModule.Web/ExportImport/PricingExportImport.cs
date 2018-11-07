@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -66,7 +65,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
             {
                 writer.WriteStartObject();
 
-                progressInfo.Description = "Price lists exporting...";
+                progressInfo.Description = "Price lists are exporting...";
                 progressCallback(progressInfo);
 
                 #region Export price lists
@@ -164,7 +163,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                             var pricelists = _jsonSerializer.Deserialize<Pricelist[]>(reader);
 
-                            progressInfo.Description = $"{pricelists.Count()} price lists importing...";
+                            progressInfo.Description = $"{pricelists.Count()} price lists are importing...";
                             progressCallback(progressInfo);
 
                             _pricingService.SavePricelists(pricelists);
@@ -206,7 +205,7 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                             var assignments = _jsonSerializer.Deserialize<PricelistAssignment[]>(reader);
 
-                            progressInfo.Description = $"{assignments.Count()} assignments importing...";
+                            progressInfo.Description = $"{assignments.Count()} assignments are importing...";
                             progressCallback(progressInfo);
 
                             _pricingService.SavePricelistAssignments(assignments);
