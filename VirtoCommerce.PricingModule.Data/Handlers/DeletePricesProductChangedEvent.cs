@@ -14,7 +14,6 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
 {
     public class DeletePricesProductChangedEvent : IEventHandler<ProductChangedEvent>
     {
-
         private readonly IPricingService _pricingService;
         private readonly IPricingSearchService _pricingSearchService;
 
@@ -33,12 +32,14 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
             var deletedProductIds = message.ChangedEntries.Where(x => x.EntryState == EntryState.Deleted && x.OldEntry.Id != null)
                                                           .Select(x => x.OldEntry.Id)
                                                           .Distinct().ToArray();
-            var searchResult = _pricingSearchService.SearchPrices(new PricesSearchCriteria { ProductIds = deletedProductIds, Take = int.MaxValue });
-            if (searchResult.Results.Any())
+            if (!deletedProductIds.IsNullOrEmpty())
             {
-                _pricingService.DeletePrices(searchResult.Results.Select(p => p.Id).ToArray());
+                var searchResult = _pricingSearchService.SearchPrices(new PricesSearchCriteria { ProductIds = deletedProductIds, Take = int.MaxValue });
+                if (searchResult.Results.Any())
+                {
+                    _pricingService.DeletePrices(searchResult.Results.Select(p => p.Id).ToArray());
+                }
             }
-
             return Task.CompletedTask;
         }
     }
