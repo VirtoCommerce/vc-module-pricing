@@ -270,7 +270,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var changeTracker = GetChangeTracker(repository))
             {
                 var pricesIds = prices.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistPricesEntities = repository.Prices.Where(x => pricesIds.Contains(x.Id)).ToArray();
+                var alreadyExistPricesEntities = repository.GetPricesByIds(pricesIds);
 
                 //Create default priceLists for prices without pricelist 
                 foreach (var priceWithoutPricelistGroup in prices.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
@@ -318,8 +318,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var changeTracker = GetChangeTracker(repository))
             {
                 var pricelistsIds = priceLists.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistEntities = repository.Pricelists.Include(x => x.Assignments)
-                                                     .Where(x => pricelistsIds.Contains(x.Id)).ToArray();
+                var alreadyExistEntities = repository.GetPricelistByIds(pricelistsIds);
                 foreach (var pricelist in priceLists)
                 {
                     var sourceEntity = AbstractTypeFactory<dataModel.PricelistEntity>.TryCreateInstance().FromModel(pricelist, pkMap);
@@ -347,7 +346,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var changeTracker = GetChangeTracker(repository))
             {
                 var assignmentsIds = assignments.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistEntities = repository.PricelistAssignments.Where(x => assignmentsIds.Contains(x.Id)).ToArray();
+                var alreadyExistEntities = repository.GetPricelistAssignmentsById(assignmentsIds);
                 foreach (var assignment in assignments)
                 {
                     //Serialize condition expression 
