@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +9,7 @@ using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
+using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using dataModel = VirtoCommerce.PricingModule.Data.Model;
@@ -38,6 +39,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             ICollection<CatalogProduct> products = new List<CatalogProduct>();
             using (var repository = _repositoryFactory())
             {
+                repository.DisableChangesTracking();
+
                 var query = repository.Prices;
 
                 if (!criteria.PriceListIds.IsNullOrEmpty())
@@ -52,7 +55,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 if (!string.IsNullOrEmpty(criteria.Keyword))
                 {
-                    var catalogSearchResult = _catalogSearchService.Search(new Domain.Catalog.Model.SearchCriteria { Keyword = criteria.Keyword, Skip = criteria.Skip, Take = criteria.Take, Sort = criteria.Sort.Replace("product.", string.Empty), ResponseGroup = Domain.Catalog.Model.SearchResponseGroup.WithProducts });
+                    var catalogSearchResult = _catalogSearchService.Search(new SearchCriteria { Keyword = criteria.Keyword, Skip = criteria.Skip, Take = criteria.Take, Sort = criteria.Sort.Replace("product.", string.Empty), ResponseGroup = Domain.Catalog.Model.SearchResponseGroup.WithProducts });
                     var productIds = catalogSearchResult.Products.Select(x => x.Id).ToArray();
                     query = query.Where(x => productIds.Contains(x.ProductId));
                     //preserve resulting products for future assignment to prices
@@ -100,6 +103,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             var retVal = new PricingSearchResult<coreModel.Pricelist>();
             using (var repository = _repositoryFactory())
             {
+                repository.DisableChangesTracking();
+
                 var query = repository.Pricelists;
                 if (!string.IsNullOrEmpty(criteria.Keyword))
                 {
@@ -131,6 +136,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             var retVal = new PricingSearchResult<coreModel.PricelistAssignment>();
             using (var repository = _repositoryFactory())
             {
+                repository.DisableChangesTracking();
+
                 var query = repository.PricelistAssignments;
 
                 if (!criteria.PriceListIds.IsNullOrEmpty())
