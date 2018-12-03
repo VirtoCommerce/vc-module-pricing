@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
@@ -40,13 +40,13 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         public IQueryable<PriceEntity> Prices => GetAsQueryable<PriceEntity>();
         public IQueryable<PricelistAssignmentEntity> PricelistAssignments => GetAsQueryable<PricelistAssignmentEntity>();
 
-        public PriceEntity[] GetPricesByIds(string[] priceIds)
+        public virtual PriceEntity[] GetPricesByIds(string[] priceIds)
         {
             var retVal = Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToArray();
             return retVal;
         }
 
-        public PricelistEntity[] GetPricelistByIds(string[] priceListIds)
+        public virtual PricelistEntity[] GetPricelistByIds(string[] priceListIds)
         {
             var retVal = Pricelists.Include(x => x.Assignments)
                                   .Where(x => priceListIds.Contains(x.Id))
@@ -54,7 +54,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return retVal;
         }
 
-        public PricelistAssignmentEntity[] GetPricelistAssignmentsById(string[] assignmentsIds)
+        public virtual PricelistAssignmentEntity[] GetPricelistAssignmentsById(string[] assignmentsIds)
         {
             var retVal = PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsIds.Contains(x.Id)).ToArray();
             return retVal;
