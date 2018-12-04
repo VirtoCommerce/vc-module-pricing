@@ -51,25 +51,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             coreModel.PricelistAssignment[] assignmentsGetters()
             {
-                using (var repository = _repositoryFactory())
+                var allAssignments = GetAllPricelistAssignments();
+                foreach (var assignment in allAssignments.Where(x => !string.IsNullOrEmpty(x.ConditionExpression)))
                 {
-                    repository.DisableChangesTracking();
-
-                    var allAssignments = repository.PricelistAssignments.Include(x => x.Pricelist).ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
-                    foreach (var assignment in allAssignments.Where(x => !string.IsNullOrEmpty(x.ConditionExpression)))
+                    try
                     {
-                        try
-                        {
-                            //Deserialize conditions
-                            assignment.Condition = _expressionSerializer.DeserializeExpression<Func<IEvaluationContext, bool>>(assignment.ConditionExpression);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.Error(ex);
-                        }
+                        //Deserialize conditions
+                        assignment.Condition = _expressionSerializer.DeserializeExpression<Func<IEvaluationContext, bool>>(assignment.ConditionExpression);
                     }
-                    return allAssignments;
-                };
+                    catch (Exception ex)
+                    {
+                        _logger.Error(ex);
+                    }
+                }
+                return allAssignments;
             }
             IQueryable<coreModel.PricelistAssignment> query = null;
             if (_cacheManager != null)
@@ -198,8 +193,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             return retVal;
         }
-
-
+        
         public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
             coreModel.Price[] result = null;
@@ -269,6 +263,18 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
             }
             return result;
+        }
+
+        public virtual coreModel.PricelistAssignment[] GetAllPricelistAssignments()
+        {
+            using (var repository = _repositoryFactory())
+            {
+                repository.DisableChangesTracking();
+
+                return repository.PricelistAssignments
+                    .Include(x => x.Pricelist).ToArray()
+                    .Select(x => x.ToModel(AbstractTypeFactory<coreModel.PricelistAssignment>.TryCreateInstance())).ToArray();
+            }
         }
 
         public virtual void SavePrices(coreModel.Price[] prices)
