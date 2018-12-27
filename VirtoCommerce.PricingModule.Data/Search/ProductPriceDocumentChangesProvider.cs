@@ -15,11 +15,12 @@ namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentChangesProvider : IPricingDocumentChangesProvider
     {
+        private const string ChangeLogObjectType = nameof(PriceEntity);
+        private static readonly TimeSpan CalendarChangesInterval = TimeSpan.FromDays(1);
+
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly Func<IPlatformRepository> _platformRepositoryFactory;
         private readonly ISettingsManager _settingsManager;
-        private const string _changeLogObjectType = nameof(PriceEntity);
-        private static TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);
 
 
         public ProductPriceDocumentChangesProvider(Func<IPricingRepository> repositoryFactory, Func<IPlatformRepository> platformRepositoryFactory, ISettingsManager settingsManager)
@@ -95,7 +96,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 //       This allows to find IDs of changed products more efficiently and to avoid redundant product reindexing.
                 //       Only priceIds are retrieved from the database, so the memory consumption shouldn't be large.
                 var priceChangeLogEntries = await platformRepository.OperationLogs
-                                                                    .Where(x => x.ObjectType == _changeLogObjectType &&
+                                                                    .Where(x => x.ObjectType == ChangeLogObjectType &&
                                                                                 (startDate == null || x.ModifiedDate >= startDate) &&
                                                                                 (endDate == null || x.ModifiedDate < endDate))
                                                                     .OrderBy(x => x.ModifiedDate)
@@ -120,7 +121,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
             //Re-index calendar prices only once per defined time interval
             var lastIndexDate = _settingsManager.GetValue("VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar", (DateTime?)null) ?? DateTime.MinValue;
-            if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval && startDate != null && endDate != null)
+            if ((DateTime.UtcNow - lastIndexDate) > CalendarChangesInterval && startDate != null && endDate != null)
             {
                 workSkip = skip - workSkip;
                 workTake = take - workTake;
@@ -136,7 +137,5 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
             return result;
         }
-
-
     }
 }
