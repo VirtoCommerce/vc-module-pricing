@@ -89,34 +89,16 @@ namespace VirtoCommerce.PricingModule.Data.Search
             var workSkip = 0;
             var workTake = 0;
 
-            using (var platformRepository = _platformRepositoryFactory())
-            using (var repository = _repositoryFactory())
+            var changedProductIds = GetProductIdsForChangedPrices(startDate, endDate);
+
+            result.TotalCount = changedProductIds.Count;
+            workSkip = Math.Min(result.TotalCount, skip);
+            workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
+
+            if (workTake > 0)
             {
-                // NOTE: we intentionally ignore pagination here and read all changes that happened during given time interval.
-                //       This allows to find IDs of changed products more efficiently and to avoid redundant product reindexing.
-                //       Only priceIds are retrieved from the database, so the memory consumption shouldn't be large.
-                var priceChangeLogEntries = platformRepository.OperationLogs
-                                                              .Where(x => x.ObjectType == _changeLogObjectType &&
-                                                                          (startDate == null || x.ModifiedDate >= startDate) &&
-                                                                          (endDate == null || x.ModifiedDate < endDate))
-                                                              .OrderBy(x => x.ModifiedDate)
-                                                              .Select(x => x.ObjectId)
-                                                              .ToArray();
-
-                var productIdsQuery = repository.Prices.Where(x => priceChangeLogEntries.Contains(x.Id))
-                                                       .Select(x => x.ProductId)
-                                                       .Distinct()
-                                                       .OrderBy(x => x);
-
-                result.TotalCount = productIdsQuery.Count();
-                workSkip = Math.Min(result.TotalCount, skip);
-                workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
-
-                if (workTake > 0)
-                {
-                    var productIds = productIdsQuery.Skip(workSkip).Take(workTake).ToArray();
-                    result.Results.AddRange(productIds.Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified }));
-                }
+                var productIds = changedProductIds.Skip(workSkip).Take(workTake).ToArray();
+                result.Results.AddRange(productIds.Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified }));
             }
 
             //Re-index calendar prices only once per defined time interval
@@ -132,6 +114,41 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 {
                     _settingsManager.SetValue("VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar", DateTime.UtcNow);
                     result.Results.AddRange(calendarChanges.Results);
+                }
+            }
+
+            return result;
+        }
+
+        protected virtual ICollection<string> GetProductIdsForChangedPrices(DateTime? startDate, DateTime? endDate)
+        {
+            const int batchSize = 500;
+
+            var result = new HashSet<string>();
+
+            using (var platformRepository = _platformRepositoryFactory())
+            using (var repository = _repositoryFactory())
+            {
+                var changedPriceIdsQuery = platformRepository.OperationLogs
+                                                             .Where(x => x.ObjectType == _changeLogObjectType &&
+                                                                         (startDate == null || x.ModifiedDate >= startDate) &&
+                                                                         (endDate == null || x.ModifiedDate < endDate))
+                                                             .OrderBy(x => x.ModifiedDate)
+                                                             .Select(x => x.ObjectId);
+
+                var totalCount = changedPriceIdsQuery.Count();
+
+                for (int i = 0; i < totalCount; i += batchSize)
+                {
+                    var changedPriceIds = changedPriceIdsQuery.Skip(i)
+                                                              .Take(batchSize)
+                                                              .ToArray();
+
+                    var productIds = repository.Prices.Where(x => changedPriceIds.Contains(x.Id))
+                                                      .Select(x => x.ProductId)
+                                                      .Distinct()
+                                                      .ToArray();
+                    result.AddRange(productIds);
                 }
             }
 
