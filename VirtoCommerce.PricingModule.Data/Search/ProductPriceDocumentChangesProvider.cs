@@ -15,8 +15,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentChangesProvider : IPricingDocumentChangesProvider
     {
-        private const string ChangeLogObjectType = nameof(PriceEntity);
-        private static readonly TimeSpan CalendarChangesInterval = TimeSpan.FromDays(1);
+        private const string _changeLogObjectType = nameof(PriceEntity);
+        private static readonly TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);
 
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly Func<IPlatformRepository> _platformRepositoryFactory;
@@ -95,33 +95,33 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 // NOTE: we intentionally ignore pagination here and read all changes that happened during given time interval.
                 //       This allows to find IDs of changed products more efficiently and to avoid redundant product reindexing.
                 //       Only priceIds are retrieved from the database, so the memory consumption shouldn't be large.
-                var priceChangeLogEntries = await platformRepository.OperationLogs
-                                                                    .Where(x => x.ObjectType == ChangeLogObjectType &&
-                                                                                (startDate == null || x.ModifiedDate >= startDate) &&
-                                                                                (endDate == null || x.ModifiedDate < endDate))
-                                                                    .OrderBy(x => x.ModifiedDate)
-                                                                    .Select(x => x.ObjectId)
-                                                                    .ToArrayAsync();
+                var priceChangeLogEntries = platformRepository.OperationLogs
+                                                              .Where(x => x.ObjectType == _changeLogObjectType &&
+                                                                          (startDate == null || x.ModifiedDate >= startDate) &&
+                                                                          (endDate == null || x.ModifiedDate < endDate))
+                                                              .OrderBy(x => x.ModifiedDate)
+                                                              .Select(x => x.ObjectId)
+                                                              .ToArray();
 
                 var productIdsQuery = repository.Prices.Where(x => priceChangeLogEntries.Contains(x.Id))
                                                        .Select(x => x.ProductId)
                                                        .Distinct()
                                                        .OrderBy(x => x);
 
-                result.TotalCount = await productIdsQuery.CountAsync();
+                result.TotalCount = productIdsQuery.Count();
                 workSkip = Math.Min(result.TotalCount, skip);
                 workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
 
                 if (workTake > 0)
                 {
-                    var productIds = await productIdsQuery.Skip(workSkip).Take(workTake).ToArrayAsync();
+                    var productIds = productIdsQuery.Skip(workSkip).Take(workTake).ToArray();
                     result.Results.AddRange(productIds.Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified }));
                 }
             }
 
             //Re-index calendar prices only once per defined time interval
             var lastIndexDate = _settingsManager.GetValue("VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar", (DateTime?)null) ?? DateTime.MinValue;
-            if ((DateTime.UtcNow - lastIndexDate) > CalendarChangesInterval && startDate != null && endDate != null)
+            if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval && startDate != null && endDate != null)
             {
                 workSkip = skip - workSkip;
                 workTake = take - workTake;
