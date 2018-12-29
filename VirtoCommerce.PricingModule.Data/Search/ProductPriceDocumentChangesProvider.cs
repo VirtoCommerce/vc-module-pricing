@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.Domain.Commerce.Model.Search;
@@ -14,11 +15,12 @@ namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentChangesProvider : IPricingDocumentChangesProvider
     {
+        private const string _changeLogObjectType = nameof(PriceEntity);
+        private static readonly TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);
+        private const int _batchSize = 500;
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly Func<IPlatformRepository> _platformRepositoryFactory;
         private readonly ISettingsManager _settingsManager;
-        private const string _changeLogObjectType = nameof(PriceEntity);
-        private static TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);
 
 
         public ProductPriceDocumentChangesProvider(Func<IPricingRepository> repositoryFactory, Func<IPlatformRepository> platformRepositoryFactory, ISettingsManager settingsManager)
@@ -87,19 +89,16 @@ namespace VirtoCommerce.PricingModule.Data.Search
             var workSkip = 0;
             var workTake = 0;
 
-            using (var platformRepository = _platformRepositoryFactory())
-            using (var repository = _repositoryFactory())
+            var changedProductIds = GetProductIdsForChangedPrices(startDate, endDate);
+
+            result.TotalCount = changedProductIds.Count;
+            workSkip = Math.Min(result.TotalCount, skip);
+            workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
+
+            if (workTake > 0)
             {
-                var operationLogChangesQuery = platformRepository.OperationLogs.Where(x => x.ObjectType == _changeLogObjectType && (startDate == null || x.ModifiedDate >= startDate) && (endDate == null || x.ModifiedDate < endDate))
-                                                                 .OrderBy(x => x.ModifiedDate);
-                result.TotalCount = operationLogChangesQuery.Count();
-                workSkip = Math.Min(result.TotalCount, skip);
-                workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
-                if (workTake > 0)
-                {
-                    var changedPriceEntriesIds = operationLogChangesQuery.Skip(workSkip).Take(workTake).Select(x => x.ObjectId).ToArray();
-                    result.Results.AddRange(repository.GetPricesByIds(changedPriceEntriesIds).Select(x => new IndexDocumentChange { DocumentId = x.ProductId, ChangeType = IndexDocumentChangeType.Modified }));
-                }
+                var productIds = changedProductIds.Skip(workSkip).Take(workTake).ToArray();
+                result.Results.AddRange(productIds.Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified }));
             }
 
             //Re-index calendar prices only once per defined time interval
@@ -121,6 +120,43 @@ namespace VirtoCommerce.PricingModule.Data.Search
             return result;
         }
 
+        /// <summary>
+        /// Retrieves all price changes and groups them by the product Id they are associated with.
+        /// </summary>
+        /// <param name="startDate">The date time period from</param>
+        /// <param name="endDate">The date time period to</param>
+        /// <returns>The unique list of products identifiers associated with changed prices for passed period</returns>
+        protected virtual ICollection<string> GetProductIdsForChangedPrices(DateTime? startDate, DateTime? endDate)
+        {
+            var result = new HashSet<string>();
 
+            using (var platformRepository = _platformRepositoryFactory())
+            using (var repository = _repositoryFactory())
+            {
+                var changedPriceIdsQuery = platformRepository.OperationLogs
+                                                             .Where(x => x.ObjectType == _changeLogObjectType &&
+                                                                         (startDate == null || x.ModifiedDate >= startDate) &&
+                                                                         (endDate == null || x.ModifiedDate < endDate))
+                                                             .OrderBy(x => x.ModifiedDate)
+                                                             .Select(x => x.ObjectId);
+
+                var totalCount = changedPriceIdsQuery.Count();
+
+                for (var i = 0; i < totalCount; i += _batchSize)
+                {
+                    var changedPriceIds = changedPriceIdsQuery.Skip(i)
+                                                              .Take(_batchSize)
+                                                              .ToArray();
+
+                    var productIds = repository.Prices.Where(x => changedPriceIds.Contains(x.Id))
+                                                      .Select(x => x.ProductId)
+                                                      .Distinct()
+                                                      .ToArray();
+                    result.AddRange(productIds);
+                }
+            }
+
+            return result;
+        }
     }
 }

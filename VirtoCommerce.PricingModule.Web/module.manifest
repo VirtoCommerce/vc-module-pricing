@@ -48,6 +48,13 @@
                 <title>The page size being used for Export / Import</title>
                 <description>High value may will cause slow performance</description>
             </setting>
+            <setting>
+                <name>Pricing.Indexing.Enable</name>
+                <valueType>boolean</valueType>
+                <defaultValue>true</defaultValue>
+                <title>Enable product price indexing (requires restart)</title>
+                <description>If this setting is turned on, product price will be included to the product index. This will also cause product re-indexing after changing its prices.</description>
+            </setting>
         </group>
     </settings>
 

@@ -74,24 +74,30 @@ namespace VirtoCommerce.PricingModule.Web
 
             #region Search
 
-            // Add price document source to the product indexing configuration
-            var productIndexingConfigurations = _container.Resolve<IndexDocumentConfiguration[]>();
-            if (productIndexingConfigurations != null)
+            var settingsManager = _container.Resolve<ISettingsManager>();
+            var priceIndexingEnabled = settingsManager.GetValue("Pricing.Indexing.Enable", true);
+            if (priceIndexingEnabled)
             {
-                var productPriceDocumentSource = new IndexDocumentSource
+                // Add price document source to the product indexing configuration
+                var productIndexingConfigurations = _container.Resolve<IndexDocumentConfiguration[]>();
+                if (productIndexingConfigurations != null)
                 {
-                    ChangesProvider = _container.Resolve<IPricingDocumentChangesProvider>(),
-                    DocumentBuilder = _container.Resolve<ProductPriceDocumentBuilder>(),
-                };
-
-                foreach (var configuration in productIndexingConfigurations.Where(c => c.DocumentType == KnownDocumentTypes.Product))
-                {
-                    if (configuration.RelatedSources == null)
+                    var productPriceDocumentSource = new IndexDocumentSource
                     {
-                        configuration.RelatedSources = new List<IndexDocumentSource>();
-                    }
+                        ChangesProvider = _container.Resolve<IPricingDocumentChangesProvider>(),
+                        DocumentBuilder = _container.Resolve<ProductPriceDocumentBuilder>(),
+                    };
 
-                    configuration.RelatedSources.Add(productPriceDocumentSource);
+                    foreach (var configuration in productIndexingConfigurations.Where(c =>
+                        c.DocumentType == KnownDocumentTypes.Product))
+                    {
+                        if (configuration.RelatedSources == null)
+                        {
+                            configuration.RelatedSources = new List<IndexDocumentSource>();
+                        }
+
+                        configuration.RelatedSources.Add(productPriceDocumentSource);
+                    }
                 }
             }
 
