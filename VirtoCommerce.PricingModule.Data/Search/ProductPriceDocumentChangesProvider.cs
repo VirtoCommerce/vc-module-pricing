@@ -17,7 +17,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
     {
         private const string _changeLogObjectType = nameof(PriceEntity);
         private static readonly TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);
-
+        private const int _batchSize = 500;
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly Func<IPlatformRepository> _platformRepositoryFactory;
         private readonly ISettingsManager _settingsManager;
@@ -120,10 +120,14 @@ namespace VirtoCommerce.PricingModule.Data.Search
             return result;
         }
 
+        /// <summary>
+        /// Retrieves all price changes and groups them by the product Id they are associated with.
+        /// </summary>
+        /// <param name="startDate">The date time period from</param>
+        /// <param name="endDate">The date time period to</param>
+        /// <returns>The unique list of products identifiers associated with changed prices for passed period</returns>
         protected virtual ICollection<string> GetProductIdsForChangedPrices(DateTime? startDate, DateTime? endDate)
         {
-            const int batchSize = 500;
-
             var result = new HashSet<string>();
 
             using (var platformRepository = _platformRepositoryFactory())
@@ -138,10 +142,10 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
                 var totalCount = changedPriceIdsQuery.Count();
 
-                for (int i = 0; i < totalCount; i += batchSize)
+                for (var i = 0; i < totalCount; i += _batchSize)
                 {
                     var changedPriceIds = changedPriceIdsQuery.Skip(i)
-                                                              .Take(batchSize)
+                                                              .Take(_batchSize)
                                                               .ToArray();
 
                     var productIds = repository.Prices.Where(x => changedPriceIds.Contains(x.Id))
