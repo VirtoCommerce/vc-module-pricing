@@ -69,8 +69,9 @@ function ($scope, pricelists, dialogService, uiGridHelper, bladeUtils) {
                 if (remove) {
                     bladeNavigationService.closeChildrenBlades(blade, function () {
                         pricelists.remove({ ids: _.pluck(list, 'id') },
-                            blade.refresh(true),
-                            function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+                            function() {
+                                return blade.refresh(true);
+                            });
                     });
                 }
             }
