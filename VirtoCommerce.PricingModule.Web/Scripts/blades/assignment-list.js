@@ -7,28 +7,26 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
 
     blade.refresh = function () {
         blade.isLoading = true;
-        assignments.search({
-            pricelistId: blade.pricelistId,
-            sort: uiGridHelper.getSortExpression($scope),
-            skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-            take: $scope.pageSettings.itemsPerPageCount
-        }, function (data) {
-            //Loading catalogs for assignments because they do not contains them
-            //Need to display name of catalog in assignments grid
-            catalogs.getCatalogs(function (results) {
-                blade.isLoading = false;
-                $scope.pageSettings.totalItems = data.totalCount;
+        searchAssignments(
+            ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+            $scope.pageSettings.itemsPerPageCount,
+            function (data) {
+                //Loading catalogs for assignments because they do not contains them
+                //Need to display name of catalog in assignments grid
+                catalogs.getCatalogs(function (results) {
+                    blade.isLoading = false;
+                    $scope.pageSettings.totalItems = data.totalCount;
 
-                var priceAssignments = data.results;
-                _.each(priceAssignments, function (x) {
-                    var catalog = _.findWhere(results, { id: x.catalogId });
-                    if (catalog) {
-                        x.catalog = catalog.name;
-                    }
+                    var priceAssignments = data.results;
+                    _.each(priceAssignments, function (x) {
+                        var catalog = _.findWhere(results, { id: x.catalogId });
+                        if (catalog) {
+                            x.catalog = catalog.name;
+                        }
+                    });
+
+                    blade.currentEntities = priceAssignments;
                 });
-
-                blade.currentEntities = priceAssignments;
-            });
         });
     };
 
@@ -84,6 +82,29 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
         dialogService.showConfirmationDialog(dialog);
     }
 
+    $scope.deleteAllFiltered = function () {
+        searchAssignments(0, Number.MAX_VALUE, function (data) {
+            var filteredIds = _.pluck(data.results, 'id');
+            var dialog = {
+                id: "confirmDeleteItems",
+                itemCount: filteredIds.length,
+                callback: function (confirm) {
+                    if (confirm) {
+                        closeChildrenBlades();
+                        blade.isLoading = true;
+
+                        assignments.remove({ ids: filteredIds }, function () {
+                            blade.refresh();
+                        }, function (error) {
+                            bladeNavigationService.setError('Error ' + error.status, blade);
+                        });
+                    }
+                }
+            }
+            dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/deleteAll-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+        });
+    }
+
     function closeChildrenBlades() {
         angular.forEach(blade.childrenBlades.slice(), function (child) {
             bladeNavigationService.closeBlade(child);
@@ -116,6 +137,16 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
                 return isItemsChecked();
             },
             permission: 'pricing:delete'
+        },
+        {
+            name: "pricing.commands.delete-all-filtered", icon: 'fa fa-trash-o',
+            executeMethod: function () {
+                $scope.deleteAllFiltered();
+            },
+            canExecuteMethod: function () {
+                return blade.currentEntities && blade.currentEntities.length > 0;
+            },
+            permission: 'pricing:delete'
         }
     ];
 
@@ -139,6 +170,17 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
 
         bladeUtils.initializePagination($scope);
     };
+
+    function searchAssignments(skip, take, onDone) {
+        assignments.search({
+            pricelistId: blade.pricelistId,
+            keyword: filter.keyword,
+            sort: uiGridHelper.getSortExpression($scope),
+            skip,
+            take
+        }, function (data) { onDone(data); }
+        );
+    }
 
     // actions on load
     //blade.refresh();

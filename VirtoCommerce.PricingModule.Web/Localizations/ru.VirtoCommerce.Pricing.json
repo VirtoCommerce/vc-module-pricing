@@ -1,4 +1,4 @@
-﻿{
+{
     "pricing": {
         "main-menu-title": "Ценообразование",
         "blades": {
@@ -75,6 +75,8 @@
                     "pricelist": "Прайс-лист",
                     "pricelist-currency":  "Валюта",
                     "priority": "Приоритет",
+				            "activation": "Активация",
+				            "expiration": "Деактивация",
                     "last-modified": "Изменено",
                     "modified-by": "Изменено"
                 }

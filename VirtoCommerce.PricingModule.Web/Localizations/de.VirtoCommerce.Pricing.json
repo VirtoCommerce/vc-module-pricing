@@ -75,6 +75,8 @@
           "pricelist": "Preisliste",
           "pricelist-currency": "Währung",
           "priority": "Priorität",
+          "activation": "Aktivierung",
+          "expiration": "Ablauf",
           "last-modified": "Geändert",
           "modified-by": "Geändert von"
         }
