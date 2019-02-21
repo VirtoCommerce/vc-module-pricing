@@ -14,6 +14,11 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
     {
         public static IQueryable<PricelistAssignmentEntity> BuildSearchQuery(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
         {
+            return BuildSearchQuery(query, criteria, out var dummy);
+        }
+
+        public static IQueryable<PricelistAssignmentEntity> BuildSearchQuery(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria, out int count)
+        {
             if (!criteria.PriceListIds.IsNullOrEmpty())
             {
                 query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
@@ -31,6 +36,8 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
             }
 
             query = query.OrderBySortInfos(sortInfos);
+
+            count = query.Count();
 
             query = query.Skip(criteria.Skip).Take(criteria.Take);
 
