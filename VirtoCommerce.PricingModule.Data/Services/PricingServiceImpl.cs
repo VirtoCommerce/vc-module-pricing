@@ -14,6 +14,7 @@ using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.PricingModule.Data.Extensions;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using dataModel = VirtoCommerce.PricingModule.Data.Model;
@@ -433,7 +434,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 repository.DisableChangesTracking();
 
-                var query = PricingSearchServiceImpl.GetPriceAssignmentsQuery(repository, criteria);
+                var query = repository.PricelistAssignments.BuildSearchQuery(criteria);
                 var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
 
                 const int BATCH_SIZE = 20;
