@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Common;
+using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
@@ -423,6 +424,27 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 repository.DeletePricelistAssignments(ids);
                 CommitChanges(repository);
                 ResetCache();
+            }
+        }
+
+        public virtual void DeletePricelistsAssignmentsByFilter(PricelistAssignmentsSearchCriteria criteria)
+        {
+            using (var repository = _repositoryFactory())
+            {
+                repository.DisableChangesTracking();
+
+                var query = PricingSearchServiceImpl.GetPriceAssignmentsQuery(repository, criteria);
+                var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
+
+                const int BATCH_SIZE = 20;
+                var skip = 0;
+                IEnumerable<string> batch = null;
+                while ((batch = pricelistAssignmentsIds.Skip(skip).Take(BATCH_SIZE)).Count() > 0)
+                {
+                    DeletePricelistsAssignments(batch.ToArray());
+
+                    skip += BATCH_SIZE;
+                }
             }
         }
         #endregion

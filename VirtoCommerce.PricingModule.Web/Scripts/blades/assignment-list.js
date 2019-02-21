@@ -78,32 +78,32 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
                     });
                 }
             }
-        }
+        };
         dialogService.showConfirmationDialog(dialog);
-    }
+    };
 
     $scope.deleteAllFiltered = function () {
+        // search to display count in dialog
         searchAssignments(0, Number.MAX_VALUE, function (data) {
-            var filteredIds = _.pluck(data.results, 'id');
             var dialog = {
                 id: "confirmDeleteItems",
-                itemCount: filteredIds.length,
+                itemCount: data.results.length,
                 callback: function (confirm) {
-                    if (confirm) {
-                        closeChildrenBlades();
-                        blade.isLoading = true;
-
-                        assignments.remove({ ids: filteredIds }, function () {
-                            blade.refresh();
-                        }, function (error) {
-                            bladeNavigationService.setError('Error ' + error.status, blade);
-                        });
-                    }
+                    if (!confirm)
+                        return;
+                    closeChildrenBlades();
+                    blade.isLoading = true;
+                    assignments.removeFiltered({
+                        pricelistId: blade.pricelistId,
+                        keyword: filter.keyword
+                    }, function () {
+                        blade.refresh();
+                    });
                 }
-            }
+            };
             dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/deleteAll-dialog.tpl.html', 'platformWebApp.confirmDialogController');
         });
-    }
+    };
 
     function closeChildrenBlades() {
         angular.forEach(blade.childrenBlades.slice(), function (child) {

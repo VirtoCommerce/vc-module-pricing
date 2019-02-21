@@ -20,6 +20,7 @@
     	return $resource('api/pricing/assignments/:id', { id: '@Id' }, {
     		search: { url: 'api/pricing/assignments' },
             getNew: { url: 'api/pricing/assignments/new' },
-            update: { method: 'PUT' }
+            update: { method: 'PUT' },
+            removeFiltered: { method: 'DELETE', url: 'api/pricing/filteredAssignments' }
         });
     }]);
