@@ -83,26 +83,22 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
     };
 
     $scope.deleteAllFiltered = function () {
-        // search to display count in dialog
-        searchAssignments(0, Number.MAX_VALUE, function (data) {
-            var dialog = {
-                id: "confirmDeleteItems",
-                itemCount: data.results.length,
-                callback: function (confirm) {
-                    if (!confirm)
-                        return;
-                    closeChildrenBlades();
-                    blade.isLoading = true;
-                    assignments.removeFiltered({
-                        pricelistId: blade.pricelistId,
-                        keyword: filter.keyword
-                    }, function () {
-                        blade.refresh();
-                    });
-                }
-            };
-            dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/deleteAll-dialog.tpl.html', 'platformWebApp.confirmDialogController');
-        });
+        var dialog = {
+            id: "confirmDeleteItems",
+            callback: function (confirm) {
+                if (!confirm)
+                    return;
+                closeChildrenBlades();
+                blade.isLoading = true;
+                assignments.removeFiltered({
+                    pricelistId: blade.pricelistId,
+                    keyword: filter.keyword
+                }, function () {
+                    blade.refresh();
+                });
+            }
+        };
+        dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/deleteAll-dialog.tpl.html', 'platformWebApp.confirmDialogController');
     };
 
     function closeChildrenBlades() {

@@ -154,9 +154,8 @@
       "assignments-delete-all": {
         "title": "Delete confirmation",
         "warning": "WARNING: this change is permanent and can't be undone afterwards. It can lead to data loss.",
-        "message": "The following will be deleted:",
-        "instruction": "Enter 'yes' to enable deletion:",
-        "item": "{{count}} Item(s)",
+        "message": "All filtered items will be deleted",
+        "instruction": "Enter 'yes' to enable deletion:"
       },
       "pricelists-delete": {
         "title": "Delete confirmation",
