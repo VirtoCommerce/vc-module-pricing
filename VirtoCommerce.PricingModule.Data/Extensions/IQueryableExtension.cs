@@ -12,7 +12,7 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
 {
     public static class IQueryableExtension
     {
-        public static IQueryable<PricelistAssignmentEntity> BuildSearchQueryNoPagination(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
+        public static IQueryable<PricelistAssignmentEntity> ApplyFilteringWithoutPagination(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
         {
             if (!criteria.PriceListIds.IsNullOrEmpty())
             {
@@ -35,7 +35,7 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
             return query;
         }
 
-        public static IQueryable<PricelistAssignmentEntity> ApplySkipTake(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
+        public static IQueryable<PricelistAssignmentEntity> ApplyPagination(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
         {
             query = query.Skip(criteria.Skip).Take(criteria.Take);
             return query;

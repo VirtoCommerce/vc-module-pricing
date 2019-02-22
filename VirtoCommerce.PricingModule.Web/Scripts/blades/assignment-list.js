@@ -7,26 +7,29 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
 
     blade.refresh = function () {
         blade.isLoading = true;
-        searchAssignments(
-            ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-            $scope.pageSettings.itemsPerPageCount,
-            function (data) {
-                //Loading catalogs for assignments because they do not contains them
-                //Need to display name of catalog in assignments grid
-                catalogs.getCatalogs(function (results) {
-                    blade.isLoading = false;
-                    $scope.pageSettings.totalItems = data.totalCount;
+        assignments.search({
+            pricelistId: blade.pricelistId,
+            keyword: filter.keyword,
+            sort: uiGridHelper.getSortExpression($scope),
+            skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+            take: $scope.pageSettings.itemsPerPageCount,
+        }, function (data) {
+            //Loading catalogs for assignments because they do not contains them
+            //Need to display name of catalog in assignments grid
+            catalogs.getCatalogs(function (results) {
+                blade.isLoading = false;
+                $scope.pageSettings.totalItems = data.totalCount;
 
-                    var priceAssignments = data.results;
-                    _.each(priceAssignments, function (x) {
-                        var catalog = _.findWhere(results, { id: x.catalogId });
-                        if (catalog) {
-                            x.catalog = catalog.name;
-                        }
-                    });
-
-                    blade.currentEntities = priceAssignments;
+                var priceAssignments = data.results;
+                _.each(priceAssignments, function (x) {
+                    var catalog = _.findWhere(results, { id: x.catalogId });
+                    if (catalog) {
+                        x.catalog = catalog.name;
+                    }
                 });
+
+                blade.currentEntities = priceAssignments;
+            });
         });
     };
 
@@ -166,17 +169,6 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
 
         bladeUtils.initializePagination($scope);
     };
-
-    function searchAssignments(skip, take, onDone) {
-        assignments.search({
-            pricelistId: blade.pricelistId,
-            keyword: filter.keyword,
-            sort: uiGridHelper.getSortExpression($scope),
-            skip,
-            take
-        }, function (data) { onDone(data); }
-        );
-    }
 
     // actions on load
     //blade.refresh();
