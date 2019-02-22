@@ -434,7 +434,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 repository.DisableChangesTracking();
 
-                var query = repository.PricelistAssignments.BuildSearchQuery(criteria);
+                var query = repository.PricelistAssignments.BuildSearchQueryNoPagination(criteria);
                 var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
 
                 const int BATCH_SIZE = 20;

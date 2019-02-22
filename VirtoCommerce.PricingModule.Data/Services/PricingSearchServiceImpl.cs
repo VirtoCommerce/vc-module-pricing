@@ -140,7 +140,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 repository.DisableChangesTracking();
 
-                var query = repository.PricelistAssignments.BuildSearchQuery(criteria, false);
+                var query = repository.PricelistAssignments.BuildSearchQueryNoPagination(criteria);
 
                 retVal.TotalCount = query.Count();
 

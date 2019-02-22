@@ -12,7 +12,7 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
 {
     public static class IQueryableExtension
     {
-        public static IQueryable<PricelistAssignmentEntity> BuildSearchQuery(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria, bool applySkipTake = true)
+        public static IQueryable<PricelistAssignmentEntity> BuildSearchQueryNoPagination(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
         {
             if (!criteria.PriceListIds.IsNullOrEmpty())
             {
@@ -31,9 +31,6 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
             }
 
             query = query.OrderBySortInfos(sortInfos);
-
-            if (applySkipTake)
-                query = ApplySkipTake(query, criteria);
 
             return query;
         }
