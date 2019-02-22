@@ -140,10 +140,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 repository.DisableChangesTracking();
 
-                var count = 0;
-                var query = repository.PricelistAssignments.BuildSearchQuery(criteria, out count);
+                var query = repository.PricelistAssignments.BuildSearchQuery(criteria, false);
 
-                retVal.TotalCount = count;
+                retVal.TotalCount = query.Count();
+
+                query = query.ApplySkipTake(criteria);
 
                 var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
                 retVal.Results = _pricingService.GetPricelistAssignmentsById(pricelistAssignmentsIds.ToArray())

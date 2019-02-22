@@ -12,26 +12,7 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
 {
     public static class IQueryableExtension
     {
-        public static IQueryable<PricelistAssignmentEntity> BuildSearchQuery(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
-        {
-            query = GetQueryWithoutSkipTake(query, criteria);
-            query = query.Skip(criteria.Skip).Take(criteria.Take);
-
-            return query;
-        }
-
-        public static IQueryable<PricelistAssignmentEntity> BuildSearchQuery(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria, out int count)
-        {
-            query = GetQueryWithoutSkipTake(query, criteria);
-
-            count = query.Count();
-
-            query = query.Skip(criteria.Skip).Take(criteria.Take);
-
-            return query;
-        }
-
-        private static IQueryable<PricelistAssignmentEntity> GetQueryWithoutSkipTake(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
+        public static IQueryable<PricelistAssignmentEntity> BuildSearchQuery(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria, bool applySkipTake = true)
         {
             if (!criteria.PriceListIds.IsNullOrEmpty())
             {
@@ -51,6 +32,15 @@ namespace VirtoCommerce.PricingModule.Data.Extensions
 
             query = query.OrderBySortInfos(sortInfos);
 
+            if (applySkipTake)
+                query = ApplySkipTake(query, criteria);
+
+            return query;
+        }
+
+        public static IQueryable<PricelistAssignmentEntity> ApplySkipTake(this IQueryable<PricelistAssignmentEntity> query, PricelistAssignmentsSearchCriteria criteria)
+        {
+            query = query.Skip(criteria.Skip).Take(criteria.Take);
             return query;
         }
     }
