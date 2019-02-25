@@ -10,7 +10,6 @@ using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
 using VirtoCommerce.Platform.Data.Infrastructure;
-using VirtoCommerce.PricingModule.Data.Extensions;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
@@ -140,11 +139,28 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 repository.DisableChangesTracking();
 
-                var query = repository.PricelistAssignments.ApplyFilteringWithoutPagination(criteria);
+                var query = repository.PricelistAssignments;
+
+                if (!criteria.PriceListIds.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
+                }
+
+                if (!string.IsNullOrEmpty(criteria.Keyword))
+                {
+                    query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
+                }
+
+                var sortInfos = criteria.SortInfos;
+                if (sortInfos.IsNullOrEmpty())
+                {
+                    sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<coreModel.PricelistAssignment>(x => x.Priority) } };
+                }
+
+                query = query.OrderBySortInfos(sortInfos);
 
                 retVal.TotalCount = query.Count();
-
-                query = query.ApplyPagination(criteria);
+                query = query.Skip(criteria.Skip).Take(criteria.Take);
 
                 var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
                 retVal.Results = _pricingService.GetPricelistAssignmentsById(pricelistAssignmentsIds.ToArray())

@@ -7,13 +7,10 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
 
     blade.refresh = function () {
         blade.isLoading = true;
-        assignments.search({
-            pricelistId: blade.pricelistId,
-            keyword: filter.keyword,
-            sort: uiGridHelper.getSortExpression($scope),
-            skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-            take: $scope.pageSettings.itemsPerPageCount,
-        }, function (data) {
+        searchAssignments(
+            ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+            $scope.pageSettings.itemsPerPageCount,
+            function (data) {
             //Loading catalogs for assignments because they do not contains them
             //Need to display name of catalog in assignments grid
             catalogs.getCatalogs(function (results) {
@@ -86,22 +83,30 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
     };
 
     $scope.deleteAllFiltered = function () {
-        var dialog = {
-            id: "confirmDeleteItems",
-            callback: function (confirm) {
-                if (!confirm)
-                    return;
-                closeChildrenBlades();
-                blade.isLoading = true;
-                assignments.removeFiltered({
-                    pricelistId: blade.pricelistId,
-                    keyword: filter.keyword
-                }, function () {
-                    blade.refresh();
-                });
-            }
-        };
-        dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/deleteAll-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+        // search to display count in dialog
+        searchAssignments(0, Number.MAX_VALUE, function (data) {
+            var filteredIds = _.pluck(data.results, 'id');
+            var dialog = {
+                id: "confirmDeleteItems",
+                itemCount: filteredIds.length,
+                callback: function (confirm) {
+                    if (confirm) {
+                        closeChildrenBlades();
+                        blade.isLoading = true;
+
+                        var skip = 0;
+                        const batchSize = 20;
+                        var ids = {};
+                        while ((ids = filteredIds.slice(skip, batchSize)).length > 0) {
+                            skip += batchSize;
+                            assignments.remove({ ids });
+                        }
+                        blade.refresh();
+                    }
+                }
+            };
+            dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/deleteAll-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+        });
     };
 
     function closeChildrenBlades() {
@@ -169,6 +174,17 @@ function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs
 
         bladeUtils.initializePagination($scope);
     };
+
+    function searchAssignments(skip, take, onDone) {
+        assignments.search({
+            pricelistId: blade.pricelistId,
+            keyword: filter.keyword,
+            sort: uiGridHelper.getSortExpression($scope),
+            skip,
+            take
+        }, function (data) { onDone(data); }
+        );
+    }
 
     // actions on load
     //blade.refresh();

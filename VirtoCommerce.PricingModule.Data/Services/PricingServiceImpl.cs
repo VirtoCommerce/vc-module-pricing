@@ -14,7 +14,6 @@ using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Serialization;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
-using VirtoCommerce.PricingModule.Data.Extensions;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 using dataModel = VirtoCommerce.PricingModule.Data.Model;
@@ -425,27 +424,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 repository.DeletePricelistAssignments(ids);
                 CommitChanges(repository);
                 ResetCache();
-            }
-        }
-
-        public virtual void DeletePricelistsAssignmentsByFilter(PricelistAssignmentsSearchCriteria criteria)
-        {
-            using (var repository = _repositoryFactory())
-            {
-                repository.DisableChangesTracking();
-
-                var query = repository.PricelistAssignments.ApplyFilteringWithoutPagination(criteria);
-                var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
-
-                const int BATCH_SIZE = 20;
-                var skip = 0;
-                IEnumerable<string> batch = null;
-                while ((batch = pricelistAssignmentsIds.Skip(skip).Take(BATCH_SIZE)).Count() > 0)
-                {
-                    DeletePricelistsAssignments(batch.ToArray());
-
-                    skip += BATCH_SIZE;
-                }
             }
         }
         #endregion
