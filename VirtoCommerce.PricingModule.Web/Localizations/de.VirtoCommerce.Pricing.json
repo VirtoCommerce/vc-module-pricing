@@ -133,9 +133,8 @@
       "assignments-delete-all": {
         "title": "Bestätigung löschen",
         "warning": "Warnung Diese Änderung ist endgültig und kann nicht rückgängig gemacht werden. Es kann zu Datenverlust führen.",
-        "message": "Die folgenden werden gelöscht:",
-        "instruction": "Geben Sie 'yes', um den Löschvorgang zu aktivieren:",
-        "item": "{{count}} Artikel"
+        "message": "Alle gefilterte Elemente werden gelöscht",
+        "instruction": "Geben Sie 'yes', um den Löschvorgang zu aktivieren:"
       },
       "pricelists-delete": {
         "title": "Bestätigung löschen",
