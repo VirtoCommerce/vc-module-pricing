@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -362,6 +362,39 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         public IHttpActionResult DeleteAssignments([FromUri] string[] ids)
         {
             _pricingService.DeletePricelistsAssignments(ids);
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
+        /// Delete pricelist assignments
+        /// </summary>
+        /// <remarks>Delete pricelist assignments by given criteria.</remarks>
+        /// <param name="criteria">Filter criteria</param>
+        /// <todo>Return no any reason if can't update</todo>
+        [HttpDelete]
+        [ResponseType(typeof(void))]
+        [Route("api/pricing/filteredAssignments")]
+        [CheckPermission(Permission = PricingPredefinedPermissions.Delete)]
+        public IHttpActionResult DeleteFilteredAssignments([FromUri]PricelistAssignmentsSearchCriteria criteria)
+        {
+            if (criteria == null)
+            {
+                criteria = new PricelistAssignmentsSearchCriteria();
+            }
+
+            var result = _pricingSearchService.SearchPricelistAssignments(criteria);
+
+            var pricelistAssignmentsIds = result.Results.Select(x => x.Id);
+            const int BATCH_SIZE = 20;
+            var skip = 0;
+            IEnumerable<string> batch;
+            while ((batch = pricelistAssignmentsIds.Skip(skip).Take(BATCH_SIZE)).Count() > 0)
+            {
+                _pricingService.DeletePricelistsAssignments(batch.ToArray());
+
+                skip += BATCH_SIZE;
+            }
+
             return StatusCode(HttpStatusCode.NoContent);
         }
 
