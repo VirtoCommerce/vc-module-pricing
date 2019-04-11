@@ -102,6 +102,10 @@
     <Compile Include="Migrations\201809260746118_PriceStartDateEndDate.Designer.cs">
       <DependentUpon>201809260746118_PriceStartDateEndDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904110931055_ChangePriceAmountTypesToMoney.cs" />
+    <Compile Include="Migrations\201904110931055_ChangePriceAmountTypesToMoney.Designer.cs">
+      <DependentUpon>201904110931055_ChangePriceAmountTypesToMoney.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\PriceEntity.cs" />
     <Compile Include="Model\PricelistEntity.cs" />
@@ -135,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201809260746118_PriceStartDateEndDate.resx">
       <DependentUpon>201809260746118_PriceStartDateEndDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904110931055_ChangePriceAmountTypesToMoney.resx">
+      <DependentUpon>201904110931055_ChangePriceAmountTypesToMoney.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

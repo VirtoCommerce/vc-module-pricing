@@ -3,35 +3,36 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Infrastructure;
 
 namespace VirtoCommerce.PricingModule.Data.Model
 {
-	public class PriceEntity : AuditableEntity
-	{
-		public decimal? Sale { get; set; }
-	
-		[Required]
-		public decimal List { get; set; }
+    public class PriceEntity : AuditableEntity
+    {
+        [Column(TypeName = "Money")]
+        public decimal? Sale { get; set; }
 
-		[StringLength(128)]
+        [Required]
+        [Column(TypeName = "Money")]
+        public decimal List { get; set; }
+
+        [StringLength(128)]
         [Index("ProductIdAndPricelistId", 1)]
         public string ProductId { get; set; }
 
-		[StringLength(1024)]
-		public string ProductName { get; set; }
+        [StringLength(1024)]
+        public string ProductName { get; set; }
 
-		public decimal MinQuantity { get; set; }
+        public decimal MinQuantity { get; set; }
 
-	    public DateTime? StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
-	    public DateTime? EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         #region Navigation Properties
         [Index("ProductIdAndPricelistId", 2)]
         public string PricelistId { get; set; }
 
-		public virtual PricelistEntity Pricelist { get; set; }
+        public virtual PricelistEntity Pricelist { get; set; }
 
         #endregion
 
@@ -43,7 +44,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
             price.Id = this.Id;
             price.List = this.List;
-            price.MinQuantity =(int)this.MinQuantity;
+            price.MinQuantity = (int)this.MinQuantity;
             price.ModifiedBy = this.ModifiedBy;
             price.ModifiedDate = this.ModifiedDate;
             price.PricelistId = this.PricelistId;
