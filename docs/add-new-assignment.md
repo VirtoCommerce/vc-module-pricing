@@ -1,6 +1,6 @@
 # Add New Assignment
 
-![Add New Assignment](/docs/media/diagramm-add-new-assignment.png)
+![Add New Assignment](/docs/media/diagram-add-new-assignment.png)
 
 ## Simple Assignment without rules and conditions
 
@@ -25,7 +25,7 @@
     1. Enters the Assignment Name
     1. Selects the Catalog from the drop-down list
     1. Selects the Price List from the drop-down list
-    1. Specifies the Priority (1, 2, 3, etc.). The system will then display on the Storefront the Price List with the highest priority 
+    1. Specifies the Priority (1, 2, 3, etc.). The system will then display on the Storefront the Price List with the highest priority
     1. The user can also fill out the fill out the ‘Description’ field, but it’s optional
     1. The user can optionally specify the date range using the date pickers ‘from’- ‘’to’ to determine Price List availability. If the user leaves the fields blank, that will mean the Price List is always available
 ![New price list assignment](/docs/media/screen-new-price-list-assignment.png)
@@ -35,9 +35,9 @@
 
 ## Assignment with Rules and Conditions
 
-1. In the created Assignment under Eligible Shoppers the user should first select if Any or All conditions are true by clicking the ‘Any’ link and selecting the option 
+1. In the created Assignment under Eligible Shoppers the user should first select if Any or All conditions are true by clicking the ‘Any’ link and selecting the option
 1. The system will display the selected option: Any or All
-1. The user clicks the ‘Add condition’ icon 
+1. The user clicks the ‘Add condition’ icon
 1. The system will display the list of different conditions previously added to the system. Below is an example of different rules and conditions that can be assigned to the Price List
 ![List of different conditions](/docs/media/screen-list-of-different-conditions.png)
 1. The user selects as many conditions and needed from the list

@@ -57,13 +57,14 @@ The Pricelist Assignment has the following key characteristics:
     1. [Simple Assignment without rules and conditions](/docs/add-new-assignment.md#simple-assignment-without-rules-and-conditions)
     1. [Assignment with Rules and Conditions](/docs/add-new-assignment.md#assignment-with-rules-and-conditions)
 
-## MANAGING PRICING MODULE SETTINGS
+## Managing Pricing module settings
 
-### Indexing
+## Web API
 
-### Web API
+Web API documentation for each module is built out automatically and can be accessed by following the link bellow:
+<https://admin-demo.virtocommerce.com/docs/ui/index#/Pricing%2520module>
 
-### Database Storage
+## Database Storage
 
 ## License
 
@@ -73,7 +74,7 @@ Licensed under the Virto Commerce Open Software License (the "License"); you
 may not use this file except in compliance with the License. You may
 obtain a copy of the License at
 
-http://virtocommerce.com/opensourcelicense
+<http://virtocommerce.com/opensourcelicense>
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

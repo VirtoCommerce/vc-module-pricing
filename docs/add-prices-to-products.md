@@ -1,6 +1,6 @@
 # Add Prices to products
 
-![Add Prices to products](/docs/media/diagramm-add-prices-to-products.png)
+![Add Prices to products](/docs/media/diagram-add-prices-to-products.png)
 
 ## Add List Price
 
@@ -30,7 +30,7 @@
 
 ## Specify Tier Price
 
-![Specify Tier Price](/docs/media/diagramm-specify-tier-price.png)
+![Specify Tier Price](/docs/media/diagram-specify-tier-price.png)
 
 1. The user navigates to Pricing module->Price Lists->selects the Price list and clicks on it
 1. The system opens the ‘Manage Price List’ screen
