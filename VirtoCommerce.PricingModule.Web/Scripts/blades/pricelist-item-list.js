@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
@@ -160,8 +160,8 @@
     $scope.getPriceRange = function (priceGroup) {
         var retVal;
         var allPrices = _.union(_.pluck(priceGroup.prices, 'list'), _.pluck(priceGroup.prices, 'sale'));
-        var minprice = $filter('currency')(_.min(allPrices), '', 2);
-        var maxprice = $filter('currency')(_.max(allPrices), '', 2);
+        var minprice = $filter('currency')(_.min(allPrices), '');
+        var maxprice = $filter('currency')(_.max(allPrices), '');
         retVal = (minprice == maxprice ? minprice : minprice + '-' + maxprice);
 
         //else {

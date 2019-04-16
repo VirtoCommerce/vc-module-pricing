@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.itemPricesWidgetController', ['$scope', '$filter', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.pricelists', 'virtoCommerce.pricingModule.prices', '$state', function ($scope, $filter, bladeNavigationService, pricelists, prices, $state) {
     var blade = $scope.blade;
 
@@ -13,8 +13,8 @@
                 var minprice = _.min(allPrices);
                 var maxprice = _.max(allPrices);
                 var currency = _.any(productPrices) ? productPrices[0].currency : '';
-                minprice = $filter('currency')(minprice, currency, 2);
-                maxprice = $filter('currency')(maxprice, currency, 2);
+                minprice = $filter('currency')(minprice, currency);
+                maxprice = $filter('currency')(maxprice, currency);
                 $scope.priceLabel = (minprice == maxprice ? minprice : minprice + ' - ' + maxprice);
             }
             return productPrices;
