@@ -1,7 +1,6 @@
 ---
-author: NO VALUE SET
-ms.author: NO VALUE SET # Microsoft employees only
-ms.date: 4/15/2019
+author: Maksim Kopnov
+date: 4/15/2019
 ---
 # PRICING MODULE
 
@@ -46,10 +45,10 @@ The Pricelist Assignment has the following key characteristics:
 ## Scenarios  
 
 1. [Create a New Price list](/Docs/create-new-price-list.md)
-    1. Add Products to the New Price List
-    1. Add Prices to products
-    1. Add List Price
-    1. Add Sale Price
+    1. [Add Products to the New Price List]()
+    1. [Add Prices to products]
+    1. [Add List Price]
+    1. [Add Sale Price]
 
 ## Specify Tier Price
 
