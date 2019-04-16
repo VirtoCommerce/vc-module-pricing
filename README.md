@@ -52,10 +52,10 @@ The Pricelist Assignment has the following key characteristics:
         1. [Add List Price](/docs/add-prices-to-products.md#add-list-price)
         1. [Add Sale Price](/docs/add-prices-to-products.md#add-sale-price)
         1. [Specify Tier Price](/docs/add-prices-to-products.md#specify-tier-price)
-1. View Price list via Catalog Module
-1. Add New Assignment
-    1. Simple Assignment without rules and conditions
-    1. Assignment with Rules and Conditions
+1. [View Price list via Catalog Module](/docs/view-price-list-via-catalog-module.md)
+1. [Add New Assignment](/docs/add-new-assignment.md)
+    1. [Simple Assignment without rules and conditions](/docs/add-new-assignment.md#simple-assignment-without-rules-and-conditions)
+    1. [Assignment with Rules and Conditions](/docs/add-new-assignment.md#assignment-with-rules-and-conditions)
 
 ## MANAGING PRICING MODULE SETTINGS
 
