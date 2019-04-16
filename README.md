@@ -45,7 +45,7 @@ The Pricelist Assignment has the following key characteristics:
 
 ## Scenarios  
 
-1. [Create a New Price list](Docs\create-new-price-list.md)
+1. [Create a New Price list](/Docs/create-new-price-list.md)
     1. Add Products to the New Price List
     1. Add Prices to products
     1. Add List Price
