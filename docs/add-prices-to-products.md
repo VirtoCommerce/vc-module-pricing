@@ -34,9 +34,9 @@
 
 1. The user navigates to Pricing module->Price Lists->selects the Price list and clicks on it
 1. The system opens the ‘Manage Price List’ screen
-1. The user clicks the Prices widget and the system will display the Price List with possibility to edit prices 
+1. The user clicks the Prices widget and the system will display the Price List with possibility to edit prices
 1. The user selects the product and the system will open the ‘Edit prices’ screen
-1. The user enters the List price (required), Sale price (Optional) and Min. quantity (required) into the correspondent input fields and clicks the ‘Save’ button 
-1. The system will save the changes and the entered price(s) will be displayed in the Price range column. The Min. quantity will be displayed in the ‘#’ column. 
+1. The user enters the List price (required), Sale price (Optional) and Min. quantity (required) into the correspondent input fields and clicks the ‘Save’ button
+1. The system will save the changes and the entered price(s) will be displayed in the Price range column. The Min. quantity will be displayed in the ‘#’ column.
 1. The system will display the tier price (price for min. Quantity) for the end user, i.e. the specified price (discount) will be available for the specified Min. Quantity
 ![Specified Price](/docs/media/screen-specified-price.png)
