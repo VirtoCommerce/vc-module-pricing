@@ -56,7 +56,7 @@ The Pricelist Assignment has the following key characteristics:
 View Price list via Catalog Module 
 Add New Assignment 
 Simple Assignment without rules and conditions 
-Assignment with Rules and Conditions 
+Assignment with Rules and Conditions
 
 # MANAGING PRICING MODULE SETTINGS
 
