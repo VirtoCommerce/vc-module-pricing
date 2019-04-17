@@ -76,6 +76,8 @@ Web API documentation for each module is built out automatically and can be acce
 
 ## Database Model
 
+![DB model](/docs/media/diagram-db-model.png)
+
 ## License
 
 Copyright (c) Virto Solutions LTD.  All rights reserved.
