@@ -15,6 +15,7 @@ The Pricing Module is consisted of three main objects:
 - Pricelist Assignment
 
 ### Price
+
 The purpose of this object is to store the item price in the system and support a static discount and a tier price. The price has the following key characteristics:
 
 - **Product** (required) - is an object that the current price relates to.
@@ -30,6 +31,7 @@ The Pricelist plays the role of a container for prices with single currency. The
 - **Prices** – the list of prices included into the Price list.  
 
 ### Pricelist Assignment
+
 The Pricelist Assignment allows associating the specific Pricelist with a catalog based on specific rules and conditions.  
 
 The Pricelist Assignment has the following key characteristics:
@@ -73,8 +75,6 @@ Web API documentation for each module is built out automatically and can be acce
 <https://admin-demo.virtocommerce.com/docs/ui/index#/Pricing%2520module>
 
 ## Database Model
-
-
 
 ## License
 
