@@ -4,7 +4,7 @@ date: 4/15/2019
 ---
 # Pricing Module
 
-## Module overview
+## Overview
 
 The **Pricing Module** is designed for storing, managing and evaluating product prices.
 
