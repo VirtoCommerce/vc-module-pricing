@@ -1,5 +1,7 @@
 # Add Prices to products
+
 ## Scenario
+
 ![Add Prices to products](/docs/media/diagram-add-prices-to-products.png)
 
 ## Add List Price

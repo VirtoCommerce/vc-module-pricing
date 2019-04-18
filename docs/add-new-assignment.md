@@ -1,6 +1,7 @@
 # Add New Assignment
 
 ## Scenario
+
 ![Add New Assignment](/docs/media/diagram-add-new-assignment.png)
 
 ## Simple Assignment without rules and conditions
