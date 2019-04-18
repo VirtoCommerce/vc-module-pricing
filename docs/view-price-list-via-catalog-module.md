@@ -1,5 +1,4 @@
 # View Price list via Catalog Module
-
 1. The user navigates to **Catalog module** &rightarrow; **Catalog** &rightarrow; **Categories and items** &rightarrow; selects the category
 1. The system will display the Categories and items screen
 ![Categories and items](/docs/media/screen-categories-and-items.png)
