@@ -14,7 +14,7 @@ The Pricing Module is consisted of three main objects:
 - Pricelist
 - Pricelist Assignment
 
-### Price list
+### Price
 
 The purpose of this object is to store the item price in the system and support a static discount and a tier price. The price has the following key characteristics:
 
