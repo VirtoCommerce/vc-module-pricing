@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -181,7 +182,9 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                                 while (reader.TokenType != JsonToken.EndArray)
                                 {
-                                    var price = _jsonSerializer.Deserialize<Price>(reader);
+                                    var price = AbstractTypeFactory<Price>.TryCreateInstance();
+                                    price = _jsonSerializer.Deserialize(reader, price.GetType()) as Price;
+
                                     pricesChunk.Add(price);
 
                                     reader.Read();
