@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using VirtoCommerce.Domain.Pricing.Model;
 using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -161,7 +162,8 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
                         {
                             reader.Read();
 
-                            var pricelists = _jsonSerializer.Deserialize<Pricelist[]>(reader);
+                            var pricelistArrayType = AbstractTypeFactory<Pricelist>.TryCreateInstance().GetType().MakeArrayType();
+                            var pricelists = _jsonSerializer.Deserialize(reader, pricelistArrayType) as Pricelist[];
 
                             progressInfo.Description = $"{pricelists.Count()} price lists are importing...";
                             progressCallback(progressInfo);
@@ -181,7 +183,10 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                                 while (reader.TokenType != JsonToken.EndArray)
                                 {
-                                    var price = _jsonSerializer.Deserialize<Price>(reader);
+                                    var price = AbstractTypeFactory<Price>.TryCreateInstance();
+
+                                    price = _jsonSerializer.Deserialize(reader, price.GetType()) as Price;
+
                                     pricesChunk.Add(price);
 
                                     reader.Read();
@@ -203,7 +208,8 @@ namespace VirtoCommerce.PricingModule.Web.ExportImport
 
                             reader.Read();
 
-                            var assignments = _jsonSerializer.Deserialize<PricelistAssignment[]>(reader);
+                            var assignmentArrayType = AbstractTypeFactory<PricelistAssignment>.TryCreateInstance().GetType().MakeArrayType();
+                            var assignments = _jsonSerializer.Deserialize(reader, assignmentArrayType) as PricelistAssignment[];
 
                             progressInfo.Description = $"{assignments.Count()} assignments are importing...";
                             progressCallback(progressInfo);
