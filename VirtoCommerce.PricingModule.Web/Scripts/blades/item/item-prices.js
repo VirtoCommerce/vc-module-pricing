@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
     function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
         $scope.uiGridConstants = uiGridConstants;
@@ -95,7 +95,7 @@
                  _.all(blade.currentEntities, $scope.isListPriceValid) &&
                  _.all(blade.currentEntities, $scope.isSalePriceValid) &&
                  _.all(blade.currentEntities, $scope.isUniqueQtyForPricelist) &&
-                (blade.currentEntities.length == 0 || _.some(blade.currentEntities, function (x) { return x.minQuantity == 1; }));
+                (blade.currentEntities.length == 0 || _.every(blade.currentEntities, function (x) { return x.minQuantity > 0; }));
         }
 
         $scope.saveChanges = function () {
