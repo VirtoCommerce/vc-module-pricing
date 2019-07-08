@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.ui-grid.extension', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, priceValidatorsService, gridOptionExtension) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
@@ -25,7 +25,7 @@
     };
 
     function isDirty() {
-        return blade.currentEntities && !objCompareService.equal(blade.origEntity, blade.currentEntities) && blade.hasUpdatePermission()
+        return blade.currentEntities && !objCompareService.equal(blade.origEntity, blade.currentEntities) && blade.hasUpdatePermission();
     }
 
     function canSave() {
@@ -38,11 +38,11 @@
 
     $scope.isValid = function () {
         return $scope.formScope && $scope.formScope.$valid &&
-             _.all(blade.currentEntities, $scope.isListPriceValid) &&
-             _.all(blade.currentEntities, $scope.isSalePriceValid) &&
-             _.all(blade.currentEntities, $scope.isUniqueQty) &&
+            _.all(blade.currentEntities, $scope.isListPriceValid) &&
+            _.all(blade.currentEntities, $scope.isSalePriceValid) &&
+            _.all(blade.currentEntities, $scope.isUniqueQty) &&
             (blade.currentEntities.length == 0 || _.some(blade.currentEntities, function (x) { return x.minQuantity == 1; }));
-    }
+    };
 
     $scope.saveChanges = function () {
         blade.isLoading = true;
@@ -143,7 +143,7 @@
         if ($scope.gridApi) {
             angular.forEach(blade.currentEntities, function (rowEntity) {
                 angular.forEach($scope.gridOptions.columnDefs, function (colDef) {
-                    $scope.gridApi.grid.validate.runValidators(rowEntity, colDef, rowEntity[colDef.name], undefined, $scope.gridApi.grid)
+                    $scope.gridApi.grid.validate.runValidators(rowEntity, colDef, rowEntity[colDef.name], undefined, $scope.gridApi.grid);
                 });
             });
         }
