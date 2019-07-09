@@ -1,4 +1,4 @@
-angular.module('virtoCommerce.pricingModule')
+﻿angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
     function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
         $scope.uiGridConstants = uiGridConstants;
@@ -52,7 +52,7 @@ angular.module('virtoCommerce.pricingModule')
                     blade.isLoading = false;
                 });
             });
-        };
+        }
 
         $scope.createNewPricelist = function () {
             var newBlade = {
@@ -83,7 +83,7 @@ angular.module('virtoCommerce.pricingModule')
         };
 
         function isDirty() {
-            return blade.currentEntities && !objCompareService.equal(blade.origEntity, blade.currentEntities) && blade.hasUpdatePermission();
+            return blade.currentEntities && !objCompareService.equal(blade.origEntity, blade.currentEntities) && blade.hasUpdatePermission()
         }
 
         function canSave() {
@@ -92,11 +92,11 @@ angular.module('virtoCommerce.pricingModule')
 
         $scope.isValid = function () {
             return $scope.formScope && $scope.formScope.$valid &&
-                _.all(blade.currentEntities, $scope.isListPriceValid) &&
-                _.all(blade.currentEntities, $scope.isSalePriceValid) &&
-                _.all(blade.currentEntities, $scope.isUniqueQtyForPricelist) &&
+                 _.all(blade.currentEntities, $scope.isListPriceValid) &&
+                 _.all(blade.currentEntities, $scope.isSalePriceValid) &&
+                 _.all(blade.currentEntities, $scope.isUniqueQtyForPricelist) &&
                 (blade.currentEntities.length == 0 || _.some(blade.currentEntities, function (x) { return x.minQuantity == 1; }));
-        };
+        }
 
         $scope.saveChanges = function () {
             blade.isLoading = true;
@@ -115,7 +115,7 @@ angular.module('virtoCommerce.pricingModule')
             }
         };
 
-        $scope.setForm = function (form) { $scope.formScope = form; };
+        $scope.setForm = function (form) { $scope.formScope = form; }
 
         blade.toolbarCommands = [
             {
@@ -148,7 +148,7 @@ angular.module('virtoCommerce.pricingModule')
                                 });
                             }
                         }
-                    };
+                    }
                     dialogService.showConfirmationDialog(dialog);
                 },
                 canExecuteMethod: function () {
@@ -184,7 +184,7 @@ angular.module('virtoCommerce.pricingModule')
             };
             blade.currentEntities.push(newPrice);
             $scope.validateGridData();
-        };
+        }
 
         $scope.isListPriceValid = priceValidatorsService.isListPriceValid;
         $scope.isSalePriceValid = priceValidatorsService.isSalePriceValid;
