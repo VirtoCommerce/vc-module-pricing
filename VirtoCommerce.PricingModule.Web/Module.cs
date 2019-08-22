@@ -8,14 +8,17 @@ using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Domain.Search;
 using VirtoCommerce.ExportModule.Core.Model;
+using VirtoCommerce.ExportModule.Core.Security;
 using VirtoCommerce.ExportModule.Core.Services;
 using VirtoCommerce.ExportModule.Data.Extensions;
+using VirtoCommerce.ExportModule.Data.Security;
 using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
+using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
@@ -28,6 +31,7 @@ using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule.Web.ExportImport;
 using VirtoCommerce.PricingModule.Web.JsonConverters;
+using VirtoCommerce.PricingModule.Web.Security;
 
 namespace VirtoCommerce.PricingModule.Web
 {
@@ -99,6 +103,14 @@ namespace VirtoCommerce.PricingModule.Web
                     var result = new PricelistAssignmentExportPagedDataSource(pricingSearchService, pricingService, catalogService, (PricelistAssignmentExportDataQuery)exportDataQuery);
                     return result;
                 })));
+
+            var exportSecurityHandlerRegistrar = _container.Resolve<IExportSecurityHandlerRegistrar>();
+            var exportSecurityHandlerFactory = new Func<IExportSecurityHandler>(() => new PermissionExportSecurityHandler(_container.Resolve<ISecurityService>(), PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read));
+
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePricelist).FullName + "FullDataExportDataPolicy", exportSecurityHandlerFactory);
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePricelist).FullName + "ExportDataPolicy", exportSecurityHandlerFactory);
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePrice).FullName + "ExportDataPolicy", exportSecurityHandlerFactory);
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePricelistAssignment).FullName + "ExportDataPolicy", exportSecurityHandlerFactory);
         }
 
         public override void PostInitialize()
