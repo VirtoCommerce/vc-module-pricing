@@ -23,7 +23,6 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             Description = source.Description;
             Currency = source.Currency;
             Id = source.Id;
-            //OuterId = source.OuterId;
             Name = source.Name;
             Code = null;
             ImageUrl = null;

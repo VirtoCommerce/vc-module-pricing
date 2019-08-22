@@ -32,7 +32,6 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             Description = source.Description;
             Priority = source.Priority;
             StartDate = source.StartDate;
-            //OuterId = source.OuterId;
             Name = source.Name;
             Code = null;
             ImageUrl = null;
