@@ -103,12 +103,12 @@ namespace VirtoCommerce.PricingModule.Web
                 })));
 
             var exportSecurityHandlerRegistrar = _container.Resolve<IExportSecurityHandlerRegistrar>();
-            var exportSecurityPermissionHandler = new Func<IExportSecurityHandler>(() => new ExportSecurityPermissionHandler(_container.Resolve<ISecurityService>(), PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read));
+            var exportSecurityHandlerFactory = new Func<IExportSecurityHandler>(() => new PermissionExportSecurityHandler(_container.Resolve<ISecurityService>(), PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read));
 
-            exportSecurityHandlerRegistrar.Register(typeof(ExportablePricelist).FullName + "FullDataExportDataPolicy", exportSecurityPermissionHandler);
-            exportSecurityHandlerRegistrar.Register(typeof(ExportablePricelist).FullName + "ExportDataPolicy", exportSecurityPermissionHandler);
-            exportSecurityHandlerRegistrar.Register(typeof(ExportablePrice).FullName + "ExportDataPolicy", exportSecurityPermissionHandler);
-            exportSecurityHandlerRegistrar.Register(typeof(ExportablePricelistAssignment).FullName + "ExportDataPolicy", exportSecurityPermissionHandler);
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePricelist).FullName + "FullDataExportDataPolicy", exportSecurityHandlerFactory);
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePricelist).FullName + "ExportDataPolicy", exportSecurityHandlerFactory);
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePrice).FullName + "ExportDataPolicy", exportSecurityHandlerFactory);
+            exportSecurityHandlerRegistrar.RegisterHandler(typeof(ExportablePricelistAssignment).FullName + "ExportDataPolicy", exportSecurityHandlerFactory);
         }
 
         public override void PostInitialize()
