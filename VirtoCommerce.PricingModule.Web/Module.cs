@@ -11,6 +11,7 @@ using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Core.Services;
 using VirtoCommerce.ExportModule.Data.Extensions;
 using VirtoCommerce.ExportModule.Data.Services;
+using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
@@ -75,7 +76,8 @@ namespace VirtoCommerce.PricingModule.Web
                   var pricingSearchService = provider.Resolve<IPricingSearchService>();
                   var pricingService = provider.Resolve<IPricingService>();
                   var itemService = provider.Resolve<IItemService>();
-                  var result = new PriceExportPagedDataSource(pricingSearchService, pricingService, itemService, (PriceExportDataQuery)exportDataQuery);
+                  var blobUrlResolver = provider.Resolve<IBlobUrlResolver>();
+                  var result = new PriceExportPagedDataSource(pricingSearchService, pricingService, itemService, blobUrlResolver, (PriceExportDataQuery)exportDataQuery);
                   return result;
               })));
 

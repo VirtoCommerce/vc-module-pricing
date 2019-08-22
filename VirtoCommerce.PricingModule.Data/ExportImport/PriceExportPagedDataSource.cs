@@ -8,6 +8,7 @@ using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Data.Services;
+using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Data.ExportImport
@@ -18,16 +19,19 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
         private readonly IPricingService _pricingService;
         private readonly IItemService _itemService;
         private readonly PriceExportDataQuery _dataQuery;
+        private readonly IBlobUrlResolver _blobUrlResolver;
 
         public PriceExportPagedDataSource(
             IPricingSearchService searchService,
             IPricingService pricingService,
             IItemService itemService,
+            IBlobUrlResolver blobUrlResolver,
             PriceExportDataQuery dataQuery) : base(dataQuery)
         {
             _searchService = searchService;
             _pricingService = pricingService;
             _itemService = itemService;
+            _blobUrlResolver = blobUrlResolver;
             _dataQuery = dataQuery;
         }
 
@@ -93,9 +97,10 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
                 var viewableEntity = kvp.Value;
                 var product = products.FirstOrDefault(x => x.Id == model.ProductId);
                 var pricelist = pricelists.FirstOrDefault(x => x.Id == model.PricelistId);
+                var imageUrl = product?.Images?.FirstOrDefault()?.Url;
 
                 viewableEntity.Code = product?.Code;
-                viewableEntity.ImageUrl = product?.Images?.FirstOrDefault()?.Url;
+                viewableEntity.ImageUrl = imageUrl != null ? _blobUrlResolver.GetAbsoluteUrl(imageUrl) : null;
                 viewableEntity.Name = product?.Name;
                 viewableEntity.ProductName = product?.Name;
                 viewableEntity.Parent = pricelist?.Name;
