@@ -1,4 +1,4 @@
-﻿namespace VirtoCommerce.PricingModule.Web.Security
+namespace VirtoCommerce.PricingModule.Web.Security
 {
     public static class PricingPredefinedPermissions
     {
@@ -6,6 +6,7 @@
             Create = "pricing:create",
             Access = "pricing:access",
             Update = "pricing:update",
-            Delete = "pricing:delete";
+            Delete = "pricing:delete",
+            Export = "pricing:export";
     }
 }
