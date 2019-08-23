@@ -71,8 +71,8 @@
     <Reference Include="VirtoCommerce.Domain, Version=2.25.26.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\VirtoCommerce.Domain.2.25.26\lib\net461\VirtoCommerce.Domain.dll</HintPath>
     </Reference>
-    <Reference Include="VirtoCommerce.ExportModule.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.ExportModule.Core.2.0.0\lib\net461\VirtoCommerce.ExportModule.Core.dll</HintPath>
+    <Reference Include="VirtoCommerce.ExportModule.Core, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.ExportModule.Core.2.0.1\lib\net461\VirtoCommerce.ExportModule.Core.dll</HintPath>
     </Reference>
     <Reference Include="VirtoCommerce.ExportModule.Data">
       <HintPath>..\VirtoCommerce.PricingModule.Web\Bin\VirtoCommerce.ExportModule.Data.dll</HintPath>
