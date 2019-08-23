@@ -10,11 +10,14 @@ using Moq;
 using Newtonsoft.Json;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Pricing.Model;
+using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Core.Services;
+using VirtoCommerce.ExportModule.CsvProvider;
 using VirtoCommerce.ExportModule.Data.Extensions;
 using VirtoCommerce.ExportModule.Data.Services;
+using VirtoCommerce.ExportModule.JsonProvider;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.PricingModule.Data.ExportImport;
 using Xunit;
@@ -34,8 +37,8 @@ namespace VirtoCommerce.PricingModule.Test
             IKnownExportTypesRegistrar registrar = new KnownExportTypesService();
 
             var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPrices(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).Returns(GetTestPriceResult());
-            searchServiceMock.Setup(x => x.SearchPrices(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).Returns(new PriceSearchResult());
+            searchServiceMock.Setup(x => x.SearchPrices(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).Returns(GetTestPriceResult<Price>());
+            searchServiceMock.Setup(x => x.SearchPrices(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).Returns(new PricingSearchResult<Price>());
 
             var priceServiceMock = new Mock<IPricingService>();
 
@@ -107,10 +110,10 @@ namespace VirtoCommerce.PricingModule.Test
             IKnownExportTypesRegistrar registrar = new KnownExportTypesService();
 
             var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPricelists(It.Is<PricelistSearchCriteria>(y => y.Skip == 0))).Returns(GetTestPricelistResult());
-            searchServiceMock.Setup(x => x.SearchPricelists(It.Is<PricelistSearchCriteria>(y => y.Skip > 0))).Returns(new PricelistSearchResult());
+            searchServiceMock.Setup(x => x.SearchPricelists(It.Is<PricelistSearchCriteria>(y => y.Skip == 0))).Returns(GetTestPricelistResult<Pricelist>());
+            searchServiceMock.Setup(x => x.SearchPricelists(It.Is<PricelistSearchCriteria>(y => y.Skip > 0))).Returns(new PricingSearchResult<Pricelist>());
 
-            searchServiceMock.Setup(x => x.SearchPrices(It.IsAny<PricesSearchCriteria>())).Returns(new PriceSearchResult()
+            searchServiceMock.Setup(x => x.SearchPrices(It.IsAny<PricesSearchCriteria>())).Returns(new PricingSearchResult<Price>()
             {
                 TotalCount = 0,
                 Results = new List<Price>(),
@@ -183,8 +186,8 @@ namespace VirtoCommerce.PricingModule.Test
             IKnownExportTypesRegistrar registrar = new KnownExportTypesService();
 
             var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPricelistAssignmentsAsync(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetPricelistAssignmentSearchResult());
-            searchServiceMock.Setup(x => x.SearchPricelistAssignmentsAsync(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PricelistAssignmentSearchResult());
+            searchServiceMock.Setup(x => x.SearchPricelistAssignments(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip == 0))).Returns(GetPricelistAssignmentSearchResult<PricelistAssignment>());
+            searchServiceMock.Setup(x => x.SearchPricelistAssignments(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip > 0))).Returns(new PricingSearchResult<PricelistAssignment>());
 
             var priceServiceMock = new Mock<IPricingService>();
             var catalogServiceMock = new Mock<ICatalogService>();
@@ -260,8 +263,8 @@ namespace VirtoCommerce.PricingModule.Test
             var resolver = (IKnownExportTypesResolver)registrar;
 
             var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPricesAsync(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetTestPriceResult());
-            searchServiceMock.Setup(x => x.SearchPricesAsync(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PriceSearchResult());
+            searchServiceMock.Setup(x => x.SearchPrices(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).Returns(GetTestPriceResult<Price>());
+            searchServiceMock.Setup(x => x.SearchPrices(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).Returns(new PricingSearchResult<Price>());
 
             var priceServiceMock = new Mock<IPricingService>();
 
@@ -283,6 +286,7 @@ namespace VirtoCommerce.PricingModule.Test
                 new Func<ExportDataRequest, IExportProvider>((request) => new JsonExportProvider(request)),
                 new Func<ExportDataRequest, IExportProvider>((request) => new CsvExportProvider(request)),
             };
+
 
             var includedPropertyNames = new string[] { "Currency", "ProductId" };
             var IncludedProperties = metadata.PropertyInfos.Where(x => includedPropertyNames.Contains(x.FullName, StringComparer.OrdinalIgnoreCase)).ToArray();
@@ -321,7 +325,7 @@ namespace VirtoCommerce.PricingModule.Test
         /// There is fake prices set
         /// </summary>
         /// <returns></returns>
-        private PriceSearchResult GetTestPriceResult()
+        private PricingSearchResult<T> GetTestPriceResult<T>()
         {
             #region resultInJSON
             string resultInJSON = @"
@@ -383,10 +387,10 @@ namespace VirtoCommerce.PricingModule.Test
 }
 ";
             #endregion
-            return (PriceSearchResult)JsonConvert.DeserializeObject(resultInJSON, typeof(PriceSearchResult));
+            return (PricingSearchResult<T>)JsonConvert.DeserializeObject(resultInJSON, typeof(PricingSearchResult<T>));
         }
 
-        private PricelistSearchResult GetTestPricelistResult()
+        private PricingSearchResult<T> GetTestPricelistResult<T>()
         {
             #region resultInJSON
             string resultInJSON = @"
@@ -440,9 +444,9 @@ namespace VirtoCommerce.PricingModule.Test
 }
 ";
             #endregion
-            return (PricelistSearchResult)JsonConvert.DeserializeObject(resultInJSON, typeof(PricelistSearchResult), new ConditionJsonConverter());
+            return (PricingSearchResult<T>)JsonConvert.DeserializeObject(resultInJSON, typeof(PricingSearchResult<T>));
         }
-        private PricelistAssignmentSearchResult GetPricelistAssignmentSearchResult()
+        private PricingSearchResult<T> GetPricelistAssignmentSearchResult<T>()
         {
             #region resultInJSON
             string resultInJSON = @"
@@ -492,7 +496,7 @@ namespace VirtoCommerce.PricingModule.Test
 
  ";
             #endregion
-            return JsonConvert.DeserializeObject<PricelistAssignmentSearchResult>(resultInJSON, new ConditionJsonConverter());
+            return JsonConvert.DeserializeObject<PricingSearchResult<T>>(resultInJSON);
         }
     }
 }
