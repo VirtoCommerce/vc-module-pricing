@@ -53,6 +53,7 @@ namespace VirtoCommerce.PricingModule.Test
                         searchServiceMock.Object,
                         priceServiceMock.Object,
                         itemServiceMock.Object,
+                        null,
                         (PriceExportDataQuery)dataQuery))
                 .WithMetadata(metadata));
 
@@ -277,6 +278,7 @@ namespace VirtoCommerce.PricingModule.Test
                         searchServiceMock.Object,
                         priceServiceMock.Object,
                         itemServiceMock.Object,
+                        null,
                         (PriceExportDataQuery)dataQuery))
                 .WithMetadata(metadata)
                 .WithTabularMetadata(typeof(TabularPrice).GetPropertyNames()));
