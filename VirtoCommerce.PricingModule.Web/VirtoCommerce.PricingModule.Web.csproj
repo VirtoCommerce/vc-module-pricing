@@ -186,6 +186,14 @@
     <Content Include="Scripts\blades\pricing-main.tpl.html" />
     <Content Include="Scripts\pricing.js" />
     <Content Include="Scripts\resources\pricing.js" />
+    <Content Include="Scripts\selectors\catalog-selector.js" />
+    <Content Include="Scripts\selectors\catalog-selector.tpl.html" />
+    <Content Include="Scripts\selectors\currency-selector.js" />
+    <Content Include="Scripts\selectors\currency-selector.tpl.html" />
+    <Content Include="Scripts\selectors\pricelist-selector.js" />
+    <Content Include="Scripts\selectors\pricelist-selector.tpl.html" />
+    <Content Include="Scripts\selectors\product-selector.js" />
+    <Content Include="Scripts\selectors\product-selector.tpl.html" />
     <Content Include="Scripts\widgets\assignmentsWidget.js" />
     <Content Include="Scripts\widgets\pricesWidget.js" />
     <Content Include="Scripts\widgets\assignmentsWidget.tpl.html" />
@@ -208,9 +216,7 @@
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\selectors\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.PricingModule.Data\VirtoCommerce.PricingModule.Data.csproj">
       <Project>{eadf6315-2743-49d4-aabe-1fc10beaa461}</Project>
