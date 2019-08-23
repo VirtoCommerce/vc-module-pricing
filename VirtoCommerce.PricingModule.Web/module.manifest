@@ -66,6 +66,7 @@
             <permission id="pricing:read" name="View pricing data" description=""/>
             <permission id="pricing:update" name="Update pricing data" description=""/>
             <permission id="pricing:delete" name="Delete pricing data" description=""/>
+            <permission id="pricing:export" name="Export pricing data" description=""/>
         </group>
     </permissions>
 </module>
