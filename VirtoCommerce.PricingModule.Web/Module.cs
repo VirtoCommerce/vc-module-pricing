@@ -6,7 +6,6 @@ using Microsoft.Practices.Unity;
 using VirtoCommerce.Domain.Catalog.Events;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Domain.Search;
-using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Core.Services;
 using VirtoCommerce.ExportModule.Data.Extensions;
 using VirtoCommerce.ExportModule.Data.Services;
@@ -135,10 +134,6 @@ namespace VirtoCommerce.PricingModule.Web
                     .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
                     .WithMetadata(typeof(ExportablePricelistAssignment).GetPropertyNames())
                     .WithTabularMetadata(typeof(TabularPricelistAssignment).GetPropertyNames()));
-
-            AbstractTypeFactory<ExportDataQuery>.RegisterType<PriceExportDataQuery>();
-            AbstractTypeFactory<ExportDataQuery>.RegisterType<PricelistAssignmentExportDataQuery>();
-            AbstractTypeFactory<ExportDataQuery>.RegisterType<PricelistExportDataQuery>();
         }
 
         #endregion
