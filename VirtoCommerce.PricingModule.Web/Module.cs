@@ -71,36 +71,6 @@ namespace VirtoCommerce.PricingModule.Web
             _container.RegisterType<PriceExportPagedDataSourceFactory>();
             _container.RegisterType<PricelistAssignmentExportPagedDataSourceFactory>();
             _container.RegisterType<PricelistExportPagedDataSourceFactory>();
-
-            //_container.RegisterType<Func<ExportDataQuery, PriceExportPagedDataSource>>(new InjectionFactory(provider =>
-            //  new Func<ExportDataQuery, PriceExportPagedDataSource>(exportDataQuery =>
-            //  {
-            //      var pricingSearchService = provider.Resolve<IPricingSearchService>();
-            //      var pricingService = provider.Resolve<IPricingService>();
-            //      var itemService = provider.Resolve<IItemService>();
-            //      var blobUrlResolver = provider.Resolve<IBlobUrlResolver>();
-            //      var result = new PriceExportPagedDataSource(pricingSearchService, pricingService, itemService, blobUrlResolver, (PriceExportDataQuery)exportDataQuery);
-            //      return result;
-            //  })));
-
-            //_container.RegisterType<Func<ExportDataQuery, PricelistExportPagedDataSource>>(new InjectionFactory(provider =>
-            //    new Func<ExportDataQuery, PricelistExportPagedDataSource>(exportDataQuery =>
-            //    {
-            //        var pricingSearchService = provider.Resolve<IPricingSearchService>();
-            //        var pricingService = provider.Resolve<IPricingService>();
-            //        var result = new PricelistExportPagedDataSource(pricingSearchService, pricingService, (PricelistExportDataQuery)exportDataQuery);
-            //        return result;
-            //    })));
-
-            //_container.RegisterType<Func<ExportDataQuery, PricelistAssignmentExportPagedDataSource>>(new InjectionFactory(provider =>
-            //    new Func<ExportDataQuery, PricelistAssignmentExportPagedDataSource>(exportDataQuery =>
-            //    {
-            //        var pricingSearchService = provider.Resolve<IPricingSearchService>();
-            //        var pricingService = provider.Resolve<IPricingService>();
-            //        var catalogService = provider.Resolve<ICatalogService>();
-            //        var result = new PricelistAssignmentExportPagedDataSource(pricingSearchService, pricingService, catalogService, (PricelistAssignmentExportDataQuery)exportDataQuery);
-            //        return result;
-            //    })));
         }
 
         public override void PostInitialize()
@@ -144,9 +114,6 @@ namespace VirtoCommerce.PricingModule.Web
             #endregion
 
             var registrar = _container.Resolve<IKnownExportTypesRegistrar>();
-            var priceExportPagedDataSourceFactory = _container.Resolve<Func<ExportDataQuery, PriceExportPagedDataSource>>();
-            var pricelistExportPagedDataSourceFactory = _container.Resolve<Func<ExportDataQuery, PricelistExportPagedDataSource>>();
-            var pricelistAssignmentExportPagedDataSourceFactory = _container.Resolve<Func<ExportDataQuery, PricelistAssignmentExportPagedDataSource>>();
 
             registrar.RegisterType(
                 ExportedTypeDefinitionBuilder.Build<ExportablePrice, PriceExportDataQuery>()
