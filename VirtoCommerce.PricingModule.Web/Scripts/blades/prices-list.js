@@ -181,7 +181,7 @@
         },
         isUniqueQtyForPricelist: function (data) {
             // Disable unique quantity test when time filtering is used.
-            return _.filter(allPrices, function (price) { return price.pricelistId == data.pricelistId && price.minQuantity == data.minQuantity && !price.startDate && !price.EndDate && !data.startDate && !data.endDate; }).length <= 1;
+            return Math.round(data.minQuantity) > 0 && _.filter(allPrices, function (price) { return price.pricelistId == data.pricelistId && price.minQuantity == data.minQuantity && !price.startDate && !price.EndDate && !data.startDate && !data.endDate; }).length <= 1;
         }
     };
 }])
