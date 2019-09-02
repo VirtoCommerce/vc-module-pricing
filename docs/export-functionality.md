@@ -4,16 +4,27 @@
 
 The Pricing module includes Export functionality, which allows the user to export data using different export criteria. Two types of data objects are allowed to be exported from Pricing module:
 
+1. Prices;
 1. Price lists;
 1. Price list assignments.
 
-The user can start the data export simply by selecting the data object and going through a very simple and intuitive wizard. The Export function is integrated with the Pricing Module and provided out-of-the-box. The screenshots bellow show the main steps of the data export in Pricing module:
+The user can start the data export by filtering/selecting data and going to generic export wizard using Export button.
+
+ The Export function is integrated with the Pricing Module and provided out-of-the-box. The screenshots bellow show the main steps of the data export in Pricing module:
 
 ### Export Price lists
+
+The user can either select all the price lists available from the list as shown bellow:
 
 ![Start Export](media/screen-start-export.png)
 
 ![Export Prices](media/screen-export-prices.png)
+
+or select some specific price lists:
+
+![Three of ten selected](media/screen-three-items-selected.png)
+
+![Pricelist export](media/screen-pricelist-export.png)
 
 ### Export Price list assignments
 
