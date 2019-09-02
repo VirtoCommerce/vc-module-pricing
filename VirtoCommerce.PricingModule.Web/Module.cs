@@ -6,6 +6,9 @@ using Microsoft.Practices.Unity;
 using VirtoCommerce.Domain.Catalog.Events;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Domain.Search;
+using VirtoCommerce.ExportModule.Core.Services;
+using VirtoCommerce.ExportModule.Data.Extensions;
+using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
@@ -14,6 +17,7 @@ using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.Platform.Data.Infrastructure.Interceptors;
 using VirtoCommerce.Platform.Data.Repositories;
+using VirtoCommerce.PricingModule.Data.ExportImport;
 using VirtoCommerce.PricingModule.Data.Handlers;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
@@ -21,6 +25,7 @@ using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule.Web.ExportImport;
 using VirtoCommerce.PricingModule.Web.JsonConverters;
+using VirtoCommerce.PricingModule.Web.Security;
 
 namespace VirtoCommerce.PricingModule.Web
 {
@@ -61,6 +66,10 @@ namespace VirtoCommerce.PricingModule.Web
 
             eventHandlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, token) => await _container.Resolve<DeletePricesProductChangedEvent>().Handle(message));
             _container.RegisterType<IPricingDocumentChangesProvider, ProductPriceDocumentChangesProvider>();
+
+            _container.RegisterType<PriceExportPagedDataSourceFactory>();
+            _container.RegisterType<PricelistAssignmentExportPagedDataSourceFactory>();
+            _container.RegisterType<PricelistExportPagedDataSourceFactory>();
         }
 
         public override void PostInitialize()
@@ -102,6 +111,29 @@ namespace VirtoCommerce.PricingModule.Web
             }
 
             #endregion
+
+            var registrar = _container.Resolve<IKnownExportTypesRegistrar>();
+
+            registrar.RegisterType(
+                ExportedTypeDefinitionBuilder.Build<ExportablePrice, PriceExportDataQuery>()
+                    .WithDataSourceFactory(_container.Resolve<PriceExportPagedDataSourceFactory>())
+                    .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
+                    .WithMetadata(typeof(ExportablePrice).GetPropertyNames())
+                    .WithTabularMetadata(typeof(TabularPrice).GetPropertyNames()));
+
+            registrar.RegisterType(
+                ExportedTypeDefinitionBuilder.Build<ExportablePricelist, PricelistExportDataQuery>()
+                    .WithDataSourceFactory(_container.Resolve<PricelistExportPagedDataSourceFactory>())
+                    .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
+                    .WithMetadata(typeof(ExportablePricelist).GetPropertyNames())
+                    .WithTabularMetadata(typeof(TabularPricelist).GetPropertyNames()));
+
+            registrar.RegisterType(
+                ExportedTypeDefinitionBuilder.Build<ExportablePricelistAssignment, PricelistAssignmentExportDataQuery>()
+                    .WithDataSourceFactory(_container.Resolve<PricelistAssignmentExportPagedDataSourceFactory>())
+                    .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
+                    .WithMetadata(typeof(ExportablePricelistAssignment).GetPropertyNames())
+                    .WithTabularMetadata(typeof(TabularPricelistAssignment).GetPropertyNames()));
         }
 
         #endregion

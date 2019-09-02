@@ -107,6 +107,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
                 }
 
+                if (!criteria.Currencies.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.Currencies.Contains(x.Currency));
+                }
+
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
@@ -144,6 +149,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 if (!string.IsNullOrEmpty(criteria.Keyword))
                 {
                     query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
+                }
+
+                if (!criteria.CatalogIds.IsNullOrEmpty())
+                {
+                    query = query.Where(x => criteria.CatalogIds.Contains(x.CatalogId));
                 }
 
                 var sortInfos = criteria.SortInfos;
