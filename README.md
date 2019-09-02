@@ -68,6 +68,7 @@ The Pricelist Assignment has the following key characteristics:
     1. [Simple Assignment without rules and conditions](/docs/add-new-assignment.md#simple-assignment-without-rules-and-conditions)
     1. [Assignment with Rules and Conditions](/docs/add-new-assignment.md#assignment-with-rules-and-conditions)
 1. [Managing Pricing module settings](/docs/view-price-list-via-catalog-module.md)
+1. [Export Prices and Pricelist Assignments](/docs/export-functionality.md)
 
 ## Web API
 
