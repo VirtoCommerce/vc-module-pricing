@@ -2,7 +2,7 @@
 
 ## Export Prices
 
-The Pricing module includes Export functionality, which allows the user to export data using different export criteria. Two types of data objects are allowed to be exported from Pricing module:
+The Pricing module includes Export functionality, which allows the user to export data using different export criteria. The following types of data objects are allowed to be exported from Pricing module:
 
 1. Prices;
 1. Price lists;
@@ -14,7 +14,7 @@ The user can start the data export by filtering/selecting data and going to gene
 
 ### Export Price lists
 
-The user can either select all the price lists available from the list as shown bellow:
+The user can either select all the price lists available from the list as shown below:
 
 ![Start Export](media/screen-start-export.png)
 
