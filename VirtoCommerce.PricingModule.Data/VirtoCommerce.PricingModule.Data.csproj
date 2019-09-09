@@ -94,15 +94,14 @@
     <Compile Include="ExportImport\ExportablePrice.cs" />
     <Compile Include="ExportImport\ExportablePricelist.cs" />
     <Compile Include="ExportImport\ExportablePricelistAssignment.cs" />
+    <Compile Include="ExportImport\IPricingExportPagedDataSourceFactory.cs" />
     <Compile Include="ExportImport\PriceExportDataQuery.cs" />
     <Compile Include="ExportImport\PriceExportPagedDataSource.cs" />
-    <Compile Include="ExportImport\PriceExportPagedDataSourceFactory.cs" />
     <Compile Include="ExportImport\PricelistAssignmentExportDataQuery.cs" />
     <Compile Include="ExportImport\PricelistAssignmentExportPagedDataSource.cs" />
-    <Compile Include="ExportImport\PricelistAssignmentExportPagedDataSourceFactory.cs" />
     <Compile Include="ExportImport\PricelistExportDataQuery.cs" />
     <Compile Include="ExportImport\PricelistExportPagedDataSource.cs" />
-    <Compile Include="ExportImport\PricelistExportPagedDataSourceFactory.cs" />
+    <Compile Include="ExportImport\PricingExportPagedDataSourceFactory.cs" />
     <Compile Include="ExportImport\TabularPrice.cs" />
     <Compile Include="ExportImport\TabularPricelist.cs" />
     <Compile Include="ExportImport\TabularPricelistAssignment.cs" />
