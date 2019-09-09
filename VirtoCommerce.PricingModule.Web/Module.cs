@@ -67,9 +67,7 @@ namespace VirtoCommerce.PricingModule.Web
             eventHandlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, token) => await _container.Resolve<DeletePricesProductChangedEvent>().Handle(message));
             _container.RegisterType<IPricingDocumentChangesProvider, ProductPriceDocumentChangesProvider>();
 
-            _container.RegisterType<PriceExportPagedDataSourceFactory>();
-            _container.RegisterType<PricelistAssignmentExportPagedDataSourceFactory>();
-            _container.RegisterType<PricelistExportPagedDataSourceFactory>();
+            _container.RegisterType<IPricingExportPagedDataSourceFactory, PricingExportPagedDataSourceFactory>();
         }
 
         public override void PostInitialize()
@@ -116,21 +114,21 @@ namespace VirtoCommerce.PricingModule.Web
 
             registrar.RegisterType(
                 ExportedTypeDefinitionBuilder.Build<ExportablePrice, PriceExportDataQuery>()
-                    .WithDataSourceFactory(_container.Resolve<PriceExportPagedDataSourceFactory>())
+                    .WithDataSourceFactory(_container.Resolve<IPricingExportPagedDataSourceFactory>())
                     .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
                     .WithMetadata(typeof(ExportablePrice).GetPropertyNames())
                     .WithTabularMetadata(typeof(TabularPrice).GetPropertyNames()));
 
             registrar.RegisterType(
                 ExportedTypeDefinitionBuilder.Build<ExportablePricelist, PricelistExportDataQuery>()
-                    .WithDataSourceFactory(_container.Resolve<PricelistExportPagedDataSourceFactory>())
+                    .WithDataSourceFactory(_container.Resolve<IPricingExportPagedDataSourceFactory>())
                     .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
                     .WithMetadata(typeof(ExportablePricelist).GetPropertyNames())
                     .WithTabularMetadata(typeof(TabularPricelist).GetPropertyNames()));
 
             registrar.RegisterType(
                 ExportedTypeDefinitionBuilder.Build<ExportablePricelistAssignment, PricelistAssignmentExportDataQuery>()
-                    .WithDataSourceFactory(_container.Resolve<PricelistAssignmentExportPagedDataSourceFactory>())
+                    .WithDataSourceFactory(_container.Resolve<IPricingExportPagedDataSourceFactory>())
                     .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
                     .WithMetadata(typeof(ExportablePricelistAssignment).GetPropertyNames())
                     .WithTabularMetadata(typeof(TabularPricelistAssignment).GetPropertyNames()));
