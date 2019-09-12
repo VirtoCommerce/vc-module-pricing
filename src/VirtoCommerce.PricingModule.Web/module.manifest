@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<module>
+    <id>VirtoCommerce.Pricing</id>
+    <version>3.0.0</version>
+    <version-tag>beta.1</version-tag>
+    <platformVersion>3.0.0</platformVersion>
+    <dependencies>
+        <dependency id="VirtoCommerce.Core" version="3.0.0" />
+        <dependency id="VirtoCommerce.Catalog" version="3.0.0" />
+        <dependency id="VirtoCommerce.Export" version="3.0.0" />
+    </dependencies>
+
+    <title>Pricing module</title>
+    <description>Robust pricing management functionality based on price list and dynamic evaluation</description>
+    <authors>
+        <author>Eugeney Tatarincev</author>
+    </authors>
+    <owners>
+        <owner>Virto Commerce</owner>
+    </owners>
+\    <copyright>Copyright © 2011-2018 Virto Commerce. All rights reserved</copyright>
+    <tags>price pricelist merchandise</tags>
+
+    <assemblyFile>VirtoCommerce.PricingModule.Web.dll</assemblyFile>
+    <moduleType>VirtoCommerce.PricingModule.Web.Module, VirtoCommerce.PricingModule.Web</moduleType>
+</module>
