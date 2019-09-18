@@ -18,7 +18,7 @@
     <owners>
         <owner>Virto Commerce</owner>
     </owners>
-\    <copyright>Copyright © 2011-2018 Virto Commerce. All rights reserved</copyright>
+\    <copyright>Copyright © 2011-2019 Virto Commerce. All rights reserved</copyright>
     <tags>price pricelist merchandise</tags>
 
     <assemblyFile>VirtoCommerce.PricingModule.Web.dll</assemblyFile>
