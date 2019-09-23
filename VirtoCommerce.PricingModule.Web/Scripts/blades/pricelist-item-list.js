@@ -162,24 +162,21 @@ angular.module('virtoCommerce.pricingModule')
                     return true;
                 },
                 executeMethod: function () {
+                    var isAllSelected = $scope.gridApi.selection.getSelectAllState();
+                    exportDataRequest.dataQuery.isAllSelected = isAllSelected;
 
-                    exportDataRequest.dataQuery.isAllSelected = true;
                     var selectedRows = $scope.gridApi.selection.getSelectedRows();
+
                     exportDataRequest.dataQuery.productIds = [];
-                    if (selectedRows && selectedRows.length) {
-                        exportDataRequest.dataQuery.isAnyFilterApplied = true;
+
+                    if ((exportDataRequest.dataQuery.productIds && exportDataRequest.dataQuery.productIds.length)
+                        || (!isAllSelected)) {
                         exportDataRequest.dataQuery.productIds = _.map(selectedRows, function (product) {
                             return product.productId;
                         });
                     }
 
-                    var searchCriteria = getSearchCriteria();
-                    if (searchCriteria.keyword !== '') {
-                        exportDataRequest.dataQuery.isAnyFilterApplied = true;
-                    }
-
-
-                    exportDataRequest.dataQuery = angular.extend(exportDataRequest.dataQuery, getSearchCriteria());
+                    angular.extend(exportDataRequest.dataQuery, getSearchCriteria());
 
                     var newBlade = {
                         id: 'priceExport',
@@ -187,8 +184,10 @@ angular.module('virtoCommerce.pricingModule')
                         subtitle: 'pricing.blades.exporter.priceSubtitle',
                         controller: 'virtoCommerce.exportModule.exportSettingsController',
                         template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
-                        exportDataRequest: exportDataRequest
-                    };
+                        exportDataRequest: exportDataRequest,
+                        //Use when we have gridApi.selection and do not fill objectIds
+                        needToCalculateSelectedTotal: exportDataRequest.dataQuery.productIds.length || false
+                };
                     bladeNavigationService.showBlade(newBlade, blade);
                 }
             }

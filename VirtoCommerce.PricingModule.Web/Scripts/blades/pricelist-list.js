@@ -118,22 +118,20 @@ angular.module('virtoCommerce.pricingModule')
                         return true;
                     },
                     executeMethod: function () {
-                        exportDataRequest.dataQuery.isAllSelected = true;
+                        var isAllSelected = $scope.gridApi.selection.getSelectAllState();
+                        exportDataRequest.dataQuery.isAllSelected = isAllSelected;
+
                         var selectedRows = $scope.gridApi.selection.getSelectedRows();
+
                         exportDataRequest.dataQuery.objectIds = [];
-                        if (selectedRows && selectedRows.length) {
-                            exportDataRequest.dataQuery.isAllSelected = false;
+
+                        if ((exportDataRequest.dataQuery.objectIds && exportDataRequest.dataQuery.objectIds.length) || (!isAllSelected)) {
                             exportDataRequest.dataQuery.objectIds = _.map(selectedRows, function (pricelist) {
                                 return pricelist.id;
                             });
                         }
 
-                        var searchCriteria = getSearchCriteria();
-                        if (searchCriteria.keyword !== '') {
-                            exportDataRequest.dataQuery.isAnyFilterApplied = true;
-                        }
-
-                        exportDataRequest.dataQuery = angular.extend(exportDataRequest.dataQuery, searchCriteria);
+                        exportDataRequest.dataQuery = angular.extend(exportDataRequest.dataQuery, getSearchCriteria());
 
                         var newBlade = {
                             id: 'pricelistExport',

@@ -43,6 +43,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             result.PriceListIds = _dataQuery.PriceListIds;
             result.ProductIds = _dataQuery.ProductIds;
             result.ModifiedSince = _dataQuery.ModifiedSince;
+            result.Keyword = _dataQuery.Keyword;
 
             return result;
         }
