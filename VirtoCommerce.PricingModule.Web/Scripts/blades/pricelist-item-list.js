@@ -4,7 +4,6 @@ angular.module('virtoCommerce.pricingModule')
         var blade = $scope.blade;
         var exportDataRequest = {
             exportTypeName: 'VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice',
-            isTabularExportSupported: true,
             dataQuery: {
                 exportTypeName: 'PriceExportDataQuery'
             }

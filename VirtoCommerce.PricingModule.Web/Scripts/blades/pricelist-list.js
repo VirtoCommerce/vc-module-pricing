@@ -6,7 +6,6 @@ angular.module('virtoCommerce.pricingModule')
 
             var defaultDataRequest = {
                 exportTypeName: 'VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist',
-                isTabularExportSupported: true,
                 dataQuery: {
                     exportTypeName: 'PricelistExportDataQuery'
                 }
