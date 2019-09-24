@@ -29,6 +29,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             var result = base.BuildSearchCriteria(exportDataQuery);
 
             result.Currencies = _dataQuery.Currencies;
+            result.Keyword = _dataQuery.Keyword;
 
             return result;
         }

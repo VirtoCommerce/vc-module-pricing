@@ -4,7 +4,6 @@ angular.module('virtoCommerce.pricingModule')
         var blade = $scope.blade;
         var exportDataRequest = {
             exportTypeName: 'VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice',
-            isTabularExportSupported: true,
             dataQuery: {
                 exportTypeName: 'PriceExportDataQuery'
             }
@@ -163,24 +162,27 @@ angular.module('virtoCommerce.pricingModule')
                     return true;
                 },
                 executeMethod: function () {
+                    var isAllSelected = $scope.gridApi.selection.getSelectAllState();
+                    exportDataRequest.dataQuery.isAllSelected = isAllSelected;
 
-                    exportDataRequest.dataQuery.isAllSelected = true;
                     var selectedRows = $scope.gridApi.selection.getSelectedRows();
+
                     exportDataRequest.dataQuery.productIds = [];
-                    if (selectedRows && selectedRows.length) {
-                        exportDataRequest.dataQuery.isAnyFilterApplied = true;
+
+                    if ((exportDataRequest.dataQuery.productIds && exportDataRequest.dataQuery.productIds.length)
+                        || (!isAllSelected)) {
                         exportDataRequest.dataQuery.productIds = _.map(selectedRows, function (product) {
                             return product.productId;
                         });
                     }
 
                     var searchCriteria = getSearchCriteria();
-                    if (searchCriteria.keyword !== '') {
+
+                    if (isAllSelected || (searchCriteria.pricelistIds && searchCriteria.pricelistIds.length > 0) || searchCriteria.keyword !== '') {
                         exportDataRequest.dataQuery.isAnyFilterApplied = true;
                     }
 
-
-                    exportDataRequest.dataQuery = angular.extend(exportDataRequest.dataQuery, getSearchCriteria());
+                    angular.extend(exportDataRequest.dataQuery, searchCriteria);
 
                     var newBlade = {
                         id: 'priceExport',
@@ -189,7 +191,7 @@ angular.module('virtoCommerce.pricingModule')
                         controller: 'virtoCommerce.exportModule.exportSettingsController',
                         template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
                         exportDataRequest: exportDataRequest
-                    };
+                };
                     bladeNavigationService.showBlade(newBlade, blade);
                 }
             }
