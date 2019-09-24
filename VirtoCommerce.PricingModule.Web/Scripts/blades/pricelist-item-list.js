@@ -176,7 +176,13 @@ angular.module('virtoCommerce.pricingModule')
                         });
                     }
 
-                    angular.extend(exportDataRequest.dataQuery, getSearchCriteria());
+                    var searchCriteria = getSearchCriteria();
+
+                    if (isAllSelected || (searchCriteria.pricelistIds && searchCriteria.pricelistIds.length > 0) || searchCriteria.keyword !== '') {
+                        exportDataRequest.dataQuery.isAnyFilterApplied = true;
+                    }
+
+                    angular.extend(exportDataRequest.dataQuery, searchCriteria);
 
                     var newBlade = {
                         id: 'priceExport',
@@ -184,9 +190,7 @@ angular.module('virtoCommerce.pricingModule')
                         subtitle: 'pricing.blades.exporter.priceSubtitle',
                         controller: 'virtoCommerce.exportModule.exportSettingsController',
                         template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
-                        exportDataRequest: exportDataRequest,
-                        //Use when we have gridApi.selection and do not fill objectIds
-                        needToCalculateSelectedTotal: exportDataRequest.dataQuery.productIds.length || false
+                        exportDataRequest: exportDataRequest
                 };
                     bladeNavigationService.showBlade(newBlade, blade);
                 }
