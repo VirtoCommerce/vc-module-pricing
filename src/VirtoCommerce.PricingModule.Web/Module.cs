@@ -40,7 +40,6 @@ namespace VirtoCommerce.PricingModule.Web
     public class Module : IModule, IExportSupport, IImportSupport
     {
         private IApplicationBuilder _applicationBuilder;
-        private ServiceProvider _serviceProvider;
 
         #region IModule Members
 
@@ -48,8 +47,8 @@ namespace VirtoCommerce.PricingModule.Web
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            _serviceProvider = serviceCollection.BuildServiceProvider();
-            var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
             var connectionString = configuration.GetConnectionString("VirtoCommerce.Pricing") ?? configuration.GetConnectionString("VirtoCommerce");
             serviceCollection.AddDbContext<PricingDbContext>(options => options.UseSqlServer(connectionString));
             serviceCollection.AddTransient<IPricingRepository, PricingRepositoryImpl>();
@@ -86,7 +85,7 @@ namespace VirtoCommerce.PricingModule.Web
         public void PostInitialize(IApplicationBuilder appBuilder)
         {
             _applicationBuilder = appBuilder;
-            var settingsManager = _serviceProvider.GetService<ISettingsManager>();
+            var settingsManager = _applicationBuilder.ApplicationServices.GetService<ISettingsManager>();
 
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
@@ -116,14 +115,14 @@ namespace VirtoCommerce.PricingModule.Web
             if (priceIndexingEnabled)
             {
                 // Add price document source to the product indexing configuration
-                var productIndexingConfigurations = _serviceProvider.GetService<IndexDocumentConfiguration[]>();
+                var productIndexingConfigurations = _applicationBuilder.ApplicationServices.GetServices<IndexDocumentConfiguration>();
 
                 if (productIndexingConfigurations != null)
                 {
                     var productPriceDocumentSource = new IndexDocumentSource
                     {
-                        ChangesProvider = _serviceProvider.GetService<IIndexDocumentChangesProvider>(),
-                        DocumentBuilder = _serviceProvider.GetService<ProductPriceDocumentBuilder>(),
+                        ChangesProvider = _applicationBuilder.ApplicationServices.GetService<IIndexDocumentChangesProvider>(),
+                        DocumentBuilder = _applicationBuilder.ApplicationServices.GetService<ProductPriceDocumentBuilder>(),
                     };
 
                     foreach (var configuration in productIndexingConfigurations.Where(c =>
