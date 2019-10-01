@@ -169,7 +169,7 @@
             return Math.round(data.minQuantity) > 0 && _.all(allPrices, function (x) { return x === data || Math.round(x.minQuantity) !== Math.round(data.minQuantity) });
         },
         isUniqueQtyForPricelist: function (data) {
-            return _.filter(allPrices, function (price) { return price.pricelistId == data.pricelistId && price.minQuantity == data.minQuantity }).length == 1;
+            return Math.round(data.minQuantity) > 0 && _.filter(allPrices, function (price) { return price.pricelistId == data.pricelistId && price.minQuantity == data.minQuantity }).length == 1;
         }
     };
 }])
