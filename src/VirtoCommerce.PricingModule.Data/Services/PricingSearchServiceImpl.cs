@@ -50,7 +50,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     //Try to replace sorting columns names
                     TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
 
-                    // TODO: add checks for criteria.Take being greater than 0
                     if (criteria.GroupByProducts)
                     {
                         var groupedQuery = query.GroupBy(x => x.ProductId).OrderBy(x => 1);
