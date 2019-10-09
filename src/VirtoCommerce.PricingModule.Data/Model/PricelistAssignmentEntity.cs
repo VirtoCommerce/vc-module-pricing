@@ -55,11 +55,11 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
             assignment.CatalogId = CatalogId;
             assignment.Description = Description;
-            assignment.EndDate = EndDate;
             assignment.Name = Name;
             assignment.PricelistId = PricelistId;
             assignment.Priority = Priority;
             assignment.StartDate = StartDate;
+            assignment.EndDate = EndDate;
 
             if (Pricelist != null)
             {
@@ -95,11 +95,11 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
             CatalogId = assignment.CatalogId;
             Description = assignment.Description;
-            EndDate = assignment.EndDate;
             Name = assignment.Name;
             PricelistId = assignment.PricelistId;
             Priority = assignment.Priority;
             StartDate = assignment.StartDate;
+            EndDate = assignment.EndDate;
 
             if (assignment.DynamicExpression != null)
             {
@@ -116,12 +116,12 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
             target.Name = Name;
             target.Description = Description;
-            target.StartDate = StartDate;
-            target.EndDate = EndDate;
             target.CatalogId = CatalogId;
             target.PricelistId = PricelistId;
             target.Priority = Priority;
             target.PredicateVisualTreeSerialized = PredicateVisualTreeSerialized;
+            target.StartDate = StartDate;
+            target.EndDate = EndDate;
         }
     }
 }

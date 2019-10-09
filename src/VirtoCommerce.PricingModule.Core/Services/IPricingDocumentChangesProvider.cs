@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirtoCommerce.SearchModule.Core.Model;
+using VirtoCommerce.SearchModule.Core.Services;
 
 namespace VirtoCommerce.PricingModule.Core.Services
 {
     /// <summary>
     /// Service responsible for providing changes for the prices that are not caused by user changes.
     /// </summary>
-    public interface IPricingChangesService
+    public interface IPricingDocumentChangesProvider : IIndexDocumentChangesProvider
     {
         /// <summary>
         /// Returns all price changes due to date filtering.

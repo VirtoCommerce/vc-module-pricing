@@ -15,10 +15,11 @@ using VirtoCommerce.SearchModule.Core.Services;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
-    public class ProductPriceDocumentChangesProvider : IIndexDocumentChangesProvider, IPricingChangesService
+    public class ProductPriceDocumentChangesProvider : IIndexDocumentChangesProvider, IPricingDocumentChangesProvider
     {
-        public const string ChangeLogObjectType = nameof(Price);
-        private static readonly TimeSpan CalendarChangesInterval = TimeSpan.FromDays(1);
+        private const string _changeLogObjectType = nameof(Price);
+        private static readonly TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);
+        private const int _batchSize = 500;
 
         private readonly IChangeLogSearchService _changeLogSearchService;
         private readonly IPricingService _pricingService;
@@ -44,15 +45,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
             }
             else
             {
-                var criteria = new ChangeLogSearchCriteria
-                {
-                    ObjectType = ChangeLogObjectType,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Take = 0
-                };
                 // Get changes count from operation log
-                result = (await _changeLogSearchService.SearchAsync(criteria)).TotalCount;
+                result = (await InnerGetChangesAsync(startDate, endDate)).TotalCount;
             }
 
             return result;
@@ -69,48 +63,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             }
             else
             {
-                var criteria = new ChangeLogSearchCriteria
-                {
-                    ObjectType = ChangeLogObjectType,
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Skip = (int)skip,
-                    Take = (int)take
-                };
-
-                // Get changes from operation log
-                var operations = (await _changeLogSearchService.SearchAsync(criteria)).Results;
-
-                var priceIds = operations.Select(c => c.ObjectId).ToArray();
-                var priceIdsAndProductIds = await GetProductIdsAsync(priceIds);
-
-                result = operations
-                    .Where(o => priceIdsAndProductIds.ContainsKey(o.ObjectId))
-                    .Select(o => new IndexDocumentChange
-                    {
-                        DocumentId = priceIdsAndProductIds[o.ObjectId],
-                        ChangeDate = o.ModifiedDate ?? o.CreatedDate,
-                        ChangeType = IndexDocumentChangeType.Modified,
-                    })
-                    .ToArray();
-
-                var workSkip = (int)(skip - Math.Min(result.Count, skip));
-                var workTake = (int)(take - Math.Min(take, Math.Max(0, result.Count - skip)));
-
-                //Re-index calendar prices only once per defined time interval
-                var lastIndexDate = _settingsManager.GetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name,
-                        (DateTime?)null) ?? DateTime.MinValue;
-                if (DateTime.UtcNow - lastIndexDate > CalendarChangesInterval && startDate != null && endDate != null)
-                {
-                    var calendarChanges =
-                        await GetCalendarChangesAsync(startDate.Value, endDate.Value, workSkip, workTake);
-
-                    if (workTake > 0)
-                    {
-                        _settingsManager.SetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, DateTime.UtcNow);
-                        result.AddRange(calendarChanges);
-                    }
-                }
+                result = (await InnerGetChangesAsync(startDate, endDate, (int)skip, (int)take)).Results.ToList();
             }
             return result;
         }
@@ -132,25 +85,94 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
                 if (priceLists.Any())
                 {
-                    result = repository.Prices.Where(x => priceLists.Contains(x.PricelistId))
+                    result = await repository.Prices.Where(x => priceLists.Contains(x.PricelistId))
                         .Select(x => x.Id)
                         .OrderBy(x => x)
                         .Skip(skip)
                         .Take(take)
                         .Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified })
-                        .ToList();
+                        .ToListAsync();
                 }
             }
             return result;
         }
         #endregion
 
-
-        protected virtual async Task<IDictionary<string, string>> GetProductIdsAsync(string[] priceIds)
+        //Need to return changes are taken from both sources -  the platform operations log and the pricing entries based on calendar dates
+        protected virtual async Task<GenericSearchResult<IndexDocumentChange>> InnerGetChangesAsync(DateTime? startDate, DateTime? endDate, int skip = 0, int take = 0)
         {
-            // TODO: How to get product for deleted price?
-            var prices = await _pricingService.GetPricesByIdAsync(priceIds);
-            var result = prices.ToDictionary(p => p.Id, p => p.ProductId);
+            var result = new GenericSearchResult<IndexDocumentChange>();
+            var workSkip = 0;
+            var workTake = 0;
+
+            var changedProductIds = await GetProductIdsForChangedPricesAsync(startDate, endDate);
+
+            result.TotalCount = changedProductIds.Count;
+            workSkip = Math.Min(result.TotalCount, skip);
+            workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
+
+            if (workTake > 0)
+            {
+                var productIds = changedProductIds.Skip(workSkip).Take(workTake).ToArray();
+                result.Results.AddRange(productIds.Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified }));
+            }
+
+            //Re-index calendar prices only once per defined time interval
+            var lastIndexDate = _settingsManager.GetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, (DateTime?)null) ?? DateTime.MinValue;
+            if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval && startDate != null && endDate != null)
+            {
+                workSkip = skip - workSkip;
+                workTake = take - workTake;
+
+                var calendarChanges = await GetCalendarChangesAsync(startDate.Value, endDate.Value, workSkip, workTake);
+                result.TotalCount += calendarChanges.Count;
+                if (workTake > 0)
+                {
+                    _settingsManager.SetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, DateTime.UtcNow);
+                    result.Results.AddRange(calendarChanges);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Retrieves all price changes and groups them by the product Id they are associated with.
+        /// </summary>
+        /// <param name="startDate">The date time period from</param>
+        /// <param name="endDate">The date time period to</param>
+        /// <returns>The unique list of products identifiers associated with changed prices for passed period</returns>
+        protected virtual async Task<ICollection<string>> GetProductIdsForChangedPricesAsync(DateTime? startDate, DateTime? endDate)
+        {
+            var result = new HashSet<string>();
+
+            var criteria = new ChangeLogSearchCriteria
+            {
+                ObjectType = _changeLogObjectType,
+                StartDate = startDate,
+                EndDate = endDate,
+                Take = 0
+            };
+
+            // Get changes from operation log
+            var operations = (await _changeLogSearchService.SearchAsync(criteria)).Results.Select(x => x.ObjectId);
+
+            using (var repository = _repositoryFactory())
+            {
+                var totalCount = operations.Count();
+
+                for (var i = 0; i < totalCount; i += _batchSize)
+                {
+                    var changedPriceIds = operations.Skip(i).Take(_batchSize).ToArray();
+
+                    var productIds = await repository.Prices.Where(x => changedPriceIds.Contains(x.Id))
+                                                      .Select(x => x.ProductId)
+                                                      .Distinct()
+                                                      .ToArrayAsync();
+                    result.AddRange(productIds);
+                }
+            }
+
             return result;
         }
     }

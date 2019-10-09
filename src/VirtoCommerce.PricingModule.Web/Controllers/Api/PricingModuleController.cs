@@ -352,6 +352,21 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <summary>
         /// Delete pricelist assignments
         /// </summary>
+        /// <remarks>Delete pricelist assignment by given array of ids.</remarks>
+        /// <param name="ids">An array of pricelist assignment ids</param>
+        /// <todo>Return no any reason if can't update</todo>
+        [HttpDelete]
+        [Route("api/pricing/assignments")]
+        [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        public async Task<ActionResult> DeleteAssignments(string[] ids)
+        {
+            await _pricingService.DeletePricelistsAssignmentsAsync(ids);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Delete pricelist assignments
+        /// </summary>
         /// <remarks>Delete pricelist assignments by given criteria.</remarks>
         /// <param name="criteria">Filter criteria</param>
         /// <todo>Return no any reason if can't update</todo>
@@ -383,22 +398,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
 
             return NoContent();
         }
-
-        /// <summary>
-        /// Delete pricelist assignments
-        /// </summary>
-        /// <remarks>Delete pricelist assignment by given array of ids.</remarks>
-        /// <param name="ids">An array of pricelist assignment ids</param>
-        /// <todo>Return no any reason if can't update</todo>
-        [HttpDelete]
-        [Route("api/pricing/assignments")]
-        [Authorize(ModuleConstants.Security.Permissions.Delete)]
-        public async Task<ActionResult> DeleteAssignments(string[] ids)
-        {
-            await _pricingService.DeletePricelistsAssignmentsAsync(ids);
-            return NoContent();
-        }
-
+        
         /// <summary>
         /// Delete all prices for specified product in specified price list
         /// </summary>
