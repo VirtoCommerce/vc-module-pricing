@@ -26,6 +26,10 @@ namespace VirtoCommerce.PricingModule.Data.Model
         [StringLength(128)]
         public string OuterId { get; set; }
 
+        public DateTime? StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
+
         #region Navigation Properties
 
         public string PricelistId { get; set; }
@@ -50,6 +54,8 @@ namespace VirtoCommerce.PricingModule.Data.Model
             price.PricelistId = PricelistId;
             price.ProductId = ProductId;
             price.Sale = Sale;
+            price.StartDate = StartDate;
+            price.EndDate = EndDate;
 
             if (Pricelist != null)
             {
@@ -78,6 +84,8 @@ namespace VirtoCommerce.PricingModule.Data.Model
             PricelistId = price.PricelistId;
             ProductId = price.ProductId;
             Sale = price.Sale;
+            StartDate = price.StartDate;
+            EndDate = price.EndDate;
 
             return this;
         }
@@ -91,6 +99,8 @@ namespace VirtoCommerce.PricingModule.Data.Model
             target.List = List;
             target.Sale = Sale;
             target.MinQuantity = MinQuantity;
+            target.StartDate = StartDate;
+            target.EndDate = EndDate;
         }
     }
 }

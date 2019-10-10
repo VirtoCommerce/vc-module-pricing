@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.CatalogModule.Core.Events;
 using VirtoCommerce.CoreModule.Core.Conditions;
 using VirtoCommerce.ExportModule.Core.Services;
 using VirtoCommerce.ExportModule.Data.Extensions;
@@ -56,11 +57,13 @@ namespace VirtoCommerce.PricingModule.Web
 
             serviceCollection.AddTransient<IPricingService, PricingServiceImpl>();
             serviceCollection.AddTransient<IPricingSearchService, PricingSearchServiceImpl>();
+            serviceCollection.AddTransient<IPricingPriorityFilterPolicy, DefaultPricingPriorityFilterPolicy>();
             serviceCollection.AddTransient<PricingExportImport>();
             serviceCollection.AddTransient<PolymorphicPricingJsonConverter>();
-            serviceCollection.AddTransient<ProductPriceDocumentChangesProvider>();
+            serviceCollection.AddTransient<IPricingDocumentChangesProvider, ProductPriceDocumentChangesProvider>();
             serviceCollection.AddTransient<ProductPriceDocumentBuilder>();
             serviceCollection.AddTransient<LogChangesChangedEventHandler>();
+            serviceCollection.AddTransient<DeletePricesProductChangedEventHandler>();
 
             serviceCollection.AddTransient<IPricingExportPagedDataSourceFactory, PricingExportPagedDataSourceFactory>();
 
@@ -121,12 +124,11 @@ namespace VirtoCommerce.PricingModule.Web
                 {
                     var productPriceDocumentSource = new IndexDocumentSource
                     {
-                        ChangesProvider = _applicationBuilder.ApplicationServices.GetService<IIndexDocumentChangesProvider>(),
+                        ChangesProvider = _applicationBuilder.ApplicationServices.GetService<IPricingDocumentChangesProvider>(),
                         DocumentBuilder = _applicationBuilder.ApplicationServices.GetService<ProductPriceDocumentBuilder>(),
                     };
 
-                    foreach (var configuration in productIndexingConfigurations.Where(c =>
-                        c.DocumentType == KnownDocumentTypes.Product))
+                    foreach (var configuration in productIndexingConfigurations.Where(c => c.DocumentType == KnownDocumentTypes.Product))
                     {
                         if (configuration.RelatedSources == null)
                         {
@@ -140,6 +142,7 @@ namespace VirtoCommerce.PricingModule.Web
 
             var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
             inProcessBus.RegisterHandler<PriceChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<LogChangesChangedEventHandler>().Handle(message));
+            inProcessBus.RegisterHandler<ProductChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<DeletePricesProductChangedEventHandler>().Handle(message));
 
             foreach (var conditionTree in AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance().Traverse<IConditionTree>(x => x.AvailableChildren))
             {

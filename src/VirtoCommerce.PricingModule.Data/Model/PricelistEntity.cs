@@ -61,6 +61,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
                 assignment.Name = assignmentEntity.Name;
                 assignment.Priority = assignmentEntity.Priority;
                 assignment.StartDate = assignmentEntity.StartDate;
+                assignment.EndDate = assignmentEntity.EndDate;
 
                 pricelist.Assignments.Add(assignment);
             }

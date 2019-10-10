@@ -6,7 +6,6 @@ angular.module('virtoCommerce.pricingModule')
             var bladeNavigationService = bladeUtils.bladeNavigationService;
             var defaultDataRequest = {
                 exportTypeName: 'VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment',
-                isTabularExportSupported: true,
                 dataQuery: {
                     exportTypeName: 'PricelistAssignmentExportDataQuery'
                 }
@@ -15,7 +14,7 @@ angular.module('virtoCommerce.pricingModule')
             var filter = blade.filter = $scope.filter = {};
 
             blade.refresh = function () {
-                
+
                 blade.isLoading = true;
                 assignments.search(getSearchCriteria(), function (data) {
                     //Loading catalogs for assignments because they do not contains them
@@ -159,24 +158,21 @@ angular.module('virtoCommerce.pricingModule')
                         return true;
                     },
                     executeMethod: function () {
+                        var isAllSelected = $scope.gridApi.selection.getSelectAllState();
+                        exportDataRequest.dataQuery.isAllSelected = isAllSelected;
 
-                        exportDataRequest.dataQuery.isAllSelected = true;
                         var selectedRows = $scope.gridApi.selection.getSelectedRows();
 
                         exportDataRequest.dataQuery.objectIds = [];
-                        if (selectedRows && selectedRows.length) {
-                            exportDataRequest.dataQuery.isAllSelected = false;
+
+                        if ((exportDataRequest.dataQuery.objectIds && exportDataRequest.dataQuery.objectIds.length)
+                            || (!isAllSelected)) {
                             exportDataRequest.dataQuery.objectIds = _.map(selectedRows, function (priceAssignments) {
                                 return priceAssignments.id;
                             });
                         }
 
-                        var searchCriteria = getSearchCriteria();
-                        if ((searchCriteria.pricelistIds && searchCriteria.pricelistIds.length > 0) || searchCriteria.keyword !== '') {
-                            exportDataRequest.dataQuery.isAnyFilterApplied = true;
-                        }
-
-                        exportDataRequest.dataQuery = angular.extend(exportDataRequest.dataQuery, searchCriteria);
+                        angular.extend(exportDataRequest.dataQuery, getSearchCriteria());
 
                         var newBlade = {
                             id: 'priceAssignmentExport',
@@ -184,8 +180,7 @@ angular.module('virtoCommerce.pricingModule')
                             subtitle: 'pricing.blades.exporter.priceAssignmentSubtitle',
                             controller: 'virtoCommerce.exportModule.exportSettingsController',
                             template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
-                            exportDataRequest: exportDataRequest,
-                            totalItemsCount: exportDataRequest.dataQuery.objectIds.length || $scope.pageSettings.totalItems
+                            exportDataRequest: exportDataRequest
                         };
                         bladeNavigationService.showBlade(newBlade, blade);
                     }
@@ -193,14 +188,14 @@ angular.module('virtoCommerce.pricingModule')
             ];
 
             filter.criteriaChanged = function () {
-              
-                    if ($scope.pageSettings.currentPage > 1) {
-                        blade.refresh();
-                        $scope.pageSettings.currentPage = 1;
-                    } else {
-                        blade.refresh();
-                    }
-                };
+
+                if ($scope.pageSettings.currentPage > 1) {
+                    blade.refresh();
+                    $scope.pageSettings.currentPage = 1;
+                } else {
+                    blade.refresh();
+                }
+            };
             // ui-grid
             $scope.setGridOptions = function (gridOptions) {
                 $scope.gridOptions = gridOptions;

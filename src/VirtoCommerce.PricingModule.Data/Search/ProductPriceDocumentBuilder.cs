@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,6 +57,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
         {
             var evalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             evalContext.ProductIds = productIds.ToArray();
+            evalContext.CertainDate = DateTime.UtcNow;
 
             return (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToList();
         }
