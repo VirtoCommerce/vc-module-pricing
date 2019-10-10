@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.489
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.PricingModule.Core", "src\VirtoCommerce.PricingModule.Core\VirtoCommerce.PricingModule.Core.csproj", "{EA833691-97E4-44A3-966F-AA933A73CB3D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.PricingModule.Data", "src\VirtoCommerce.PricingModule.Data\VirtoCommerce.PricingModule.Data.csproj", "{5DAB1AE3-CC3F-4003-BB00-4066C1C853F8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{A323F957-C542-4FEE-99DE-85919752450E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.PricingModule.Web", "src\VirtoCommerce.PricingModule.Web\VirtoCommerce.PricingModule.Web.csproj", "{1362E662-7EB8-42E9-8E2D-9F6F538E46F5}"
 EndProject
@@ -31,8 +29,6 @@ Global
 		{5DAB1AE3-CC3F-4003-BB00-4066C1C853F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DAB1AE3-CC3F-4003-BB00-4066C1C853F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DAB1AE3-CC3F-4003-BB00-4066C1C853F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A323F957-C542-4FEE-99DE-85919752450E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A323F957-C542-4FEE-99DE-85919752450E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1362E662-7EB8-42E9-8E2D-9F6F538E46F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1362E662-7EB8-42E9-8E2D-9F6F538E46F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1362E662-7EB8-42E9-8E2D-9F6F538E46F5}.Release|Any CPU.ActiveCfg = Release|Any CPU

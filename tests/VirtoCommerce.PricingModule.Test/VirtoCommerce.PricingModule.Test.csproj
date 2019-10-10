@@ -17,9 +17,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="Moq" Version="4.10.0" />
-    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.0.0-beta.1" />
-    <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.0.0-beta.1" />
-    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.0.0-beta.1" />
+    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.0.0-rc.1" />
+    <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.0.0-rc.1" />
+    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.0.0-rc.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
   </ItemGroup>
