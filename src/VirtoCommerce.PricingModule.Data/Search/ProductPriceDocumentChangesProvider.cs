@@ -22,14 +22,12 @@ namespace VirtoCommerce.PricingModule.Data.Search
         private const int _batchSize = 500;
 
         private readonly IChangeLogSearchService _changeLogSearchService;
-        private readonly IPricingService _pricingService;
         private readonly ISettingsManager _settingsManager;
         private readonly Func<IPricingRepository> _repositoryFactory;
 
-        public ProductPriceDocumentChangesProvider(IChangeLogSearchService changeLogSearchService, IPricingService pricingService, ISettingsManager settingsManager, Func<IPricingRepository> repositoryFactory)
+        public ProductPriceDocumentChangesProvider(IChangeLogSearchService changeLogSearchService, ISettingsManager settingsManager, Func<IPricingRepository> repositoryFactory)
         {
             _changeLogSearchService = changeLogSearchService;
-            _pricingService = pricingService;
             _settingsManager = settingsManager;
             _repositoryFactory = repositoryFactory;
         }
@@ -69,29 +67,21 @@ namespace VirtoCommerce.PricingModule.Data.Search
         }
 
         #region IPricingDocumentChangesProvider Members
-        public virtual async Task<IList<IndexDocumentChange>> GetCalendarChangesAsync(DateTime? startDate, DateTime? endDate, int skip = 0, int take = 0)
+        public virtual async Task<GenericSearchResult<IndexDocumentChange>> GetCalendarChangesAsync(DateTime? startDate, DateTime? endDate, int skip = 0, int take = 0)
         {
-            IList<IndexDocumentChange> result = null;
+            var result = new GenericSearchResult<IndexDocumentChange>();
 
             using (var repository = _repositoryFactory())
             {
                 //Return calendar changes only for prices that have at least one specific date range.
-                var priceLists = await repository.PricelistAssignments
-                    .Where(x => x.StartDate != null || x.EndDate != null)
-                    .Where(x => (x.StartDate == null || x.StartDate <= endDate) && (x.EndDate == null || x.EndDate > startDate))
-                    .Select(x => x.PricelistId)
-                    .Distinct()
-                    .ToArrayAsync();
+                var calendarChangesQuery = repository.Prices.Where(x => x.StartDate != null || x.EndDate != null)
+                                                            .Where(x => (x.StartDate == null || x.StartDate <= endDate) && (x.EndDate == null || x.EndDate > startDate)).Select(x => x.ProductId).Distinct();
 
-                if (priceLists.Any())
+                result.TotalCount += await calendarChangesQuery.CountAsync();
+                if (take > 0)
                 {
-                    result = await repository.Prices.Where(x => priceLists.Contains(x.PricelistId))
-                        .Select(x => x.Id)
-                        .OrderBy(x => x)
-                        .Skip(skip)
-                        .Take(take)
-                        .Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified })
-                        .ToListAsync();
+                    result.Results = calendarChangesQuery.OrderBy(x => x).Skip(skip).Take(take)
+                                                         .Select(x => new IndexDocumentChange { DocumentId = x, ChangeType = IndexDocumentChangeType.Modified }).ToList();
                 }
             }
             return result;
@@ -125,11 +115,11 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 workTake = take - workTake;
 
                 var calendarChanges = await GetCalendarChangesAsync(startDate.Value, endDate.Value, workSkip, workTake);
-                result.TotalCount += calendarChanges.Count;
+                result.TotalCount += calendarChanges.TotalCount;
                 if (workTake > 0)
                 {
                     _settingsManager.SetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, DateTime.UtcNow);
-                    result.Results.AddRange(calendarChanges);
+                    result.Results.AddRange(calendarChanges.Results);
                 }
             }
 

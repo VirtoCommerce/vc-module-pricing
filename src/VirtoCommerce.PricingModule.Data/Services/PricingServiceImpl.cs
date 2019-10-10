@@ -83,7 +83,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             var assignments = query.ToArray();
-            var assignmentsToReturn = assignments.Where(x => x.DynamicExpression != null).ToList();
+            var assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
 
             foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
             {

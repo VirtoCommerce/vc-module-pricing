@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
 
@@ -21,7 +22,7 @@ namespace VirtoCommerce.PricingModule.Core.Services
         /// <param name="skip">Optional count of price changes to skip for the pagination.</param>
         /// <param name="take">Optional count of price changes to take for the pagination.</param>
         /// <returns></returns>
-        Task<IList<IndexDocumentChange>> GetCalendarChangesAsync(DateTime? lastEvaluationTimestamp,
+        Task<GenericSearchResult<IndexDocumentChange>> GetCalendarChangesAsync(DateTime? lastEvaluationTimestamp,
             DateTime? evaluationTimestamp, int skip, int take);
     }
 }
