@@ -8,10 +8,14 @@
 
     <ItemGroup>
         <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.1.1" />
+        <PackageReference Include="GitVersionTask" Version="5.0.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Hangfire" Version="1.6.22" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.3" />
-        <PackageReference Include="VirtoCommerce.CatalogModule.Core" Version="3.0.0-beta.1" />
+        <PackageReference Include="VirtoCommerce.CatalogModule.Core" Version="3.0.0-rc.1" />
         <PackageReference Include="VirtoCommerce.CoreModule.Core" Version="3.0.0-rc.1" />
         <PackageReference Include="VirtoCommerce.ExportModule.Core" Version="3.0.0-rc.1" />
         <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.0.0-rc.1" />
