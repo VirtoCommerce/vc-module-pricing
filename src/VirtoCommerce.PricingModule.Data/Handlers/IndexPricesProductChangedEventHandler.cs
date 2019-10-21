@@ -26,7 +26,9 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
                 throw new ArgumentNullException(nameof(message));
             }
 
-            var indexProductIds = message.ChangedEntries.Where(x => (x.EntryState == EntryState.Modified || x.EntryState == EntryState.Added)
+            var entityStates = new[] { EntryState.Added, EntryState.Modified, EntryState.Deleted };
+
+            var indexProductIds = message.ChangedEntries.Where(x => entityStates.Any(s => s == x.EntryState)
                                                                     && x.OldEntry.ProductId != null)
                                                           .Select(x => x.OldEntry.ProductId)
                                                           .Distinct().ToArray();
