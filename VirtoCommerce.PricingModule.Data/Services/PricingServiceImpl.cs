@@ -8,8 +8,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using VirtoCommerce.Domain.Catalog.Services;
 using VirtoCommerce.Domain.Common;
+using VirtoCommerce.Domain.Common.Events;
+using VirtoCommerce.Domain.Pricing.Events;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Serialization;
 using VirtoCommerce.Platform.Data.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
@@ -28,9 +31,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly IExpressionSerializer _expressionSerializer;
         private readonly IPricingExtensionManager _extensionManager;
         private readonly IPricingPriorityFilterPolicy _pricingPriorityFilterPolicy;
+        private readonly IEventPublisher _eventPublisher;
 
         public PricingServiceImpl(Func<IPricingRepository> repositoryFactory, IItemService productService, ILog logger, ICacheManager<object> cacheManager, IExpressionSerializer expressionSerializer,
-                                  IPricingExtensionManager extensionManager, IPricingPriorityFilterPolicy pricingFilterPolicy)
+                                  IPricingExtensionManager extensionManager, IPricingPriorityFilterPolicy pricingFilterPolicy, IEventPublisher eventPublisher)
         {
             _repositoryFactory = repositoryFactory;
             _productService = productService;
@@ -39,6 +43,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _expressionSerializer = expressionSerializer;
             _extensionManager = extensionManager;
             _pricingPriorityFilterPolicy = pricingFilterPolicy;
+            _eventPublisher = eventPublisher;
         }
 
         #region IPricingService Members
@@ -280,6 +285,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
         public virtual void SavePrices(coreModel.Price[] prices)
         {
             var pkMap = new PrimaryKeyResolvingMap();
+            var changedEntries = new List<GenericChangedEntry<coreModel.Price>>();
+
             using (var repository = _repositoryFactory())
             using (var changeTracker = GetChangeTracker(repository))
             {
@@ -312,16 +319,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     if (targetEntity != null)
                     {
                         changeTracker.Attach(targetEntity);
+                        changedEntries.Add(new GenericChangedEntry<coreModel.Price>(price, targetEntity.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance()), EntryState.Modified));
                         sourceEntity.Patch(targetEntity);
                     }
                     else
                     {
                         repository.Add(sourceEntity);
+                        changedEntries.Add(new GenericChangedEntry<coreModel.Price>(price, EntryState.Added));
                     }
                 }
                 CommitChanges(repository);
                 pkMap.ResolvePrimaryKeys();
                 ResetCache();
+
+                _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
             }
         }
 

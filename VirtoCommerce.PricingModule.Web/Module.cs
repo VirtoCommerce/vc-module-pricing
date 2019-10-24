@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Http;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.Domain.Catalog.Events;
+using VirtoCommerce.Domain.Pricing.Events;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Domain.Search;
 using VirtoCommerce.ExportModule.Core.Services;
@@ -65,6 +66,8 @@ namespace VirtoCommerce.PricingModule.Web
             var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
 
             eventHandlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, token) => await _container.Resolve<DeletePricesProductChangedEvent>().Handle(message));
+            eventHandlerRegistrar.RegisterHandler<PriceChangedEvent>(async (message, token) => await _container.Resolve<IndexPricesProductChangedEventHandler>().Handle(message));
+
             _container.RegisterType<IPricingDocumentChangesProvider, ProductPriceDocumentChangesProvider>();
 
             _container.RegisterType<IPricingExportPagedDataSourceFactory, PricingExportPagedDataSourceFactory>();
