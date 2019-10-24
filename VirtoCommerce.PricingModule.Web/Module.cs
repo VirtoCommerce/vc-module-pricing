@@ -64,6 +64,7 @@ namespace VirtoCommerce.PricingModule.Web
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
 
             var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
+
             eventHandlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, token) => await _container.Resolve<DeletePricesProductChangedEvent>().Handle(message));
             eventHandlerRegistrar.RegisterHandler<PriceChangedEvent>(async (message, token) => await _container.Resolve<IndexPricesProductChangedEventHandler>().Handle(message));
 

@@ -129,7 +129,7 @@ namespace VirtoCommerce.PricingModule.Tests
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.AsQueryable());
 
             var service = new PricingServiceImpl(() => mockRepository.Object, null, null, null, null, null,
-                new DefaultPricingPriorityFilterPolicy());
+                new DefaultPricingPriorityFilterPolicy(), null);
 
             // Eval with date and no matches, this should result in default price.
             evalContext.CertainDate = new DateTime(2018, 09, 20);
