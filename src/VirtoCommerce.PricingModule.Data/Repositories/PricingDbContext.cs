@@ -19,18 +19,18 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PriceEntity>().ToTable("Price").HasKey(x => x.Id);
-            modelBuilder.Entity<PriceEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<PriceEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<PriceEntity>().HasOne(x => x.Pricelist).WithMany(x => x.Prices).IsRequired().HasForeignKey(x => x.PricelistId);
             modelBuilder.Entity<PriceEntity>().HasIndex(x => new { x.ProductId, x.PricelistId }).HasName("IX_PriceId");
             modelBuilder.Entity<PriceEntity>();
 
             modelBuilder.Entity<PricelistEntity>().ToTable("Pricelist").HasKey(x => x.Id);
-            modelBuilder.Entity<PricelistEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<PricelistEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<PricelistEntity>().HasIndex(x => x.OuterId);
 
             modelBuilder.Entity<PricelistAssignmentEntity>().ToTable("PricelistAssignment").HasKey(x => x.Id);
             modelBuilder.Entity<PricelistAssignmentEntity>().HasOne(x => x.Pricelist).WithMany(x => x.Assignments).IsRequired().HasForeignKey(x => x.PricelistId);
-            modelBuilder.Entity<PricelistAssignmentEntity>().Property(x => x.Id).HasMaxLength(128);
+            modelBuilder.Entity<PricelistAssignmentEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
 
             base.OnModelCreating(modelBuilder);
         }
