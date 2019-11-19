@@ -57,6 +57,15 @@
                 <description>If this setting is turned on, product price will be included to the product index. This will also cause product re-indexing after changing its prices.</description>
             </setting>
         </group>
+        <group name="Search|Pricing">
+            <setting>
+                <name>Pricing.Search.EventBasedIndexation.Enable</name>
+                <valueType>boolean</valueType>
+                <defaultValue>false</defaultValue>
+                <title>Enable event-based indexation for pricing (Restart required)</title>
+                <description>Any changes to the pricing entities will trigger a background task that will apply these changes in the search index.</description>
+            </setting>
+        </group>
     </settings>
 
     <permissions>
