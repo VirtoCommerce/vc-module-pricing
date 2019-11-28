@@ -63,11 +63,7 @@ namespace VirtoCommerce.PricingModule.Web
             _container.RegisterType<IPricingService, PricingServiceImpl>();
             _container.RegisterType<IPricingSearchService, PricingSearchServiceImpl>();
 
-            var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
-
-            eventHandlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, token) => await _container.Resolve<DeletePricesProductChangedEvent>().Handle(message));
-            eventHandlerRegistrar.RegisterHandler<PriceChangedEvent>(async (message, token) => await _container.Resolve<IndexPricesProductChangedEventHandler>().Handle(message));
-
+          
             _container.RegisterType<IPricingDocumentChangesProvider, ProductPriceDocumentChangesProvider>();
 
             _container.RegisterType<IPricingExportPagedDataSourceFactory, PricingExportPagedDataSourceFactory>();
@@ -113,6 +109,16 @@ namespace VirtoCommerce.PricingModule.Web
 
             #endregion
 
+            var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
+
+            var settingManager = _container.Resolve<ISettingsManager>();
+            if (settingManager.GetValue("Pricing.Search.EventBasedIndexation.Enable", false))
+            {
+                eventHandlerRegistrar.RegisterHandler<PriceChangedEvent>(async (message, token) => await _container.Resolve<IndexPricesProductChangedEventHandler>().Handle(message));
+            }
+            eventHandlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, token) => await _container.Resolve<DeletePricesProductChangedEvent>().Handle(message));
+
+            #region GenericExport
             var registrar = _container.Resolve<IKnownExportTypesRegistrar>();
 
             registrar.RegisterType(
@@ -134,7 +140,8 @@ namespace VirtoCommerce.PricingModule.Web
                     .WithDataSourceFactory(_container.Resolve<IPricingExportPagedDataSourceFactory>())
                     .WithPermissionAuthorization(PricingPredefinedPermissions.Export, PricingPredefinedPermissions.Read)
                     .WithMetadata(typeof(ExportablePricelistAssignment).GetPropertyNames())
-                    .WithTabularMetadata(typeof(TabularPricelistAssignment).GetPropertyNames()));
+                    .WithTabularMetadata(typeof(TabularPricelistAssignment).GetPropertyNames())); 
+            #endregion
         }
 
         #endregion
