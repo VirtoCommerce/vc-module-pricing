@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -232,6 +233,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpPut]
         [Route("api/pricing/assignments")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdatePriceListAssignment([FromBody]PricelistAssignment assignment)
         {
             await _pricingService.SavePricelistAssignmentsAsync(new[] { assignment });
@@ -241,6 +243,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpPut]
         [Route("api/products/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateProductsPrices([FromBody]ProductPrice[] productPrices)
         {
             var result = await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria
@@ -343,6 +346,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpPut]
         [Route("api/pricing/pricelists")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdatePriceList([FromBody]Pricelist priceList)
         {
             await _pricingService.SavePricelistsAsync(new[] { priceList });
@@ -358,6 +362,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpDelete]
         [Route("api/pricing/assignments")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteAssignments(string[] ids)
         {
             await _pricingService.DeletePricelistsAssignmentsAsync(ids);
@@ -371,7 +376,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <param name="criteria">Filter criteria</param>
         /// <todo>Return no any reason if can't update</todo>
         [HttpDelete]
-        [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [Route("api/pricing/filteredAssignments")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
         public async Task<ActionResult> DeleteFilteredAssignments([FromQuery]PricelistAssignmentsSearchCriteria criteria)
@@ -408,6 +413,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpDelete]
         [Route("api/pricing/pricelists/{pricelistId}/products/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteProductPrices(string pricelistId, string[] productIds)
         {
             var result = await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria { PriceListId = pricelistId, ProductIds = productIds, Take = int.MaxValue });
@@ -423,6 +429,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpDelete]
         [Route("api/pricing/products/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteProductPrice(string[] priceIds)
         {
             await _pricingService.DeletePricesAsync(priceIds);
@@ -437,6 +444,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpDelete]
         [Route("api/pricing/pricelists")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeletePricelists(string[] ids)
         {
             await _pricingService.DeletePricelistsAsync(ids);
