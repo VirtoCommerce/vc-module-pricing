@@ -49,13 +49,25 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = true
                 };
 
+                public static SettingDescriptor EventBasedIndexation = new SettingDescriptor
+                {
+                    Name = "Pricing.Search.EventBasedIndexation.Enable",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false
+                };
+
                 public static IEnumerable<SettingDescriptor> AllSettings
                 {
                     get
                     {
-                        yield return ExportImportPageSize;
-                        yield return IndexationDatePricingCalendar;
-                        yield return PricingIndexing;
+                        return new List<SettingDescriptor>
+                               {
+                                   ExportImportPageSize,
+                                   IndexationDatePricingCalendar,
+                                   PricingIndexing,
+                                   EventBasedIndexation
+                               };
                     }
                 }
             }
