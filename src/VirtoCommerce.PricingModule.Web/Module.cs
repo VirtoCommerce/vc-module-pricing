@@ -144,7 +144,7 @@ namespace VirtoCommerce.PricingModule.Web
             inProcessBus.RegisterHandler<PriceChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<LogChangesChangedEventHandler>().Handle(message));
             inProcessBus.RegisterHandler<ProductChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<DeletePricesProductChangedEventHandler>().Handle(message));
 
-            if (settingsManager.GetValue("Pricing.Search.EventBasedIndexation.Enable", false))
+            if (settingsManager.GetValue(ModuleConstants.Settings.General.EventBasedIndexation.Name, false))
             {
                 inProcessBus.RegisterHandler<PriceChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexPricesProductChangedEventHandler>().Handle(message));
             }
