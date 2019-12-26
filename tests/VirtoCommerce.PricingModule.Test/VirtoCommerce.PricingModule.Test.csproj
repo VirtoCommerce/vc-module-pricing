@@ -14,16 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="MockQueryable.Moq" Version="3.0.1" />
     <PackageReference Include="Moq" Version="4.13.1" />
-    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.0.0-3-0-0-vp-837-co-0001" />
-    <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.0.0-3-0-0-vp-837-co-0001" />
-    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.0.0-3-0-0-vp-837-co-0001" />
+    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.0.0-rc.1" />
+    <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.0.0-rc.1" />
+    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.0.0-rc.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
   </ItemGroup>

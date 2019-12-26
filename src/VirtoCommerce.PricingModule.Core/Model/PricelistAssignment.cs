@@ -40,8 +40,8 @@ namespace VirtoCommerce.PricingModule.Core.Model
         {
             var result = MemberwiseClone() as PricelistAssignment;
 
-            result.Pricelist = result.Pricelist?.Clone() as Pricelist;
-            result.DynamicExpression = result.DynamicExpression?.Clone() as PriceConditionTree;
+            result.Pricelist = Pricelist?.Clone() as Pricelist;
+            result.DynamicExpression = DynamicExpression?.Clone() as PriceConditionTree;
 
             return result;
         }
