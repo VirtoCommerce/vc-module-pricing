@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using MockQueryable.Moq;
 using Moq;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.Common;
@@ -26,7 +27,7 @@ namespace VirtoCommerce.PricingModule.Test
                 new OperationLogEntity { ModifiedDate = new DateTime(2018, 11, 01), ObjectId = "2", ObjectType = nameof(PriceEntity) },
                 new OperationLogEntity { ModifiedDate = new DateTime(2018, 11, 01), ObjectId = "3", ObjectType = nameof(PriceEntity) },
             };
-            var mockPrices = new Common.TestAsyncEnumerable<PriceEntity>(new[] {
+            var mockPrices = new PriceEntity[] {
                 //Without from/till dates (unbounded)
                 new PriceEntity { Id = "1", ProductId = "1" },
                 //Without from date (unbounded)
@@ -35,10 +36,10 @@ namespace VirtoCommerce.PricingModule.Test
                 new PriceEntity { Id = "3", ProductId = "3", StartDate = new DateTime(2018, 06, 01) },
                 //with from/till dates (bounded)
                 new PriceEntity { Id = "4", ProductId = "4", StartDate = new DateTime(2018, 06, 01), EndDate = new DateTime(2018, 12, 01) }
-            });
+            }.AsQueryable().BuildMock();
             var mockPricingRepository = new Mock<IPricingRepository>();
-            mockPricingRepository.SetupGet(x => x.Prices).Returns(mockPrices.AsQueryable());
-            mockPricingRepository.Setup(x => x.GetPricesByIdsAsync(It.IsAny<string[]>())).ReturnsAsync(mockPrices.AsQueryable().ToArray());
+            mockPricingRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
+            mockPricingRepository.Setup(x => x.GetPricesByIdsAsync(It.IsAny<string[]>())).ReturnsAsync(mockPrices.Object.ToArray());
             var mockPlatformRepository = new Mock<IPlatformRepository>();
             mockPlatformRepository.SetupGet(x => x.OperationLogs).Returns(mockOperationsLogs.AsQueryable());
             var mockSettingManager = new Mock<ISettingsManager>();
@@ -115,7 +116,7 @@ namespace VirtoCommerce.PricingModule.Test
                 PricelistIds = new[] { "List1" }
             };
 
-            var mockPrices = new Common.TestAsyncEnumerable<PriceEntity>(new[] {
+            var mockPrices = new PriceEntity[] {
                 // Unbounded past.
                 new PriceEntity { Id = "1", List = 1, EndDate = new DateTime(2018, 09, 10), PricelistId = "List1" , ProductId = "ProductId" },
                 // Bounded past.
@@ -128,10 +129,10 @@ namespace VirtoCommerce.PricingModule.Test
 
                 // Default unfiltered price.
                 new PriceEntity { Id = "10", List = 10, PricelistId = "List1" , ProductId = "ProductId" },
-            });
+            }.AsQueryable().BuildMock();
 
             var mockRepository = new Mock<IPricingRepository>();
-            mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.AsQueryable());
+            mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
 
             var service = new PricingServiceImpl(() => mockRepository.Object, null, null, null, null,
                 new DefaultPricingPriorityFilterPolicy());
