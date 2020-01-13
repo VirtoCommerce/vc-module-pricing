@@ -8,6 +8,7 @@
         <dependency id="VirtoCommerce.Core" version="3.0.0" />
         <dependency id="VirtoCommerce.Catalog" version="3.0.0" />
         <dependency id="VirtoCommerce.Export" version="3.0.0" />
+        <dependency id="VirtoCommerce.Search" version="3.0.0" />
     </dependencies>
 
     <title>Pricing module</title>
