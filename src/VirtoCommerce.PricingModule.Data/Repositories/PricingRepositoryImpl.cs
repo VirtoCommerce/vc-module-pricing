@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient; //https://github.com/dotnet/efcore/issues/16812
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Data.Infrastructure;
