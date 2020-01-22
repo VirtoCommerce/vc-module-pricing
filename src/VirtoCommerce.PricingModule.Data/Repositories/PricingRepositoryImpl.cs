@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient; //https://github.com/dotnet/efcore/issues/16812
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Data.Infrastructure;
@@ -27,19 +27,19 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return retVal;
         }
 
-        public virtual async Task<PricelistEntity[]> GetPricelistByIdsAsync(string[] priceListIds)
+        public virtual async Task<PricelistEntity[]> GetPricelistByIdsAsync(string[] pricelistIds)
         {
             // TODO: replace Include with separate query
             var retVal = await Pricelists.Include(x => x.Assignments)
-                                         .Where(x => priceListIds.Contains(x.Id))
+                                         .Where(x => pricelistIds.Contains(x.Id))
                                          .ToArrayAsync();
             return retVal;
         }
 
-        public virtual async Task<PricelistAssignmentEntity[]> GetPricelistAssignmentsByIdAsync(string[] assignmentsIds)
+        public virtual async Task<PricelistAssignmentEntity[]> GetPricelistAssignmentsByIdAsync(string[] assignmentIds)
         {
             // TODO: replace Include with separate query
-            var retVal = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsIds.Contains(x.Id)).ToArrayAsync();
+            var retVal = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentIds.Contains(x.Id)).ToArrayAsync();
             return retVal;
         }
 
