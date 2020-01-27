@@ -152,7 +152,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Model\ModelDiagram.cd" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
