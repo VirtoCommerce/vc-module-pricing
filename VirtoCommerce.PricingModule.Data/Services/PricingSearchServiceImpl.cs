@@ -18,13 +18,16 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly ICatalogSearchService _catalogSearchService;
         private readonly IPricingService _pricingService;
+
         private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
+
         public PricingSearchServiceImpl(Func<IPricingRepository> repositoryFactory, ICatalogSearchService catalogSearchService, IPricingService pricingService)
         {
             _repositoryFactory = repositoryFactory;
             _catalogSearchService = catalogSearchService;
-            _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List);
             _pricingService = pricingService;
+
+            _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List);
         }
 
 
@@ -221,8 +224,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             //Try to replace sorting columns names
             foreach (var sortInfo in sortingInfos)
             {
-                string newColumnName;
-                if (transformationMap.TryGetValue(sortInfo.SortColumn.ToLowerInvariant(), out newColumnName))
+                if (transformationMap.TryGetValue(sortInfo.SortColumn.ToLowerInvariant(), out var newColumnName))
                 {
                     sortInfo.SortColumn = newColumnName;
                 }
