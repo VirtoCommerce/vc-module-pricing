@@ -7,6 +7,7 @@ using VirtoCommerce.Domain.Pricing.Model.Search;
 using VirtoCommerce.Domain.Pricing.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using coreModel = VirtoCommerce.Domain.Pricing.Model;
 
@@ -31,37 +32,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         public virtual PricingSearchResult<coreModel.Price> SearchPrices(PricesSearchCriteria criteria)
         {
-            var retVal = new PricingSearchResult<coreModel.Price>();
-            ICollection<CatalogProduct> products = new List<CatalogProduct>();
+            var result = new PricingSearchResult<coreModel.Price>();
+
+            ICollection<CatalogProduct> products;
+
             using (var repository = _repositoryFactory())
             {
                 repository.DisableChangesTracking();
 
-                var query = repository.Prices;
-
-                if (!criteria.PriceListIds.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
-                }
-
-                if (!criteria.ProductIds.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.ProductIds.Contains(x.ProductId));
-                }
-
-                if (!string.IsNullOrEmpty(criteria.Keyword))
-                {
-                    var catalogSearchResult = _catalogSearchService.Search(new SearchCriteria { Keyword = criteria.Keyword, Skip = criteria.Skip, Take = criteria.Take, Sort = criteria.Sort.Replace("product.", string.Empty), ResponseGroup = Domain.Catalog.Model.SearchResponseGroup.WithProducts });
-                    var productIds = catalogSearchResult.Products.Select(x => x.Id).ToArray();
-                    query = query.Where(x => productIds.Contains(x.ProductId));
-                    //preserve resulting products for future assignment to prices
-                    products = catalogSearchResult.Products;
-                }
-
-                if (criteria.ModifiedSince.HasValue)
-                {
-                    query = query.Where(x => x.ModifiedDate >= criteria.ModifiedSince);
-                }
+                var query = GetPricesQuery(repository, criteria, out products);
 
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
@@ -71,46 +50,38 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 //Try to replace sorting columns names
                 TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
 
-
                 query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
                 if (criteria.GroupByProducts)
                 {
                     var groupedQuery = query.GroupBy(x => x.ProductId).OrderBy(x => 1);
-                    retVal.TotalCount = groupedQuery.Count();
+                    result.TotalCount = groupedQuery.Count();
                     query = groupedQuery.Skip(criteria.Skip).Take(criteria.Take).SelectMany(x => x);
                 }
                 else
                 {
-                    retVal.TotalCount = query.Count();
+                    result.TotalCount = query.Count();
                     query = query.Skip(criteria.Skip).Take(criteria.Take);
                 }
 
                 var pricesIds = query.Select(x => x.Id).ToList();
-                retVal.Results = _pricingService.GetPricesById(pricesIds.ToArray())
+                result.Results = _pricingService.GetPricesById(pricesIds.ToArray())
                                             .OrderBy(x => pricesIds.IndexOf(x.Id))
                                             .ToList();
             }
-            return retVal;
+
+            return result;
         }
 
         public virtual PricingSearchResult<coreModel.Pricelist> SearchPricelists(PricelistSearchCriteria criteria)
         {
-            var retVal = new PricingSearchResult<coreModel.Pricelist>();
+            var result = new PricingSearchResult<coreModel.Pricelist>();
+
             using (var repository = _repositoryFactory())
             {
                 repository.DisableChangesTracking();
 
-                var query = repository.Pricelists;
-                if (!string.IsNullOrEmpty(criteria.Keyword))
-                {
-                    query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
-                }
-
-                if (!criteria.Currencies.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.Currencies.Contains(x.Currency));
-                }
+                var query = GetPricelistsQuery(repository, criteria);
 
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
@@ -120,41 +91,25 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
-                retVal.TotalCount = query.Count();
+                result.TotalCount = query.Count();
                 query = query.Skip(criteria.Skip).Take(criteria.Take);
 
                 var pricelistsIds = query.Select(x => x.Id).ToList();
-                retVal.Results = _pricingService.GetPricelistsById(pricelistsIds.ToArray())
+                result.Results = _pricingService.GetPricelistsById(pricelistsIds.ToArray())
                                                 .OrderBy(x => pricelistsIds.IndexOf(x.Id)).ToList();
             }
-            return retVal;
+            return result;
         }
-
-
 
         public virtual PricingSearchResult<coreModel.PricelistAssignment> SearchPricelistAssignments(PricelistAssignmentsSearchCriteria criteria)
         {
-            var retVal = new PricingSearchResult<coreModel.PricelistAssignment>();
+            var result = new PricingSearchResult<coreModel.PricelistAssignment>();
+
             using (var repository = _repositoryFactory())
             {
                 repository.DisableChangesTracking();
 
-                var query = repository.PricelistAssignments;
-
-                if (!criteria.PriceListIds.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
-                }
-
-                if (!string.IsNullOrEmpty(criteria.Keyword))
-                {
-                    query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
-                }
-
-                if (!criteria.CatalogIds.IsNullOrEmpty())
-                {
-                    query = query.Where(x => criteria.CatalogIds.Contains(x.CatalogId));
-                }
+                var query = GetPricelistAssignmentsQuery(repository, criteria);
 
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
@@ -164,17 +119,102 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
-                retVal.TotalCount = query.Count();
+                result.TotalCount = query.Count();
                 query = query.Skip(criteria.Skip).Take(criteria.Take);
 
                 var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
-                retVal.Results = _pricingService.GetPricelistAssignmentsById(pricelistAssignmentsIds.ToArray())
+                result.Results = _pricingService.GetPricelistAssignmentsById(pricelistAssignmentsIds.ToArray())
                                                 .OrderBy(x => pricelistAssignmentsIds.IndexOf(x.Id))
                                                 .ToList();
             }
-            return retVal;
+
+            return result;
         }
         #endregion
+
+
+        protected virtual IQueryable<PriceEntity> GetPricesQuery(IPricingRepository repository, PricesSearchCriteria criteria, out ICollection<CatalogProduct> products)
+        {
+            products = new List<CatalogProduct>();
+
+            var query = repository.Prices;
+
+            if (!criteria.PriceListIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
+            }
+
+            if (!criteria.ProductIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.ProductIds.Contains(x.ProductId));
+            }
+
+            if (!string.IsNullOrEmpty(criteria.Keyword))
+            {
+                var catalogSearchCriteria = new SearchCriteria
+                {
+                    Keyword = criteria.Keyword,
+                    Skip = criteria.Skip,
+                    Take = criteria.Take,
+                    Sort = criteria.Sort.Replace("product.", string.Empty),
+                    ResponseGroup = SearchResponseGroup.WithProducts,
+                };
+                var catalogSearchResult = _catalogSearchService.Search(catalogSearchCriteria);
+
+                var productIds = catalogSearchResult.Products.Select(x => x.Id).ToArray();
+                //preserve resulting products for future assignment to prices
+                products = catalogSearchResult.Products;
+
+                query = query.Where(x => productIds.Contains(x.ProductId));
+            }
+
+            if (criteria.ModifiedSince.HasValue)
+            {
+                query = query.Where(x => x.ModifiedDate >= criteria.ModifiedSince);
+            }
+
+            return query;
+        }
+
+        protected virtual IQueryable<PricelistEntity> GetPricelistsQuery(IPricingRepository repository, PricelistSearchCriteria criteria)
+        {
+            var query = repository.Pricelists;
+
+            if (!string.IsNullOrEmpty(criteria.Keyword))
+            {
+                query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
+            }
+
+            if (!criteria.Currencies.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.Currencies.Contains(x.Currency));
+            }
+
+            return query;
+        }
+
+        protected virtual IQueryable<PricelistAssignmentEntity> GetPricelistAssignmentsQuery(IPricingRepository repository, PricelistAssignmentsSearchCriteria criteria)
+        {
+            var query = repository.PricelistAssignments;
+
+            if (!criteria.PriceListIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.PriceListIds.Contains(x.PricelistId));
+            }
+
+            if (!string.IsNullOrEmpty(criteria.Keyword))
+            {
+                query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
+            }
+
+            if (!criteria.CatalogIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.CatalogIds.Contains(x.CatalogId));
+            }
+
+            return query;
+        }
+
 
         private static void TryTransformSortingInfoColumnNames(IDictionary<string, string> transformationMap, SortInfo[] sortingInfos)
         {
