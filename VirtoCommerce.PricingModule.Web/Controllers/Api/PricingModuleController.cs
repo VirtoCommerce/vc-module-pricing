@@ -130,13 +130,30 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         }
 
         /// <summary>
-        /// Search product prices 
+        /// Search product prices
         /// </summary>
         /// <remarks>Search product prices</remarks>
         [HttpGet]
         [ResponseType(typeof(PricingSearchResult<webModel.ProductPrice>))]
         [Route("api/catalog/products/prices/search")]
-        public IHttpActionResult SearchProductPrices([FromUri]PricesSearchCriteria criteria)
+        public IHttpActionResult SearchProductPricesGet([FromUri]PricesSearchCriteria criteria)
+        {
+            return Ok(SearchProductPricesImpl(criteria));
+        }
+
+        /// <summary>
+        /// Search product prices 
+        /// </summary>
+        /// <remarks>Search product prices</remarks>
+        [HttpPost]
+        [ResponseType(typeof(PricingSearchResult<webModel.ProductPrice>))]
+        [Route("api/catalog/products/prices/search")]
+        public IHttpActionResult SearchProductPricesPost([FromBody]PricesSearchCriteria criteria)
+        {
+            return Ok(SearchProductPricesImpl(criteria));
+        }
+
+        private PricingSearchResult<webModel.ProductPrice> SearchProductPricesImpl(PricesSearchCriteria criteria)
         {
             if (criteria == null)
             {
@@ -164,8 +181,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 }
                 retVal.Results.Add(productPrice);
             }
-
-            return Ok(retVal);
+            return retVal;
         }
 
         /// <summary>
