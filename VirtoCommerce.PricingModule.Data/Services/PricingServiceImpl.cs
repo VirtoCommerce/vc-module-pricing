@@ -174,14 +174,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     .ToArray();
             }
 
-            var priceListOrdererList = evalContext.PricelistIds?.ToList();
-            //Apply pricing  filtration strategy for found prices
+            //Apply pricing filtration strategy for found prices
             result.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
 
             //Then variation inherited prices
             if (_productService != null)
             {
                 var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct()).ToArray();
+
                 //Variation price inheritance
                 //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
                 if (productIdsWithoutPrice.Any())
