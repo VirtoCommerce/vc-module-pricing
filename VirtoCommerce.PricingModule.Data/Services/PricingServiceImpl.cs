@@ -157,6 +157,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
 
+                // Filter product prices by applicable price lists
+                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
+
                 // Filter by date expiration
                 // Always filter on date, so that we limit the results to process.
                 var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
@@ -198,7 +201,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             return retVal;
         }
-        
+
         public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
             coreModel.Price[] result = null;
