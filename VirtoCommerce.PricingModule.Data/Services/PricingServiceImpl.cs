@@ -135,12 +135,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 throw new ArgumentNullException(nameof(evalContext));
             }
+
             if (evalContext.ProductIds == null)
             {
                 throw new MissingFieldException(nameof(evalContext.ProductIds));
             }
 
-            var retVal = new List<coreModel.Price>();
+            var result = new List<coreModel.Price>();
+
             coreModel.Price[] prices;
             using (var repository = _repositoryFactory())
             {
@@ -157,23 +159,29 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     evalContext.PricelistIds = EvaluatePriceLists(evalContext).Select(x => x.Id).ToArray();
                 }
 
+                // Filter product prices by applicable price lists
+                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
+
                 // Filter by date expiration
                 // Always filter on date, so that we limit the results to process.
                 var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
                 query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
                     && (x.EndDate == null || x.EndDate > certainDate));
 
-                prices = query.ToArray().Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance())).ToArray();
+                prices = query
+                    .AsEnumerable()
+                    .Select(x => x.ToModel(AbstractTypeFactory<coreModel.Price>.TryCreateInstance()))
+                    .ToArray();
             }
 
-            var priceListOrdererList = evalContext.PricelistIds?.ToList();
-            //Apply pricing  filtration strategy for found prices
-            retVal.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
+            //Apply pricing filtration strategy for found prices
+            result.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
 
             //Then variation inherited prices
             if (_productService != null)
             {
-                var productIdsWithoutPrice = evalContext.ProductIds.Except(retVal.Select(x => x.ProductId).Distinct()).ToArray();
+                var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct()).ToArray();
+
                 //Variation price inheritance
                 //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
                 if (productIdsWithoutPrice.Any())
@@ -187,18 +195,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         {
                             var jObject = JObject.FromObject(inheritedPrice);
                             var variationPrice = (coreModel.Price)jObject.ToObject(inheritedPrice.GetType());
+
                             //For correct override price in possible update 
                             variationPrice.Id = null;
                             variationPrice.ProductId = variation.Id;
-                            retVal.Add(variationPrice);
+
+                            result.Add(variationPrice);
                         }
                     }
                 }
             }
 
-            return retVal;
+            return result;
         }
-        
+
         public virtual coreModel.Price[] GetPricesById(string[] ids)
         {
             coreModel.Price[] result = null;
