@@ -15,7 +15,7 @@ using VirtoCommerce.SearchModule.Core.Services;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
-    public class ProductPriceDocumentChangesProvider : IIndexDocumentChangesProvider, IPricingDocumentChangesProvider
+    public class ProductPriceDocumentChangesProvider : IPricingDocumentChangesProvider
     {
         private const string _changeLogObjectType = nameof(Price);
         private static readonly TimeSpan _calendarChangesInterval = TimeSpan.FromDays(1);

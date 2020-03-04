@@ -17,7 +17,7 @@ namespace VirtoCommerce.PricingModule.Core
                 public const string Delete = "pricing:delete";
                 public const string Export = "pricing:export";
 
-                public static readonly string[] AllPermissions = { Read, Create, Access, Update, Delete, Export };
+                public static string[] AllPermissions { get; } = { Read, Create, Access, Update, Delete, Export };
             }
         }
 
@@ -25,7 +25,7 @@ namespace VirtoCommerce.PricingModule.Core
         {
             public static class General
             {
-                public static readonly SettingDescriptor ExportImportPageSize = new SettingDescriptor
+                public static SettingDescriptor ExportImportPageSize { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.ExportImport.PageSize",
                     GroupName = "Pricing|General",
@@ -33,7 +33,7 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = 50
                 };
 
-                public static SettingDescriptor IndexationDatePricingCalendar = new SettingDescriptor
+                public static SettingDescriptor IndexationDatePricingCalendar { get; } = new SettingDescriptor
                 {
                     Name = "VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar",
                     GroupName = "Pricing|Search",
@@ -41,7 +41,7 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = default(DateTime)
                 };
 
-                public static SettingDescriptor PricingIndexing = new SettingDescriptor
+                public static SettingDescriptor PricingIndexing { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.Indexing.Enable",
                     GroupName = "Pricing|Search",
@@ -49,7 +49,7 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = true
                 };
 
-                public static SettingDescriptor EventBasedIndexation = new SettingDescriptor
+                public static SettingDescriptor EventBasedIndexation { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.Search.EventBasedIndexation.Enable",
                     GroupName = "Pricing|General",
@@ -72,7 +72,7 @@ namespace VirtoCommerce.PricingModule.Core
                 }
             }
 
-            public static IEnumerable<SettingDescriptor> AllSettings => General.AllSettings;
+            public static IEnumerable<SettingDescriptor> AllSettings { get; } = General.AllSettings;
         }
     }
 }

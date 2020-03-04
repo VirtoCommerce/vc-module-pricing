@@ -155,7 +155,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 prices = queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance())).ToArray();
             }
 
-            var priceListOrdererList = evalContext.PricelistIds?.ToList();
             //Apply pricing  filtration strategy for found prices
             retVal.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
 

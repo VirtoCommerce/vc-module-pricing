@@ -67,6 +67,7 @@ namespace VirtoCommerce.PricingModule.Test
 
         private static void GetProgressCallback(ExportImportProgressInfo exportImportProgressInfo)
         {
+            // Debug purposes
         }
 
         private JsonSerializer GetJsonSerializer()

@@ -54,7 +54,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             }
             else
             {
-                var pricelistAssignmentSearchResult = _searchService.SearchPricelistAssignmentsAsync((PricelistAssignmentsSearchCriteria)searchCriteria).GetAwaiter().GetResult();
+                var pricelistAssignmentSearchResult = _searchService.SearchPricelistAssignmentsAsync(searchCriteria).GetAwaiter().GetResult();
                 result = pricelistAssignmentSearchResult.Results.ToArray();
                 totalCount = pricelistAssignmentSearchResult.TotalCount;
             }

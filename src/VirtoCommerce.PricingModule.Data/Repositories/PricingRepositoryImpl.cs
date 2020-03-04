@@ -36,10 +36,10 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return retVal;
         }
 
-        public virtual async Task<PricelistAssignmentEntity[]> GetPricelistAssignmentsByIdAsync(string[] assignmentIds)
+        public virtual async Task<PricelistAssignmentEntity[]> GetPricelistAssignmentsByIdAsync(string[] assignmentsId)
         {
             // TODO: replace Include with separate query
-            var retVal = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentIds.Contains(x.Id)).ToArrayAsync();
+            var retVal = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToArrayAsync();
             return retVal;
         }
 

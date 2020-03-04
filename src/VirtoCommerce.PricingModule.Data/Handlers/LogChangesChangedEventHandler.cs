@@ -17,9 +17,9 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
             _changeLogService = changeLogService;
         }
 
-        public virtual Task Handle(PriceChangedEvent @event)
+        public virtual Task Handle(PriceChangedEvent message)
         {
-            InnerHandle(@event);
+            InnerHandle(message);
             return Task.CompletedTask;
         }
 

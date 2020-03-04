@@ -32,7 +32,7 @@ namespace VirtoCommerce.PricingModule.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            // Mandatory method left empty
         }
     }
 }
