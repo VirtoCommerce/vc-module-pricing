@@ -86,6 +86,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 var query = GetPricelistsQuery(repository, criteria);
 
+                result.TotalCount = query.Count();
+
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
@@ -94,7 +96,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
-                result.TotalCount = query.Count();
                 query = query.Skip(criteria.Skip).Take(criteria.Take);
 
                 var pricelistsIds = query.Select(x => x.Id).ToList();
@@ -114,6 +115,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 var query = GetPricelistAssignmentsQuery(repository, criteria);
 
+                result.TotalCount = query.Count();
+
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
@@ -122,7 +125,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
-                result.TotalCount = query.Count();
                 query = query.Skip(criteria.Skip).Take(criteria.Take);
 
                 var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
