@@ -37,19 +37,18 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             var result = new PricingSearchResult<coreModel.Price>();
 
-            ICollection<CatalogProduct> products;
-
             using (var repository = _repositoryFactory())
             {
                 repository.DisableChangesTracking();
 
-                var query = GetPricesQuery(repository, criteria, out products);
+                var query = GetPricesQuery(repository, criteria, out _);
 
                 var sortInfos = criteria.SortInfos;
                 if (sortInfos.IsNullOrEmpty())
                 {
                     sortInfos = new[] { new SortInfo { SortColumn = ReflectionUtility.GetPropertyName<coreModel.Price>(x => x.List) } };
                 }
+
                 //Try to replace sorting columns names
                 TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
 
@@ -67,10 +66,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     query = query.Skip(criteria.Skip).Take(criteria.Take);
                 }
 
-                var pricesIds = query.Select(x => x.Id).ToList();
-                result.Results = _pricingService.GetPricesById(pricesIds.ToArray())
-                                            .OrderBy(x => pricesIds.IndexOf(x.Id))
-                                            .ToList();
+                var ids = query.Select(x => x.Id).ToList();
+
+                result.Results = _pricingService.GetPricesById(ids.ToArray())
+                    .OrderBy(x => ids.IndexOf(x.Id))
+                    .ToList();
             }
 
             return result;
@@ -96,12 +96,17 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
-                query = query.Skip(criteria.Skip).Take(criteria.Take);
+                var ids = query
+                    .Skip(criteria.Skip)
+                    .Take(criteria.Take)
+                    .Select(x => x.Id)
+                    .ToList();
 
-                var pricelistsIds = query.Select(x => x.Id).ToList();
-                result.Results = _pricingService.GetPricelistsById(pricelistsIds.ToArray())
-                                                .OrderBy(x => pricelistsIds.IndexOf(x.Id)).ToList();
+                result.Results = _pricingService.GetPricelistsById(ids.ToArray())
+                    .OrderBy(x => ids.IndexOf(x.Id))
+                    .ToList();
             }
+
             return result;
         }
 
@@ -125,16 +130,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 query = query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id);
 
-                query = query.Skip(criteria.Skip).Take(criteria.Take);
+                var ids = query
+                    .Skip(criteria.Skip)
+                    .Take(criteria.Take)
+                    .Select(x => x.Id)
+                    .ToList();
 
-                var pricelistAssignmentsIds = query.Select(x => x.Id).ToList();
-                result.Results = _pricingService.GetPricelistAssignmentsById(pricelistAssignmentsIds.ToArray())
-                                                .OrderBy(x => pricelistAssignmentsIds.IndexOf(x.Id))
-                                                .ToList();
+                result.Results = _pricingService.GetPricelistAssignmentsById(ids.ToArray())
+                    .OrderBy(x => ids.IndexOf(x.Id))
+                    .ToList();
             }
 
             return result;
         }
+
         #endregion
 
 
@@ -164,9 +173,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     Sort = criteria.Sort.Replace("product.", string.Empty),
                     ResponseGroup = SearchResponseGroup.WithProducts,
                 };
+
                 var catalogSearchResult = _catalogSearchService.Search(catalogSearchCriteria);
 
                 var productIds = catalogSearchResult.Products.Select(x => x.Id).ToArray();
+
                 //preserve resulting products for future assignment to prices
                 products = catalogSearchResult.Products;
 
@@ -232,8 +243,5 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
             }
         }
-
-
     }
 }
-
