@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Model.Search;
+using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.PricingModule.Core.Model;
@@ -21,13 +24,17 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly IPricingService _pricingService;
         private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
         private readonly IPlatformMemoryCache _platformMemoryCache;
+        private readonly IProductSearchService _productSearchService;
 
-        public PricingSearchServiceImpl(Func<IPricingRepository> repositoryFactory, IPricingService pricingService, IPlatformMemoryCache platformMemoryCache)
+        public PricingSearchServiceImpl(Func<IPricingRepository> repositoryFactory, IPricingService pricingService
+            , IPlatformMemoryCache platformMemoryCache
+            , IProductSearchService productSearchService)
         {
             _repositoryFactory = repositoryFactory;
             _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<Price>(x => x.List);
             _pricingService = pricingService;
             _platformMemoryCache = platformMemoryCache;
+            _productSearchService = productSearchService;
         }
 
 
@@ -45,7 +52,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 using (var repository = _repositoryFactory())
                 {
-                    var query = BuildQuery(repository, criteria);
+                    var query = await BuildQueryAsync(repository, criteria);
                     var sortInfos = BuildSortExpression(criteria);
                     //Try to replace sorting columns names
                     TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
@@ -136,7 +143,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             });
         }
         #endregion
-        protected virtual IQueryable<PriceEntity> BuildQuery(IPricingRepository repository, PricesSearchCriteria criteria)
+        protected virtual async Task<IQueryable<PriceEntity>> BuildQueryAsync(IPricingRepository repository, PricesSearchCriteria criteria)
         {
             var query = repository.Prices;
 
@@ -153,6 +160,22 @@ namespace VirtoCommerce.PricingModule.Data.Services
             if (criteria.ModifiedSince.HasValue)
             {
                 query = query.Where(x => x.ModifiedDate >= criteria.ModifiedSince);
+            }
+
+            if (!string.IsNullOrEmpty(criteria.Keyword))
+            {
+                var productSearchCriteria = AbstractTypeFactory<ProductSearchCriteria>.TryCreateInstance();
+                productSearchCriteria.Keyword = criteria.Keyword;
+                productSearchCriteria.Skip = criteria.Skip;
+                productSearchCriteria.Take = criteria.Take;
+                productSearchCriteria.Sort = criteria.Sort.Replace("product.", string.Empty);
+                productSearchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
+
+                var catalogSearchResult = await _productSearchService.SearchProductsAsync(productSearchCriteria);
+
+                var productIds = catalogSearchResult.Results.Select(x => x.Id).ToArray();
+
+                query = query.Where(x => productIds.Contains(x.ProductId));
             }
 
             return query;
