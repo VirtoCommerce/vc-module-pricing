@@ -24,17 +24,17 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly IPricingService _pricingService;
         private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
         private readonly IPlatformMemoryCache _platformMemoryCache;
-        private readonly IProductSearchService _productSearchService;
+        private readonly IProductIndexedSearchService _productIndexedSearchService;
 
         public PricingSearchServiceImpl(Func<IPricingRepository> repositoryFactory, IPricingService pricingService
             , IPlatformMemoryCache platformMemoryCache
-            , IProductSearchService productSearchService)
+            , IProductIndexedSearchService productIndexedSearchService)
         {
             _repositoryFactory = repositoryFactory;
             _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<Price>(x => x.List);
             _pricingService = pricingService;
             _platformMemoryCache = platformMemoryCache;
-            _productSearchService = productSearchService;
+            _productIndexedSearchService = productIndexedSearchService;
         }
 
 
@@ -164,16 +164,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             if (!string.IsNullOrEmpty(criteria.Keyword))
             {
-                var productSearchCriteria = AbstractTypeFactory<ProductSearchCriteria>.TryCreateInstance();
-                productSearchCriteria.Keyword = criteria.Keyword;
-                productSearchCriteria.Skip = criteria.Skip;
-                productSearchCriteria.Take = criteria.Take;
-                productSearchCriteria.Sort = criteria.Sort.Replace("product.", string.Empty);
-                productSearchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
+                var searchCriteria = AbstractTypeFactory<ProductIndexedSearchCriteria>.TryCreateInstance();
+                searchCriteria.Keyword = criteria.Keyword;
+                searchCriteria.Skip = criteria.Skip;
+                searchCriteria.Take = criteria.Take;
+                searchCriteria.Sort = criteria.Sort.Replace("product.", string.Empty);
+                searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
+                var searchResult = await _productIndexedSearchService.SearchAsync(searchCriteria);
 
-                var catalogSearchResult = await _productSearchService.SearchProductsAsync(productSearchCriteria);
-
-                var productIds = catalogSearchResult.Results.Select(x => x.Id).ToArray();
+                var productIds = searchResult.Items.Select(x => x.Id).ToArray();
 
                 query = query.Where(x => productIds.Contains(x.ProductId));
             }
