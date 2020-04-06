@@ -137,7 +137,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/catalog/products/prices/search")]
         public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesGet([FromQuery]PricesSearchCriteria criteria)
         {
-            return Ok(await SearchProductPricesImpl(criteria));
+            return Ok(await InnerSearchProductPrices(criteria));
         }
 
         /// <summary>
@@ -148,10 +148,10 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/catalog/products/prices/search")]
         public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesPost([FromBody]PricesSearchCriteria criteria)
         {
-            return Ok(await SearchProductPricesImpl(criteria));
+            return Ok(await InnerSearchProductPrices(criteria));
         }
 
-        private async Task<ProductPriceSearchResult> SearchProductPricesImpl(PricesSearchCriteria criteria)
+        private async Task<ProductPriceSearchResult> InnerSearchProductPrices(PricesSearchCriteria criteria)
         {
             if (criteria == null)
             {
