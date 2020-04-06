@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Core.Assets;
@@ -73,8 +73,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/assignments/{id}")]
         public async Task<ActionResult<PricelistAssignment>> GetPricelistAssignmentById(string id)
         {
-            var assignment = (await _pricingService.GetPricelistAssignmentsByIdAsync(new[] { id })).FirstOrDefault();        
-            if(assignment != null)
+            var assignment = (await _pricingService.GetPricelistAssignmentsByIdAsync(new[] { id })).FirstOrDefault();
+            if (assignment != null)
             {
                 assignment.DynamicExpression?.MergeFromPrototype(AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance());
             }
@@ -135,7 +135,23 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <remarks>Search product prices</remarks>
         [HttpGet]
         [Route("api/catalog/products/prices/search")]
-        public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPrices(PricesSearchCriteria criteria)
+        public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesGet([FromQuery]PricesSearchCriteria criteria)
+        {
+            return Ok(await SearchProductPricesImpl(criteria));
+        }
+
+        /// <summary>
+        /// Search product prices 
+        /// </summary>
+        /// <remarks>Search product prices</remarks>
+        [HttpPost]
+        [Route("api/catalog/products/prices/search")]
+        public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesPost([FromBody]PricesSearchCriteria criteria)
+        {
+            return Ok(await SearchProductPricesImpl(criteria));
+        }
+
+        private async Task<ProductPriceSearchResult> SearchProductPricesImpl(PricesSearchCriteria criteria)
         {
             if (criteria == null)
             {
@@ -172,7 +188,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 result.Results.Add(productPrice);
             }
 
-            return Ok(result);
+            return result;
         }
 
         /// <summary>
@@ -403,7 +419,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
 
             return NoContent();
         }
-        
+
         /// <summary>
         /// Delete all prices for specified product in specified price list
         /// </summary>
