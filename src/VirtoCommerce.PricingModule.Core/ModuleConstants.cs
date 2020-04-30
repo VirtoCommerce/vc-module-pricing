@@ -49,6 +49,14 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = true
                 };
 
+                public static SettingDescriptor StorePricesInIndex { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Search.StorePricesInIndex",
+                    GroupName = "Pricing|Search",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false
+                };
+                
                 public static SettingDescriptor EventBasedIndexation { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.Search.EventBasedIndexation.Enable",
