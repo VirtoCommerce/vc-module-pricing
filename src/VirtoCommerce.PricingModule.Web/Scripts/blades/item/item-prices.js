@@ -1,58 +1,64 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
     function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
         $scope.uiGridConstants = uiGridConstants;
         var blade = $scope.blade;
         blade.updatePermission = 'pricing:update';
 
-        blade.refresh = function () {
+        blade.refresh = function() {
             blade.isLoading = true;
-            prices.getProductPricelists({ id: blade.itemId }, function (pricelists) {
-                //Loading catalogs for assignments because they do not contains them
-                //Need to display name of catalog in assignments grid
-                catalogs.getCatalogs(function (catalogsList) {
-                    $scope.catalogsList = catalogsList;
+            prices.getProductPricelists({ id: blade.itemId },
+                function (pricelists) {
+                    //Loading catalogs for assignments because they do not contains them
+                    //Need to display name of catalog in assignments grid
+                    catalogs.search({ take: 1000, responseGroup: 'Info' },
+                        function(data) {
+                            $scope.catalogsList = data.results;
+                            blade.origEntity = [];
 
-                    blade.origEntity = [];
+                            //Collect all available pricelists
+                            blade.pricelistList = _.map(pricelists,
+                                function(pricelist) {
+                                    return {
+                                        id: pricelist.id,
+                                        code: pricelist.name,
+                                        currency: pricelist.currency,
+                                        assignments: pricelist.assignments,
+                                        displayName: pricelist.name + ' - ' + pricelist.currency
+                                    };
+                                });
+                            blade.selectedPricelist = _.first(blade.pricelistList);
 
-                    //Collect all available pricelists
-                    blade.pricelistList = _.map(pricelists, function (pricelist) {
-                        return {
-                            id: pricelist.id,
-                            code: pricelist.name,
-                            currency: pricelist.currency,
-                            assignments: pricelist.assignments,
-                            displayName: pricelist.name + ' - ' + pricelist.currency
-                        };
-                    });
-                    blade.selectedPricelist = _.first(blade.pricelistList);
+                            var pricelistsWithPrices = _.filter(pricelists,
+                                function(pricelist) { return pricelist.prices.length > 0; });
+                            _.each(pricelistsWithPrices,
+                                function(pricelistWithPrices) {
+                                    var priceListData = {
+                                        name: pricelistWithPrices.name,
+                                        currency: pricelistWithPrices.currency
+                                    };
 
-                    var pricelistsWithPrices = _.filter(pricelists, function (pricelist) { return pricelist.prices.length > 0; });
-                    _.each(pricelistsWithPrices, function (pricelistWithPrices) {
-                        var priceListData = {
-                            name: pricelistWithPrices.name,
-                            currency: pricelistWithPrices.currency
-                        };
+                                    var catalogsId = _.pluck(pricelistWithPrices.assignments, 'catalogId');
+                                    var catalogsName = _.map(catalogsId,
+                                        function(catalogId) {
+                                            return _.findWhere($scope.catalogsList, { id: catalogId }).name;
+                                        });
+                                    priceListData.catalog = catalogsName.join(', ');
 
-                        var catalogsId = _.pluck(pricelistWithPrices.assignments, 'catalogId');
-                        var catalogsName = _.map(catalogsId, function (catalogId) {
-                            return _.findWhere($scope.catalogsList, { id: catalogId }).name;
+                                    _.each(pricelistWithPrices.prices,
+                                        function(price) {
+                                            var priceData = angular.copy(priceListData);
+                                            priceData = angular.extend(price, priceData);
+                                            blade.origEntity.push(priceData);
+                                        });
+                                });
+
+                            blade.currentEntities = angular.copy(blade.origEntity);
+                            priceValidatorsService.setAllPrices(blade.currentEntities);
+                            blade.isLoading = false;
                         });
-                        priceListData.catalog = catalogsName.join(', ');
-
-                        _.each(pricelistWithPrices.prices, function (price) {
-                            var priceData = angular.copy(priceListData);
-                            priceData = angular.extend(price, priceData);
-                            blade.origEntity.push(priceData);
-                        });
-                    });
-
-                    blade.currentEntities = angular.copy(blade.origEntity);
-                    priceValidatorsService.setAllPrices(blade.currentEntities);
-                    blade.isLoading = false;
                 });
-            });
-        }
+        };
 
         $scope.createNewPricelist = function () {
             var newBlade = {
