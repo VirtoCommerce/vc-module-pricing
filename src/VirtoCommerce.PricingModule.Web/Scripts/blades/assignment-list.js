@@ -19,13 +19,13 @@ angular.module('virtoCommerce.pricingModule')
                 assignments.search(getSearchCriteria(), function (data) {
                     //Loading catalogs for assignments because they do not contains them
                     //Need to display name of catalog in assignments grid
-                    catalogs.getCatalogs(function (results) {
+                    catalogs.search({ take: 1000, responseGroup: 'Info' }, function (results) {
                         blade.isLoading = false;
                         $scope.pageSettings.totalItems = data.totalCount;
 
                         var priceAssignments = data.results;
                         _.each(priceAssignments, function (x) {
-                            var catalog = _.findWhere(results, { id: x.catalogId });
+                            var catalog = _.findWhere(results.results, { id: x.catalogId });
                             if (catalog) {
                                 x.catalog = catalog.name;
                             }

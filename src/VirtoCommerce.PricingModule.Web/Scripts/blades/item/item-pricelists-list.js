@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.itemPricelistsListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs) {
     $scope.uiGridConstants = uiGridConstants;
     var blade = $scope.blade;
@@ -8,7 +8,7 @@
     	prices.getProductPricelists({ id: blade.itemId }, function (pricelists) {
     	    //Loading catalogs for pricelists because they do not contains them
     	    //Need to display name of catalog in product item pricelists grid
-    	    catalogs.getCatalogs(function (catalogsList) {
+            catalogs.search({ take: 1000, responseGroup: 'Info' }, function (catalogsList) {
     	        blade.isLoading = false;
     	        blade.currentEntities = [];
     	        _.each(pricelists, function (x) {
@@ -21,7 +21,7 @@
 
     	                var catalogsId = _.pluck(x.assignments, 'catalogId');
     	                var catalogsName = _.map(catalogsId, function (catalogId) {
-    	                    return _.findWhere(catalogsList, { id: catalogId }).name;
+                            return _.findWhere(catalogsList.results, { id: catalogId }).name;
                         });
     	                pricelist.catalog = catalogsName.join(', ');
     	                blade.currentEntities.push(pricelist);
