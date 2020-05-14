@@ -51,7 +51,7 @@ namespace VirtoCommerce.PricingModule.Core
 
                 public static SettingDescriptor StorePricesInIndex { get; } = new SettingDescriptor
                 {
-                    Name = "Pricing.Search.StorePricesInIndex",
+                    Name = "Pricing.Indexing.StorePricesInIndex",
                     GroupName = "Pricing|Search",
                     ValueType = SettingValueType.Boolean,
                     DefaultValue = false
@@ -74,7 +74,8 @@ namespace VirtoCommerce.PricingModule.Core
                                    ExportImportPageSize,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,
-                                   EventBasedIndexation
+                                   EventBasedIndexation,
+                                   StorePricesInIndex
                                };
                     }
                 }
