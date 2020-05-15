@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.Platform.Core.Caching;
@@ -8,21 +9,26 @@ namespace VirtoCommerce.PricingModule.Data.Caching
 {
     public class PricesCacheRegion : CancellableCacheRegion<PricesCacheRegion>
     {
-        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _priceRegionTokenLookup = new ConcurrentDictionary<string, CancellationTokenSource>();
+        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _entityRegionTokenLookup = new ConcurrentDictionary<string, CancellationTokenSource>();
 
-        public static IChangeToken CreateChangeToken(string priceId)
+        public static IChangeToken CreateChangeToken(string[] entityIds)
         {
-            if (string.IsNullOrEmpty(priceId))
+            if (entityIds == null)
             {
-                throw new ArgumentNullException(nameof(priceId));
+                throw new ArgumentNullException(nameof(entityIds));
             }
-            var cancellationTokenSource = _priceRegionTokenLookup.GetOrAdd(priceId, new CancellationTokenSource());
-            return new CompositeChangeToken(new[] { CreateChangeToken(), new CancellationChangeToken(cancellationTokenSource.Token) });
+
+            var changeTokens = new List<IChangeToken> { CreateChangeToken() };
+            foreach (var entityId in entityIds)
+            {
+                changeTokens.Add(new CancellationChangeToken(_entityRegionTokenLookup.GetOrAdd(entityId, new CancellationTokenSource()).Token));
+            }
+            return new CompositeChangeToken(changeTokens);
         }
 
         public static void ExpirePrice(string priceId)
         {
-            if (_priceRegionTokenLookup.TryRemove(priceId, out var token))
+            if (_entityRegionTokenLookup.TryRemove(priceId, out var token))
             {
                 token.Cancel();
             }
