@@ -221,11 +221,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     using (var repository = _repositoryFactory())
                     {
+                        cacheEntry.AddExpirationToken(PricelistAssignmentsCacheRegion.CreateChangeToken(ids));
                         result = (await repository.GetPricelistAssignmentsByIdAsync(ids)).Select(x => x.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance())).ToArray();
-                    }
-                    foreach (var assignment in result)
-                    {
-                        cacheEntry.AddExpirationToken(PricelistAssignmentsCacheRegion.CreateChangeToken(assignment.Id));
                     }
                 }
                 return result;
@@ -242,18 +239,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     using (var repository = _repositoryFactory())
                     {
-                        var resultList = new List<Pricelist>(ids.Length);
+                        cacheEntry.AddExpirationToken(PricelistsCacheRegion.CreateChangeToken(ids));
 
                         var pricelistEntities = await repository.GetPricelistByIdsAsync(ids);
-                        foreach (var pricelistEntity in pricelistEntities)
-                        {
-                            var pricelist = pricelistEntity.ToModel(AbstractTypeFactory<Pricelist>.TryCreateInstance());
-
-                            cacheEntry.AddExpirationToken(PricelistsCacheRegion.CreateChangeToken(pricelist.Id));
-                            resultList.Add(pricelist);
-                        }
-
-                        result = resultList.ToArray();
+                        result = pricelistEntities.Select(x => x.ToModel(AbstractTypeFactory<Pricelist>.TryCreateInstance())).ToArray();
                     }
                 }
 

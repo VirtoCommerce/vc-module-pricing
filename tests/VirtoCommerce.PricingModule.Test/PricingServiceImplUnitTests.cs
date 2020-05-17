@@ -63,6 +63,54 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.NotEqual(nullPrice, price);
         }
 
+        [Fact]
+        public async Task GetByIdsAsync_GetThenSavePricelist_ReturnCachedPricelist()
+        {
+            //Arrange
+            var id = Guid.NewGuid().ToString();
+            var newPricelist = new Pricelist { Id = id };
+            var newPricelistEntity = AbstractTypeFactory<PricelistEntity>.TryCreateInstance().FromModel(newPricelist, new PrimaryKeyResolvingMap());
+            var service = GetPricingServiceImplWithPlatformMemoryCache();
+            _repositoryMock.Setup(x => x.Add(newPricelistEntity))
+                .Callback(() =>
+                {
+                    _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }))
+                        .ReturnsAsync(new[] { newPricelistEntity });
+                });
+
+            //Act
+            var nullPricelist = await service.GetPricelistsByIdAsync(new[] { id });
+            await service.SavePricelistsAsync(new[] { newPricelist });
+            var pricelist = await service.GetPricelistsByIdAsync(new[] { id });
+
+            //Assert
+            Assert.NotEqual(nullPricelist, pricelist);
+        }
+
+        [Fact]
+        public async Task GetByIdsAsync_GetThenSavePricelistAssignment_ReturnCachedPricelistAssignment()
+        {
+            //Arrange
+            var id = Guid.NewGuid().ToString();
+            var newPricelistAssignment = new PricelistAssignment { Id = id };
+            var newPricelistAssignmentEntity = AbstractTypeFactory<PricelistAssignmentEntity>.TryCreateInstance().FromModel(newPricelistAssignment, new PrimaryKeyResolvingMap());
+            var service = GetPricingServiceImplWithPlatformMemoryCache();
+            _repositoryMock.Setup(x => x.Add(newPricelistAssignmentEntity))
+                .Callback(() =>
+                {
+                    _repositoryMock.Setup(o => o.GetPricelistAssignmentsByIdAsync(new[] { id }))
+                        .ReturnsAsync(new[] { newPricelistAssignmentEntity });
+                });
+
+            //Act
+            var nullPricelistAssignment = await service.GetPricelistAssignmentsByIdAsync(new[] { id });
+            await service.SavePricelistAssignmentsAsync(new[] { newPricelistAssignment });
+            var PricelistAssignment = await service.GetPricelistAssignmentsByIdAsync(new[] { id });
+
+            //Assert
+            Assert.NotEqual(nullPricelistAssignment, PricelistAssignment);
+        }
+
 
         private PricingServiceImpl GetPricingServiceImplWithPlatformMemoryCache()
         {
