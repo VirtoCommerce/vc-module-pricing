@@ -248,7 +248,7 @@
       },
       "Indexing": {
         "Enable": {
-          "title": "Enable product price indexing (requires restart)",
+          "title": "Enable product price indexing",
           "description": "If this setting is turned on, product price will be included to the product index. This will also cause product re-indexing after changing its prices."
         },
         "StorePricesInIndex": {
