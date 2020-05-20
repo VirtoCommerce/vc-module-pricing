@@ -73,6 +73,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     {
                         var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
                                                             .Select(x => x.Id)
+                                                            .AsNoTracking()
                                                             .ToArrayAsync();
 
                         var unorderedResults = await _pricingService.GetPricesByIdAsync(priceIds);
@@ -103,6 +104,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         var pricelistIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
                                                                 .Select(x => x.Id)
                                                                 .Skip(criteria.Skip).Take(criteria.Take)
+                                                                .AsNoTracking()
                                                                 .ToArrayAsync();
                         var unorderedResults = await _pricingService.GetPricelistsByIdAsync(pricelistIds);
                         result.Results = unorderedResults.OrderBy(x => Array.IndexOf(pricelistIds, x.Id)).ToList();
@@ -134,6 +136,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         var pricelistAssignmentsIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
                                                                  .Select(x => x.Id)
                                                                 .Skip(criteria.Skip).Take(criteria.Take)
+                                                                .AsNoTracking()
                                                                 .ToArrayAsync();
                         var unorderedResults = await _pricingService.GetPricelistAssignmentsByIdAsync(pricelistAssignmentsIds);
                         result.Results = unorderedResults.OrderBy(x => Array.IndexOf(pricelistAssignmentsIds, x.Id)).ToList();

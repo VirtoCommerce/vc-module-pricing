@@ -82,7 +82,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
             }
 
-            var assignments = query.ToArray();
+            var assignments = query.AsNoTracking().ToArray();
             var assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
 
             foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
@@ -109,7 +109,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 repository.DisableChangesTracking();
 
-                return (await repository.PricelistAssignments.Include(x => x.Pricelist).ToArrayAsync()).Select(x => x.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance())).ToArray();
+                return (await repository.PricelistAssignments.Include(x => x.Pricelist).AsNoTracking().ToArrayAsync()).Select(x => x.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance())).ToArray();
             }
         }
         /// <summary>
@@ -151,7 +151,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
                     && (x.EndDate == null || x.EndDate > certainDate));
 
-                var queryResult = await query.ToArrayAsync();
+                var queryResult = await query.AsNoTracking().ToArrayAsync();
                 prices = queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance())).ToArray();
             }
 
