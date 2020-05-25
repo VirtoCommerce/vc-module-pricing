@@ -54,6 +54,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
                     document.Add(new IndexDocumentField($"price_{price.Currency}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
                     document.Add(new IndexDocumentField("price", price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
                 }
+                
+                document.Add(new IndexDocumentField("is", prices.Any(x => x.Sale > 0) ? "sale" : "nosale") { IsRetrievable = true, IsFilterable = true, IsCollection = true });
             }
 
             document.Add(new IndexDocumentField("is", prices?.Count > 0 ? "priced" : "unpriced") { IsRetrievable = true, IsFilterable = true, IsCollection = true });
