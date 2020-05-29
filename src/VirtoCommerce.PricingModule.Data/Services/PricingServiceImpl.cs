@@ -129,7 +129,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 throw new MissingFieldException("ProductIds");
             }
 
-            var retVal = new List<Price>();
+            var result = new List<Price>();
             Price[] prices;
             using (var repository = _repositoryFactory())
             {
@@ -156,36 +156,37 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             //Apply pricing  filtration strategy for found prices
-            retVal.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
+            result.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
 
             //Then variation inherited prices
             if (_productService != null)
             {
-                var productIdsWithoutPrice = evalContext.ProductIds.Except(retVal.Select(x => x.ProductId).Distinct()).ToArray();
-                //Variation price inheritance
+                var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct()).ToArray();
+                //Try to inherit prices for variations from their main product
                 //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
                 if (productIdsWithoutPrice.Any())
                 {
                     var variations = (await _productService.GetByIdsAsync(productIdsWithoutPrice, ItemResponseGroup.ItemInfo.ToString())).Where(x => x.MainProductId != null).ToList();
+                    evalContext = evalContext.Clone() as PriceEvaluationContext;
                     evalContext.ProductIds = variations.Select(x => x.MainProductId).Distinct().ToArray();
-
-                    var inheritedPrices = await EvaluateProductPricesAsync(evalContext);
-                    foreach (var inheritedPrice in inheritedPrices)
+                    if (!evalContext.ProductIds.IsNullOrEmpty())
                     {
-                        foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
+                        var inheritedPrices = await EvaluateProductPricesAsync(evalContext);
+                        foreach (var inheritedPrice in inheritedPrices)
                         {
-                            var jObject = JObject.FromObject(inheritedPrice);
-                            var variationPrice = (Price)jObject.ToObject(inheritedPrice.GetType());
-                            //For correct override price in possible update 
-                            variationPrice.Id = null;
-                            variationPrice.ProductId = variation.Id;
-                            retVal.Add(variationPrice);
+                            foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
+                            {
+                                var variationPrice = inheritedPrice.Clone() as Price;
+                                //Reset id for correct override price in possible update 
+                                variationPrice.Id = null;
+                                variationPrice.ProductId = variation.Id;
+                                result.Add(variationPrice);
+                            }
                         }
                     }
                 }
             }
-
-            return retVal;
+            return result;
         }
 
 
@@ -376,7 +377,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
-
+                
                 foreach (var assignment in assignments)
                 {
                     PricelistAssignmentsCacheRegion.ExpirePricelistAssignment(assignment.Id);

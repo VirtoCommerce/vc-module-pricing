@@ -3,7 +3,7 @@ using VirtoCommerce.CoreModule.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Core.Model
 {
-	public class PriceEvaluationContext : EvaluationContextBase
+	public class PriceEvaluationContext : EvaluationContextBase, ICloneable
 	{
 		public string StoreId { get; set; } 
 		public string CatalogId { get; set; }
@@ -18,5 +18,10 @@ namespace VirtoCommerce.PricingModule.Core.Model
 		public string OrganizationId { get; set; }
 		public DateTime? CertainDate { get; set; }
 		public string Currency { get; set; }
-	}
+
+        public object Clone()
+        {
+            return base.MemberwiseClone() as PriceEvaluationContext;
+        }
+    }
 }
