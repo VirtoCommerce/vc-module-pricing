@@ -1,6 +1,6 @@
 # Create a New Price list
 
-![Create a New Price list](/docs/media/diagram-create-new-price-list.png)
+![Create a New Price list](media/diagram-create-new-price-list.png)
 
 In order to create a new Price list, the user should first go to Virto Commerce Platform and select the Pricing Module
 
@@ -13,8 +13,8 @@ In order to create a new Price list, the user should first go to Virto Commerce 
     1. Assignment widget with **zero** assignments
     1. **Create** button remains disabled until the user enters the Name and selects the currency
 1. The user fills out the required fields and clicks the **Create** button
-![Price list blade](/docs/media/screen-new-price-list-blade.png)
+![Price list blade](media/screen-new-price-list-blade.png)
 1. The New Price List will be created by the system:
     1. The New Price List is displayed on the Price Lists screen  
     1. Prices and Assignments widgets are active
-![Prices and Assignments widgets](/docs/media/screen-assignments-widget.png)
+![Prices and Assignments widgets](media/screen-assignments-widget.png)
