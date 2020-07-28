@@ -9,7 +9,7 @@ The Pricing Module is consisted of three main objects:
 1. Price list
 1. Price list Assignment
 
-**Price**
+### Price
 
 The purpose of this object is to store the item price in the system and support a static discount and a tier price. The price has the following key characteristics:
 
@@ -18,14 +18,14 @@ The purpose of this object is to store the item price in the system and support 
 - **Sale price** (optional) – is the discounted price of an item from the regular sale price.
 - **Min quantity** (min. 1) – represents lower inclusive limit for products quantity starting from which, this price will be valid. The min QTY is used for achieving Tier pricing functionality.
 
-**Pricelist**
+### Pricelist
 
 The Pricelist plays the role of a container for prices with single currency. The Pricelist has the following key characteristics:
 
 - **Currency** (required) – single currency for all prices included into the Price list.  
 - **Prices** – the list of prices included into the Price list.  
 
-**Pricelist Assignment**
+### Pricelist Assignment
 
 The Pricelist Assignment allows associating the specific Pricelist with a catalog based on specific rules and conditions.  
 
