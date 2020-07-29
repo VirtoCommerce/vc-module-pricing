@@ -12,7 +12,7 @@ namespace VirtoCommerce.PricingModule.Data.Caching
             {
                 throw new ArgumentNullException(nameof(priceId));
             }
-            return new CompositeChangeToken(new[] { CreateChangeToken(), CreateChangeTokenForKey(priceId) });
+            return CreateChangeTokenForKey(priceId);
         }
 
         public static void ExpirePrice(string priceId)
