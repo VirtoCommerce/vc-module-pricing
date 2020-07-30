@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.Platform.Core.Caching;
 
@@ -20,7 +18,7 @@ namespace VirtoCommerce.PricingModule.Data.Caching
             {
                 changeTokens.Add(CreateChangeTokenForKey(entityId));
             }
-            return new CompositeChangeToken(changeTokens);            
+            return new CompositeChangeToken(changeTokens);
         }
 
         public static void ExpirePricelistAssignment(string pricelistAssignmentId)
