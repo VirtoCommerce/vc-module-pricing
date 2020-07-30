@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Primitives;
 using VirtoCommerce.Platform.Core.Caching;
 
@@ -6,13 +7,18 @@ namespace VirtoCommerce.PricingModule.Data.Caching
 {
     public class PricelistAssignmentsCacheRegion : CancellableCacheRegion<PricelistAssignmentsCacheRegion>
     {
-        public static IChangeToken CreateChangeToken(string pricelistAssignmentId)
+        public static IChangeToken CreateChangeToken(string[] entityIds)
         {
-            if (string.IsNullOrEmpty(pricelistAssignmentId))
+            if (entityIds == null)
             {
-                throw new ArgumentNullException(nameof(pricelistAssignmentId));
+                throw new ArgumentNullException(nameof(entityIds));
             }
-            return CreateChangeTokenForKey(pricelistAssignmentId);
+            var changeTokens = new List<IChangeToken> { CreateChangeToken() };
+            foreach (var entityId in entityIds)
+            {
+                changeTokens.Add(CreateChangeTokenForKey(entityId));
+            }
+            return new CompositeChangeToken(changeTokens);
         }
 
         public static void ExpirePricelistAssignment(string pricelistAssignmentId)
