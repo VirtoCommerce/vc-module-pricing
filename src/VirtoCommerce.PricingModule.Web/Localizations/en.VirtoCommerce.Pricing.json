@@ -248,7 +248,7 @@
       },
       "Indexing": {
         "Enable": {
-          "title": "Enable product price indexing (requires restart)",
+          "title": "Enable product price indexing",
           "description": "If this setting is turned on, product price will be included to the product index. This will also cause product re-indexing after changing its prices."
         },
         "StorePricesInIndex": {
@@ -260,7 +260,7 @@
       "Search": {
         "EventBasedIndexation": {
           "Enable": {
-            "title": "Enable event-based indexation for pricing entities (Restart required)",
+            "title": "Enable event-based indexation for pricing entities",
             "description": "Any changes to the catalog entity will trigger a background task that will apply these changes in the search index."
           }
         }

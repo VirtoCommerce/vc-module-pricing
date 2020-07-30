@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,19 +20,20 @@ using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Core.Settings.Events;
 using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Security.Authorization;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Common;
 using VirtoCommerce.PricingModule.Data.ExportImport;
 using VirtoCommerce.PricingModule.Data.Handlers;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule.Web.JsonConverters;
-using VirtoCommerce.SearchModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Web
 {
@@ -64,6 +64,9 @@ namespace VirtoCommerce.PricingModule.Web
             serviceCollection.AddTransient<LogChangesChangedEventHandler>();
             serviceCollection.AddTransient<DeletePricesProductChangedEventHandler>();
             serviceCollection.AddTransient<IndexPricesProductChangedEventHandler>();
+            serviceCollection.AddTransient<ObjectSettingEntryChangedEventHandler>();
+
+            serviceCollection.AddTransient<ModuleConfigurator>();
 
             serviceCollection.AddTransient<IPricingExportPagedDataSourceFactory, PricingExportPagedDataSourceFactory>();
 
@@ -114,40 +117,17 @@ namespace VirtoCommerce.PricingModule.Web
             var mvcJsonOptions = appBuilder.ApplicationServices.GetService<IOptions<MvcNewtonsoftJsonOptions>>();
             mvcJsonOptions.Value.SerializerSettings.Converters.Add(appBuilder.ApplicationServices.GetService<PolymorphicPricingJsonConverter>());
 
-            var priceIndexingEnabled = settingsManager.GetValue(ModuleConstants.Settings.General.PricingIndexing.Name, true);
-            if (priceIndexingEnabled)
-            {
-                // Add price document source to the product indexing configuration
-                var productIndexingConfigurations = _applicationBuilder.ApplicationServices.GetServices<IndexDocumentConfiguration>();
-
-                if (productIndexingConfigurations != null)
-                {
-                    var productPriceDocumentSource = new IndexDocumentSource
-                    {
-                        ChangesProvider = _applicationBuilder.ApplicationServices.GetService<IPricingDocumentChangesProvider>(),
-                        DocumentBuilder = _applicationBuilder.ApplicationServices.GetService<ProductPriceDocumentBuilder>(),
-                    };
-
-                    foreach (var configuration in productIndexingConfigurations.Where(c => c.DocumentType == KnownDocumentTypes.Product))
-                    {
-                        if (configuration.RelatedSources == null)
-                        {
-                            configuration.RelatedSources = new List<IndexDocumentSource>();
-                        }
-
-                        configuration.RelatedSources.Add(productPriceDocumentSource);
-                    }
-                }
-            }
-
+            //Subscribe for Search configuration changes
             var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
+            inProcessBus.RegisterHandler<ObjectSettingChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<ObjectSettingEntryChangedEventHandler>().Handle(message));
+
+            //Configure Search
+            var moduleConfigurator = appBuilder.ApplicationServices.GetService<ModuleConfigurator>();
+            moduleConfigurator.ConfigureSearchAsync();
+
             inProcessBus.RegisterHandler<PriceChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<LogChangesChangedEventHandler>().Handle(message));
             inProcessBus.RegisterHandler<ProductChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<DeletePricesProductChangedEventHandler>().Handle(message));
-
-            if (settingsManager.GetValue(ModuleConstants.Settings.General.EventBasedIndexation.Name, false))
-            {
-                inProcessBus.RegisterHandler<PriceChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexPricesProductChangedEventHandler>().Handle(message));
-            }
+            inProcessBus.RegisterHandler<PriceChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<IndexPricesProductChangedEventHandler>().Handle(message));
 
             foreach (var conditionTree in AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance().Traverse<IConditionTree>(x => x.AvailableChildren))
             {

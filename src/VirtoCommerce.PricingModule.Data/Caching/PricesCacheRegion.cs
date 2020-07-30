@@ -9,29 +9,23 @@ namespace VirtoCommerce.PricingModule.Data.Caching
 {
     public class PricesCacheRegion : CancellableCacheRegion<PricesCacheRegion>
     {
-        private static readonly ConcurrentDictionary<string, CancellationTokenSource> _entityRegionTokenLookup = new ConcurrentDictionary<string, CancellationTokenSource>();
-
         public static IChangeToken CreateChangeToken(string[] entityIds)
         {
             if (entityIds == null)
             {
                 throw new ArgumentNullException(nameof(entityIds));
             }
-
             var changeTokens = new List<IChangeToken> { CreateChangeToken() };
             foreach (var entityId in entityIds)
             {
-                changeTokens.Add(new CancellationChangeToken(_entityRegionTokenLookup.GetOrAdd(entityId, new CancellationTokenSource()).Token));
+                changeTokens.Add(CreateChangeTokenForKey(priceId));
             }
-            return new CompositeChangeToken(changeTokens);
+            return new CompositeChangeToken(changeTokens);            
         }
 
         public static void ExpirePrice(string priceId)
         {
-            if (_entityRegionTokenLookup.TryRemove(priceId, out var token))
-            {
-                token.Cancel();
-            }
+            ExpireTokenForKey(priceId);
         }
     }
 }
