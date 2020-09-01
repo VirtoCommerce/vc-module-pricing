@@ -2,7 +2,7 @@
 
 ## Scenario
 
-![Add New Assignment](/docs/media/diagram-add-new-assignment.png)
+![Add New Assignment](media/diagram-add-new-assignment.png)
 
 ## Simple Assignment without rules and conditions
 
@@ -30,7 +30,7 @@
     1. Specifies the Priority (1, 2, 3, etc.). The system will then display on the Storefront the Price List with the highest priority
     1. The user can also fill out the fill out the **Description** field, but it’s optional
     1. The user can optionally specify the date range using the date pickers **from** - **to** to determine Price List availability. If the user leaves the fields blank, that will mean the Price List is always available
-![New price list assignment](/docs/media/screen-new-price-list-assignment.png)
+![New price list assignment](media/screen-new-price-list-assignment.png)
 1. The system will create an assignment without additional rules and conditions
 1. The system will display the number of assignments created in the Assignment widget
 ![Assignment](/docs/media/screen-assignment.png)
@@ -41,9 +41,9 @@
 1. The system will display the selected option: Any or All
 1. The user clicks the **Add condition** icon
 1. The system will display the list of different conditions previously added to the system. Below is an example of different rules and conditions that can be assigned to the Price List
-![List of different conditions](/docs/media/screen-list-of-different-conditions.png)
+![List of different conditions](media/screen-list-of-different-conditions.png)
 1. The user selects as many conditions and needed from the list
 1. The system will display the selected conditions with possibility to delete them as shown on the screen shot bellow
-![Selected conditions](/docs/media/screen-selected-conditions.png)
+![Selected conditions](media/screen-selected-conditions.png)
 1. The user clicks the **Save** button on the top of the screen and the system will save the selected conditions
 1. The conditions will be assigned to the Price List
