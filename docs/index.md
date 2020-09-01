@@ -1,4 +1,3 @@
-
 # Overview
 
 The **Pricing Module** is designed for storing, managing and evaluating product prices.
@@ -9,7 +8,7 @@ The Pricing Module is consisted of three main objects:
 1. Price list
 1. Price list Assignment
 
-### Price
+## Price
 
 The purpose of this object is to store the item price in the system and support a static discount and a tier price. The price has the following key characteristics:
 
@@ -18,14 +17,14 @@ The purpose of this object is to store the item price in the system and support 
 - **Sale price** (optional) – is the discounted price of an item from the regular sale price.
 - **Min quantity** (min. 1) – represents lower inclusive limit for products quantity starting from which, this price will be valid. The min QTY is used for achieving Tier pricing functionality.
 
-### Pricelist
+## Pricelist
 
 The Pricelist plays the role of a container for prices with single currency. The Pricelist has the following key characteristics:
 
 - **Currency** (required) – single currency for all prices included into the Price list.  
 - **Prices** – the list of prices included into the Price list.  
 
-### Pricelist Assignment
+## Pricelist Assignment
 
 The Pricelist Assignment allows associating the specific Pricelist with a catalog based on specific rules and conditions.  
 
@@ -37,7 +36,7 @@ The Pricelist Assignment has the following key characteristics:
 - **Priority**  defines the priority of the Pricelist. The system will apply the pricelist that has the highest priority.  
 - **Dynamic Assignment** of applicability.
 
-## Key Features
+## Key Features 
 
 1. The system supports multiple **Pricelists**, i.e. the same product item may have different price in different price lists.
 1. Each **Catalog** can have its own list of **Pricelists**.
@@ -50,21 +49,29 @@ The Pricelist Assignment has the following key characteristics:
 1. The system allows assigning one **Pricelists** to several different **Catalogs**. The **Pricelists** is integrated into the **Catalog**.
 1. The system allows specify the **Pricelists** priority and therefore display on **Storefront** the **Pricelists** with higher priority.
 
-## Documentation
+## Scenarios  
 
-1. [Pricing Module Document](/docs/index.md)
+1. [Create a New Price list](/docs/create-new-price-list.md)
+    1. [Add Products to the New Price List](/docs/add-products-to-the-new-price-list.md)
+    1. [Add Prices to products](/docs/add-prices-to-products.md)
+        1. [Add List Price](/docs/add-prices-to-products.md#add-list-price)
+        1. [Add Sale Price](/docs/add-prices-to-products.md#add-sale-price)
+        1. [Specify Tier Price](/docs/add-prices-to-products.md#specify-tier-price)
+1. [View Price list via Catalog Module](/docs/view-price-list-via-catalog-module.md)
+1. [Add New Assignment](/docs/add-new-assignment.md)
+    1. [Simple Assignment without rules and conditions](/docs/add-new-assignment.md#simple-assignment-without-rules-and-conditions)
+    1. [Assignment with Rules and Conditions](/docs/add-new-assignment.md#assignment-with-rules-and-conditions)
+1. [Managing Pricing module settings](/docs/managing-pricing-module-settings.md)
+1. [Export Prices and Pricelist Assignments](/docs/export-functionality.md)
 
-1. [View on Github](https://github.com/VirtoCommerce/vc-module-pricing)
+## Web API
 
-1. [Web API Documentation](<https://admin-demo.virtocommerce.com/docs/ui/index#/Pricing%2520module>)
+Web API documentation for each module is built out automatically and can be accessed by following the link bellow:
+<https://admin-demo.virtocommerce.com/docs/ui/index#/Pricing%2520module>
 
-## References
+## Database Model
 
-1. Deploy: https://virtocommerce.com/docs/latest/developer-guide/deploy-module-from-source-code/
-1. Installation: https://www.virtocommerce.com/docs/latest/user-guide/modules/
-1. Home: https://virtocommerce.com
-1. Community: https://www.virtocommerce.org
-1. [Download Latest Release](https://github.com/mayaalsamarrai/vc-module-pricing/releases)
+![DB model](media/diagram-db-model.png)
 
 ## License
 
