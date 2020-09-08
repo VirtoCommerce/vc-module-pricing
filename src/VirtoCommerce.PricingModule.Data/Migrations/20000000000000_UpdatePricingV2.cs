@@ -9,8 +9,8 @@ namespace VirtoCommerce.PricingModule.Data.Migrations
             migrationBuilder.Sql(@"IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '__MigrationHistory'))
                 IF (EXISTS (SELECT * FROM __MigrationHistory WHERE ContextKey = 'VirtoCommerce.PricingModule.Data.Migrations.Configuration'))
                     BEGIN
-	                    INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190520064847_InitialPricing', '2.2.3-servicing-35854')
-                        INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20191009090449_AddPriceStartDateAndEndDate', '2.2.3-servicing-35854')
+	                    INSERT INTO [__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20190520064847_InitialPricing', '2.2.3-servicing-35854')
+                        INSERT INTO [__EFMigrationsHistory] ([MigrationId],[ProductVersion]) VALUES ('20191009090449_AddPriceStartDateAndEndDate', '2.2.3-servicing-35854')
 
                         UPDATE [PricelistAssignment] SET [PredicateVisualTreeSerialized] = REPLACE([PredicateVisualTreeSerialized], 'ConditionExpressionTree', 'PriceConditionTree')
                         UPDATE [PricelistAssignment] SET [ConditionExpression] = null
