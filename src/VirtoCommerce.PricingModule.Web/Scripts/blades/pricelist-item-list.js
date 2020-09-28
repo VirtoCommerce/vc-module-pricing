@@ -167,6 +167,12 @@ angular.module('virtoCommerce.pricingModule')
 
                     var selectedRows = $scope.gridApi.selection.getSelectedRows();
 
+                    exportDataRequest.dataQuery.objectIds = [];
+                    if (!isAllSelected && selectedRows) {
+                        var priceIds = _.pluck(_.flatten(_.pluck(selectedRows, 'prices')), 'id');
+                        exportDataRequest.dataQuery.objectIds = priceIds;
+                    }
+
                     exportDataRequest.dataQuery.productIds = [];
 
                     if ((exportDataRequest.dataQuery.productIds && exportDataRequest.dataQuery.productIds.length)
@@ -191,7 +197,7 @@ angular.module('virtoCommerce.pricingModule')
                         controller: 'virtoCommerce.exportModule.exportSettingsController',
                         template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
                         exportDataRequest: exportDataRequest
-                };
+                    };
                     bladeNavigationService.showBlade(newBlade, blade);
                 }
             }
@@ -199,7 +205,7 @@ angular.module('virtoCommerce.pricingModule')
 
         function getSearchCriteria() {
             var result = {
-                priceListIds: [blade.currentEntityId],
+                pricelistIds: [blade.currentEntityId],
                 keyword: filter.keyword,
                 sort: uiGridHelper.getSortExpression($scope),
                 skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,

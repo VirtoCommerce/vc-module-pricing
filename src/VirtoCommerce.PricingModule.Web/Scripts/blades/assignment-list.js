@@ -217,7 +217,7 @@ angular.module('virtoCommerce.pricingModule')
                     take: $scope.pageSettings.itemsPerPageCount
                 };
                 if (filter.current) {
-                    result.pricelistIds = filter.current.priceListIds;
+                    result.pricelistIds = filter.current.pricelistIds;
                     result.catalogIds = filter.current.catalogIds || [];
                 } else {
                     result.pricelistIds = blade.pricelistId ? [blade.pricelistId] : [];
