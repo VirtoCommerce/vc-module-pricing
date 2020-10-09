@@ -50,8 +50,8 @@
         angular.copy(blade.currentEntities, blade.origEntity);
         if (_.any(blade.currentEntities)) {
             prices.update({ id: blade.itemId }, blade.data, function (data) {
-                // blade.parentBlade.refresh();
                 $scope.bladeClose();
+                blade.parentBlade.refresh();
             },
             function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
         }

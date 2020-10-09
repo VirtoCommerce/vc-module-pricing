@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Core.Caching;
@@ -365,10 +364,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
-                
+
                 foreach (var assignment in assignments)
                 {
                     PricelistAssignmentsCacheRegion.ExpirePricelistAssignment(assignment.Id);
+                    PricelistsCacheRegion.ExpirePricelist(assignment.PricelistId);
                 }
                 ResetCache();
             }
@@ -434,6 +434,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
             PricingCacheRegion.ExpireRegion();
             PricingSearchCacheRegion.ExpireRegion();
         }
-              
+
     }
 }
