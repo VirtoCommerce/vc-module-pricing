@@ -59,19 +59,23 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     if (criteria.GroupByProducts)
                     {
-                        var groupedQuery = query.GroupBy(x => x.ProductId).OrderBy(x => 1);
+                        var groupedQuery = query.Select(x => x.ProductId).OrderBy(x => x).Distinct();
                         result.TotalCount = await groupedQuery.CountAsync();
-                        query = groupedQuery.Skip(criteria.Skip).Take(criteria.Take).SelectMany(x => x);
+
+                        if (criteria.Take > 0)
+                        {
+                            query = query.Where(x => groupedQuery.Contains(x.ProductId));
+                        }
                     }
                     else
                     {
                         result.TotalCount = await query.CountAsync();
-                        query = query.Skip(criteria.Skip).Take(criteria.Take);
                     }
 
                     if (criteria.Take > 0)
                     {
                         var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
+                                                            .Skip(criteria.Skip).Take(criteria.Take)
                                                             .Select(x => x.Id)
                                                             .AsNoTracking()
                                                             .ToArrayAsync();
