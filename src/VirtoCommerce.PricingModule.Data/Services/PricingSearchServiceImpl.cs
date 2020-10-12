@@ -64,27 +64,18 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                         if (criteria.Take > 0)
                         {
-                            if (criteria.ProductIds.IsNullOrEmpty())
-                            {
-                                criteria.ProductIds = await groupedQuery.OrderBy(x => x).Skip(criteria.Skip).Take(criteria.Take).ToArrayAsync();
-                            }
-                            else
-                            {
-                                criteria.ProductIds = criteria.ProductIds.Skip(criteria.Skip).Take(criteria.Take).ToArray();
-                            }
-
-                            query = query.Where(x => criteria.ProductIds.Contains(x.ProductId));
+                            query = query.Where(x => groupedQuery.Contains(x.ProductId));
                         }
                     }
                     else
                     {
                         result.TotalCount = await query.CountAsync();
-                        query = query.Skip(criteria.Skip).Take(criteria.Take);
                     }
 
                     if (criteria.Take > 0)
                     {
                         var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
+                                                            .Skip(criteria.Skip).Take(criteria.Take)
                                                             .Select(x => x.Id)
                                                             .AsNoTracking()
                                                             .ToArrayAsync();
