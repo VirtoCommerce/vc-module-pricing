@@ -53,47 +53,44 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 using (var repository = _repositoryFactory())
                 {
                     var query = await BuildQueryAsync(repository, criteria);
+                    var sortInfos = BuildSortExpression(criteria);
+                    //Try to replace sorting columns names
+                    TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
 
                     if (criteria.GroupByProducts)
                     {
-                        var groupedQuery = query.GroupBy(x => x.ProductId).Select(x => x.Key);
+                        var groupedQuery = query.Select(x => x.ProductId).OrderBy(x => x).Distinct();
                         result.TotalCount = await groupedQuery.CountAsync();
 
                         if (criteria.Take > 0)
                         {
-                            var productIds = await groupedQuery.Skip(criteria.Skip).Take(criteria.Take).AsNoTracking().ToArrayAsync();
+                            if (criteria.ProductIds.IsNullOrEmpty())
+                            {
+                                criteria.ProductIds = await groupedQuery.OrderBy(x => x).Skip(criteria.Skip).Take(criteria.Take).ToArrayAsync();
+                            }
+                            else
+                            {
+                                criteria.ProductIds = criteria.ProductIds.Skip(criteria.Skip).Take(criteria.Take).ToArray();
+                            }
 
-                            var criteria2 = criteria.Clone() as PricesSearchCriteria;
-                            criteria2.ProductId = null;
-                            criteria2.ProductIds = productIds;
-                            criteria2.GroupByProducts = false;
-                            criteria2.Skip = 0;
-                            criteria2.Take = int.MaxValue;
-                            var rezult2 = await SearchPricesAsync(criteria2);
-
-                            result.Results = rezult2.Results;
+                            query = query.Where(x => criteria.ProductIds.Contains(x.ProductId));
                         }
                     }
                     else
                     {
                         result.TotalCount = await query.CountAsync();
+                        query = query.Skip(criteria.Skip).Take(criteria.Take);
+                    }
 
-                        if (criteria.Take > 0)
-                        {
-                            var sortInfos = BuildSortExpression(criteria);
-                            //Try to replace sorting columns names
-                            TryTransformSortingInfoColumnNames(_pricesSortingAliases, sortInfos);
+                    if (criteria.Take > 0)
+                    {
+                        var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
+                                                            .Select(x => x.Id)
+                                                            .AsNoTracking()
+                                                            .ToArrayAsync();
 
-                            query = query.Skip(criteria.Skip).Take(criteria.Take);
-
-                            var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
-                                                             .Select(x => x.Id)
-                                                             .AsNoTracking()
-                                                             .ToArrayAsync();
-
-                            var unorderedResults = await _pricingService.GetPricesByIdAsync(priceIds);
-                            result.Results = unorderedResults.OrderBy(x => Array.IndexOf(priceIds, x.Id)).ToList();
-                        }
+                        var unorderedResults = await _pricingService.GetPricesByIdAsync(priceIds);
+                        result.Results = unorderedResults.OrderBy(x => Array.IndexOf(priceIds, x.Id)).ToList();
                     }
                 }
                 return result;
