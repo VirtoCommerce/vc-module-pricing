@@ -297,13 +297,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
-                await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
 
                 foreach (var price in prices)
                 {
                     PricesCacheRegion.ExpirePrice(price.Id);
                 }
                 ResetCache();
+
+                await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
             }
         }
 
@@ -382,13 +383,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var changedEntries = prices.Select(x => new GenericChangedEntry<Price>(x, EntryState.Deleted));
                 await repository.DeletePricesAsync(ids);
                 await repository.UnitOfWork.CommitAsync();
-                await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
 
                 foreach (var id in ids)
                 {
                     PricesCacheRegion.ExpirePrice(id);
                 }
                 ResetCache();
+
+                await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
             }
         }
         public virtual async Task DeletePricelistsAsync(string[] ids)
