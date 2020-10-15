@@ -16,6 +16,12 @@ angular.module('virtoCommerce.pricingModule')
                 blade.currentEntities = data.results;
                 $scope.pageSettings.totalItems = data.totalCount;
 
+                _.each(blade.currentEntities, (item)=>{
+                    if(!item.product) {
+                        item.product = { name : "Product not exist" };
+                    }
+                });
+                
                 blade.isLoading = false;
             }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
         };
