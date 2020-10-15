@@ -14,18 +14,21 @@ angular.module('virtoCommerce.pricingModule')
             blade.isLoading = true;
 
             prices.search(getSearchCriteria(), function (data) {
-                blade.currentEntities = data.results;
+                blade.currentEntities = $scope.preparePrices(data.results);
                 $scope.pageSettings.totalItems = data.totalCount;
-
-                _.each(blade.currentEntities, (item)=>{
-                    if(!item.product) {
-                        item.product = { name :  $scope.defaultProductName};
-                    }
-                });
 
                 blade.isLoading = false;
             }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
         };
+
+        $scope.preparePrices = function(data) {
+            _.each(data, (item) => {
+                if(!item.product) {
+                    item.product = { name :  $scope.defaultProductName};
+                }
+            });
+            return data;
+        }
 
         $scope.selectNode = function (node) {
             $scope.selectedNodeId = node.productId;
