@@ -1,7 +1,7 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService) {
+    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate) {
         $scope.uiGridConstants = uiGridConstants;
-        $scope.defaultProductName = "Product with the given Id does not exist";
+        $scope.noProductRowName = $translate.instant('pricing.blades.pricelist-item-list.labels.no-product-row-name');
         var blade = $scope.blade;
         var exportDataRequest = {
             exportTypeName: 'VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice',
@@ -24,7 +24,7 @@ angular.module('virtoCommerce.pricingModule')
         $scope.preparePrices = function(data) {
             _.each(data, (item) => {
                 if(!item.product) {
-                    item.product = { name :  $scope.defaultProductName};
+                    item.product = { name :  $scope.noProductRowName};
                 }
             });
             return data;
