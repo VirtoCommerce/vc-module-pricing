@@ -1,6 +1,7 @@
 angular.module('virtoCommerce.pricingModule')
     .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService) {
         $scope.uiGridConstants = uiGridConstants;
+        $scope.defaultProductName = "Product with the given Id does not exist";
         var blade = $scope.blade;
         var exportDataRequest = {
             exportTypeName: 'VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice',
@@ -18,10 +19,10 @@ angular.module('virtoCommerce.pricingModule')
 
                 _.each(blade.currentEntities, (item)=>{
                     if(!item.product) {
-                        item.product = { name : "Product not exist" };
+                        item.product = { name :  $scope.defaultProductName};
                     }
                 });
-                
+
                 blade.isLoading = false;
             }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
         };

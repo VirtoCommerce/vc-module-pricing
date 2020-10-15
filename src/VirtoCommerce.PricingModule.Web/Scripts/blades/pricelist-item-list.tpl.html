@@ -22,7 +22,11 @@
                             name: 'product.imgSrc', displayName: 'pricing.blades.pricelist-item-list.labels.picture',
                             enableColumnResizing: false, enableSorting: false, width: 60, cellTemplate: 'icon.cell.html'
                         },
-                        { name: 'product.name', displayName: 'pricing.blades.pricelist-item-list.labels.item-name', cellTooltip:true, sort: { direction: uiGridConstants.ASC }, width: '**'},
+                        { 
+                            name: 'product.name', displayName: 'pricing.blades.pricelist-item-list.labels.item-name', 
+                            cellTooltip:true, sort: { direction: uiGridConstants.ASC }, width: '**',
+                            cellTemplate: 'productName.cell.html'
+                        },
                         { name: 'product.code', displayName: 'pricing.blades.pricelist-item-list.labels.item-code'},
                         { name: 'pricesLength', displayName: '#', headerTooltip: 'pricing.blades.pricelist-item-list.labels.prices-count', field: 'prices.length', width: 30},
                         { name: 'prices', displayName: 'pricing.blades.pricelist-item-list.labels.price-range', headerTooltip: true, width: 90, cellTemplate: 'pricelistItems-list-priceRange.cell.html'}
@@ -36,7 +40,13 @@
 </div>
 
 <script type="text/ng-template" id="list.row.html">
-    <div ng-click='grid.appScope.selectNode(row.entity)' ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" ui-grid-one-bind-id-grid="rowRenderIndex + '-' + col.uid + '-cell'" class="ui-grid-cell" ng-class="{'ui-grid-row-header-cell': col.isRowHeader, '__selected': row.entity.productId===grid.appScope.selectedNodeId }" role="{{col.isRowHeader ? 'rowheader' : 'gridcell' }}" ui-grid-cell></div>
+    <div ng-click='grid.appScope.selectNode(row.entity)' 
+    ng-repeat="(colRenderIndex, col) in colContainer.renderedColumns track by col.uid" 
+    ui-grid-one-bind-id-grid="rowRenderIndex + '-' + col.uid + '-cell'" 
+    class="ui-grid-cell" 
+    ng-class="{'ui-grid-row-header-cell': col.isRowHeader, '__selected': row.entity.productId===grid.appScope.selectedNodeId, 'table-descr' :  row.entity.product.name === grid.appScope.defaultProductName }" 
+    role="{{col.isRowHeader ? 'rowheader' : 'gridcell' }}" 
+    ui-grid-cell></div>
 </script>
 <script type="text/ng-template" id="icon.cell.html">
     <div class="ui-grid-cell-contents">
@@ -48,4 +58,7 @@
 </script>
 <script type="text/ng-template" id="pricelistItems-list-priceRange.cell.html">
     <div class="ui-grid-cell-contents">{{grid.appScope.getPriceRange(row.entity)}}</div>
+</script>
+<script type="text/ng-template" id="productName.cell.html">
+    <div class="ui-grid-cell-contents" > {{ row.entity.product.name}}</div>
 </script>
