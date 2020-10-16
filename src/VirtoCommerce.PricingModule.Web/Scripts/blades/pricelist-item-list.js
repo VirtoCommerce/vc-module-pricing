@@ -1,6 +1,7 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService) {
+    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate) {
         $scope.uiGridConstants = uiGridConstants;
+        $scope.noProductRowName = $translate.instant('pricing.blades.pricelist-item-list.labels.no-product-row-name');
         var blade = $scope.blade;
         var exportDataRequest = {
             exportTypeName: 'VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice',
@@ -13,12 +14,21 @@ angular.module('virtoCommerce.pricingModule')
             blade.isLoading = true;
 
             prices.search(getSearchCriteria(), function (data) {
-                blade.currentEntities = data.results;
+                blade.currentEntities = $scope.preparePrices(data.results);
                 $scope.pageSettings.totalItems = data.totalCount;
 
                 blade.isLoading = false;
             }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
         };
+
+        $scope.preparePrices = function(data) {
+            _.each(data, (item) => {
+                if(!item.product) {
+                    item.product = { name :  $scope.noProductRowName};
+                }
+            });
+            return data;
+        }
 
         $scope.selectNode = function (node) {
             $scope.selectedNodeId = node.productId;
