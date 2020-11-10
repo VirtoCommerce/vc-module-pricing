@@ -29,7 +29,7 @@ namespace VirtoCommerce.PricingModule.Core
                 {
                     Name = "Pricing.ExportImport.PageSize",
                     GroupName = "Pricing|General",
-                    ValueType = SettingValueType.Integer,
+                    ValueType = SettingValueType.PositiveInteger,
                     DefaultValue = 50
                 };
 
@@ -56,7 +56,7 @@ namespace VirtoCommerce.PricingModule.Core
                     ValueType = SettingValueType.Boolean,
                     DefaultValue = false
                 };
-                
+
                 public static SettingDescriptor EventBasedIndexation { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.Search.EventBasedIndexation.Enable",
