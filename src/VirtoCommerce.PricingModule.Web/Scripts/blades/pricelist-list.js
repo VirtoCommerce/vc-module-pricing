@@ -192,7 +192,9 @@ angular.module('virtoCommerce.pricingModule')
             }
 
             filter.change = function () {
-                $localStorage.exportSearchFilterId = filter.current ? filter.current.id : null;
+                $scope.exportSearchFilterId = filter.current ? filter.current.id : null;
+                $localStorage.exportSearchFilterIds[exportDataRequest.exportTypeName] = $scope.exportSearchFilterId;
+
                 var metafieldsId = exportDataRequest.exportTypeName + 'ExportFilter';
                 if (filter.current && !filter.current.id) {
                     filter.current = null;
