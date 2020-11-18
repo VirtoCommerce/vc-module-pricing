@@ -52,9 +52,11 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
         // When the job is awaiting desired timeout for lock release, it stucks in "processing" anyway. (Therefore, you should not to set long timeouts (like 24*60*60), this will cause a lot of stucked jobs and performance degradation.)
         // Then, if timeout is over and the lock NOT acquired, the job falls into "scheduled" state (this is default fail-retry scenario).
         // Failed job goes to "Failed" state (by default) after retries exhausted.
-        public async Task LogEntityChangesInBackground(OperationLog[] operationLogs)
+
+        // (!) Do not make this method async, it causes improper user recorded into the log! It happens because the user stored in the current thread. If the thread switched, the user info will lost..
+        public void LogEntityChangesInBackground(OperationLog[] operationLogs)
         {
-            await _changeLogService.SaveChangesAsync(operationLogs);
+            _changeLogService.SaveChangesAsync(operationLogs).GetAwaiter().GetResult();
         }
     }
 }
