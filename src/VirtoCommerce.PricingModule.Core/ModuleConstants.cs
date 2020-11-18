@@ -65,6 +65,15 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = false
                 };
 
+
+                public static SettingDescriptor LogPricingChanges { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.LogPricingChanges",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false,
+                };
+
                 public static IEnumerable<SettingDescriptor> AllSettings
                 {
                     get
@@ -72,6 +81,7 @@ namespace VirtoCommerce.PricingModule.Core
                         return new List<SettingDescriptor>
                                {
                                    ExportImportPageSize,
+                                   LogPricingChanges,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,
                                    EventBasedIndexation,

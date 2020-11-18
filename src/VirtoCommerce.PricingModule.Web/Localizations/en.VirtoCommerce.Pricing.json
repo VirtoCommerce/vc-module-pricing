@@ -247,6 +247,10 @@
           "description": "High value may cause slow performance"
         }
       },
+      "LogPricingChanges": {
+        "title": "Log pricing changes",
+        "description": "Log changes into the platform operation log. This might impact database size if prices are changed relatively often."
+      },
       "Indexing": {
         "Enable": {
           "title": "Enable product price indexing",
