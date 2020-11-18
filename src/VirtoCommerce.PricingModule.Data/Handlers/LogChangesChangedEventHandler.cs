@@ -40,7 +40,7 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
             }
             else
             {
-                // Force reset the date of last data modifications, so that it would be reset even if the Inventory.LogInventoryChanges setting is inactive.
+                // Force reset the date of last data modifications, so that it would be reset even if the Pricing.LogPricingChanges setting is inactive.
                 _lastModifiedDateTime.Reset();
             }
         }
