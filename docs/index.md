@@ -51,23 +51,23 @@ The Pricelist Assignment has the following key characteristics:
 
 ## Scenarios  
 
-1. [Create a New Price list](/docs/create-new-price-list.md)
-    1. [Add Products to the New Price List](/docs/add-products-to-the-new-price-list.md)
-    1. [Add Prices to products](/docs/add-prices-to-products.md)
-        1. [Add List Price](/docs/add-prices-to-products.md#add-list-price)
-        1. [Add Sale Price](/docs/add-prices-to-products.md#add-sale-price)
-        1. [Specify Tier Price](/docs/add-prices-to-products.md#specify-tier-price)
-1. [View Price list via Catalog Module](/docs/view-price-list-via-catalog-module.md)
-1. [Add New Assignment](/docs/add-new-assignment.md)
-    1. [Simple Assignment without rules and conditions](/docs/add-new-assignment.md#simple-assignment-without-rules-and-conditions)
-    1. [Assignment with Rules and Conditions](/docs/add-new-assignment.md#assignment-with-rules-and-conditions)
-1. [Managing Pricing module settings](/docs/managing-pricing-module-settings.md)
-1. [Export Prices and Pricelist Assignments](/docs/export-functionality.md)
+1. [Create a New Price list](create-new-price-list.md)
+    1. [Add Products to the New Price List](add-products-to-the-new-price-list.md)
+    1. [Add Prices to products](add-prices-to-products.md)
+        1. [Add List Price](add-prices-to-products.md#add-list-price)
+        1. [Add Sale Price](add-prices-to-products.md#add-sale-price)
+        1. [Specify Tier Price](add-prices-to-products.md#specify-tier-price)
+1. [View Price list via Catalog Module](view-price-list-via-catalog-module.md)
+1. [Add New Assignment](add-new-assignment.md)
+    1. [Simple Assignment without rules and conditions](add-new-assignment.md#simple-assignment-without-rules-and-conditions)
+    1. [Assignment with Rules and Conditions](add-new-assignment.md#assignment-with-rules-and-conditions)
+1. [Managing Pricing module settings](managing-pricing-module-settings.md)
+1. [Export Prices and Pricelist Assignments](export-functionality.md)
 
 ## Web API
 
 Web API documentation for each module is built out automatically and can be accessed by following the link bellow:
-<https://admin-demo.virtocommerce.com/docs/ui/index#/Pricing%2520module>
+<https://admin-demo.virtocommerce.com/docs/index.html?urls.primaryName=VirtoCommerce.Pricing>
 
 ## Database Model
 
