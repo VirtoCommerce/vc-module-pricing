@@ -34,7 +34,7 @@ angular.module('virtoCommerce.pricingModule')
             $scope.selectedNodeId = node.productId;
 
             var newBlade = {
-                id: 'itemPrices',
+                id: 'productItemPrices',
                 itemId: node.productId,
                 priceListId: blade.currentEntityId,
                 data: node,

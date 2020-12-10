@@ -101,6 +101,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
             target.MinQuantity = MinQuantity;
             target.StartDate = StartDate;
             target.EndDate = EndDate;
+            target.OuterId = OuterId;
         }
     }
 }
