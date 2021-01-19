@@ -295,6 +295,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     }
                 }
 
+                await _eventPublisher.Publish(new PriceChangingEvent(changedEntries));
+
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
 
