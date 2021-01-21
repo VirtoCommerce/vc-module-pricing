@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VirtoCommerce.PricingModule.Data.Migrations
 {
@@ -6,13 +6,16 @@ namespace VirtoCommerce.PricingModule.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_Price_PricelistId",
-                table: "Price");
+            migrationBuilder.Sql(@"DROP INDEX IF EXISTS [IX_Price_PricelistId] ON [Price]");
 
-            migrationBuilder.DropIndex(
-                name: "IX_PriceId",
-                table: "Price");
+            migrationBuilder.Sql(@"DROP INDEX IF EXISTS [IX_PriceId] ON [Price]");
+
+            // Drop redundant index from 2X
+            migrationBuilder.Sql(@"DROP INDEX IF EXISTS [ProductIdAndPricelistId] ON [Price]");
+
+            // Drop redundant index from 2X
+            migrationBuilder.Sql(@"DROP INDEX IF EXISTS [IX_PricelistId] ON [Price]");
+
 
             migrationBuilder.CreateIndex(
                 name: "IX_PricelistProductDates",
