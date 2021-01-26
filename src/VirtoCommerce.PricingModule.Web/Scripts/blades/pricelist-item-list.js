@@ -60,7 +60,7 @@ angular.module('virtoCommerce.pricingModule')
                 breadcrumbs: [],
                 toolbarCommands: [
                     {
-                        name: "pricing.commands.add-selected", icon: 'fa fa-plus',
+                        name: "pricing.commands.add-selected", icon: 'fas fa-plus',
                         executeMethod: function (blade) {
                             addProductsToPricelist(selectedProducts, blade);
                         },
@@ -150,13 +150,13 @@ angular.module('virtoCommerce.pricingModule')
                 canExecuteMethod: function () { return true; }
             },
             {
-                name: "platform.commands.add", icon: 'fa fa-plus',
+                name: "platform.commands.add", icon: 'fas fa-plus',
                 executeMethod: openAddEntityWizard,
                 canExecuteMethod: function () { return true; },
                 permission: blade.updatePermission
             },
             {
-                name: "platform.commands.delete", icon: 'fa fa-trash-o',
+                name: "platform.commands.delete", icon: 'fas fa-trash-alt',
                 executeMethod: function () {
                     $scope.deleteList($scope.gridApi.selection.getSelectedRows());
                 },

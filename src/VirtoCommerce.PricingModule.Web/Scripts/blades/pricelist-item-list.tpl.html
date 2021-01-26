@@ -1,4 +1,4 @@
-﻿<div class="blade-static">
+<div class="blade-static">
     <div class="form-group">
         <div class="form-input __search">
             <input placeholder="{{ 'platform.placeholders.search-keyword' | translate }}" ng-model="filter.keyword" ng-keyup="$event.which === 13 && filter.criteriaChanged()">
@@ -52,7 +52,7 @@
     <div class="ui-grid-cell-contents">
         <div class="product-img">
             <div class="image" style="background-image: url('{{COL_FIELD}}')" ng-if="COL_FIELD"></div>
-            <em class="table-ico fa fa-image" ng-if="!COL_FIELD"></em>
+            <em class="table-ico fas fa-image" ng-if="!COL_FIELD"></em>
         </div>
     </div>
 </script>

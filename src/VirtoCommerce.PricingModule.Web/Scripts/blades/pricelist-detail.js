@@ -73,7 +73,7 @@
                     blade.toolbarCommands = [
                         {
                             name: "platform.commands.save",
-                            icon: 'fa fa-save',
+                            icon: 'fas fa-save',
                             executeMethod: $scope.saveChanges,
                             canExecuteMethod: canSave,
                             permission: blade.updatePermission
