@@ -74,7 +74,7 @@
 
     blade.toolbarCommands = [
         {
-            name: "platform.commands.save", icon: 'fa fa-save',
+            name: "platform.commands.save", icon: 'fas fa-save',
             executeMethod: $scope.saveChanges,
             canExecuteMethod: canSave,
             permission: blade.updatePermission
@@ -88,13 +88,13 @@
             permission: blade.updatePermission
         },
         {
-            name: "platform.commands.add", icon: 'fa fa-plus',
+            name: "platform.commands.add", icon: 'fas fa-plus',
             executeMethod: function () { addNewPrice(blade.currentEntities); },
             canExecuteMethod: function () { return true; },
             permission: blade.updatePermission
         },
         {
-            name: "platform.commands.delete", icon: 'fa fa-trash-o',
+            name: "platform.commands.delete", icon: 'fas fa-trash-alt',
             executeMethod: function () {
                 var selection = $scope.gridApi.selection.getSelectedRows();
                 angular.forEach(selection, function (listItem) {

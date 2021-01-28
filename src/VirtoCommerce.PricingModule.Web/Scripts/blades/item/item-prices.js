@@ -126,14 +126,14 @@ angular.module('virtoCommerce.pricingModule')
         blade.toolbarCommands = [
             {
                 name: "platform.commands.save",
-                icon: 'fa fa-save',
+                icon: 'fas fa-save',
                 executeMethod: $scope.saveChanges,
                 canExecuteMethod: canSave,
                 permission: blade.updatePermission
             },
             {
                 name: "platform.commands.delete",
-                icon: 'fa fa-trash-o',
+                icon: 'fas fa-trash-alt',
                 executeMethod: function () {
                     var selection = $scope.gridApi.selection.getSelectedRows();
                     var ids = _.map(selection, function (item) { return item.id; });
