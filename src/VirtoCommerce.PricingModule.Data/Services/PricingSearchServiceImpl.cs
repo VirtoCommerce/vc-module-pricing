@@ -177,6 +177,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 searchCriteria.Take = criteria.Take;
                 searchCriteria.Sort = criteria.Sort.Replace("product.", string.Empty);
                 searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
+                searchCriteria.WithHidden = true;
                 var searchResult = await _productIndexedSearchService.SearchAsync(searchCriteria);
 
                 var productIds = searchResult.Items.Select(x => x.Id).ToArray();
