@@ -1,11 +1,11 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.pricingMainController', ['$scope', 'platformWebApp.bladeNavigationService', function ($scope, bladeNavigationService) {
     $scope.selectedNodeId = null;
 
     function initializeBlade() {
         var entities = [
-            { name: 'pricing.blades.pricing-main.menu.pricelist-list.title', entityName: 'pricelist', icon: 'fa-usd' },
-            { name: 'pricing.blades.pricing-main.menu.pricelist-assignment-list.title', entityName: 'assignment', icon: 'fa-anchor' }];
+            { name: 'pricing.blades.pricing-main.menu.pricelist-list.title', entityName: 'pricelist', icon: 'fa fa-usd' },
+            { name: 'pricing.blades.pricing-main.menu.pricelist-assignment-list.title', entityName: 'assignment', icon: 'fa fa-anchor' }];
         $scope.blade.currentEntities = entities;
         $scope.blade.isLoading = false;
 
@@ -24,7 +24,7 @@
         bladeNavigationService.showBlade(newBlade, $scope.blade);
     }
 
-    $scope.blade.headIcon = 'fa-usd';
+    $scope.blade.headIcon = 'fa fa-usd';
 
     initializeBlade();
 }]);
