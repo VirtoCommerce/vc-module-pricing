@@ -3,11 +3,16 @@ angular.module('virtoCommerce.pricingModule')
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
 
+    $scope.pageSize = 20;
+    $scope.catalogs = [];
+    $scope.pricelists = [];
+
+
     blade.refresh = function (parentRefresh) {
         if (blade.isNew) {
             assignments.getNew(initializeBlade);
         } else {
-            assignments.get({ id: blade.currentEntityId }, initializeBlade, function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+            assignments.get({ id: blade.currentEntityId }, initializeBlade);
             if (parentRefresh && angular.isFunction(blade.parentBlade.refresh)) {
                 blade.parentBlade.refresh();
             }
@@ -141,9 +146,80 @@ angular.module('virtoCommerce.pricingModule')
     };
 
     // actions on load
-    $scope.catalogs = catalogs.query();
-    pricelists.search({ take: 1000 }, function (result) {
-    	$scope.pricelists = result.results;
-    });
+    $scope.fetchCatalogs = ($select) => {
+        while (blade.isLoading) sleep(100);
+        if ($scope.catalogs.length == 0) {
+            $select.page = 0;
+
+            if (blade.currentEntity.catalogId) {
+                let criteria = {
+                    CatalogIds: [blade.currentEntity.catalogId]
+                }
+                catalogs.search(criteria, (data) => {
+                    $scope.catalogs = data.results;
+                    $scope.fetchNextCatalogs($select);
+                });
+            }
+            else {
+                $scope.fetchNextCatalogs($select);
+            }
+        }
+    }
+    $scope.fetchNextCatalogs = ($select) => {
+        let criteria = {
+            SearchPhrase: $select.search,
+            take: $scope.pageSize,
+            skip: $select.page * $scope.pageSize
+        }
+
+        catalogs.search(criteria, (data) => {
+            $scope.catalogs = $scope.catalogs.concat(data.results);
+            $select.page++;
+
+            if ($scope.catalogs.length < data.totalCount) {
+                $scope.$broadcast('scrollCompleted');
+            }
+        });
+    }
+
+
+    $scope.fetchPricelists = ($select) => {
+        while (blade.isLoading) sleep(100);
+        if ($scope.pricelists.length == 0) {
+            $select.page = 0;
+
+            if (blade.currentEntity.pricelistId) {
+                let criteria = {
+                    ObjectIds: [blade.currentEntity.pricelistId]
+                }
+                pricelists.search(criteria, (data) => {
+                    $scope.pricelists = data.results;
+                    $scope.fetchNextPricelists($select);
+                });
+            }
+            else {
+                $scope.fetchNextPricelists($select);
+            }
+        }
+    }
+    $scope.fetchNextPricelists = ($select) => {
+        let criteria = {
+            SearchPhrase: $select.search,
+            take: $scope.pageSize,
+            skip: $select.page * $scope.pageSize
+        }
+
+        pricelists.search(criteria, (data) => {
+            $scope.pricelists = $scope.pricelists.concat(data.results);
+            $select.page++;
+
+            if ($scope.pricelists.length < data.totalCount) {
+                $scope.$broadcast('scrollCompleted');
+            }
+        });
+    }
+
+
+    
     blade.refresh();
 }]);

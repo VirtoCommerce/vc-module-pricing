@@ -15,8 +15,8 @@
                             <label class="form-label">{{'pricing.blades.assignment-detail.labels.price-list' | translate}}</label>
                             <div class="form-input">
                                 <ui-select ng-model="blade.currentEntity.pricelistId" required>
-                                    <ui-select-match placeholder="{{'pricing.blades.assignment-detail.placeholders.price-list' | translate}}">{{$select.selected.name}}</ui-select-match>
-                                    <ui-select-choices repeat="x.id as x in pricelists | filter: { name: $select.search }">
+                                    <ui-select-match placeholder="{{'pricing.blades.assignment-detail.placeholders.price-list' | translate}}">{{pricelists.length > 0 ? $select.selected.name : 'Loading...'}}</ui-select-match>
+                                    <ui-select-choices repeat="x.id as x in pricelists | filter: { name: $select.search }" refresh="fetchPricelists($select)" when-scrolled="fetchNextPricelists($select)">
                                         <span ng-bind-html="x.name | highlight: $select.search"></span>
                                     </ui-select-choices>
                                 </ui-select>
@@ -24,12 +24,13 @@
                         </div>
                     </div>
                     <div class="column">
+
                         <div class="form-group">
                             <label class="form-label">{{'pricing.blades.assignment-detail.labels.catalog' | translate}}</label>
                             <div class="form-input">
                                 <ui-select ng-model="blade.currentEntity.catalogId" required>
-                                    <ui-select-match placeholder="{{'pricing.blades.assignment-detail.placeholders.catalog' | translate}}">{{$select.selected.name}}</ui-select-match>
-                                    <ui-select-choices repeat="x.id as x in catalogs | filter: { name: $select.search }">
+                                    <ui-select-match placeholder="{{'pricing.blades.assignment-detail.placeholders.catalog' | translate}}">{{catalogs.length > 0 ? $select.selected.name : 'Loading...'}}</ui-select-match>
+                                    <ui-select-choices repeat="x.id as x in catalogs | filter: { name: $select.search }" refresh="fetchCatalogs($select)" when-scrolled="fetchNextCatalogs($select)">
                                         <span ng-bind-html="x.name | highlight: $select.search"></span>
                                     </ui-select-choices>
                                 </ui-select>
