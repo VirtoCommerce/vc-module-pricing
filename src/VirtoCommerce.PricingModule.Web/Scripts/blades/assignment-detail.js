@@ -145,81 +145,9 @@ angular.module('virtoCommerce.pricingModule')
         _.each(expressionElement.children, stripOffUiInformation);
     };
 
-    // actions on load
-    $scope.fetchCatalogs = ($select) => {
-        while (blade.isLoading) sleep(100);
-        if ($scope.catalogs.length == 0) {
-            $select.page = 0;
 
-            if (blade.currentEntity.catalogId) {
-                let criteria = {
-                    CatalogIds: [blade.currentEntity.catalogId]
-                }
-                catalogs.search(criteria, (data) => {
-                    $scope.catalogs = data.results;
-                    $scope.fetchNextCatalogs($select);
-                });
-            }
-            else {
-                $scope.fetchNextCatalogs($select);
-            }
-        }
-    }
-    $scope.fetchNextCatalogs = ($select) => {
-        let criteria = {
-            SearchPhrase: $select.search,
-            take: $scope.pageSize,
-            skip: $select.page * $scope.pageSize
-        }
+    $scope.catalogDataSource = (criteria) => catalogs.search(criteria).$promise;
+    $scope.pricelistDataSource = (criteria) => pricelists.search(criteria).$promise;
 
-        catalogs.search(criteria, (data) => {
-            $scope.catalogs = $scope.catalogs.concat(data.results);
-            $select.page++;
-
-            if ($scope.catalogs.length < data.totalCount) {
-                $scope.$broadcast('scrollCompleted');
-            }
-        });
-    }
-
-
-    $scope.fetchPricelists = ($select) => {
-        while (blade.isLoading) sleep(100);
-        if ($scope.pricelists.length == 0) {
-            $select.page = 0;
-
-            if (blade.currentEntity.pricelistId) {
-                let criteria = {
-                    ObjectIds: [blade.currentEntity.pricelistId]
-                }
-                pricelists.search(criteria, (data) => {
-                    $scope.pricelists = data.results;
-                    $scope.fetchNextPricelists($select);
-                });
-            }
-            else {
-                $scope.fetchNextPricelists($select);
-            }
-        }
-    }
-    $scope.fetchNextPricelists = ($select) => {
-        let criteria = {
-            SearchPhrase: $select.search,
-            take: $scope.pageSize,
-            skip: $select.page * $scope.pageSize
-        }
-
-        pricelists.search(criteria, (data) => {
-            $scope.pricelists = $scope.pricelists.concat(data.results);
-            $select.page++;
-
-            if ($scope.pricelists.length < data.totalCount) {
-                $scope.$broadcast('scrollCompleted');
-            }
-        });
-    }
-
-
-    
     blade.refresh();
 }]);
