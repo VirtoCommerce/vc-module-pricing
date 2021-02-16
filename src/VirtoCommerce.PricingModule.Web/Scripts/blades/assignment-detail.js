@@ -5,7 +5,6 @@ angular.module('virtoCommerce.pricingModule')
 
     $scope.pageSize = 20;
 
-
     blade.refresh = function (parentRefresh) {
         if (blade.isNew) {
             assignments.getNew(initializeBlade);
