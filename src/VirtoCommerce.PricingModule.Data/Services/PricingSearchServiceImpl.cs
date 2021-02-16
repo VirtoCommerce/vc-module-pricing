@@ -218,6 +218,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => criteria.Currencies.Contains(x.Currency));
             }
 
+            if (!criteria.ObjectIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.ObjectIds.Contains(x.Id));
+            }
+
             return query;
         }
 
