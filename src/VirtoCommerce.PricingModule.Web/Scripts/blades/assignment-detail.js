@@ -4,8 +4,6 @@ angular.module('virtoCommerce.pricingModule')
     blade.updatePermission = 'pricing:update';
 
     $scope.pageSize = 20;
-    $scope.catalogs = [];
-    $scope.pricelists = [];
 
 
     blade.refresh = function (parentRefresh) {
