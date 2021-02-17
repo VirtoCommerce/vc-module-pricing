@@ -84,7 +84,7 @@ angular.module('virtoCommerce.pricingModule')
                 dialogService.showConfirmationDialog(dialog);
             }
 
-            blade.headIcon = 'fa-usd';
+            blade.headIcon = 'fa fa-usd';
             blade.subtitle = 'pricing.blades.pricelist-list.subtitle';
 
             blade.toolbarCommands = [

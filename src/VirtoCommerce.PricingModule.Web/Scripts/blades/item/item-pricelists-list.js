@@ -62,7 +62,7 @@ angular.module('virtoCommerce.pricingModule')
         bladeNavigationService.showBlade(newBlade, blade);
     }
 
-    blade.headIcon = 'fa-usd';
+    blade.headIcon = 'fa fa-usd';
     blade.toolbarCommands = [
         {
             name: "platform.commands.refresh", icon: 'fa fa-refresh',

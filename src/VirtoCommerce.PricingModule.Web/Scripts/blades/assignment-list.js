@@ -113,7 +113,7 @@ angular.module('virtoCommerce.pricingModule')
                 });
             }
 
-            blade.headIcon = 'fa-anchor';
+            blade.headIcon = 'fa fa-anchor';
             blade.subtitle = 'pricing.blades.pricelist-assignment-list.subtitle';
 
             blade.toolbarCommands = [

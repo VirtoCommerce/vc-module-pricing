@@ -3,11 +3,13 @@ angular.module('virtoCommerce.pricingModule')
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
 
+    $scope.pageSize = 20;
+
     blade.refresh = function (parentRefresh) {
         if (blade.isNew) {
             assignments.getNew(initializeBlade);
         } else {
-            assignments.get({ id: blade.currentEntityId }, initializeBlade, function (error) { bladeNavigationService.setError('Error ' + error.status, $scope.blade); });
+            assignments.get({ id: blade.currentEntityId }, initializeBlade);
             if (parentRefresh && angular.isFunction(blade.parentBlade.refresh)) {
                 blade.parentBlade.refresh();
             }
@@ -140,10 +142,9 @@ angular.module('virtoCommerce.pricingModule')
         _.each(expressionElement.children, stripOffUiInformation);
     };
 
-    // actions on load
-    $scope.catalogs = catalogs.query();
-    pricelists.search({ take: 1000 }, function (result) {
-    	$scope.pricelists = result.results;
-    });
+
+    $scope.catalogDataSource = (criteria) => catalogs.search(criteria).$promise;
+    $scope.pricelistDataSource = (criteria) => pricelists.search(criteria).$promise;
+
     blade.refresh();
 }]);
