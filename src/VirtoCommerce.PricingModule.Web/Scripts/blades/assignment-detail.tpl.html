@@ -1,4 +1,4 @@
-<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
+﻿<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
 <div class="blade-content __medium-wide">
     <div class="blade-inner">
         <div class="inner-block">
@@ -11,23 +11,18 @@
                                 <input ng-model="blade.currentEntity.name" required placeholder="{{'pricing.blades.assignment-detail.placeholders.assignment-name' | translate}}" />
                             </div>
                         </div>
-
                         <ui-scroll
                             data="pricelistDataSource(criteria)"
                             label="'pricing.blades.assignment-detail.labels.price-list'" 
                             placeholder="'pricing.blades.assignment-detail.placeholders.price-list'"
-                            selected-id="blade.currentEntity.pricelistId" />
-
-
+                            selected-id="blade.currentEntity.pricelistId" > </ui-scroll>
                     </div>
                     <div class="column">
-
                         <ui-scroll
                             data="catalogDataSource(criteria)"
                             label="'pricing.blades.assignment-detail.labels.catalog'" 
                             placeholder="'pricing.blades.assignment-detail.placeholders.catalog'"
-                            selected-id="blade.currentEntity.catalogId" />
-
+                            selected-id="blade.currentEntity.catalogId"> </ui-scroll>
                         <div class="form-group">
                             <label class="form-label">{{'pricing.blades.assignment-detail.labels.priority' | translate}}</label>
                             <div class="form-input __number list __info">
