@@ -47,10 +47,12 @@ namespace VirtoCommerce.PricingModule.Web
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            var connectionString = configuration.GetConnectionString("VirtoCommerce.Pricing") ?? configuration.GetConnectionString("VirtoCommerce");
-            serviceCollection.AddDbContext<PricingDbContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<PricingDbContext>((provider, options) =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
+            });
+
             serviceCollection.AddTransient<IPricingRepository, PricingRepositoryImpl>();
             serviceCollection.AddTransient<Func<IPricingRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPricingRepository>());
 
