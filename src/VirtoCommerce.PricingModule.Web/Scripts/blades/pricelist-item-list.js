@@ -1,5 +1,5 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate) {
+    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', 'virtoCommerce.exportModule.exportModuleApi',  function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate, exportApi) {
         $scope.uiGridConstants = uiGridConstants;
         $scope.noProductRowName = $translate.instant('pricing.blades.pricelist-item-list.labels.no-product-row-name');
         var blade = $scope.blade;
@@ -9,6 +9,8 @@ angular.module('virtoCommerce.pricingModule')
                 exportTypeName: 'PriceExportDataQuery'
             }
         };
+        blade.csvExportProvider = 'CsvExportProvider';
+        blade.csvExportDelimiter = ';'
 
         blade.refresh = function () {
             blade.isLoading = true;
@@ -172,43 +174,35 @@ angular.module('virtoCommerce.pricingModule')
                     return true;
                 },
                 executeMethod: function () {
-                    var isAllSelected = $scope.gridApi.selection.getSelectAllState();
-                    exportDataRequest.dataQuery.isAllSelected = isAllSelected;
-
-                    var selectedRows = $scope.gridApi.selection.getSelectedRows();
-
+                    $scope.selectedRows = $scope.gridApi.selection.getSelectedRows();
+                    $scope.isAllSelected = $scope.gridApi.selection.getSelectAllState() || !$scope.selectedRows.length;
+                    exportDataRequest.dataQuery.isAllSelected = $scope.isAllSelected;
+                    exportDataRequest.providerConfig = {};
+                    exportDataRequest.providerConfig.configuration = {};
+                    exportDataRequest.providerConfig.configuration.delimiter = blade.csvExportDelimiter;
                     exportDataRequest.dataQuery.objectIds = [];
-                    if (!isAllSelected && selectedRows) {
-                        var priceIds = _.pluck(_.flatten(_.pluck(selectedRows, 'prices')), 'id');
+                    if (!$scope.isAllSelected && $scope.selectedRows) {
+                        var priceIds = _.pluck(_.flatten(_.pluck($scope.selectedRows, 'prices')), 'id');
                         exportDataRequest.dataQuery.objectIds = priceIds;
                     }
 
                     exportDataRequest.dataQuery.productIds = [];
 
                     if ((exportDataRequest.dataQuery.productIds && exportDataRequest.dataQuery.productIds.length)
-                        || (!isAllSelected)) {
-                        exportDataRequest.dataQuery.productIds = _.map(selectedRows, function (product) {
+                        || (!$scope.isAllSelected)) {
+                        exportDataRequest.dataQuery.productIds = _.map($scope.selectedRows, function (product) {
                             return product.productId;
                         });
                     }
 
                     var searchCriteria = getSearchCriteria();
 
-                    if (isAllSelected || (searchCriteria.pricelistIds && searchCriteria.pricelistIds.length > 0) || searchCriteria.keyword !== '') {
+                    if ($scope.isAllSelected || (searchCriteria.pricelistIds && searchCriteria.pricelistIds.length > 0) || searchCriteria.keyword !== '') {
                         exportDataRequest.dataQuery.isAnyFilterApplied = true;
                     }
 
                     angular.extend(exportDataRequest.dataQuery, searchCriteria);
-
-                    var newBlade = {
-                        id: 'priceExport',
-                        title: 'pricing.blades.exporter.priceTitle',
-                        subtitle: 'pricing.blades.exporter.priceSubtitle',
-                        controller: 'virtoCommerce.exportModule.exportSettingsController',
-                        template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
-                        exportDataRequest: exportDataRequest
-                    };
-                    bladeNavigationService.showBlade(newBlade, blade);
+                    showExportDialog();
                 }
             }
         ];
@@ -222,6 +216,56 @@ angular.module('virtoCommerce.pricingModule')
                 take: $scope.pageSettings.itemsPerPageCount
             }
             return result;
+        }
+
+        function showExportDialog() {
+            getCsvPropertyInfos();
+            var dialog = {
+                id: "priceExportDialog",
+                exportAll: $scope.isAllSelected ? true : false,
+                totalItemsCount: $scope.pageSettings.totalItems,
+                selectedItemsCount: $scope.selectedRows.length,
+                advancedExport: function () {
+                    this.no();
+                    var newBlade = {
+                        id: 'priceExport',
+                        title: 'pricing.blades.exporter.priceTitle',
+                        subtitle: 'pricing.blades.exporter.priceSubtitle',
+                        controller: 'virtoCommerce.exportModule.exportSettingsController',
+                        template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
+                        exportDataRequest: exportDataRequest
+                    };
+                    bladeNavigationService.showBlade(newBlade, blade);
+                },
+                callback: function (confirm) {
+                    if (confirm) {
+                        exportDataRequest.providerName = blade.csvExportProvider;
+                        delete exportDataRequest.dataQuery.skip;
+                        delete exportDataRequest.dataQuery.take;
+                        delete exportDataRequest.dataQuery.IsPreview;
+                        blade.isExporting = true;
+                        var progressBlade = {
+                            id: 'exportProgress',
+                            title: 'export.blades.export-progress.title',
+                            controller: 'virtoCommerce.exportModule.exportProgressController',
+                            template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-progress.tpl.html',
+                            exportDataRequest: exportDataRequest,
+                            onCompleted: function () {
+                                blade.isExporting = false;
+                            }
+                        };
+                        bladeNavigationService.showBlade(progressBlade, blade);
+                    }
+                }
+            }
+            dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/priceExport-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+        }
+
+        function getCsvPropertyInfos() {
+            exportApi.getKnownTypes(function(results) {
+                const selectedType = _.find(results, function(x) {return x.typeName === exportDataRequest.exportTypeName; });
+                exportDataRequest.dataQuery.includedProperties = selectedType.tabularMetaData.propertyInfos;
+            });
         }
 
         $scope.getPriceRange = function (priceGroup) {

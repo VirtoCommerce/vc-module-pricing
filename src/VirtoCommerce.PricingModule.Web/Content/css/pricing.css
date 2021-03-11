@@ -15,6 +15,18 @@ button.btn.add-price-button {
     padding: 0 10px;
 }
 
-    button.btn.add-price-button:hover {
-        background: #43b0e6;
-    }
+button.btn.add-price-button:hover {
+    background: #43b0e6;
+}
+
+.cancel-btn {
+    background: transparent;
+    color: #43b0e6;
+    border: 1px solid #43b0e6;
+    text-shadow: none;
+}
+
+.cancel-btn:hover {
+    background: #43b0e6;
+    color: #fff;
+}
