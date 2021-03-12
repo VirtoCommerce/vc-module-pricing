@@ -251,9 +251,6 @@ angular.module('virtoCommerce.pricingModule')
                     $scope.selectedRows = $scope.gridApi.selection.getSelectedRows();
                     $scope.isAllSelected = $scope.gridApi.selection.getSelectAllState() || !$scope.selectedRows.length;
                     exportDataRequest.dataQuery.isAllSelected = $scope.isAllSelected;
-                    exportDataRequest.providerConfig = {};
-                    exportDataRequest.providerConfig.configuration = {};
-                    exportDataRequest.providerConfig.configuration.delimiter = blade.csvExportDelimiter;
                     exportDataRequest.dataQuery.objectIds = [];
                     if (!$scope.isAllSelected && $scope.selectedRows) {
                         var priceIds = _.pluck(_.flatten(_.pluck($scope.selectedRows, 'prices')), 'id');
@@ -312,6 +309,9 @@ angular.module('virtoCommerce.pricingModule')
                 },
                 callback: function (confirm) {
                     if (confirm) {
+                        exportDataRequest.providerConfig = {};
+                        exportDataRequest.providerConfig.configuration = {};
+                        exportDataRequest.providerConfig.configuration.delimiter = blade.csvExportDelimiter;
                         exportDataRequest.providerName = blade.csvExportProvider;
                         exportDataRequest.dataQuery.includedProperties = blade.csvPropertyInfos;
                         delete exportDataRequest.dataQuery.skip;
