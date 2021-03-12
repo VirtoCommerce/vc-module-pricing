@@ -314,8 +314,7 @@ angular.module('virtoCommerce.pricingModule')
                 callback: function (confirm) {
                     if (confirm) {
                         exportDataRequest.providerConfig = {};
-                        exportDataRequest.providerConfig.configuration = {};
-                        exportDataRequest.providerConfig.configuration.delimiter = blade.csvExportDelimiter;
+                        exportDataRequest.providerConfig.delimiter = blade.csvExportDelimiter;
                         exportDataRequest.providerName = blade.csvExportProvider;
                         exportDataRequest.dataQuery.includedProperties = blade.csvPropertyInfos;
                         delete exportDataRequest.dataQuery.skip;
