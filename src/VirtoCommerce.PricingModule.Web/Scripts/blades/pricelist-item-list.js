@@ -1,5 +1,5 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', 'virtoCommerce.exportModule.exportModuleApi',  function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate, exportApi) {
+    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate) {
         $scope.uiGridConstants = uiGridConstants;
         $scope.noProductRowName = $translate.instant('pricing.blades.pricelist-item-list.labels.no-product-row-name');
         var blade = $scope.blade;
@@ -10,7 +10,81 @@ angular.module('virtoCommerce.pricingModule')
             }
         };
         blade.csvExportProvider = 'CsvExportProvider';
-        blade.csvExportDelimiter = ';'
+        blade.csvExportDelimiter = ';';
+        blade.csvPropertyInfos = [
+            {
+                fullName: "Code",
+                group: "TabularPrice",
+                displayName: "SKU",
+                isRequired: false,
+            },
+            {
+                fullName: "ProductName",
+                group: "TabularPrice",
+                displayName: "Product Name",
+                isRequired: false,
+            },
+            {
+                fullName: "Currency",
+                group: "TabularPrice",
+                displayName: "Currency",
+                isRequired: false,
+            },
+            {
+                fullName: "List",
+                group: "TabularPrice",
+                displayName: "List price",
+                isRequired: false,
+            },
+            {
+                fullName: "Sale",
+                group: "TabularPrice",
+                displayName: "Sales price",
+                isRequired: false,
+            },
+            {
+                fullName: "MinQuantity",
+                group: "TabularPrice",
+                displayName: "Min quantity",
+                isRequired: false,
+            },
+            {
+                fullName: "ModifiedDate",
+                group: "TabularPrice",
+                displayName: "Modified",
+                isRequired: false,
+            },
+            {
+                fullName: "StartDate",
+                group: "TabularPrice",
+                displayName: "Valid from",
+                isRequired: false,
+            },
+            {
+                fullName: "EndDate",
+                group: "TabularPrice",
+                displayName: "Valid to",
+                isRequired: false,
+            },
+            {
+                fullName: "CreatedDate",
+                group: "TabularPrice",
+                displayName: "Created date",
+                isRequired: false,
+            },
+            {
+                fullName: "CreatedBy",
+                group: "TabularPrice",
+                displayName: "Created by",
+                isRequired: false,
+            },
+            {
+                fullName: "ModifiedBy",
+                group: "TabularPrice",
+                displayName: "Modified By",
+                isRequired: false,
+            }
+        ];
 
         blade.refresh = function () {
             blade.isLoading = true;
@@ -219,7 +293,6 @@ angular.module('virtoCommerce.pricingModule')
         }
 
         function showExportDialog() {
-            getCsvPropertyInfos();
             var dialog = {
                 id: "priceExportDialog",
                 exportAll: $scope.isAllSelected ? true : false,
@@ -240,6 +313,7 @@ angular.module('virtoCommerce.pricingModule')
                 callback: function (confirm) {
                     if (confirm) {
                         exportDataRequest.providerName = blade.csvExportProvider;
+                        exportDataRequest.dataQuery.includedProperties = blade.csvPropertyInfos;
                         delete exportDataRequest.dataQuery.skip;
                         delete exportDataRequest.dataQuery.take;
                         delete exportDataRequest.dataQuery.IsPreview;
@@ -259,13 +333,6 @@ angular.module('virtoCommerce.pricingModule')
                 }
             }
             dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/priceExport-dialog.tpl.html', 'platformWebApp.confirmDialogController');
-        }
-
-        function getCsvPropertyInfos() {
-            exportApi.getKnownTypes(function(results) {
-                const selectedType = _.find(results, function(x) {return x.typeName === exportDataRequest.exportTypeName; });
-                exportDataRequest.dataQuery.includedProperties = selectedType.tabularMetaData.propertyInfos;
-            });
         }
 
         $scope.getPriceRange = function (priceGroup) {
