@@ -185,6 +185,16 @@
             "assignment-save": {
                 "title": "Сохранение изменений",
                 "message": "Назначение каталога было изменено. Вы хотите сохранить изменения?"
+            },
+            "pricelist-export": {
+              "title": "Экспортировать цены",
+              "subtitle-all": "Все {{count}} цены",
+              "subtitle-not-all": "{{count}} цен",
+              "subtitle-end": "из этой категории будут экспортированны в csv файл.",
+              "advanced-export-subtitle-start": "Вы можете",
+              "advanced-export-subtitle-link": "использовать продвинутый экспорт",
+              "advanced-export-subtitle-end": "чтобы сделать продуманный подбор цен.",
+              "export": "Экспорт"
             }
         },
         "commands": {
