@@ -296,6 +296,10 @@ angular.module('virtoCommerce.pricingModule')
                 totalItemsCount: $scope.pageSettings.totalItems,
                 selectedItemsCount: $scope.selectedRows.length,
                 advancedExport: function () {
+                    if (exportDataRequest.providerConfig) {
+                        delete exportDataRequest.providerConfig;
+                    }
+
                     this.no();
                     var newBlade = {
                         id: 'priceExport',
