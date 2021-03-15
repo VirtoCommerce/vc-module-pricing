@@ -291,13 +291,13 @@ angular.module('virtoCommerce.pricingModule')
 
         function showExportDialog() {
             const selectedItemsCount = $scope.isAllSelected ? $scope.pageSettings.totalItems : $scope.selectedRows.length;
-            const validationError = selectedItemsCount > $scope.exportLimit;
+            const validationError = selectedItemsCount > $scope.exportLimit[0];
             var dialog = {
                 id: "priceExportDialog",
                 exportAll: $scope.isAllSelected ? true : false,
                 totalItemsCount: $scope.pageSettings.totalItems,
                 selectedItemsCount,
-                exportLimit: $scope.exportLimit,
+                exportLimit: $scope.exportLimit[0],
                 validationError,
                 advancedExport: function () {
                     if (exportDataRequest.providerConfig) {
