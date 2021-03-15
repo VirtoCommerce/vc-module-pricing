@@ -41,7 +41,6 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = 10000
                 };
 
-
                 public static SettingDescriptor IndexationDatePricingCalendar { get; } = new SettingDescriptor
                 {
                     Name = "VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar",
