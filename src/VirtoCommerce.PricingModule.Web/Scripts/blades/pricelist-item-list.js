@@ -1,5 +1,5 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate) {
+    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', 'platformWebApp.settings', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate, settings) {
         $scope.uiGridConstants = uiGridConstants;
         $scope.noProductRowName = $translate.instant('pricing.blades.pricelist-item-list.labels.no-product-row-name');
         var blade = $scope.blade;
@@ -88,7 +88,7 @@ angular.module('virtoCommerce.pricingModule')
 
         blade.refresh = function () {
             blade.isLoading = true;
-
+            $scope.exportLimit = settings.getValues({ id: 'Pricing.ExportImport.LimitOfLines' });
             prices.search(getSearchCriteria(), function (data) {
                 blade.currentEntities = $scope.preparePrices(data.results);
                 $scope.pageSettings.totalItems = data.totalCount;
@@ -290,11 +290,15 @@ angular.module('virtoCommerce.pricingModule')
         }
 
         function showExportDialog() {
+            const selectedItemsCount = $scope.isAllSelected ? $scope.pageSettings.totalItems : $scope.selectedRows.length;
+            const validationError = selectedItemsCount > $scope.exportLimit;
             var dialog = {
                 id: "priceExportDialog",
                 exportAll: $scope.isAllSelected ? true : false,
                 totalItemsCount: $scope.pageSettings.totalItems,
-                selectedItemsCount: $scope.selectedRows.length,
+                selectedItemsCount,
+                exportLimit: $scope.exportLimit,
+                validationError,
                 advancedExport: function () {
                     if (exportDataRequest.providerConfig) {
                         delete exportDataRequest.providerConfig;

@@ -30,3 +30,8 @@ button.btn.add-price-button:hover {
     background: #43b0e6;
     color: #fff;
 }
+
+.modal-warning {
+    background: #fcb040 !important;
+    color: #fff !important;
+}

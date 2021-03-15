@@ -194,6 +194,10 @@
               "advanced-export-subtitle-start": "Вы можете",
               "advanced-export-subtitle-link": "использовать продвинутый экспорт",
               "advanced-export-subtitle-end": "чтобы сделать продуманный подбор цен.",
+              "validation-error-subtitle-start": "Вы выбрали",
+              "validation-error-subtitle-middle": "но экспорт ограничен",
+              "validation-error-subtitle-count": "{{count}} шт{{comma}}",
+              "validation-error-subtitle-end": "вернитесь, чтобы выбрать другое количество",
               "export": "Экспорт"
             }
         },
