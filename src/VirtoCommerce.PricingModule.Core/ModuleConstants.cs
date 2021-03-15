@@ -33,6 +33,15 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = 50
                 };
 
+                public static SettingDescriptor ExportImportLimitOfLines { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.ExportImport.LimitOfLines",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.PositiveInteger,
+                    DefaultValue = 10000
+                };
+
+
                 public static SettingDescriptor IndexationDatePricingCalendar { get; } = new SettingDescriptor
                 {
                     Name = "VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar",
@@ -81,6 +90,7 @@ namespace VirtoCommerce.PricingModule.Core
                         return new List<SettingDescriptor>
                                {
                                    ExportImportPageSize,
+                                   ExportImportLimitOfLines,
                                    LogPricingChanges,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,

@@ -245,6 +245,10 @@
         "PageSize": {
           "title": "The page size being used for Export / Import",
           "description": "High value may cause slow performance"
+        },
+        "LimitOfLines": {
+          "title": "The limit for number of lines that can be exported / imported",
+          "description": "High value may cause slow performance"
         }
       },
       "LogPricingChanges": {
