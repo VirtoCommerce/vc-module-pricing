@@ -174,10 +174,6 @@
                 "PageSize": {
                     "title": "Die Seitengröße wird für den Export / Import verwendet",
                     "description": "Hoher Wert kann zu langsamer Leistung führen"
-                },
-                "LimitOfLines": {
-                    "title": "Das Limit für die Anzahl der Zeilen, die exportiert / importiert werden können",
-                    "description": "Hoher Wert kann zu langsamer Leistung führen"
                 }
             }
         }
