@@ -89,7 +89,7 @@ angular.module('virtoCommerce.pricingModule')
         blade.refresh = function () {
             blade.isLoading = true;
 
-            settings.getValues({ id: 'Pricing.ExportImport.LimitOfLines' }, (value) => {
+            settings.getValues({ id: 'Pricing.SimpleExport.LimitOfLines' }, (value) => {
                 $scope.exportLimit = value[0];
             });
 
