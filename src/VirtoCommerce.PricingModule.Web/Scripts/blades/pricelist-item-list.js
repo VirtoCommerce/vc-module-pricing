@@ -88,7 +88,11 @@ angular.module('virtoCommerce.pricingModule')
 
         blade.refresh = function () {
             blade.isLoading = true;
-            $scope.exportLimit = settings.getValues({ id: 'Pricing.ExportImport.LimitOfLines' });
+
+            settings.getValues({ id: 'Pricing.ExportImport.LimitOfLines' }, (value) => {
+                $scope.exportLimit = value[0];
+            });
+
             prices.search(getSearchCriteria(), function (data) {
                 blade.currentEntities = $scope.preparePrices(data.results);
                 $scope.pageSettings.totalItems = data.totalCount;
@@ -291,13 +295,13 @@ angular.module('virtoCommerce.pricingModule')
 
         function showExportDialog() {
             const selectedItemsCount = $scope.isAllSelected ? $scope.pageSettings.totalItems : $scope.selectedRows.length;
-            const validationError = selectedItemsCount > $scope.exportLimit[0];
+            const validationError = selectedItemsCount > $scope.exportLimit;
             var dialog = {
                 id: "priceExportDialog",
                 exportAll: $scope.isAllSelected ? true : false,
                 totalItemsCount: $scope.pageSettings.totalItems,
                 selectedItemsCount,
-                exportLimit: $scope.exportLimit[0],
+                exportLimit: $scope.exportLimit,
                 validationError,
                 advancedExport: function () {
                     if (exportDataRequest.providerConfig) {
