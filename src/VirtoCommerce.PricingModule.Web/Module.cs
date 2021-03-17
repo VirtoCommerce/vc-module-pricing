@@ -26,6 +26,7 @@ using VirtoCommerce.Platform.Security.Authorization;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
+using VirtoCommerce.PricingModule.Core.Model.ExportImport;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Common;
 using VirtoCommerce.PricingModule.Data.ExportImport;
@@ -88,15 +89,24 @@ namespace VirtoCommerce.PricingModule.Web
                 configure.AddPolicy(typeof(ExportablePrice).FullName + "ExportDataPolicy", exportPolicy);
                 configure.AddPolicy(typeof(ExportablePricelistAssignment).FullName + "ExportDataPolicy", exportPolicy);
             });
+
+
+            var snapshot = serviceCollection.BuildServiceProvider();
+            var configuration = snapshot.GetService<IConfiguration>();
+            serviceCollection.AddOptions<SimpleExportOptions>().Bind(configuration.GetSection("Pricing:SimpleExport")).ValidateDataAnnotations();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
         {
             _applicationBuilder = appBuilder;
-            var settingsManager = _applicationBuilder.ApplicationServices.GetService<ISettingsManager>();
 
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
+
+            var settingsManager = _applicationBuilder.ApplicationServices.GetService<ISettingsManager>();
+            var simpleExportImportOptions = appBuilder.ApplicationServices.GetService<IOptions<SimpleExportOptions>>().Value;
+            settingsManager.SetValue(ModuleConstants.Settings.General.SimpleExportLimitOfLines.Name,
+                simpleExportImportOptions.LimitOfLines ?? ModuleConstants.Settings.General.SimpleExportLimitOfLines.DefaultValue);
 
             var modulePermissions = ModuleConstants.Security.Permissions.AllPermissions.Select(p => new Permission
             {
