@@ -34,6 +34,12 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             ProductId = source.ProductId;
             Sale = source.Sale;
             OuterId = source.OuterId;
+            CreatedDate = source.CreatedDate;
+            ModifiedDate = source.ModifiedDate;
+            StartDate = source.StartDate;
+            EndDate = source.EndDate;
+            ModifiedBy = source.ModifiedBy;
+            CreatedBy = source.CreatedBy;
 
             return this;
         }
@@ -53,6 +59,13 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             result.ProductId = ProductId;
             result.ProductName = ProductName;
             result.Sale = Sale;
+            result.Code = Code;
+            result.ModifiedDate = ModifiedDate;
+            result.StartDate = StartDate;
+            result.EndDate = EndDate;
+            result.CreatedDate = CreatedDate;
+            result.CreatedBy = CreatedBy;
+            result.ModifiedBy = ModifiedBy;
 
             return result;
         }

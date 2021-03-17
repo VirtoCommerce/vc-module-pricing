@@ -1,0 +1,29 @@
+<div class="modal-header" ng-class="{'modal-warning': validationError}">
+    <h3 class="modal-title">{{ 'pricing.dialogs.pricelist-export.title' | translate }}</h3>
+</div>
+<div class="modal-body">
+    <p ng-if="!validationError">
+        <b ng-if="exportAll">{{ 'pricing.dialogs.pricelist-export.subtitle-all' | translate: {count: totalItemsCount} }}</b>
+        <b ng-if="!exportAll">{{ 'pricing.dialogs.pricelist-export.subtitle-not-all' | translate: {count: selectedItemsCount} }}</b>
+        {{ 'pricing.dialogs.pricelist-export.subtitle-end' | translate }}
+    </p>
+    <p class="form-group" ng-if="!validationError">
+        {{ 'pricing.dialogs.pricelist-export.advanced-export-subtitle-start' | translate }}
+        <a ng-click="advancedExport()">{{ 'pricing.dialogs.pricelist-export.advanced-export-subtitle-link' | translate }}</a>
+        {{ 'pricing.dialogs.pricelist-export.advanced-export-subtitle-end' | translate }}
+    </p>
+    <p ng-if="validationError">
+        {{ 'pricing.dialogs.pricelist-export.validation-error-subtitle-start' | translate }}
+        <b>{{ 'pricing.dialogs.pricelist-export.validation-error-subtitle-count' | translate: {count: selectedItemsCount} }}</b>
+        {{ 'pricing.dialogs.pricelist-export.validation-error-subtitle-middle' | translate }}
+        <b>{{ 'pricing.dialogs.pricelist-export.validation-error-subtitle-count' | translate: {count: exportLimit, comma:','} }}</b>
+        {{ 'pricing.dialogs.pricelist-export.validation-error-subtitle-end' | translate }}
+    </p>
+</div>
+<div class="modal-footer" ng-if="!validationError">
+    <button class="btn cancel-btn" ng-click="cancel()">{{ 'platform.commands.cancel' | translate }}</button>
+    <button class="btn" ng-click="yes()">{{ 'pricing.dialogs.pricelist-export.export' | translate }}</button>
+</div>
+<div class="modal-footer" ng-if="validationError">
+    <button class="btn" ng-click="cancel()">{{ 'platform.commands.ok' | translate }}</button>
+</div>

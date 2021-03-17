@@ -189,6 +189,20 @@
       "assignment-save": {
         "title": "Save changes",
         "message": "The catalog assignment has been modified. Do you want to save changes?"
+      },
+      "pricelist-export": {
+        "title": "Prices export",
+        "subtitle-all": "All {{count}} lines",
+        "subtitle-not-all": "{{count}} price lines",
+        "subtitle-end": "from this category will be exported to csv file.",
+        "advanced-export-subtitle-start": "You can",
+        "advanced-export-subtitle-link": "use advanced export",
+        "advanced-export-subtitle-end": "to make sophisticated prices selection.",
+        "validation-error-subtitle-start": "You have selected",
+        "validation-error-subtitle-middle": "but export is limited with",
+        "validation-error-subtitle-count": "{{count}} items{{comma}}",
+        "validation-error-subtitle-end": "you retrieve to export more",
+        "export": "Export"
       }
     },
     "commands": {

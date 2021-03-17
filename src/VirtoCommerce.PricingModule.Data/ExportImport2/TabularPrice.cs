@@ -1,3 +1,4 @@
+using System;
 using VirtoCommerce.ExportModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Data.ExportImport
@@ -13,6 +14,13 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
         public decimal? Sale { get; set; }
         public decimal List { get; set; }
         public int MinQuantity { get; set; }
+        public string Code { get; set; }
+        public DateTime? ModifiedDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string CreatedBy { get; set; }
+        public string ModifiedBy { get; set; }
 
         public object Clone()
         {
