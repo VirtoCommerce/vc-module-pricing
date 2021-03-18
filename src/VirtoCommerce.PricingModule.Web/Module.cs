@@ -90,10 +90,7 @@ namespace VirtoCommerce.PricingModule.Web
                 configure.AddPolicy(typeof(ExportablePricelistAssignment).FullName + "ExportDataPolicy", exportPolicy);
             });
 
-
-            var snapshot = serviceCollection.BuildServiceProvider();
-            var configuration = snapshot.GetService<IConfiguration>();
-            serviceCollection.AddOptions<SimpleExportOptions>().Bind(configuration.GetSection("Pricing:SimpleExport")).ValidateDataAnnotations();
+            serviceCollection.AddSingleton<IConfigureOptions<SimpleExportOptions>, ConfigureSimpleExportOptions>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
