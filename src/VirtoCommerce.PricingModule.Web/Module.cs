@@ -38,13 +38,14 @@ using VirtoCommerce.PricingModule.Web.JsonConverters;
 
 namespace VirtoCommerce.PricingModule.Web
 {
-    public class Module : IModule, IExportSupport, IImportSupport
+    public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration
     {
         private IApplicationBuilder _applicationBuilder;
 
         #region IModule Members
 
         public ManifestModuleInfo ModuleInfo { get; set; }
+        public IConfiguration Configuration { get; set; }
 
         public void Initialize(IServiceCollection serviceCollection)
         {
@@ -90,10 +91,7 @@ namespace VirtoCommerce.PricingModule.Web
                 configure.AddPolicy(typeof(ExportablePricelistAssignment).FullName + "ExportDataPolicy", exportPolicy);
             });
 
-
-            var snapshot = serviceCollection.BuildServiceProvider();
-            var configuration = snapshot.GetService<IConfiguration>();
-            serviceCollection.AddOptions<SimpleExportOptions>().Bind(configuration.GetSection("Pricing:SimpleExport")).ValidateDataAnnotations();
+            serviceCollection.AddOptions<SimpleExportOptions>().Bind(Configuration.GetSection("Pricing:SimpleExport")).ValidateDataAnnotations();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
