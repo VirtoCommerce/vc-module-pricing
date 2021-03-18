@@ -10,7 +10,7 @@ angular.module('virtoCommerce.pricingModule')
                 placeholder: '=',
                 selectedId: '=',
             },
-            templateUrl: 'Modules/$(VirtoCommerce.Pricing)/Scripts/directives/UiScroll.tpl.html',
+            templateUrl: 'Modules/$(VirtoCommerce.Pricing)/Scripts/directives/uiScroll.tpl.html',
             controller: ['$scope', function(scope) {
                 scope.list = [];
                 
