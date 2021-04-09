@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Pricing</id>
   <version>3.20.0</version>
@@ -15,7 +15,7 @@
   <projectUrl>https://virtocommerce.com/apps/extensions/virto-pricing-module</projectUrl>
   <iconUrl>Modules/$(VirtoCommerce.Pricing)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
-  <copyright>Copyright © 2011-2020 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2021 Virto Commerce. All rights reserved</copyright>
   <tags>price pricelist merchandise</tags>
   <assemblyFile>VirtoCommerce.PricingModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.PricingModule.Web.Module, VirtoCommerce.PricingModule.Web</moduleType>
