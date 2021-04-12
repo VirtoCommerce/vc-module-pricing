@@ -211,10 +211,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result.Select(x => x.Clone() as Price).ToArray();
         }
 
-        public virtual async Task<PricelistAssignment[]> GetPricelistAssignmentsByIdAsync(string[] ids)
+        public virtual Task<PricelistAssignment[]> GetPricelistAssignmentsByIdAsync(string[] ids)
         {
             var cacheKey = CacheKey.With(GetType(), nameof(GetPricelistAssignmentsByIdAsync), string.Join("-", ids));
-            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
+            return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
             {
                 PricelistAssignment[] result = null;
                 if (ids != null)
@@ -229,10 +229,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
             });
         }
 
-        public virtual async Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids)
+        public virtual Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids)
         {
             var cacheKey = CacheKey.With(GetType(), nameof(GetPricelistsByIdAsync), string.Join("-", ids));
-            return await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
+            return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
             {
                 Pricelist[] result = null;
                 if (ids != null)
@@ -313,6 +313,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         public virtual async Task SavePricelistsAsync(Pricelist[] priceLists)
         {
             var pkMap = new PrimaryKeyResolvingMap();
+            var changedEntries = new List<GenericChangedEntry<Pricelist>>();
             using (var repository = _repositoryFactory())
             {
                 var pricelistsIds = priceLists.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
@@ -324,13 +325,17 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var targetEntity = alreadyExistEntities.FirstOrDefault(x => x.Id == pricelist.Id);
                     if (targetEntity != null)
                     {
+                        changedEntries.Add(new GenericChangedEntry<Pricelist>(pricelist, targetEntity.ToModel(AbstractTypeFactory<Pricelist>.TryCreateInstance()), EntryState.Modified));
                         sourceEntity.Patch(targetEntity);
                     }
                     else
                     {
+                        changedEntries.Add(new GenericChangedEntry<Pricelist>(pricelist, EntryState.Added));
                         repository.Add(sourceEntity);
                     }
                 }
+
+                await _eventPublisher.Publish(new PricelistChangingEvent(changedEntries));
 
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
@@ -340,12 +345,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     PricelistsCacheRegion.ExpirePricelist(pricelist.Id);
                 }
                 ResetCache();
+
+                await _eventPublisher.Publish(new PricelistChangedEvent(changedEntries));
             }
         }
 
         public virtual async Task SavePricelistAssignmentsAsync(PricelistAssignment[] assignments)
         {
             var pkMap = new PrimaryKeyResolvingMap();
+            var changedEntries = new List<GenericChangedEntry<PricelistAssignment>>();
             using (var repository = _repositoryFactory())
             {
                 var assignmentsIds = assignments.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
@@ -357,13 +365,17 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var targetEntity = alreadyExistEntities.FirstOrDefault(x => x.Id == assignment.Id);
                     if (targetEntity != null)
                     {
+                        changedEntries.Add(new GenericChangedEntry<PricelistAssignment>(assignment, targetEntity.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance()), EntryState.Modified));
                         sourceEntity.Patch(targetEntity);
                     }
                     else
                     {
+                        changedEntries.Add(new GenericChangedEntry<PricelistAssignment>(assignment, EntryState.Added));
                         repository.Add(sourceEntity);
                     }
                 }
+
+                await _eventPublisher.Publish(new PricelistAssignmentChangingEvent(changedEntries));
 
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
@@ -374,6 +386,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     PricelistsCacheRegion.ExpirePricelist(assignment.PricelistId);
                 }
                 ResetCache();
+
+                await _eventPublisher.Publish(new PricelistAssignmentChangedEvent(changedEntries));
             }
         }
 
@@ -383,6 +397,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 var prices = await GetPricesByIdAsync(ids);
                 var changedEntries = prices.Select(x => new GenericChangedEntry<Price>(x, EntryState.Deleted));
+
+                await _eventPublisher.Publish(new PriceChangingEvent(changedEntries));
+
                 await repository.DeletePricesAsync(ids);
                 await repository.UnitOfWork.CommitAsync();
 
@@ -399,6 +416,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             using (var repository = _repositoryFactory())
             {
+                var pricelists = await GetPricelistsByIdAsync(ids);
+                var changedEntries = pricelists.Select(x => new GenericChangedEntry<Pricelist>(x, EntryState.Deleted));
+
+                await _eventPublisher.Publish(new PricelistChangingEvent(changedEntries));
+
                 await repository.DeletePricelistsAsync(ids);
                 await repository.UnitOfWork.CommitAsync();
 
@@ -407,6 +429,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     PricelistsCacheRegion.ExpirePricelist(id);
                 }
                 ResetCache();
+
+                await _eventPublisher.Publish(new PricelistChangedEvent(changedEntries));
             }
         }
 
@@ -414,6 +438,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             using (var repository = _repositoryFactory())
             {
+                var assignments = await GetPricelistAssignmentsByIdAsync(ids);
+                var changedEntries = assignments.Select(x => new GenericChangedEntry<PricelistAssignment>(x, EntryState.Deleted));
+
+                await _eventPublisher.Publish(new PricelistAssignmentChangingEvent(changedEntries));
+
                 await repository.DeletePricelistAssignmentsAsync(ids);
                 await repository.UnitOfWork.CommitAsync();
 
@@ -422,6 +451,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     PricelistAssignmentsCacheRegion.ExpirePricelistAssignment(id);
                 }
                 ResetCache();
+
+                await _eventPublisher.Publish(new PricelistAssignmentChangedEvent(changedEntries));
             }
         }
         #endregion
