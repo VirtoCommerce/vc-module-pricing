@@ -59,26 +59,30 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     if (criteria.GroupByProducts)
                     {
-                        var groupedQuery = query.Select(x => x.ProductId).OrderBy(x => x).Distinct();
-                        result.TotalCount = await groupedQuery.CountAsync();
+                        // unique priced product IDs
+                        var pricedProductsQuery = query.Select(x => x.ProductId).OrderBy(x => x).Distinct();
+                        result.TotalCount = await pricedProductsQuery.CountAsync();
 
                         if (criteria.Take > 0)
                         {
-                            query = query.Where(x => groupedQuery.Contains(x.ProductId));
+                            query = query.Where(x => pricedProductsQuery
+                                                        .OrderBy(x => x)
+                                                        .Skip(criteria.Skip).Take(criteria.Take).Contains(x.ProductId));
                         }
                     }
                     else
                     {
                         result.TotalCount = await query.CountAsync();
+
+                        query = query.Skip(criteria.Skip).Take(criteria.Take);
                     }
 
                     if (criteria.Take > 0)
                     {
                         var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
-                                                            .Skip(criteria.Skip).Take(criteria.Take)
-                                                            .Select(x => x.Id)
-                                                            .AsNoTracking()
-                                                            .ToArrayAsync();
+                                                    .Select(x => x.Id)
+                                                    .AsNoTracking()
+                                                    .ToArrayAsync();
 
                         var unorderedResults = await _pricingService.GetPricesByIdAsync(priceIds);
                         result.Results = unorderedResults.OrderBy(x => Array.IndexOf(priceIds, x.Id)).ToList();
