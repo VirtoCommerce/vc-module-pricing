@@ -42,7 +42,8 @@
           "item-name": "Item name",
           "item-code": "Item code",
           "price-range": "Price range",
-          "prices-count": "Prices count",
+          "price-count": "Price count",
+          "prices-count": "Prices count in this price list",
           "no-product-row-name": "Product with the given Id does not exist"
         },
         "placeholders": {

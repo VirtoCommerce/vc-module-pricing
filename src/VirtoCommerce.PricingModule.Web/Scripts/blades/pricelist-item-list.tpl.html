@@ -24,11 +24,11 @@
                         },
                         { 
                             name: 'product.name', displayName: 'pricing.blades.pricelist-item-list.labels.item-name', 
-                            cellTooltip:true, sort: { direction: uiGridConstants.ASC }, width: '**',
+                            cellTooltip:true, sort: { direction: uiGridConstants.ASC }, width: '***',
                             cellTemplate: 'productName.cell.html'
                         },
                         { name: 'product.code', displayName: 'pricing.blades.pricelist-item-list.labels.item-code'},
-                        { name: 'pricesLength', displayName: '#', headerTooltip: 'pricing.blades.pricelist-item-list.labels.prices-count', field: 'prices.length', width: 30},
+                        { name: 'pricesLength', displayName: 'pricing.blades.pricelist-item-list.labels.price-count', headerTooltip: 'pricing.blades.pricelist-item-list.labels.prices-count', field: 'prices.length', width: 36},
                         { name: 'prices', displayName: 'pricing.blades.pricelist-item-list.labels.price-range', headerTooltip: true, width: 90, cellTemplate: 'pricelistItems-list-priceRange.cell.html'}
                     ]})">
             <div class="table-wrapper" ng-if="blade.currentEntities.length">
