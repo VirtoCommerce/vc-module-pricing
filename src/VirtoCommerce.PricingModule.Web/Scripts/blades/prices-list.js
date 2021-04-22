@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.pricesListController', ['$scope', 'virtoCommerce.pricingModule.prices', 'platformWebApp.objCompareService', 'platformWebApp.bladeNavigationService', 'platformWebApp.uiGridHelper', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.ui-grid.extension', function ($scope, prices, objCompareService, bladeNavigationService, uiGridHelper, priceValidatorsService, gridOptionExtension) {
     $scope.uiGridConstants = uiGridHelper.uiGridConstants;
     var blade = $scope.blade;
@@ -9,10 +9,6 @@
         if (!blade.data.prices) {
             blade.data.prices = [];
         }
-
-        //if (!_.any(blade.data.prices)) {
-        //    addNewPrice(blade.data.prices);
-        //}
 
         blade.currentEntities = angular.copy(blade.data.prices);
         blade.origEntity = blade.data.prices;
@@ -41,7 +37,7 @@
              _.all(blade.currentEntities, $scope.isListPriceValid) &&
              _.all(blade.currentEntities, $scope.isSalePriceValid) &&
              _.all(blade.currentEntities, $scope.isUniqueQty) &&
-            (blade.currentEntities.length == 0 || _.some(blade.currentEntities, function (x) { return x.minQuantity == 1; }));
+            (blade.currentEntities.length === 0 || _.some(blade.currentEntities, function (x) { return x.minQuantity === 1; }));
     }
 
     $scope.saveChanges = function () {
@@ -70,7 +66,7 @@
         }
     };
 
-    $scope.setForm = function (form) { $scope.formScope = form; }
+    $scope.setForm = function (form) { $scope.formScope = form; };
 
     blade.toolbarCommands = [
         {
@@ -181,7 +177,7 @@
         },
         isUniqueQtyForPricelist: function (data) {
             // Disable unique quantity test when time filtering is used.
-            return Math.round(data.minQuantity) > 0 && _.filter(allPrices, function (price) { return price.pricelistId == data.pricelistId && price.minQuantity == data.minQuantity && !price.startDate && !price.EndDate && !data.startDate && !data.endDate; }).length <= 1;
+            return Math.round(data.minQuantity) > 0 && _.filter(allPrices, function (price) { return price.pricelistId === data.pricelistId && price.minQuantity === data.minQuantity && !price.startDate && !price.EndDate && !data.startDate && !data.endDate; }).length <= 1;
         }
     };
 }])

@@ -215,6 +215,7 @@ angular.module('virtoCommerce.pricingModule')
 
         function getSearchCriteria() {
             var result = {
+                groupByProducts: true,
                 pricelistIds: [blade.currentEntityId],
                 keyword: filter.keyword,
                 sort: uiGridHelper.getSortExpression($scope),
