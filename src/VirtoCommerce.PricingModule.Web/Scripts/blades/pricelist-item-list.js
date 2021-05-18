@@ -28,6 +28,7 @@ angular.module('virtoCommerce.pricingModule')
             prices.search(blade.getSearchCriteria(), function (data) {
                 blade.currentEntities = $scope.preparePrices(data.results);
                 $scope.pageSettings.totalItems = data.totalCount;
+                blade.totalItems = data.totalCount;
 
                 blade.isLoading = false;
             }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
