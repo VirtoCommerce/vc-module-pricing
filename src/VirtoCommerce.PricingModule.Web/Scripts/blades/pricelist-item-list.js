@@ -224,7 +224,7 @@ angular.module('virtoCommerce.pricingModule')
                 canExecuteMethod: function () {
                     return true;
                 },
-                executeMethod: function (blade) {
+                executeMethod: function () {
                     blade.exportPrices();
                 }
             }
