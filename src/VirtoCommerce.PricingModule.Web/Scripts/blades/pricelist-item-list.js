@@ -10,12 +10,25 @@ angular.module('virtoCommerce.pricingModule')
             }
         };
 
+        blade.getSearchCriteria = function() {
+            var result = {
+                groupByProducts: true,
+                pricelistIds: [blade.currentEntityId],
+                keyword: filter.keyword,
+                sort: uiGridHelper.getSortExpression($scope),
+                skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
+                take: $scope.pageSettings.itemsPerPageCount
+            }
+            return result;
+        }
+
         blade.refresh = function () {
             blade.isLoading = true;
 
-            prices.search(getSearchCriteria(), function (data) {
+            prices.search(blade.getSearchCriteria(), function (data) {
                 blade.currentEntities = $scope.preparePrices(data.results);
                 $scope.pageSettings.totalItems = data.totalCount;
+                blade.totalItems = data.totalCount;
 
                 blade.isLoading = false;
             }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
@@ -143,6 +156,46 @@ angular.module('virtoCommerce.pricingModule')
             dialogService.showConfirmationDialog(dialog);
         }
 
+        blade.exportPrices = function() {
+            var isAllSelected = $scope.gridApi.selection.getSelectAllState();
+            exportDataRequest.dataQuery.isAllSelected = isAllSelected;
+
+            var selectedRows = $scope.gridApi.selection.getSelectedRows();
+
+            exportDataRequest.dataQuery.objectIds = [];
+            if (!isAllSelected && selectedRows) {
+                var priceIds = _.pluck(_.flatten(_.pluck(selectedRows, 'prices')), 'id');
+                exportDataRequest.dataQuery.objectIds = priceIds;
+            }
+
+            exportDataRequest.dataQuery.productIds = [];
+
+            if ((exportDataRequest.dataQuery.productIds && exportDataRequest.dataQuery.productIds.length)
+                || (!isAllSelected)) {
+                exportDataRequest.dataQuery.productIds = _.map(selectedRows, function (product) {
+                    return product.productId;
+                });
+            }
+
+            var searchCriteria = blade.getSearchCriteria();
+
+            if (isAllSelected || (searchCriteria.pricelistIds && searchCriteria.pricelistIds.length > 0) || searchCriteria.keyword !== '') {
+                exportDataRequest.dataQuery.isAnyFilterApplied = true;
+            }
+
+            angular.extend(exportDataRequest.dataQuery, searchCriteria);
+
+            var newBlade = {
+                id: 'priceExport',
+                title: 'pricing.blades.exporter.priceTitle',
+                subtitle: 'pricing.blades.exporter.priceSubtitle',
+                controller: 'virtoCommerce.exportModule.exportSettingsController',
+                template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
+                exportDataRequest: exportDataRequest
+            };
+            bladeNavigationService.showBlade(newBlade, blade);
+        }
+
         blade.toolbarCommands = [
             {
                 name: "platform.commands.refresh", icon: 'fa fa-refresh',
@@ -172,58 +225,10 @@ angular.module('virtoCommerce.pricingModule')
                     return true;
                 },
                 executeMethod: function () {
-                    var isAllSelected = $scope.gridApi.selection.getSelectAllState();
-                    exportDataRequest.dataQuery.isAllSelected = isAllSelected;
-
-                    var selectedRows = $scope.gridApi.selection.getSelectedRows();
-
-                    exportDataRequest.dataQuery.objectIds = [];
-                    if (!isAllSelected && selectedRows) {
-                        var priceIds = _.pluck(_.flatten(_.pluck(selectedRows, 'prices')), 'id');
-                        exportDataRequest.dataQuery.objectIds = priceIds;
-                    }
-
-                    exportDataRequest.dataQuery.productIds = [];
-
-                    if ((exportDataRequest.dataQuery.productIds && exportDataRequest.dataQuery.productIds.length)
-                        || (!isAllSelected)) {
-                        exportDataRequest.dataQuery.productIds = _.map(selectedRows, function (product) {
-                            return product.productId;
-                        });
-                    }
-
-                    var searchCriteria = getSearchCriteria();
-
-                    if (isAllSelected || (searchCriteria.pricelistIds && searchCriteria.pricelistIds.length > 0) || searchCriteria.keyword !== '') {
-                        exportDataRequest.dataQuery.isAnyFilterApplied = true;
-                    }
-
-                    angular.extend(exportDataRequest.dataQuery, searchCriteria);
-
-                    var newBlade = {
-                        id: 'priceExport',
-                        title: 'pricing.blades.exporter.priceTitle',
-                        subtitle: 'pricing.blades.exporter.priceSubtitle',
-                        controller: 'virtoCommerce.exportModule.exportSettingsController',
-                        template: 'Modules/$(VirtoCommerce.Export)/Scripts/blades/export-settings.tpl.html',
-                        exportDataRequest: exportDataRequest
-                    };
-                    bladeNavigationService.showBlade(newBlade, blade);
+                    blade.exportPrices();
                 }
             }
         ];
-
-        function getSearchCriteria() {
-            var result = {
-                groupByProducts: true,
-                pricelistIds: [blade.currentEntityId],
-                keyword: filter.keyword,
-                sort: uiGridHelper.getSortExpression($scope),
-                skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-                take: $scope.pageSettings.itemsPerPageCount
-            }
-            return result;
-        }
 
         $scope.getPriceRange = function (priceGroup) {
             var retVal;
