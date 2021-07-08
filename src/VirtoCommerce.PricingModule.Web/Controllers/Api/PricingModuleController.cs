@@ -45,7 +45,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <returns>Prices array</returns>
         [HttpPost]
         [Route("api/pricing/evaluate")]
-        public async Task<ActionResult<Price[]>> EvaluatePrices([FromBody]PriceEvaluationContext evalContext)
+        public async Task<ActionResult<Price[]>> EvaluatePrices([FromBody] PriceEvaluationContext evalContext)
         {
             var retVal = (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToArray();
 
@@ -60,7 +60,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <returns>Pricelist array</returns>
         [HttpPost]
         [Route("api/pricing/pricelists/evaluate")]
-        public async Task<ActionResult<Pricelist[]>> EvaluatePriceLists([FromBody]PriceEvaluationContext evalContext)
+        public async Task<ActionResult<Pricelist[]>> EvaluatePriceLists([FromBody] PriceEvaluationContext evalContext)
         {
             var retVal = (await _pricingService.EvaluatePriceListsAsync(evalContext)).ToArray();
             return Ok(retVal);
@@ -135,7 +135,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <remarks>Search product prices</remarks>
         [HttpGet]
         [Route("api/catalog/products/prices/search")]
-        public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesGet([FromQuery]PricesSearchCriteria criteria)
+        public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesGet([FromQuery] PricesSearchCriteria criteria)
         {
             return Ok(await InnerSearchProductPrices(criteria));
         }
@@ -146,7 +146,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <remarks>Search product prices</remarks>
         [HttpPost]
         [Route("api/catalog/products/prices/search")]
-        public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesPost([FromBody]PricesSearchCriteria criteria)
+        public async Task<ActionResult<ProductPriceSearchResult>> SearchProductPricesPost([FromBody] PricesSearchCriteria criteria)
         {
             return Ok(await InnerSearchProductPrices(criteria));
         }
@@ -235,7 +235,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpPost]
         [Route("api/pricing/assignments")]
         [Authorize(ModuleConstants.Security.Permissions.Create)]
-        public async Task<ActionResult<PricelistAssignment>> CreatePricelistAssignment([FromBody]PricelistAssignment assignment)
+        public async Task<ActionResult<PricelistAssignment>> CreatePricelistAssignment([FromBody] PricelistAssignment assignment)
         {
             await _pricingService.SavePricelistAssignmentsAsync(new[] { assignment });
             return Ok(assignment);
@@ -250,7 +250,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/assignments")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> UpdatePriceListAssignment([FromBody]PricelistAssignment assignment)
+        public async Task<ActionResult> UpdatePriceListAssignment([FromBody] PricelistAssignment assignment)
         {
             await _pricingService.SavePricelistAssignmentsAsync(new[] { assignment });
             return NoContent();
@@ -260,7 +260,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/products/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> UpdateProductsPrices([FromBody]ProductPrice[] productPrices)
+        public async Task<ActionResult> UpdateProductsPrices([FromBody] ProductPrice[] productPrices)
         {
             var result = await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria
             {
@@ -308,7 +308,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpPut]
         [Route("api/products/{productId}/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
-        public async Task<ActionResult> UpdateProductPrices([FromBody]ProductPrice productPrice)
+        public async Task<ActionResult> UpdateProductPrices([FromBody] ProductPrice productPrice)
         {
             return await UpdateProductsPrices(new[] { productPrice });
         }
@@ -350,7 +350,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpPost]
         [Route("api/pricing/pricelists")]
         [Authorize(ModuleConstants.Security.Permissions.Create)]
-        public async Task<ActionResult<Pricelist>> CreatePriceList([FromBody]Pricelist priceList)
+        public async Task<ActionResult<Pricelist>> CreatePriceList([FromBody] Pricelist priceList)
         {
             await _pricingService.SavePricelistsAsync(new[] { priceList });
             return Ok(priceList);
@@ -363,7 +363,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> UpdatePriceList([FromBody]Pricelist priceList)
+        public async Task<ActionResult> UpdatePriceList([FromBody] Pricelist priceList)
         {
             await _pricingService.SavePricelistsAsync(new[] { priceList });
             return NoContent();
@@ -395,7 +395,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [Route("api/pricing/filteredAssignments")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
-        public async Task<ActionResult> DeleteFilteredAssignments([FromQuery]PricelistAssignmentsSearchCriteria criteria)
+        public async Task<ActionResult> DeleteFilteredAssignments([FromQuery] PricelistAssignmentsSearchCriteria criteria)
         {
             if (criteria == null)
             {
@@ -405,17 +405,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             var result = await _pricingSearchService.SearchPricelistAssignmentsAsync(criteria);
 
             var pricelistAssignmentsIds = result.Results.Select(x => x.Id);
-            const int BATCH_SIZE = 20;
-            var skip = 0;
-            IEnumerable<string> batch;
-            do
-            {
-                batch = pricelistAssignmentsIds.Skip(skip).Take(BATCH_SIZE);
-                await _pricingService.DeletePricelistsAssignmentsAsync(batch.ToArray());
-                skip += BATCH_SIZE;
-            }
-            while (batch.Any());
 
+            const int BATCH_SIZE = 20;
+            for (var skip = 0; skip < pricelistAssignmentsIds.Count(); skip += BATCH_SIZE)
+            {
+                var batch = pricelistAssignmentsIds.Skip(skip).Take(BATCH_SIZE);
+                await _pricingService.DeletePricelistsAssignmentsAsync(batch.ToArray());
+            }
 
             return NoContent();
         }
