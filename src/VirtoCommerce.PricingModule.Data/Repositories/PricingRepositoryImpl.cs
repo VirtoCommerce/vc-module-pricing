@@ -43,26 +43,30 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return retVal;
         }
 
-        public async Task DeletePricesAsync(string[] ids)
+        public Task DeletePricesAsync(string[] ids)
         {
-            await ExecuteStoreCommand("DELETE FROM Price WHERE Id IN ({0})", ids);
+            return ExecuteSqlCommandAsync("DELETE FROM Price WHERE Id IN ({0})", ids);
         }
 
-        public async Task DeletePricelistsAsync(string[] ids)
+        public Task DeletePricelistsAsync(string[] ids)
         {
-            await ExecuteStoreCommand("DELETE FROM Pricelist WHERE Id IN ({0})", ids);
+            return ExecuteSqlCommandAsync("DELETE FROM Pricelist WHERE Id IN ({0})", ids);
         }
 
-        public async Task DeletePricelistAssignmentsAsync(string[] ids)
+        public Task DeletePricelistAssignmentsAsync(string[] ids)
         {
-            await ExecuteStoreCommand("DELETE FROM PricelistAssignment WHERE Id IN ({0})", ids);
+            return ExecuteSqlCommandAsync("DELETE FROM PricelistAssignment WHERE Id IN ({0})", ids);
         }
 
 
-        protected virtual async Task ExecuteStoreCommand(string commandTemplate, IEnumerable<string> parameterValues)
+        protected virtual Task ExecuteSqlCommandAsync(string commandTemplate, IEnumerable<string> parameterValues)
         {
-            var command = CreateCommand(commandTemplate, parameterValues);
-            await DbContext.Database.ExecuteSqlRawAsync(command.Text, command.Parameters);
+            if (parameterValues?.Count() > 0)
+            {
+                var command = CreateCommand(commandTemplate, parameterValues);
+                return DbContext.Database.ExecuteSqlRawAsync(command.Text, command.Parameters);
+            }
+            return Task.CompletedTask;
         }
 
         protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
