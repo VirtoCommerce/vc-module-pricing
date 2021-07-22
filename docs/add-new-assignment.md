@@ -7,7 +7,7 @@
 ## Simple Assignment without rules and conditions
 
 1. The user selects **Price List** on the Price Lists screen and clicks on the **Assignments widget**
-![Price list](/docs/media/screen-price-lists.png)
+![Price list](media/screen-price-lists.png)
 1. The system opens a new screen with an active **Add** button that enables the user to add a new Assignment to the selected Price List
 1. The user clicks the **Add** button and the system opens the **New Price List Assignment** screen. The screen will display the following elements:
     1. Assignment Name input field - required
@@ -33,7 +33,7 @@
 ![New price list assignment](media/screen-new-price-list-assignment.png)
 1. The system will create an assignment without additional rules and conditions
 1. The system will display the number of assignments created in the Assignment widget
-![Assignment](/docs/media/screen-assignment.png)
+![Assignment](media/screen-assignment.png)
 
 ## Assignment with Rules and Conditions
 
