@@ -16,7 +16,7 @@ The user can start the data export by filtering/selecting data and going to gene
 
 The user can either select all the price lists available from the list as shown below:
 
-![Start Export](screen-start-export.png)
+![Start Export](media/screen-start-export.png)
 
 ![Export Prices](media/screen-export-prices.png)
 
