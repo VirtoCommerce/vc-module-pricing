@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using VirtoCommerce.CatalogModule.Core.Events;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.GenericCrud;
+using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
 
@@ -11,13 +13,13 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
 {
     public class DeletePricesProductChangedEventHandler : IEventHandler<ProductChangedEvent>
     {
-        private readonly IPricingService _pricingService;
-        private readonly IPricingSearchService _pricingSearchService;
+        private readonly ICrudService<Price> _priceService;
+        private readonly ISearchService<PricesSearchCriteria, PriceSearchResult, Price> _priceSearchService;
 
-        public DeletePricesProductChangedEventHandler(IPricingService pricingService, IPricingSearchService pricingSearchService)
+        public DeletePricesProductChangedEventHandler(IPriceService priceService, IPriceSearchService priceSearchService)
         {
-            _pricingService = pricingService;
-            _pricingSearchService = pricingSearchService;
+            _priceService = (ICrudService<Price>)priceService;
+            _priceSearchService = (ISearchService<PricesSearchCriteria, PriceSearchResult, Price>)priceSearchService;
         }
 
         public virtual async Task Handle(ProductChangedEvent message)
@@ -31,10 +33,10 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
                                                           .Distinct().ToArray();
             if (!deletedProductIds.IsNullOrEmpty())
             {
-                var searchResult = await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria { ProductIds = deletedProductIds, Take = int.MaxValue });
+                var searchResult = await _priceSearchService.SearchAsync(new PricesSearchCriteria { ProductIds = deletedProductIds, Take = int.MaxValue });
                 if (searchResult.Results.Any())
                 {
-                    await _pricingService.DeletePricesAsync(searchResult.Results.Select(p => p.Id).ToArray());
+                    await _priceService.DeleteAsync(searchResult.Results.Select(p => p.Id).ToArray());
                 }
             }
         }

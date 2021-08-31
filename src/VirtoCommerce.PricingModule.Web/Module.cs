@@ -52,6 +52,13 @@ namespace VirtoCommerce.PricingModule.Web
 
             serviceCollection.AddTransient<IPricingRepository, PricingRepositoryImpl>();
             serviceCollection.AddTransient<Func<IPricingRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPricingRepository>());
+            serviceCollection.AddTransient<IPriceRepository, PriceRepository>();
+            serviceCollection.AddTransient<Func<IPriceRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPriceRepository>());
+            serviceCollection.AddTransient<IPricelistRepository, PricelistRepository>();
+            serviceCollection.AddTransient<Func<IPricelistRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPricelistRepository>());
+            serviceCollection.AddTransient<IPriceRepository, PriceRepository>();
+            serviceCollection.AddTransient<Func<IPricelistAssignmentRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPricelistAssignmentRepository>());
+            serviceCollection.AddTransient<IPricelistAssignmentRepository, PricelistAssignmentRepository>();
 
             serviceCollection.AddTransient<IPricingService, PricingServiceImpl>();
             serviceCollection.AddTransient<IPricingSearchService, PricingSearchServiceImpl>();
@@ -63,6 +70,13 @@ namespace VirtoCommerce.PricingModule.Web
             serviceCollection.AddTransient<DeletePricesProductChangedEventHandler>();
             serviceCollection.AddTransient<IndexPricesProductChangedEventHandler>();
             serviceCollection.AddTransient<ObjectSettingEntryChangedEventHandler>();
+
+            serviceCollection.AddTransient<IPriceService, PriceService>();
+            serviceCollection.AddTransient<IPriceSearchService, PriceSearchService>();
+            serviceCollection.AddTransient<IPricelistService, PricelistService>();
+            serviceCollection.AddTransient<IPricelistSearchService, PricelistSearchService>();
+            serviceCollection.AddTransient<IPricelistAssignmentService, PricelistAssignmentService>();
+            serviceCollection.AddTransient<IPricelistAssignmentSearchService, PricelistAssignmentSearchService>();
 
             serviceCollection.AddTransient<ModuleConfigurator>();
 

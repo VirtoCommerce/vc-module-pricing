@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Core.Services
 {
+    [Obsolete(@"Need to remove after inheriting IPriceService, IPricelistService, and IPricelistAssignmentService from ICrudService.")]
     public interface IPricingService
     {        
         Task<Price[]> GetPricesByIdAsync(string[] ids);

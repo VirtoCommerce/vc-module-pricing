@@ -17,6 +17,7 @@ using VirtoCommerce.ExportModule.Data.Extensions;
 using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.ExportModule.JsonProvider;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
@@ -34,11 +35,19 @@ namespace VirtoCommerce.PricingModule.Test
             //Arrange
             IKnownExportTypesRegistrar registrar = new KnownExportTypesService();
 
-            var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPricesAsync(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetTestPriceResult());
-            searchServiceMock.Setup(x => x.SearchPricesAsync(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PriceSearchResult());
+            
+            var searchServiceMock = new Mock<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>>();
+            searchServiceMock.Setup(x =>
+                    x.SearchAsync(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetTestPriceResult());
+            searchServiceMock.Setup(x =>
+                    x.SearchAsync(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PriceSearchResult());
 
-            var priceServiceMock = new Mock<IPricingService>();
+            var pricelistSearchServiceMock = new Mock<ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>>();
+            var pricelistAssignmentSearchServiceMock = new Mock<ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>>();
+
+            var priceServiceMock = new Mock<ICrudService<Price>>();
+            var pricelistServiceMock = new Mock<ICrudService<Pricelist>>();
+            var pricelistAssignmentServiceMock = new Mock<ICrudService<PricelistAssignment>>();
 
             var itemServiceMock = new Mock<IItemService>();
 
@@ -46,7 +55,12 @@ namespace VirtoCommerce.PricingModule.Test
             var resolver = (IKnownExportTypesResolver)registrar;
 
             registrar.RegisterType(ExportedTypeDefinitionBuilder.Build<ExportablePrice, PriceExportDataQuery>()
-                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(searchServiceMock.Object, priceServiceMock.Object, itemServiceMock.Object, new Mock<ICatalogService>().Object))
+                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(priceServiceMock.As<IPriceService>().Object
+                    , searchServiceMock.As<IPriceSearchService>().Object, pricelistServiceMock.As<IPricelistService>().Object
+                    , pricelistSearchServiceMock.As<IPricelistSearchService>().Object
+                    , pricelistAssignmentServiceMock.As<IPricelistAssignmentService>().Object
+                    , pricelistAssignmentSearchServiceMock.As<IPricelistAssignmentSearchService>().Object
+                    , itemServiceMock.Object, new Mock<ICatalogService>().Object))
                 .WithMetadata(metadata));
 
             var includedPropertyNames = new string[] { "Currency", "ProductId", "Sale", "List", "MinQuantity", "StartDate", "EndDate", "EffectiveValue" };
@@ -102,22 +116,37 @@ namespace VirtoCommerce.PricingModule.Test
             //Arrange
             IKnownExportTypesRegistrar registrar = new KnownExportTypesService();
 
-            var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPricelistsAsync(It.Is<PricelistSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetTestPricelistResult());
-            searchServiceMock.Setup(x => x.SearchPricelistsAsync(It.Is<PricelistSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PricelistSearchResult());
+            var pricelistSearchServiceMock = new Mock<ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>>();
+            pricelistSearchServiceMock.Setup(x =>
+                x.SearchAsync(It.Is<PricelistSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetTestPricelistResult());
+            pricelistSearchServiceMock.Setup(x =>
+                x.SearchAsync(It.Is<PricelistSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PricelistSearchResult());
 
-            searchServiceMock.Setup(x => x.SearchPricesAsync(It.IsAny<PricesSearchCriteria>())).ReturnsAsync(new PriceSearchResult()
+            var searchServiceMock = new Mock<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>>();
+            searchServiceMock.As<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>>().Setup(x =>
+                x.SearchAsync(It.IsAny<PricesSearchCriteria>())).ReturnsAsync(new PriceSearchResult()
             {
                 TotalCount = 0,
                 Results = new List<Price>(),
             });
 
-            var priceServiceMock = new Mock<IPricingService>();
+            var pricelistAssignmentSearchServiceMock = new Mock<ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>>();
+
+            var priceServiceMock = new Mock<ICrudService<Price>>();
+            var pricelistServiceMock = new Mock<ICrudService<Pricelist>>();
+            var pricelistAssignmentServiceMock = new Mock<ICrudService<PricelistAssignment>>();
+
+            var itemServiceMock = new Mock<IItemService>();
 
             var metadata = typeof(ExportablePricelist).GetPropertyNames();
             var resolver = (IKnownExportTypesResolver)registrar;
             registrar.RegisterType(ExportedTypeDefinitionBuilder.Build<ExportablePricelist, PricelistExportDataQuery>()
-                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(searchServiceMock.Object, priceServiceMock.Object, new Mock<IItemService>().Object, new Mock<ICatalogService>().Object))
+                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(priceServiceMock.As<IPriceService>().Object
+                    , searchServiceMock.As<IPriceSearchService>().Object, pricelistServiceMock.As<IPricelistService>().Object
+                    , pricelistSearchServiceMock.As<IPricelistSearchService>().Object
+                    , pricelistAssignmentServiceMock.As<IPricelistAssignmentService>().Object
+                    , pricelistAssignmentSearchServiceMock.As<IPricelistAssignmentSearchService>().Object
+                    , itemServiceMock.Object, new Mock<ICatalogService>().Object))
                 .WithMetadata(metadata));
 
             var exportProviderFactories = new[] {
@@ -174,17 +203,31 @@ namespace VirtoCommerce.PricingModule.Test
         {
             IKnownExportTypesRegistrar registrar = new KnownExportTypesService();
 
-            var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPricelistAssignmentsAsync(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetPricelistAssignmentSearchResult());
-            searchServiceMock.Setup(x => x.SearchPricelistAssignmentsAsync(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PricelistAssignmentSearchResult());
+            var pricelistAssignmentSearchServiceMock = new Mock<ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>>();
+            pricelistAssignmentSearchServiceMock
+                .Setup(x => x.SearchAsync(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetPricelistAssignmentSearchResult());
+            pricelistAssignmentSearchServiceMock
+                .Setup(x => x.SearchAsync(It.Is<PricelistAssignmentsSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PricelistAssignmentSearchResult());
 
-            var priceServiceMock = new Mock<IPricingService>();
+            var searchServiceMock = new Mock<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>>();
+            var pricelistSearchServiceMock = new Mock<ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>>();
+
+            var priceServiceMock = new Mock<ICrudService<Price>>();
+            var pricelistServiceMock = new Mock<ICrudService<Pricelist>>();
+            var pricelistAssignmentServiceMock = new Mock<ICrudService<PricelistAssignment>>();
+
+            var itemServiceMock = new Mock<IItemService>();
             var catalogServiceMock = new Mock<ICatalogService>();
 
             var metadata = typeof(ExportablePricelistAssignment).GetPropertyNames();
             var resolver = (IKnownExportTypesResolver)registrar;
             registrar.RegisterType(ExportedTypeDefinitionBuilder.Build<ExportablePricelistAssignment, PricelistAssignmentExportDataQuery>()
-                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(searchServiceMock.Object, priceServiceMock.Object, new Mock<IItemService>().Object, catalogServiceMock.Object))
+                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(priceServiceMock.As<IPriceService>().Object
+                    , searchServiceMock.As<IPriceSearchService>().Object, pricelistServiceMock.As<IPricelistService>().Object
+                    , pricelistSearchServiceMock.As<IPricelistSearchService>().Object
+                    , pricelistAssignmentServiceMock.As<IPricelistAssignmentService>().Object
+                    , pricelistAssignmentSearchServiceMock.As<IPricelistAssignmentSearchService>().Object
+                    , itemServiceMock.Object, new Mock<ICatalogService>().Object))
                 .WithMetadata(metadata));
 
             var exportProviderFactories = new[] {
@@ -246,17 +289,29 @@ namespace VirtoCommerce.PricingModule.Test
 
             var resolver = (IKnownExportTypesResolver)registrar;
 
-            var searchServiceMock = new Mock<IPricingSearchService>();
-            searchServiceMock.Setup(x => x.SearchPricesAsync(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetTestPriceResult());
-            searchServiceMock.Setup(x => x.SearchPricesAsync(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PriceSearchResult());
+            var searchServiceMock = new Mock<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>>();
+            searchServiceMock.Setup(x =>
+                    x.SearchAsync(It.Is<PricesSearchCriteria>(y => y.Skip == 0))).ReturnsAsync(GetTestPriceResult());
+            searchServiceMock.Setup(x =>
+                    x.SearchAsync(It.Is<PricesSearchCriteria>(y => y.Skip > 0))).ReturnsAsync(new PriceSearchResult());
 
-            var priceServiceMock = new Mock<IPricingService>();
+            var pricelistSearchServiceMock = new Mock<ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>>();
+            var pricelistAssignmentSearchServiceMock = new Mock<ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>>();
+
+            var priceServiceMock = new Mock<ICrudService<Price>>();
+            var pricelistServiceMock = new Mock<ICrudService<Pricelist>>();
+            var pricelistAssignmentServiceMock = new Mock<ICrudService<PricelistAssignment>>();
 
             var itemServiceMock = new Mock<IItemService>();
 
             var metadata = typeof(ExportablePrice).GetPropertyNames();
             registrar.RegisterType(ExportedTypeDefinitionBuilder.Build<ExportablePrice, PriceExportDataQuery>()
-                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(searchServiceMock.Object, priceServiceMock.Object, itemServiceMock.Object, new Mock<ICatalogService>().Object))
+                .WithDataSourceFactory(new PricingExportPagedDataSourceFactory(priceServiceMock.As<IPriceService>().Object
+                    , searchServiceMock.As<IPriceSearchService>().Object, pricelistServiceMock.As<IPricelistService>().Object
+                    , pricelistSearchServiceMock.As<IPricelistSearchService>().Object
+                    , pricelistAssignmentServiceMock.As<IPricelistAssignmentService>().Object
+                    , pricelistAssignmentSearchServiceMock.As<IPricelistAssignmentSearchService>().Object
+                    , itemServiceMock.Object, new Mock<ICatalogService>().Object))
                 .WithMetadata(metadata)
                 .WithTabularMetadata(typeof(TabularPrice).GetPropertyNames()));
 

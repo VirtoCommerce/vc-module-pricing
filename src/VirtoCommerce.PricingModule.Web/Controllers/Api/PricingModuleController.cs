@@ -8,6 +8,7 @@ using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
@@ -20,24 +21,35 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
     [Authorize(ModuleConstants.Security.Permissions.Read)]
     public class PricingModuleController : Controller
     {
-        private readonly IPricingService _pricingService;
-        private readonly IPricingSearchService _pricingSearchService;
         private readonly IItemService _itemService;
         private readonly IBlobUrlResolver _blobUrlResolver;
-
+        private readonly IPriceService _priceService;
+        private readonly IPricelistService _pricelistService;
+        private readonly IPricelistAssignmentService _pricelistAssignmentService;
+        private readonly ISearchService<PricesSearchCriteria, PriceSearchResult, Price> _priceSearchService;
+        private readonly ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist> _pricelistSearchService;
+        private readonly ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment> _pricelistAssignmentSearchService;
 
         public PricingModuleController(
-            IPricingService pricingService
-            , IItemService itemService
-            , IPricingSearchService pricingSearchService
-            , IBlobUrlResolver blobUrlResolver)
+            IItemService itemService
+            , IBlobUrlResolver blobUrlResolver
+            , IPriceService priceService
+            , IPriceSearchService priceSearchService
+            , IPricelistService pricelistService
+            , IPricelistSearchService pricelistSearchService
+            , IPricelistAssignmentService pricelistAssignmentService
+            , IPricelistAssignmentSearchService pricelistAssignmentSearchService)
         {
-            _pricingService = pricingService;
             _itemService = itemService;
-            _pricingSearchService = pricingSearchService;
             _blobUrlResolver = blobUrlResolver;
+            _priceSearchService = (ISearchService<PricesSearchCriteria, PriceSearchResult, Price>)priceSearchService;
+            _pricelistSearchService = (ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>)pricelistSearchService;
+            _pricelistAssignmentSearchService = (ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>)pricelistAssignmentSearchService;
+            _priceService = priceService;
+            _pricelistService = pricelistService;
+            _pricelistAssignmentService = pricelistAssignmentService;
         }
-
+        
         /// <summary>
         /// Evaluate prices by given context
         /// </summary>
@@ -47,7 +59,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/evaluate")]
         public async Task<ActionResult<Price[]>> EvaluatePrices([FromBody] PriceEvaluationContext evalContext)
         {
-            var retVal = (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToArray();
+            var retVal = (await _priceService.EvaluateProductPricesAsync(evalContext)).ToArray();
 
             return Ok(retVal);
         }
@@ -62,7 +74,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/evaluate")]
         public async Task<ActionResult<Pricelist[]>> EvaluatePriceLists([FromBody] PriceEvaluationContext evalContext)
         {
-            var retVal = (await _pricingService.EvaluatePriceListsAsync(evalContext)).ToArray();
+            var retVal = (await _pricelistAssignmentService.EvaluatePriceListsAsync(evalContext)).ToArray();
             return Ok(retVal);
         }
         /// <summary>
@@ -73,7 +85,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/assignments/{id}")]
         public async Task<ActionResult<PricelistAssignment>> GetPricelistAssignmentById(string id)
         {
-            var assignment = (await _pricingService.GetPricelistAssignmentsByIdAsync(new[] { id })).FirstOrDefault();
+            var assignment = (await ((ICrudService<PricelistAssignment>)_pricelistAssignmentService).GetByIdsAsync(new[] { id })).FirstOrDefault();
             if (assignment != null)
             {
                 assignment.DynamicExpression?.MergeFromPrototype(AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance());
@@ -109,7 +121,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 criteria = new PricelistSearchCriteria();
             }
-            var result = await _pricingSearchService.SearchPricelistsAsync(criteria);
+            var result = await _pricelistSearchService.SearchAsync(criteria);
             return Ok(result);
         }
 
@@ -125,7 +137,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 criteria = new PricelistAssignmentsSearchCriteria();
             }
-            var result = await _pricingSearchService.SearchPricelistAssignmentsAsync(criteria);
+            var result = await _pricelistAssignmentSearchService.SearchAsync(criteria);
             return Ok(result);
         }
 
@@ -159,7 +171,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             }
 
             var result = AbstractTypeFactory<ProductPriceSearchResult>.TryCreateInstance();
-            var searchResult = await _pricingSearchService.SearchPricesAsync(criteria);
+            var searchResult = await _priceSearchService.SearchAsync(criteria);
             result.TotalCount = searchResult.TotalCount;
             result.Results = new List<ProductPrice>();
 
@@ -237,7 +249,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<PricelistAssignment>> CreatePricelistAssignment([FromBody] PricelistAssignment assignment)
         {
-            await _pricingService.SavePricelistAssignmentsAsync(new[] { assignment });
+            await ((ICrudService<PricelistAssignment>)_pricelistAssignmentService).SaveChangesAsync(new[] { assignment });
             return Ok(assignment);
         }
 
@@ -252,7 +264,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdatePriceListAssignment([FromBody] PricelistAssignment assignment)
         {
-            await _pricingService.SavePricelistAssignmentsAsync(new[] { assignment });
+            await ((ICrudService<PricelistAssignment>)_pricelistAssignmentService).SaveChangesAsync(new[] { assignment });
             return NoContent();
         }
 
@@ -262,7 +274,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateProductsPrices([FromBody] ProductPrice[] productPrices)
         {
-            var result = await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria
+            var result = await _priceSearchService.SearchAsync(new PricesSearchCriteria
             {
                 Take = int.MaxValue,
                 ProductIds = productPrices.Select(x => x.ProductId).ToArray()
@@ -297,10 +309,10 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                     changedPrices.AddRange(sourcePricesGroup);
                 }
             }
-            await _pricingService.SavePricesAsync(changedPrices.ToArray());
+            await ((ICrudService<Price>)_priceService).SaveChangesAsync(changedPrices.ToArray());
             if (!deletedPrices.IsNullOrEmpty())
             {
-                await _pricingService.DeletePricesAsync(deletedPrices.Select(x => x.Id).ToArray());
+                await ((ICrudService<Price>)_priceService).DeleteAsync(deletedPrices.Select(x => x.Id).ToArray());
             }
             return NoContent();
         }
@@ -322,8 +334,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/catalog/products/{productId}/pricelists")]
         public async Task<ActionResult<Pricelist[]>> GetProductPriceLists(string productId)
         {
-            var productPrices = (await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria { Take = int.MaxValue, ProductId = productId })).Results;
-            var priceLists = (await _pricingSearchService.SearchPricelistsAsync(new PricelistSearchCriteria { Take = int.MaxValue })).Results;
+            var productPrices = (await _priceSearchService.SearchAsync(new PricesSearchCriteria { Take = int.MaxValue, ProductId = productId })).Results;
+            var priceLists = (await _pricelistSearchService.SearchAsync(new PricelistSearchCriteria { Take = int.MaxValue })).Results;
             foreach (var pricelist in priceLists)
             {
                 pricelist.Prices = productPrices.Where(x => x.PricelistId == pricelist.Id).ToList();
@@ -339,7 +351,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/{id}")]
         public async Task<ActionResult<Pricelist>> GetPriceListById(string id)
         {
-            var pricelist = (await _pricingService.GetPricelistsByIdAsync(new[] { id })).FirstOrDefault();
+            var pricelist = (await ((ICrudService<Pricelist>)_pricelistService).GetByIdsAsync(new[] { id })).FirstOrDefault();
             return Ok(pricelist);
         }
 
@@ -352,7 +364,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<Pricelist>> CreatePriceList([FromBody] Pricelist priceList)
         {
-            await _pricingService.SavePricelistsAsync(new[] { priceList });
+            await ((ICrudService<Pricelist>)_pricelistService).SaveChangesAsync(new[] { priceList });
             return Ok(priceList);
         }
 
@@ -365,7 +377,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdatePriceList([FromBody] Pricelist priceList)
         {
-            await _pricingService.SavePricelistsAsync(new[] { priceList });
+            await ((ICrudService<Pricelist>)_pricelistService).SaveChangesAsync(new[] { priceList });
             return NoContent();
         }
 
@@ -381,7 +393,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteAssignments(string[] ids)
         {
-            await _pricingService.DeletePricelistsAssignmentsAsync(ids);
+            await ((ICrudService<PricelistAssignment>)_pricelistAssignmentService).DeleteAsync(ids);
             return NoContent();
         }
 
@@ -402,7 +414,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 criteria = new PricelistAssignmentsSearchCriteria();
             }
 
-            var result = await _pricingSearchService.SearchPricelistAssignmentsAsync(criteria);
+            var result = await _pricelistAssignmentSearchService.SearchAsync(criteria);
 
             var pricelistAssignmentsIds = result.Results.Select(x => x.Id);
 
@@ -410,7 +422,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             for (var skip = 0; skip < pricelistAssignmentsIds.Count(); skip += BATCH_SIZE)
             {
                 var batch = pricelistAssignmentsIds.Skip(skip).Take(BATCH_SIZE);
-                await _pricingService.DeletePricelistsAssignmentsAsync(batch.ToArray());
+                await ((ICrudService<PricelistAssignment>)_pricelistAssignmentService).DeleteAsync(batch.ToArray());
             }
 
             return NoContent();
@@ -428,8 +440,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteProductPrices(string pricelistId, string[] productIds)
         {
-            var result = await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria { PriceListId = pricelistId, ProductIds = productIds, Take = int.MaxValue });
-            await _pricingService.DeletePricesAsync(result.Results.Select(x => x.Id).ToArray());
+            var result = await _priceSearchService.SearchAsync(new PricesSearchCriteria { PriceListId = pricelistId, ProductIds = productIds, Take = int.MaxValue });
+            await ((ICrudService<Price>)_priceService).DeleteAsync(result.Results.Select(x => x.Id).ToArray());
             return NoContent();
         }
 
@@ -444,7 +456,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteProductPrice(string[] priceIds)
         {
-            await _pricingService.DeletePricesAsync(priceIds);
+            await ((ICrudService<Price>)_priceService).DeleteAsync(priceIds);
             return NoContent();
         }
 
@@ -459,7 +471,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeletePricelists(string[] ids)
         {
-            await _pricingService.DeletePricelistsAsync(ids);
+            await ((ICrudService<Pricelist>)_pricelistService).DeleteAsync(ids);
             return NoContent();
         }
     }
