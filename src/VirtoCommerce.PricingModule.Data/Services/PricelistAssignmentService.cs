@@ -14,7 +14,6 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
-using VirtoCommerce.PricingModule.Data.Caching;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
@@ -95,9 +94,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
         }
 
-        protected override void ClearCache(IEnumerable<PricelistAssignment> assignments)
+        protected override void ClearCache(IEnumerable<PricelistAssignment> models)
         {
-            foreach (var assignment in assignments)
+            foreach (var assignment in models)
             {
                 GenericCachingRegion<PricelistAssignment>.ExpireTokenForKey(assignment.Id);
                 GenericCachingRegion<Pricelist>.ExpireTokenForKey(assignment.PricelistId);
