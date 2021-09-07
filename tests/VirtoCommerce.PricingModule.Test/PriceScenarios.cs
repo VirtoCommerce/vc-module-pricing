@@ -2,12 +2,14 @@ using System;
 using System.Linq;
 using MockQueryable.Moq;
 using Moq;
+using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Model;
 using VirtoCommerce.Platform.Data.Repositories;
 using VirtoCommerce.PricingModule.Core.Model;
+using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
@@ -37,9 +39,9 @@ namespace VirtoCommerce.PricingModule.Test
                 //with from/till dates (bounded)
                 new PriceEntity { Id = "4", ProductId = "4", StartDate = new DateTime(2018, 06, 01), EndDate = new DateTime(2018, 12, 01) }
             }.AsQueryable().BuildMock();
-            var mockPricingRepository = new Mock<IPricingRepository>();
+            var mockPricingRepository = new Mock<IPriceRepository>();
             mockPricingRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
-            mockPricingRepository.Setup(x => x.GetPricesByIdsAsync(It.IsAny<string[]>())).ReturnsAsync(mockPrices.Object.ToArray());
+            mockPricingRepository.Setup(x => x.GetByIdsAsync(It.IsAny<string[]>())).ReturnsAsync(mockPrices.Object.ToArray());
             var mockPlatformRepository = new Mock<IPlatformRepository>();
             mockPlatformRepository.SetupGet(x => x.OperationLogs).Returns(mockOperationsLogs.AsQueryable());
             var mockSettingManager = new Mock<ISettingsManager>();
@@ -131,11 +133,13 @@ namespace VirtoCommerce.PricingModule.Test
                 new PriceEntity { Id = "10", List = 10, PricelistId = "List1" , ProductId = "ProductId" },
             }.AsQueryable().BuildMock();
 
-            var mockRepository = new Mock<IPricingRepository>();
+            var mockRepository= new Mock<IPriceRepository>();
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
-
-            var service = new PricingServiceImpl(() => mockRepository.Object, null, null, null, null,
-                new DefaultPricingPriorityFilterPolicy());
+            var pricelistService = new Mock<IPricelistService>();
+            var pricelistAssignmentService = new Mock<IPricelistAssignmentService>();
+            var itemService = new Mock<IItemService>();
+            var service = new PriceService(() => mockRepository.Object, null, null, 
+                new DefaultPricingPriorityFilterPolicy(), pricelistAssignmentService.Object, pricelistService.Object,  itemService.Object);
 
             // Eval with date and no matches, this should result in default price.
             evalContext.CertainDate = new DateTime(2018, 09, 20);

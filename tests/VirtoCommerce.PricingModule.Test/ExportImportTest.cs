@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Moq;
@@ -21,29 +22,21 @@ namespace VirtoCommerce.PricingModule.Test
         {
             var data = GetSampleDataStream();
 
-            var priceService = new Mock<ICrudService<Price>>();
-            var pricelistService = new Mock<ICrudService<Pricelist>>();
-            var pricelistAssignmentService = new Mock<ICrudService<PricelistAssignment>>();
-            var priceSearchService = new Mock<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>>();
-            var pricelistSearchService = new Mock<ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>>();
-            var pricelistAssignmentSearchService = new Mock<ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>>();
-
+            var pricingService = new Mock<IPricingService>();
+            var pricingSearchService = new Mock<IPricingSearchService>();
 
             var settingsManager = GetSettingsManager();
 
             settingsManager.Setup(s => s.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new ObjectSettingEntry { Value = 2 });
 
-            var importProcessor = new PricingExportImport(priceService.As<IPriceService>().Object, priceSearchService.As<IPriceSearchService>().Object,
-                pricelistService.As<IPricelistService>().Object, pricelistSearchService.As<IPricelistSearchService>().Object,
-                pricelistAssignmentService.As<IPricelistAssignmentService>().Object,
-                pricelistAssignmentSearchService.As<IPricelistAssignmentSearchService>().Object, settingsManager.Object, GetJsonSerializer());
+            var importProcessor = new PricingExportImport(settingsManager.Object, GetJsonSerializer(), pricingService.Object, pricingSearchService.Object);
 
             var cancellationTokenMock = new Mock<ICancellationToken>();
             await importProcessor.DoImportAsync(data, GetProgressCallback, cancellationTokenMock.Object);
 
-            priceService.As<ICrudService<Price>>().Verify(p =>  p.SaveChangesAsync(It.IsAny<Price[]>()), Times.Exactly(2));
-            pricelistService.As<ICrudService<Pricelist>>().Verify(p => p.SaveChangesAsync(It.IsAny<Pricelist[]>()), Times.Exactly(1));
-            pricelistAssignmentService.As<ICrudService<PricelistAssignment>>().Verify(p => p.SaveChangesAsync(It.IsAny<PricelistAssignment[]>()), Times.Exactly(1));
+            pricingService.Verify(p =>  p.SavePricesAsync(It.IsAny<IEnumerable<Price>>()), Times.Exactly(2));
+            pricingService.Verify(p => p.SavePricelistsAsync(It.IsAny<IEnumerable<Pricelist>>()), Times.Exactly(1));
+            pricingService.Verify(p => p.SavePricelistAssignmentsAsync(It.IsAny<IEnumerable<PricelistAssignment>>()), Times.Exactly(1));
         }
 
 

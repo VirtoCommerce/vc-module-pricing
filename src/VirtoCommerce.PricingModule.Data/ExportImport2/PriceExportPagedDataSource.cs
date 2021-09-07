@@ -6,7 +6,6 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
@@ -15,27 +14,22 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 {
     public class PriceExportPagedDataSource : ExportPagedDataSource<PriceExportDataQuery, PricesSearchCriteria>
     {
-        private readonly ICrudService<Price> _priceService;
-        private readonly ISearchService<PricesSearchCriteria, PriceSearchResult, Price> _priceSearchService;
-        private readonly ICrudService<Pricelist> _pricelistService;
-
         private readonly IItemService _itemService;
         private readonly PriceExportDataQuery _dataQuery;
 
-        public PriceExportPagedDataSource(
-            IPriceSearchService priceSearchService,
-            IPriceService priceService,
-            IPricelistService pricelistService,
-            IItemService itemService,
-            PriceExportDataQuery dataQuery) : base(dataQuery)
+        private readonly IPricingService _pricingService;
+        private readonly IPricingSearchService _pricingSearchService;
+
+        public PriceExportPagedDataSource(IPricingService pricingService
+            , IPricingSearchService pricingSearchService
+            , IItemService itemService
+            , PriceExportDataQuery dataQuery) : base(dataQuery)
         {
-            _priceSearchService = (ISearchService<PricesSearchCriteria, PriceSearchResult, Price>)priceSearchService;
-            _priceService = (ICrudService <Price>)priceService;
-            _pricelistService = (ICrudService<Pricelist>)pricelistService;
+            _pricingService = pricingService;
+            _pricingSearchService = pricingSearchService;
             _itemService = itemService;
             _dataQuery = dataQuery;
         }
-
 
         protected override PricesSearchCriteria BuildSearchCriteria(PriceExportDataQuery exportDataQuery)
         {
@@ -56,12 +50,12 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
             if (searchCriteria.ObjectIds.Any(x => !string.IsNullOrWhiteSpace(x)))
             {
-                result = _priceService.GetByIdsAsync(searchCriteria.ObjectIds.AsEnumerable()).GetAwaiter().GetResult().ToArray();
+                result = _pricingService.GetPricesByIdAsync(searchCriteria.ObjectIds).GetAwaiter().GetResult().ToArray();
                 totalCount = result.Length;
             }
             else
             {
-                var priceSearchResult = _priceSearchService.SearchAsync(searchCriteria).GetAwaiter().GetResult();
+                var priceSearchResult = _pricingSearchService.SearchPricesAsync(searchCriteria).GetAwaiter().GetResult();
                 result = priceSearchResult.Results.ToArray();
                 totalCount = priceSearchResult.TotalCount;
             }
@@ -91,7 +85,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             var productIds = models.Select(x => x.ProductId).Distinct().ToArray();
             var pricelistIds = models.Select(x => x.PricelistId).Distinct().ToArray();
             var products = _itemService.GetByIdsAsync(productIds, ItemResponseGroup.ItemInfo.ToString()).GetAwaiter().GetResult();
-            var pricelists = _pricelistService.GetByIdsAsync(pricelistIds).GetAwaiter().GetResult();
+            var pricelists = _pricingService.GetPricelistsByIdAsync(pricelistIds.AsEnumerable()).GetAwaiter().GetResult();
 
             foreach (var kvp in viewableMap)
             {

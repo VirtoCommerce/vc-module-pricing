@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
@@ -39,16 +38,16 @@ namespace VirtoCommerce.PricingModule.Data.Services
         }
 
 
-        public override async Task SaveChangesAsync(IEnumerable<Price> prices)
+        public override async Task SaveChangesAsync(IEnumerable<Price> models)
         {
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<Price>>();
             using (var repository = _repositoryFactory())
             {
-                var alreadyExistPricesEntities = await LoadEntities(repository, prices.Select(x => x.Id).Where(x => x != null).Distinct().ToArray());
+                var alreadyExistPricesEntities = await LoadEntities(repository, models.Select(x => x.Id).Where(x => x != null).Distinct().ToArray());
 
                 //Create default priceLists for prices without pricelist 
-                foreach (var priceWithoutPricelistGroup in prices.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
+                foreach (var priceWithoutPricelistGroup in models.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
                 {
                     var defaultPriceListId = _pricelistService.GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
                     var pricelists = await ((ICrudService<Pricelist>)_pricelistService).GetByIdsAsync(new[] { defaultPriceListId });
@@ -67,7 +66,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     }
                 }
 
-                foreach (var price in prices)
+                foreach (var price in models)
                 {
                     var sourceEntity = AbstractTypeFactory<PriceEntity>.TryCreateInstance().FromModel(price, pkMap);
                     var targetEntity = alreadyExistPricesEntities.FirstOrDefault(x => x.Id == price.Id);
@@ -88,18 +87,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 await repository.UnitOfWork.CommitAsync();
                 pkMap.ResolvePrimaryKeys();
 
-                ClearCache(prices);
+                ClearCache(models);
 
                 await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
             }
         }
 
-        /// <summary>
-        /// Evaluation product prices.
-        /// Will get either all prices or one price per currency depending on the settings in evalContext.
-        /// </summary>
-        /// <param name="evalContext"></param>
-        /// <returns></returns>
         public virtual async Task<IEnumerable<Price>> EvaluateProductPricesAsync(PriceEvaluationContext evalContext)
         {
             if (evalContext == null)

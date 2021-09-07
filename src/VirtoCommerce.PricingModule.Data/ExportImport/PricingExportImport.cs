@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
-using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.ExportImport;
 using VirtoCommerce.PricingModule.Core;
@@ -21,34 +19,20 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
         private readonly ISettingsManager _settingsManager;
         private readonly JsonSerializer _jsonSerializer;
 
-        private readonly ICrudService<Price> _priceService;
-        private readonly ICrudService<Pricelist> _pricelistService;
-        private readonly ICrudService<PricelistAssignment> _pricelistAssignmentService;
-        private readonly ISearchService<PricesSearchCriteria, PriceSearchResult, Price> _priceSearchService;
-        private readonly ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist> _pricelistSearchService;
-        private readonly ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment> _pricelistAssignmentSearchService;
+        private readonly IPricingService _pricingService;
+        private readonly IPricingSearchService _pricingSearchService;
 
         private int? _batchSize;
 
-        public PricingExportImport(IPriceService priceService
-            , IPriceSearchService priceSearchService
-            , IPricelistService pricelistService
-            , IPricelistSearchService pricelistSearchService
-            , IPricelistAssignmentService pricelistAssignmentService
-            , IPricelistAssignmentSearchService pricelistAssignmentSearchService
-            , ISettingsManager settingsManager
-            , JsonSerializer jsonSerializer)
+        public PricingExportImport(ISettingsManager settingsManager
+            , JsonSerializer jsonSerializer
+            , IPricingService pricingService
+            , IPricingSearchService pricingSearchService)
         {
             _settingsManager = settingsManager;
-
             _jsonSerializer = jsonSerializer;
-
-            _priceSearchService = (ISearchService<PricesSearchCriteria, PriceSearchResult, Price>)priceSearchService;
-            _pricelistSearchService = (ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>)pricelistSearchService;
-            _pricelistAssignmentSearchService = (ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>)pricelistAssignmentSearchService;
-            _priceService = (ICrudService<Price>)priceService;
-            _pricelistService = (ICrudService<Pricelist>)pricelistService;
-            _pricelistAssignmentService = (ICrudService<PricelistAssignment>)pricelistAssignmentService;
+            _pricingService = pricingService;
+            _pricingSearchService = pricingSearchService;
         }
 
         private int BatchSize
@@ -84,7 +68,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
                 await writer.WritePropertyNameAsync("Pricelists");
 
                 await writer.SerializeJsonArrayWithPagingAsync(_jsonSerializer, BatchSize, async (skip, take) =>
-                    (GenericSearchResult<Pricelist>)await _pricelistSearchService.SearchAsync(new PricelistSearchCriteria { Skip = skip, Take = take })
+                    (GenericSearchResult<Pricelist>)await _pricingSearchService.SearchPricelistsAsync(new PricelistSearchCriteria { Skip = skip, Take = take })
                 , (processedCount, totalCount) =>
                 {
                     progressInfo.Description = $"{ processedCount } of { totalCount } pricelits have been exported";
@@ -98,7 +82,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
                 await writer.WritePropertyNameAsync("Assignments");
 
                 await writer.SerializeJsonArrayWithPagingAsync(_jsonSerializer, BatchSize, async (skip, take) =>
-                    (GenericSearchResult<PricelistAssignment>)await _pricelistAssignmentSearchService.SearchAsync(new PricelistAssignmentsSearchCriteria { Skip = skip, Take = take })
+                    (GenericSearchResult<PricelistAssignment>)await _pricingSearchService.SearchPricelistAssignmentsAsync(new PricelistAssignmentsSearchCriteria { Skip = skip, Take = take })
                 , (processedCount, totalCount) =>
                 {
                     progressInfo.Description = $"{ processedCount } of { totalCount } pricelits assignments have been exported";
@@ -112,7 +96,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
                 await writer.WritePropertyNameAsync("Prices");
 
                 await writer.SerializeJsonArrayWithPagingAsync(_jsonSerializer, BatchSize, async (skip, take) =>
-                    (GenericSearchResult<Price>)await _priceSearchService.SearchAsync(new PricesSearchCriteria { Skip = skip, Take = take })
+                    (GenericSearchResult<Price>)await _pricingSearchService.SearchPricesAsync(new PricesSearchCriteria { Skip = skip, Take = take })
                 , (processedCount, totalCount) =>
                 {
                     progressInfo.Description = $"{ processedCount } of { totalCount } prices have been exported";
@@ -143,7 +127,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
                         if (readerValue == "Pricelists")
                         {
-                            await reader.DeserializeJsonArrayWithPagingAsync<Pricelist>(_jsonSerializer, BatchSize, items => _pricelistService.SaveChangesAsync(items.ToArray()), processedCount =>
+                            await reader.DeserializeJsonArrayWithPagingAsync<Pricelist>(_jsonSerializer, BatchSize, items => _pricingService.SavePricelistsAsync(items), processedCount =>
                             {
                                 progressInfo.Description = $"{ processedCount } price lists have been imported";
                                 progressCallback(progressInfo);
@@ -151,7 +135,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
                         }
                         else if (readerValue == "Prices")
                         {
-                            await reader.DeserializeJsonArrayWithPagingAsync<Price>(_jsonSerializer, BatchSize, items => _priceService.SaveChangesAsync(items.ToArray()), processedCount =>
+                            await reader.DeserializeJsonArrayWithPagingAsync<Price>(_jsonSerializer, BatchSize, items => _pricingService.SavePricesAsync(items), processedCount =>
                             {
                                 progressInfo.Description = $"Prices: {progressInfo.ProcessedCount} have been imported";
                                 progressCallback(progressInfo);
@@ -159,7 +143,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
                         }
                         else if (readerValue == "Assignments")
                         {
-                            await reader.DeserializeJsonArrayWithPagingAsync<PricelistAssignment>(_jsonSerializer, BatchSize, items => _pricelistAssignmentService.SaveChangesAsync(items.ToArray()), processedCount =>
+                            await reader.DeserializeJsonArrayWithPagingAsync<PricelistAssignment>(_jsonSerializer, BatchSize, items => _pricingService.SavePricelistAssignmentsAsync(items), processedCount =>
                             {
                                 progressInfo.Description = $"{progressInfo.ProcessedCount} assignments have been imported";
                                 progressCallback(progressInfo);

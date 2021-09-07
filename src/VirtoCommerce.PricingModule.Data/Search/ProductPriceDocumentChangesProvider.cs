@@ -11,7 +11,7 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.SearchModule.Core.Model;
-using VirtoCommerce.SearchModule.Core.Services;
+
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
@@ -23,9 +23,9 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
         private readonly IChangeLogSearchService _changeLogSearchService;
         private readonly ISettingsManager _settingsManager;
-        private readonly Func<IPricingRepository> _repositoryFactory;
+        private readonly Func<IPriceRepository> _repositoryFactory;
 
-        public ProductPriceDocumentChangesProvider(IChangeLogSearchService changeLogSearchService, ISettingsManager settingsManager, Func<IPricingRepository> repositoryFactory)
+        public ProductPriceDocumentChangesProvider(IChangeLogSearchService changeLogSearchService, ISettingsManager settingsManager, Func<IPriceRepository> repositoryFactory)
         {
             _changeLogSearchService = changeLogSearchService;
             _settingsManager = settingsManager;
