@@ -113,10 +113,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                                              .Where(x => evalContext.ProductIds.Contains(x.ProductId))
                                              .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
 
-                if (evalContext.PricelistIds.IsNullOrEmpty())
-                {
-                    evalContext.PricelistIds = (await _pricelistAssignmentService.EvaluatePriceListsAsync(evalContext)).Select(x => x.Id).ToArray();
-                }
+                evalContext.PricelistIds = evalContext.PricelistIds.IsNullOrEmpty() ? (await _pricelistAssignmentService.EvaluatePriceListsAsync(evalContext)).Select(x => x.Id).ToArray()
+                                                                                    : evalContext.PricelistIds;
 
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
 
@@ -133,35 +131,39 @@ namespace VirtoCommerce.PricingModule.Data.Services
             //Apply pricing  filtration strategy for found prices
             result.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
 
+            if (_productService == null) {
+                return result;
+            }
             //Then variation inherited prices
-            if (_productService != null)
+            var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct()).ToArray();
+            if (!productIdsWithoutPrice.Any()) {
+                return result;
+            }
+
+            //Try to inherit prices for variations from their main product
+            //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
+            var variations = (await _productService.GetByIdsAsync(productIdsWithoutPrice, ItemResponseGroup.ItemInfo.ToString()))
+                .Where(x => x.MainProductId != null).ToList();
+            evalContext = evalContext.Clone() as PriceEvaluationContext;
+            evalContext.ProductIds = variations.Select(x => x.MainProductId).Distinct().ToArray();
+
+            if (evalContext.ProductIds.IsNullOrEmpty()) {
+                return result;
+            }
+
+            var inheritedPrices = await EvaluateProductPricesAsync(evalContext);
+            foreach (var inheritedPrice in inheritedPrices)
             {
-                var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct()).ToArray();
-                //Try to inherit prices for variations from their main product
-                //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
-                if (productIdsWithoutPrice.Any())
+                foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
                 {
-                    var variations = (await _productService.GetByIdsAsync(productIdsWithoutPrice, ItemResponseGroup.ItemInfo.ToString()))
-                        .Where(x => x.MainProductId != null).ToList();
-                    evalContext = evalContext.Clone() as PriceEvaluationContext;
-                    evalContext.ProductIds = variations.Select(x => x.MainProductId).Distinct().ToArray();
-                    if (!evalContext.ProductIds.IsNullOrEmpty())
-                    {
-                        var inheritedPrices = await EvaluateProductPricesAsync(evalContext);
-                        foreach (var inheritedPrice in inheritedPrices)
-                        {
-                            foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
-                            {
-                                var variationPrice = inheritedPrice.Clone() as Price;
-                                //Reset id for correct override price in possible update 
-                                variationPrice.Id = null;
-                                variationPrice.ProductId = variation.Id;
-                                result.Add(variationPrice);
-                            }
-                        }
-                    }
+                    var variationPrice = inheritedPrice.Clone() as Price;
+                    //Reset id for correct override price in possible update 
+                    variationPrice.Id = null;
+                    variationPrice.ProductId = variation.Id;
+                    result.Add(variationPrice);
                 }
             }
+
             return result;
         }
 
