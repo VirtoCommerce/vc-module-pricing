@@ -67,17 +67,14 @@
 <script type="text/ng-template" id="ui-grid/dateCellTemplate">
     <div class="ui-grid-cell-contents" title="{{grid.validate.getTitleFormattedErrors(row.entity,col.colDef)}}">
         <div class="form-editor form-input">
-            <input class="ng-valid form-input" date ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" placeholder="yyyy-mm-ddThh:mm:ss" readonly="readonly" />
+            <input class="ng-valid form-input" value="{{MODEL_COL_FIELD | date: 'short' }}" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" readonly="readonly" placeholder="N/A" />
         </div>
     </div>
 </script>
 <!-- Date Cell Write -->
 <script type="text/ng-template" id="date-cellTextEditor">
     <div class="form-editor form-input __calendar">
-        <input class="form-input" date ng-model="MODEL_COL_FIELD" placeholder="yyyy-mm-ddThh:mm:ss" datepicker-popup is-open="grid.appScope.datepickers[col.colDef.name]" />
-        <button class="btn" type="button" ng-click="grid.appScope.open($event, col.colDef.name)">
-            <i class="btn-ico fa fa-calendar"></i>
-        </button>
+        <input type="text" class="form-input" date ng-model="MODEL_COL_FIELD" datepicker-popup="short" datepicker-popup-dropless="true" is-open="grid.appScope.datepickers[col.colDef.name]">
     </div>
 </script>
 
