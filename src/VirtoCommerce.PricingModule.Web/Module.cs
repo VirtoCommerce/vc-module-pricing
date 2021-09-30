@@ -15,6 +15,7 @@ using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -23,7 +24,9 @@ using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Security.Authorization;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Events;
+using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
+using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Common;
 using VirtoCommerce.PricingModule.Data.ExportImport;
@@ -52,7 +55,12 @@ namespace VirtoCommerce.PricingModule.Web
 
             serviceCollection.AddTransient<IPricingRepository, PricingRepositoryImpl>();
             serviceCollection.AddTransient<Func<IPricingRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPricingRepository>());
-
+            serviceCollection.AddTransient<ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>, PricelistAssignmentSearchService>();
+            serviceCollection.AddTransient<ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>, PricelistSearchService> ();
+            serviceCollection.AddTransient<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>, PriceSearchService> ();
+            serviceCollection.AddTransient<ICrudService<PricelistAssignment>, PricelistAssignmentService> ();
+            serviceCollection.AddTransient<ICrudService<Pricelist>, PricelistService> ();
+            serviceCollection.AddTransient<ICrudService<Price>, PriceService> ();
             serviceCollection.AddTransient<IPricingService, PricingServiceImpl>();
             serviceCollection.AddTransient<IPricingSearchService, PricingSearchServiceImpl>();
             serviceCollection.AddTransient<IPricingPriorityFilterPolicy, DefaultPricingPriorityFilterPolicy>();

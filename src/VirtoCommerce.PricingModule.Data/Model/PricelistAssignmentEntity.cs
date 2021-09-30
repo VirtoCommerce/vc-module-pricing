@@ -3,12 +3,13 @@ using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using VirtoCommerce.CoreModule.Core.Conditions;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
 
 namespace VirtoCommerce.PricingModule.Data.Model
 {
-    public class PricelistAssignmentEntity : AuditableEntity, IHasOuterId
+    public class PricelistAssignmentEntity : AuditableEntity, IHasOuterId, IDataEntity<PricelistAssignmentEntity, PricelistAssignment>
     {
         [StringLength(128)]
         [Required]

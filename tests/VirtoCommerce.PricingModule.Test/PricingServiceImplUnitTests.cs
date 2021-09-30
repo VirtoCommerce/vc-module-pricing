@@ -26,6 +26,7 @@ namespace VirtoCommerce.PricingModule.Test
         private readonly Mock<IPricingRepository> _repositoryMock;
         private readonly Mock<IItemService> _productServiceMock;
         private readonly Mock<ILogger<PricingServiceImpl>> _loggerMock;
+        private readonly Mock<ILogger<PricelistAssignmentService>> _loggerMockAssignmentService;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
         private readonly Mock<IPricingPriorityFilterPolicy> _pricingPriorityFilterPolicyMock;
 
@@ -35,6 +36,7 @@ namespace VirtoCommerce.PricingModule.Test
             _repositoryMock = new Mock<IPricingRepository>();
             _productServiceMock = new Mock<IItemService>();
             _loggerMock = new Mock<ILogger<PricingServiceImpl>>();
+            _loggerMockAssignmentService = new Mock<ILogger<PricelistAssignmentService>>();
             _eventPublisherMock = new Mock<IEventPublisher>();
             _pricingPriorityFilterPolicyMock = new Mock<IPricingPriorityFilterPolicy>();
         }
@@ -125,11 +127,13 @@ namespace VirtoCommerce.PricingModule.Test
         {
 
             return new PricingServiceImpl(
+                new PricelistAssignmentService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object, _loggerMockAssignmentService.Object),
+                new PricelistService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
+                new PriceService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object, new PricelistService(() => pricingRepository, platformMemoryCache, null)),
                 () => pricingRepository,
                 _productServiceMock.Object,
                 _loggerMock.Object,
                 platformMemoryCache,
-                _eventPublisherMock.Object,
                 _pricingPriorityFilterPolicyMock.Object
                 );
         }
