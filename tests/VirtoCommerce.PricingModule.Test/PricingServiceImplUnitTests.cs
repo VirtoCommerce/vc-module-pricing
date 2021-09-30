@@ -25,7 +25,7 @@ namespace VirtoCommerce.PricingModule.Test
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IPricingRepository> _repositoryMock;
         private readonly Mock<IItemService> _productServiceMock;
-        private readonly Mock<ILogger<PricingServiceImpl>> _loggerMock;
+        private readonly Mock<ILogger<PricingEvaluatorService>> _loggerMock;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
         private readonly Mock<IPricingPriorityFilterPolicy> _pricingPriorityFilterPolicyMock;
 
@@ -34,7 +34,7 @@ namespace VirtoCommerce.PricingModule.Test
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _repositoryMock = new Mock<IPricingRepository>();
             _productServiceMock = new Mock<IItemService>();
-            _loggerMock = new Mock<ILogger<PricingServiceImpl>>();
+            _loggerMock = new Mock<ILogger<PricingEvaluatorService>>();
             _eventPublisherMock = new Mock<IEventPublisher>();
             _pricingPriorityFilterPolicyMock = new Mock<IPricingPriorityFilterPolicy>();
         }
@@ -128,11 +128,13 @@ namespace VirtoCommerce.PricingModule.Test
                 new PricelistAssignmentService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
                 new PricelistService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
                 new PriceService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object, new PricelistService(() => pricingRepository, platformMemoryCache, null)),
-                () => pricingRepository,
-                _productServiceMock.Object,
-                _loggerMock.Object,
-                platformMemoryCache,
-                _pricingPriorityFilterPolicyMock.Object
+                new PricingEvaluatorService(
+                        () => pricingRepository,
+                        _productServiceMock.Object,
+                        _loggerMock.Object,
+                        platformMemoryCache,
+                        _pricingPriorityFilterPolicyMock.Object
+                    )
                 );
         }
     }

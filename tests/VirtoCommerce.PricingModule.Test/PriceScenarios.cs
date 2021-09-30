@@ -137,8 +137,9 @@ namespace VirtoCommerce.PricingModule.Test
             var service = new PricingServiceImpl(new PricelistAssignmentService(() => mockRepository.Object, null, null),
                         new PricelistService(() => mockRepository.Object, null, null),
                         new PriceService(() => mockRepository.Object, null, null, null),
+                        new PricingEvaluatorService(
                         () => mockRepository.Object, null, null, null,
-                        new DefaultPricingPriorityFilterPolicy());
+                        new DefaultPricingPriorityFilterPolicy()));
 
             // Eval with date and no matches, this should result in default price.
             evalContext.CertainDate = new DateTime(2018, 09, 20);

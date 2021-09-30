@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Model;
@@ -6,6 +7,9 @@ using VirtoCommerce.PricingModule.Core.Services;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
+    [Obsolete("Implementation was decoupled to separate implementations of ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>, " +
+        "ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>, " +
+        "ISearchService<PricesSearchCriteria, PriceSearchResult, Price>") ]
     public class PricingSearchServiceImpl : IPricingSearchService
     {
 
