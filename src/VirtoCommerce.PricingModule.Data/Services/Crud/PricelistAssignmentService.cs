@@ -17,12 +17,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricelistAssignmentService : CrudService<PricelistAssignment, PricelistAssignmentEntity, PricelistAssignmentChangingEvent, PricelistAssignmentChangedEvent>
     {
-        private readonly ILogger<PricelistAssignmentService> _logger;
-        public PricelistAssignmentService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IEventPublisher eventPublisher,
-            ILogger<PricelistAssignmentService> logger)
+        public PricelistAssignmentService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IEventPublisher eventPublisher)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
-            _logger = logger;
         }
 
         protected override async Task<IEnumerable<PricelistAssignmentEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)

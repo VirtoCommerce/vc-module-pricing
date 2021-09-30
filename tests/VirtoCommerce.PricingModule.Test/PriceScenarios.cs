@@ -134,7 +134,7 @@ namespace VirtoCommerce.PricingModule.Test
             var mockRepository = new Mock<IPricingRepository>();
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
 
-            var service = new PricingServiceImpl(new PricelistAssignmentService(() => mockRepository.Object, null, null, null),
+            var service = new PricingServiceImpl(new PricelistAssignmentService(() => mockRepository.Object, null, null),
                         new PricelistService(() => mockRepository.Object, null, null),
                         new PriceService(() => mockRepository.Object, null, null, null),
                         () => mockRepository.Object, null, null, null,
