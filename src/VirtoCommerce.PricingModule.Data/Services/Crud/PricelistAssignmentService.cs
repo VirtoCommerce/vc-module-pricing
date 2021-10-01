@@ -23,7 +23,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         protected override async Task<IEnumerable<PricelistAssignmentEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
         {
-            return await ((IPricingRepository)repository).GetPricelistAssignmentsByIdAsync(ids.ToArray());
+            return await ((IPricingRepository)repository).GetPricelistAssignmentsByIdAsync(ids);
         }
 
 

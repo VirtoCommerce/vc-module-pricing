@@ -82,7 +82,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         protected override async Task<IEnumerable<PriceEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
         {
-            return await ((IPricingRepository)repository).GetPricesByIdsAsync(ids.ToArray());
+            return await ((IPricingRepository)repository).GetPricesByIdsAsync(ids);
         }
 
         protected override void ClearCache(IEnumerable<Price> models)

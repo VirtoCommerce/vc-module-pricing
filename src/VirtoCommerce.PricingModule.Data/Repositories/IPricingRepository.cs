@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.Platform.Core.Common;
@@ -12,12 +13,12 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         IQueryable<PriceEntity> Prices { get; }
         IQueryable<PricelistAssignmentEntity> PricelistAssignments { get; }
 
-        Task<PriceEntity[]> GetPricesByIdsAsync(string[] priceIds);
-        Task<PricelistEntity[]> GetPricelistByIdsAsync(string[] pricelistIds);
-        Task<PricelistAssignmentEntity[]> GetPricelistAssignmentsByIdAsync(string[] assignmentsId);
+        Task<IList<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds);
+        Task<IList<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds);
+        Task<IList<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId);
 
-        Task DeletePricesAsync(string[] ids);
-        Task DeletePricelistsAsync(string[] ids);
-        Task DeletePricelistAssignmentsAsync(string[] ids);
+        Task DeletePricesAsync(IEnumerable<string> ids);
+        Task DeletePricelistsAsync(IEnumerable<string> ids);
+        Task DeletePricelistAssignmentsAsync(IEnumerable<string> ids);
     }
 }

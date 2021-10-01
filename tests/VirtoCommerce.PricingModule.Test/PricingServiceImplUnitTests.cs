@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -53,11 +52,15 @@ namespace VirtoCommerce.PricingModule.Test
                 .Callback(() =>
                 {
                     _repositoryMock.Setup(o => o.GetPricesByIdsAsync(new[] { id }))
-                        .ReturnsAsync(new[] { newPriceEntity });
+                        .ReturnsAsync(new List<PriceEntity>(new[] { newPriceEntity }));
                 });
 
+            _repositoryMock.Setup(o => o.GetPricesByIdsAsync(new[] { id }))
+                .ReturnsAsync(new List<PriceEntity>());
+            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(new List<PricelistEntity>());
             //Act
-            var nullPrice = await service.GetPricesByIdAsync(new []{ id });
+            var nullPrice = await service.GetPricesByIdAsync(new[] { id });
             await service.SavePricesAsync(new[] { newPrice });
             var price = await service.GetPricesByIdAsync(new[] { id });
 
@@ -77,8 +80,11 @@ namespace VirtoCommerce.PricingModule.Test
                 .Callback(() =>
                 {
                     _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }))
-                        .ReturnsAsync(new[] { newPricelistEntity });
+                        .ReturnsAsync(new List<PricelistEntity>(new[] { newPricelistEntity }));
                 });
+
+            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }))
+                .ReturnsAsync(new List<PricelistEntity>());
 
             //Act
             var nullPricelist = await service.GetPricelistsByIdAsync(new[] { id });
@@ -101,9 +107,11 @@ namespace VirtoCommerce.PricingModule.Test
                 .Callback(() =>
                 {
                     _repositoryMock.Setup(o => o.GetPricelistAssignmentsByIdAsync(new[] { id }))
-                        .ReturnsAsync(new[] { newPricelistAssignmentEntity });
+                        .ReturnsAsync(new List<PricelistAssignmentEntity>(new[] { newPricelistAssignmentEntity }));
                 });
 
+            _repositoryMock.Setup(o => o.GetPricelistAssignmentsByIdAsync(new[] { id }))
+                .ReturnsAsync(new List<PricelistAssignmentEntity>());
             //Act
             var nullPricelistAssignment = await service.GetPricelistAssignmentsByIdAsync(new[] { id });
             await service.SavePricelistAssignmentsAsync(new[] { newPricelistAssignment });

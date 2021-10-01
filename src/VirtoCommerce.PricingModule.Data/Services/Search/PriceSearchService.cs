@@ -76,10 +76,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
                                                     .Select(x => x.Id)
                                                     .AsNoTracking()
-                                                    .ToArrayAsync();
+                                                    .ToListAsync();
 
                         var unorderedResults = await _crudService.GetByIdsAsync(priceIds);
-                        result.Results = unorderedResults.OrderBy(x => Array.IndexOf(priceIds, x.Id)).ToList();
+                        result.Results = unorderedResults.OrderBy(x => priceIds.IndexOf(x.Id)).ToList();
                     }
                 }
                 return result;
@@ -137,7 +137,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 searchCriteria.WithHidden = true;
                 var searchResult = await _productIndexedSearchService.SearchAsync(searchCriteria);
 
-                var productIds = searchResult.Items.Select(x => x.Id).ToArray();
+                var productIds = searchResult.Items.Select(x => x.Id);
 
                 query = query.Where(x => productIds.Contains(x.ProductId));
             }

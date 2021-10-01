@@ -20,40 +20,40 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         public IQueryable<PriceEntity> Prices => DbContext.Set<PriceEntity>();
         public IQueryable<PricelistAssignmentEntity> PricelistAssignments => DbContext.Set<PricelistAssignmentEntity>();
 
-        public virtual async Task<PriceEntity[]> GetPricesByIdsAsync(string[] priceIds)
+        public virtual async Task<IList<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds)
         {
             // TODO: replace Include with separate query
-            var retVal = await Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToArrayAsync();
+            var retVal = await Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToListAsync();
             return retVal;
         }
 
-        public virtual async Task<PricelistEntity[]> GetPricelistByIdsAsync(string[] pricelistIds)
+        public virtual async Task<IList<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds)
         {
             // TODO: replace Include with separate query
             var retVal = await Pricelists.Include(x => x.Assignments)
                                          .Where(x => pricelistIds.Contains(x.Id))
-                                         .ToArrayAsync();
+                                         .ToListAsync();
             return retVal;
         }
 
-        public virtual async Task<PricelistAssignmentEntity[]> GetPricelistAssignmentsByIdAsync(string[] assignmentsId)
+        public virtual async Task<IList<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId)
         {
             // TODO: replace Include with separate query
-            var retVal = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToArrayAsync();
+            var retVal = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToListAsync();
             return retVal;
         }
 
-        public Task DeletePricesAsync(string[] ids)
+        public Task DeletePricesAsync(IEnumerable<string> ids)
         {
             return ExecuteSqlCommandAsync("DELETE FROM Price WHERE Id IN ({0})", ids);
         }
 
-        public Task DeletePricelistsAsync(string[] ids)
+        public Task DeletePricelistsAsync(IEnumerable<string> ids)
         {
             return ExecuteSqlCommandAsync("DELETE FROM Pricelist WHERE Id IN ({0})", ids);
         }
 
-        public Task DeletePricelistAssignmentsAsync(string[] ids)
+        public Task DeletePricelistAssignmentsAsync(IEnumerable<string> ids)
         {
             return ExecuteSqlCommandAsync("DELETE FROM PricelistAssignment WHERE Id IN ({0})", ids);
         }
@@ -71,20 +71,20 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
         {
-            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v)).ToArray();
+            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v));
             var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
 
             return new Command
             {
                 Text = string.Format(commandTemplate, parameterNames),
-                Parameters = parameters.OfType<object>().ToArray(),
+                Parameters = parameters.OfType<object>(),
             };
         }
 
         protected class Command
         {
             public string Text { get; set; }
-            public object[] Parameters { get; set; }
+            public IEnumerable<object> Parameters { get; set; }
         }
     }
 }
