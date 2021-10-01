@@ -68,7 +68,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
             }
 
-            var assignments = await query.ToListAsync();
+            var assignments = query.ToList();
             var assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
 
             foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
