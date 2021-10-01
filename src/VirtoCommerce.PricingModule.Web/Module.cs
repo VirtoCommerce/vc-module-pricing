@@ -35,6 +35,8 @@ using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 
+#pragma warning disable CS0618 // Allow to use obsoleted
+
 namespace VirtoCommerce.PricingModule.Web
 {
     public class Module : IModule, IExportSupport, IImportSupport

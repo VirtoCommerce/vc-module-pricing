@@ -18,6 +18,8 @@ using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Services;
 using Xunit;
 
+#pragma warning disable CS0618 // Allow to use obsoleted
+
 namespace VirtoCommerce.PricingModule.Test
 {
     public class PricingServiceImplUnitTests
