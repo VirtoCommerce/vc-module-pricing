@@ -15,6 +15,8 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
+#pragma warning disable CS0618 // Allow to use obsoleted
+
 namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricingEvaluatorService : IPricingEvaluatorService
