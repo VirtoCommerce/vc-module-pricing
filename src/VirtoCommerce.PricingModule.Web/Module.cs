@@ -168,18 +168,18 @@ namespace VirtoCommerce.PricingModule.Web
 
         #region ISupportExportImportModule Members
 
-        public async Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
+        public Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
             ICancellationToken cancellationToken)
         {
             var exportJob = _applicationBuilder.ApplicationServices.GetRequiredService<PricingExportImport>();
-            await exportJob.DoExportAsync(outStream, progressCallback, cancellationToken);
+            return exportJob.DoExportAsync(outStream, progressCallback, cancellationToken);
         }
 
-        public async Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
+        public Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
             ICancellationToken cancellationToken)
         {
             var importJob = _applicationBuilder.ApplicationServices.GetRequiredService<PricingExportImport>();
-            await importJob.DoImportAsync(inputStream, progressCallback, cancellationToken);
+            return importJob.DoImportAsync(inputStream, progressCallback, cancellationToken);
         }
 
         #endregion       

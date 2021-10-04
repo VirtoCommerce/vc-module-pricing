@@ -23,24 +23,24 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         public virtual async Task<IList<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds)
         {
             // TODO: replace Include with separate query
-            var retVal = await Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToListAsync();
-            return retVal;
+            var result = await Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToListAsync();
+            return result;
         }
 
         public virtual async Task<IList<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds)
         {
             // TODO: replace Include with separate query
-            var retVal = await Pricelists.Include(x => x.Assignments)
+            var result = await Pricelists.Include(x => x.Assignments)
                                          .Where(x => pricelistIds.Contains(x.Id))
                                          .ToListAsync();
-            return retVal;
+            return result;
         }
 
         public virtual async Task<IList<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId)
         {
             // TODO: replace Include with separate query
-            var retVal = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToListAsync();
-            return retVal;
+            var result = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToListAsync();
+            return result;
         }
 
         public Task DeletePricesAsync(IEnumerable<string> ids)

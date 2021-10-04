@@ -47,9 +47,9 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/evaluate")]
         public async Task<ActionResult<Price[]>> EvaluatePrices([FromBody] PriceEvaluationContext evalContext)
         {
-            var retVal = (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToArray();
+            var result = (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToArray();
 
-            return Ok(retVal);
+            return Ok(result);
         }
 
 
@@ -62,8 +62,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/evaluate")]
         public async Task<ActionResult<Pricelist[]>> EvaluatePriceLists([FromBody] PriceEvaluationContext evalContext)
         {
-            var retVal = (await _pricingService.EvaluatePriceListsAsync(evalContext)).ToArray();
-            return Ok(retVal);
+            var result = (await _pricingService.EvaluatePriceListsAsync(evalContext)).ToArray();
+            return Ok(result);
         }
         /// <summary>
         /// Get pricelist assignment
@@ -219,13 +219,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// <param name="catalogId">Catalog id</param>
         [HttpGet]
         [Route("api/products/{productId}/{catalogId}/pricesWidget")]
-        public async Task<ActionResult<Price[]>> EvaluateProductPricesForCatalog(string productId, string catalogId)
+        public Task<ActionResult<Price[]>> EvaluateProductPricesForCatalog(string productId, string catalogId)
         {
             var priceEvalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             priceEvalContext.ProductIds = new[] { productId };
             priceEvalContext.CatalogId = catalogId;
 
-            return await EvaluatePrices(priceEvalContext);
+            return EvaluatePrices(priceEvalContext);
         }
 
         /// <summary>
@@ -308,9 +308,9 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [HttpPut]
         [Route("api/products/{productId}/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
-        public async Task<ActionResult> UpdateProductPrices([FromBody] ProductPrice productPrice)
+        public Task<ActionResult> UpdateProductPrices([FromBody] ProductPrice productPrice)
         {
-            return await UpdateProductsPrices(new[] { productPrice });
+            return UpdateProductsPrices(new[] { productPrice });
         }
 
         /// <summary>

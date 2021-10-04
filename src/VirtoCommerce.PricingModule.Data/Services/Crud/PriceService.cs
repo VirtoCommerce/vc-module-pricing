@@ -31,7 +31,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             var changedEntries = new List<GenericChangedEntry<Price>>();
             using (var repository = _repositoryFactory())
             {
-                var alreadyExistPricesEntities = await LoadEntities(repository, models.Select(x => x.Id).Where(x => x != null).Distinct().ToArray());
+                var alreadyExistPricesEntities = await LoadEntities(repository, models.Select(x => x.Id).Where(x => x != null).Distinct().ToList());
 
                 //Create default priceLists for prices without pricelist 
                 foreach (var priceWithoutPricelistGroup in models.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
@@ -39,13 +39,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
                     var pricelists = await _pricelistService.GetByIdsAsync(new[] { defaultPriceListId });
                     if (pricelists.IsNullOrEmpty())
-                    {
-                        var defaultPriceList = AbstractTypeFactory<Pricelist>.TryCreateInstance();
-                        defaultPriceList.Id = defaultPriceListId;
-                        defaultPriceList.Currency = priceWithoutPricelistGroup.Key;
-                        defaultPriceList.Name = defaultPriceListId;
-                        defaultPriceList.Description = defaultPriceListId;
-                        repository.Add(AbstractTypeFactory<PricelistEntity>.TryCreateInstance().FromModel(defaultPriceList, pkMap));
+                    {                        
+                        repository.Add(AbstractTypeFactory<PricelistEntity>.TryCreateInstance().FromModel(GetDefaultPriceList(priceWithoutPricelistGroup, defaultPriceListId), pkMap));
                     }
                     foreach (var priceWithoutPricelist in priceWithoutPricelistGroup)
                     {
@@ -91,10 +86,19 @@ namespace VirtoCommerce.PricingModule.Data.Services
             base.ClearCache(models);
         }
 
+        protected virtual Pricelist GetDefaultPriceList(IGrouping<string, Price> priceWithoutPricelistGroup, string defaultPriceListId)
+        {
+            var defaultPriceList = AbstractTypeFactory<Pricelist>.TryCreateInstance();
+            defaultPriceList.Id = defaultPriceListId;
+            defaultPriceList.Currency = priceWithoutPricelistGroup.Key;
+            defaultPriceList.Name = defaultPriceListId;
+            defaultPriceList.Description = defaultPriceListId;
+            return defaultPriceList;
+        }
         private string GetDefaultPriceListName(string currency)
         {
-            var retVal = "Default" + currency;
-            return retVal;
+            var result = "Default" + currency;
+            return result;
         }
     }
 }
