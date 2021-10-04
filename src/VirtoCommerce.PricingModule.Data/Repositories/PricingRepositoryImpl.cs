@@ -20,14 +20,14 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         public IQueryable<PriceEntity> Prices => DbContext.Set<PriceEntity>();
         public IQueryable<PricelistAssignmentEntity> PricelistAssignments => DbContext.Set<PricelistAssignmentEntity>();
 
-        public virtual async Task<IList<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds)
+        public virtual async Task<ICollection<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds)
         {
             // TODO: replace Include with separate query
             var result = await Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToListAsync();
             return result;
         }
 
-        public virtual async Task<IList<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds)
+        public virtual async Task<ICollection<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds)
         {
             // TODO: replace Include with separate query
             var result = await Pricelists.Include(x => x.Assignments)
@@ -36,7 +36,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return result;
         }
 
-        public virtual async Task<IList<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId)
+        public virtual async Task<ICollection<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId)
         {
             // TODO: replace Include with separate query
             var result = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToListAsync();
