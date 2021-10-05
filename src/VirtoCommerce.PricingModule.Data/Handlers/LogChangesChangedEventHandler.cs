@@ -23,9 +23,9 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
             _settingsManager = settingsManager;
         }
 
-        public virtual async Task Handle(PriceChangedEvent message)
+        public virtual Task Handle(PriceChangedEvent message)
         {
-            await InnerHandle(message);
+            return InnerHandle(message);
         }
 
         protected virtual async Task InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity

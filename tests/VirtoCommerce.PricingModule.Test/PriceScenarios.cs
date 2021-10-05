@@ -14,6 +14,8 @@ using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 using Xunit;
 
+#pragma warning disable CS0618 // Allow to use obsoleted
+
 namespace VirtoCommerce.PricingModule.Test
 {
     public class PriceScenarios
@@ -134,8 +136,12 @@ namespace VirtoCommerce.PricingModule.Test
             var mockRepository = new Mock<IPricingRepository>();
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
 
-            var service = new PricingServiceImpl(() => mockRepository.Object, null, null, null, null,
-                new DefaultPricingPriorityFilterPolicy());
+            var service = new PricingServiceImpl(new PricelistAssignmentService(() => mockRepository.Object, null, null),
+                        new PricelistService(() => mockRepository.Object, null, null),
+                        new PriceService(() => mockRepository.Object, null, null, null),
+                        new PricingEvaluatorService(
+                        () => mockRepository.Object, null, null, null,
+                        new DefaultPricingPriorityFilterPolicy()));
 
             // Eval with date and no matches, this should result in default price.
             evalContext.CertainDate = new DateTime(2018, 09, 20);
