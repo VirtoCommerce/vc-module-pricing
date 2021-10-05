@@ -2,11 +2,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Model
 {
-    public class PriceEntity : AuditableEntity, IHasOuterId
+    public class PriceEntity : AuditableEntity, IHasOuterId, IDataEntity<PriceEntity, Price>
     {
         [Column(TypeName = "Money")]
         public decimal? Sale { get; set; }

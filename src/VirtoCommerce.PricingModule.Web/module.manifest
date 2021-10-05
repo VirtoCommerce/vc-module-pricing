@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Pricing</id>
-  <version>3.25.0</version>
+  <version>3.26.0</version>
   <version-tag />
-  <platformVersion>3.59.0-alpha.11906</platformVersion>
+  <platformVersion>3.80.0</platformVersion>
   <title>Pricing module</title>
   <description>Robust pricing management functionality based on price list and dynamic evaluation</description>
   <authors>

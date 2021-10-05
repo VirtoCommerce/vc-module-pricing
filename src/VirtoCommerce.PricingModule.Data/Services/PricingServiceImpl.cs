@@ -2,473 +2,87 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using VirtoCommerce.CatalogModule.Core.Model;
-using VirtoCommerce.CatalogModule.Core.Services;
-using VirtoCommerce.Platform.Core.Caching;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.Events;
-using VirtoCommerce.Platform.Data.Infrastructure;
-using VirtoCommerce.PricingModule.Core.Events;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
-using VirtoCommerce.PricingModule.Data.Caching;
-using VirtoCommerce.PricingModule.Data.Model;
-using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
+    [Obsolete("Implementation was decoupled to separate implementations of interfaces IPricingEvaluatorService, ICrudService<PricelistAssignment>, ICrudService<Pricelist>, ICrudService<Price>")]
     public class PricingServiceImpl : IPricingService
     {
-        private readonly Func<IPricingRepository> _repositoryFactory;
-        private readonly IItemService _productService;
-        private readonly ILogger<PricingServiceImpl> _logger;
-        private readonly IPlatformMemoryCache _platformMemoryCache;
-        private readonly IEventPublisher _eventPublisher;
-        private readonly IPricingPriorityFilterPolicy _pricingPriorityFilterPolicy;
+        private readonly ICrudService<PricelistAssignment> _pricelistAssignmentService;
+        private readonly ICrudService<Pricelist> _pricelistService;
+        private readonly ICrudService<Price> _priceService;
+        private readonly IPricingEvaluatorService _pricingEvaluatorService;
+
 
         public PricingServiceImpl(
-            Func<IPricingRepository> repositoryFactory
-            , IItemService productService
-            , ILogger<PricingServiceImpl> logger
-            , IPlatformMemoryCache platformMemoryCache
-            , IEventPublisher eventPublisher
-            , IPricingPriorityFilterPolicy pricingPriorityFilterPolicy)
+                ICrudService<PricelistAssignment> pricelistAssignmentService,
+                ICrudService<Pricelist> pricelistService,
+                ICrudService<Price> priceService,
+                IPricingEvaluatorService pricingEvaluatorService
+            )
         {
-            _repositoryFactory = repositoryFactory;
-            _productService = productService;
-            _logger = logger;
-            _platformMemoryCache = platformMemoryCache;
-            _eventPublisher = eventPublisher;
-            _pricingPriorityFilterPolicy = pricingPriorityFilterPolicy;
+            _pricelistAssignmentService = pricelistAssignmentService;
+            _pricelistService = pricelistService;
+            _priceService = priceService;
+            _pricingEvaluatorService = pricingEvaluatorService;
         }
 
-        #region IPricingService Members
-        /// <summary>
-        /// Evaluate pricelists for special context. All resulting pricelists ordered by priority
-        /// </summary>
-        /// <param name="evalContext"></param>
-        /// <returns></returns>
-        public virtual async Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
+        public Task DeletePricelistsAssignmentsAsync(string[] ids)
         {
-            var cacheKey = CacheKey.With(GetType(), nameof(EvaluatePriceListsAsync));
-            var priceListAssignments = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
-            {
-                cacheEntry.AddExpirationToken(PricingCacheRegion.CreateChangeToken());
-
-                return await GetAllPricelistAssignments();
-            });
-
-            var query = priceListAssignments.AsQueryable();
-
-            if (evalContext.CatalogId != null)
-            {
-                //filter by catalog
-                query = query.Where(x => x.CatalogId == evalContext.CatalogId);
-            }
-
-            if (evalContext.Currency != null)
-            {
-                //filter by currency
-                query = query.Where(x => x.Pricelist.Currency == evalContext.Currency.ToString());
-            }
-
-            if (evalContext.CertainDate != null)
-            {
-                //filter by date expiration
-                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
-            }
-
-            var assignments = query.ToArray();
-            var assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
-
-            foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
-            {
-                try
-                {
-                    if (assignment.DynamicExpression.IsSatisfiedBy(evalContext) && assignmentsToReturn.All(x => x.PricelistId != assignment.PricelistId))
-                    {
-                        assignmentsToReturn.Add(assignment);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to evaluate price assignment condition.");
-                }
-            }
-
-            return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
+            return _pricelistAssignmentService.DeleteAsync(ids);
         }
 
-        public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()
+        public Task DeletePricelistsAsync(string[] ids)
         {
-            using (var repository = _repositoryFactory())
-            {
-                repository.DisableChangesTracking();
-
-                return (await repository.PricelistAssignments.Include(x => x.Pricelist).AsNoTracking().ToArrayAsync()).Select(x => x.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance())).ToArray();
-            }
-        }
-        /// <summary>
-        /// Evaluation product prices.
-        /// Will get either all prices or one price per currency depending on the settings in evalContext.
-        /// </summary>
-        /// <param name="evalContext"></param>
-        /// <returns></returns>
-        public virtual async Task<IEnumerable<Price>> EvaluateProductPricesAsync(PriceEvaluationContext evalContext)
-        {
-            if (evalContext == null)
-            {
-                throw new ArgumentNullException(nameof(evalContext));
-            }
-            if (evalContext.ProductIds == null)
-            {
-                throw new MissingFieldException("ProductIds");
-            }
-
-            var result = new List<Price>();
-            Price[] prices;
-            using (var repository = _repositoryFactory())
-            {
-                //Get a price range satisfying by passing context
-                var query = repository.Prices.Include(x => x.Pricelist)
-                                             .Where(x => evalContext.ProductIds.Contains(x.ProductId))
-                                             .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
-
-                if (evalContext.PricelistIds.IsNullOrEmpty())
-                {
-                    evalContext.PricelistIds = (await EvaluatePriceListsAsync(evalContext)).Select(x => x.Id).ToArray();
-                }
-
-                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
-
-                // Filter by date expiration
-                // Always filter on date, so that we limit the results to process.
-                var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
-                query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
-                    && (x.EndDate == null || x.EndDate > certainDate));
-
-                var queryResult = await query.AsNoTracking().ToArrayAsync();
-                prices = queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance())).ToArray();
-            }
-
-            //Apply pricing  filtration strategy for found prices
-            result.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
-
-            //Then variation inherited prices
-            if (_productService != null)
-            {
-                var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct()).ToArray();
-                //Try to inherit prices for variations from their main product
-                //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
-                if (productIdsWithoutPrice.Any())
-                {
-                    var variations = (await _productService.GetByIdsAsync(productIdsWithoutPrice, ItemResponseGroup.ItemInfo.ToString())).Where(x => x.MainProductId != null).ToList();
-                    evalContext = evalContext.Clone() as PriceEvaluationContext;
-                    evalContext.ProductIds = variations.Select(x => x.MainProductId).Distinct().ToArray();
-                    if (!evalContext.ProductIds.IsNullOrEmpty())
-                    {
-                        var inheritedPrices = await EvaluateProductPricesAsync(evalContext);
-                        foreach (var inheritedPrice in inheritedPrices)
-                        {
-                            foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
-                            {
-                                var variationPrice = inheritedPrice.Clone() as Price;
-                                //Reset id for correct override price in possible update 
-                                variationPrice.Id = null;
-                                variationPrice.ProductId = variation.Id;
-                                result.Add(variationPrice);
-                            }
-                        }
-                    }
-                }
-            }
-            return result;
+            return _pricelistService.DeleteAsync(ids);
         }
 
-
-        public virtual async Task<Price[]> GetPricesByIdAsync(string[] ids)
+        public Task DeletePricesAsync(string[] ids)
         {
-            var cacheKey = CacheKey.With(GetType(), nameof(GetPricesByIdAsync), string.Join("-", ids));
-            var result = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
-            {
-                Price[] result = null;
-                if (ids != null)
-                {
-                    using (var repository = _repositoryFactory())
-                    {
-                        cacheEntry.AddExpirationToken(PricesCacheRegion.CreateChangeToken(ids));
-
-                        result = (await repository.GetPricesByIdsAsync(ids)).Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance())).ToArray();
-                    }
-                }
-
-                return result;
-            });
-
-            return result.Select(x => x.Clone() as Price).ToArray();
+            return _priceService.DeleteAsync(ids);
         }
 
-        public virtual Task<PricelistAssignment[]> GetPricelistAssignmentsByIdAsync(string[] ids)
+        public Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
         {
-            var cacheKey = CacheKey.With(GetType(), nameof(GetPricelistAssignmentsByIdAsync), string.Join("-", ids));
-            return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
-            {
-                PricelistAssignment[] result = null;
-                if (ids != null)
-                {
-                    using (var repository = _repositoryFactory())
-                    {
-                        cacheEntry.AddExpirationToken(PricelistAssignmentsCacheRegion.CreateChangeToken(ids));
-                        result = (await repository.GetPricelistAssignmentsByIdAsync(ids)).Select(x => x.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance())).ToArray();
-                    }
-                }
-                return result;
-            });
+            return _pricingEvaluatorService.EvaluatePriceListsAsync(evalContext);
         }
 
-        public virtual Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids)
+        public Task<IEnumerable<Price>> EvaluateProductPricesAsync(PriceEvaluationContext evalContext)
         {
-            var cacheKey = CacheKey.With(GetType(), nameof(GetPricelistsByIdAsync), string.Join("-", ids));
-            return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
-            {
-                Pricelist[] result = null;
-                if (ids != null)
-                {
-                    using (var repository = _repositoryFactory())
-                    {
-                        cacheEntry.AddExpirationToken(PricelistsCacheRegion.CreateChangeToken(ids));
-
-                        var pricelistEntities = await repository.GetPricelistByIdsAsync(ids);
-                        result = pricelistEntities.Select(x => x.ToModel(AbstractTypeFactory<Pricelist>.TryCreateInstance())).ToArray();
-                    }
-                }
-
-                return result;
-            });
+            return _pricingEvaluatorService.EvaluateProductPricesAsync(evalContext);
         }
 
-        public virtual async Task SavePricesAsync(Price[] prices)
+        public async Task<PricelistAssignment[]> GetPricelistAssignmentsByIdAsync(string[] ids)
         {
-            var pkMap = new PrimaryKeyResolvingMap();
-            var changedEntries = new List<GenericChangedEntry<Price>>();
-            using (var repository = _repositoryFactory())
-            {
-                var pricesIds = prices.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistPricesEntities = await repository.GetPricesByIdsAsync(pricesIds);
-
-                //Create default priceLists for prices without pricelist 
-                foreach (var priceWithoutPricelistGroup in prices.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
-                {
-                    var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
-                    var pricelists = await GetPricelistsByIdAsync(new[] { defaultPriceListId });
-                    if (pricelists.IsNullOrEmpty())
-                    {
-                        var defaultPriceList = AbstractTypeFactory<Pricelist>.TryCreateInstance();
-                        defaultPriceList.Id = defaultPriceListId;
-                        defaultPriceList.Currency = priceWithoutPricelistGroup.Key;
-                        defaultPriceList.Name = defaultPriceListId;
-                        defaultPriceList.Description = defaultPriceListId;
-                        repository.Add(AbstractTypeFactory<PricelistEntity>.TryCreateInstance().FromModel(defaultPriceList, pkMap));
-                    }
-                    foreach (var priceWithoutPricelist in priceWithoutPricelistGroup)
-                    {
-                        priceWithoutPricelist.PricelistId = defaultPriceListId;
-                    }
-                }
-
-                foreach (var price in prices)
-                {
-                    var sourceEntity = AbstractTypeFactory<PriceEntity>.TryCreateInstance().FromModel(price, pkMap);
-                    var targetEntity = alreadyExistPricesEntities.FirstOrDefault(x => x.Id == price.Id);
-                    if (targetEntity != null)
-                    {
-                        changedEntries.Add(new GenericChangedEntry<Price>(price, targetEntity.ToModel(AbstractTypeFactory<Price>.TryCreateInstance()), EntryState.Modified));
-                        sourceEntity.Patch(targetEntity);
-                    }
-                    else
-                    {
-                        changedEntries.Add(new GenericChangedEntry<Price>(price, EntryState.Added));
-                        repository.Add(sourceEntity);
-                    }
-                }
-
-                await _eventPublisher.Publish(new PriceChangingEvent(changedEntries));
-
-                await repository.UnitOfWork.CommitAsync();
-                pkMap.ResolvePrimaryKeys();
-
-                foreach (var price in prices)
-                {
-                    PricesCacheRegion.ExpirePrice(price.Id);
-                }
-                ResetCache();
-
-                await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
-            }
+            return (await _pricelistAssignmentService.GetByIdsAsync(ids)).ToArray();
         }
 
-        public virtual async Task SavePricelistsAsync(Pricelist[] priceLists)
+        public async Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids)
         {
-            var pkMap = new PrimaryKeyResolvingMap();
-            var changedEntries = new List<GenericChangedEntry<Pricelist>>();
-            using (var repository = _repositoryFactory())
-            {
-                var pricelistsIds = priceLists.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistEntities = await repository.GetPricelistByIdsAsync(pricelistsIds);
-
-                foreach (var pricelist in priceLists)
-                {
-                    var sourceEntity = AbstractTypeFactory<PricelistEntity>.TryCreateInstance().FromModel(pricelist, pkMap);
-                    var targetEntity = alreadyExistEntities.FirstOrDefault(x => x.Id == pricelist.Id);
-                    if (targetEntity != null)
-                    {
-                        changedEntries.Add(new GenericChangedEntry<Pricelist>(pricelist, targetEntity.ToModel(AbstractTypeFactory<Pricelist>.TryCreateInstance()), EntryState.Modified));
-                        sourceEntity.Patch(targetEntity);
-                    }
-                    else
-                    {
-                        changedEntries.Add(new GenericChangedEntry<Pricelist>(pricelist, EntryState.Added));
-                        repository.Add(sourceEntity);
-                    }
-                }
-
-                await _eventPublisher.Publish(new PricelistChangingEvent(changedEntries));
-
-                await repository.UnitOfWork.CommitAsync();
-                pkMap.ResolvePrimaryKeys();
-
-                foreach (var pricelist in priceLists)
-                {
-                    PricelistsCacheRegion.ExpirePricelist(pricelist.Id);
-                }
-                ResetCache();
-
-                await _eventPublisher.Publish(new PricelistChangedEvent(changedEntries));
-            }
+            return (await _pricelistService.GetByIdsAsync(ids)).ToArray();
         }
 
-        public virtual async Task SavePricelistAssignmentsAsync(PricelistAssignment[] assignments)
+        public async Task<Price[]> GetPricesByIdAsync(string[] ids)
         {
-            var pkMap = new PrimaryKeyResolvingMap();
-            var changedEntries = new List<GenericChangedEntry<PricelistAssignment>>();
-            using (var repository = _repositoryFactory())
-            {
-                var assignmentsIds = assignments.Select(x => x.Id).Where(x => x != null).Distinct().ToArray();
-                var alreadyExistEntities = await repository.GetPricelistAssignmentsByIdAsync(assignmentsIds);
-
-                foreach (var assignment in assignments)
-                {
-                    var sourceEntity = AbstractTypeFactory<PricelistAssignmentEntity>.TryCreateInstance().FromModel(assignment, pkMap);
-                    var targetEntity = alreadyExistEntities.FirstOrDefault(x => x.Id == assignment.Id);
-                    if (targetEntity != null)
-                    {
-                        changedEntries.Add(new GenericChangedEntry<PricelistAssignment>(assignment, targetEntity.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance()), EntryState.Modified));
-                        sourceEntity.Patch(targetEntity);
-                    }
-                    else
-                    {
-                        changedEntries.Add(new GenericChangedEntry<PricelistAssignment>(assignment, EntryState.Added));
-                        repository.Add(sourceEntity);
-                    }
-                }
-
-                await _eventPublisher.Publish(new PricelistAssignmentChangingEvent(changedEntries));
-
-                await repository.UnitOfWork.CommitAsync();
-                pkMap.ResolvePrimaryKeys();
-
-                foreach (var assignment in assignments)
-                {
-                    PricelistAssignmentsCacheRegion.ExpirePricelistAssignment(assignment.Id);
-                    PricelistsCacheRegion.ExpirePricelist(assignment.PricelistId);
-                }
-                ResetCache();
-
-                await _eventPublisher.Publish(new PricelistAssignmentChangedEvent(changedEntries));
-            }
+            return (await _priceService.GetByIdsAsync(ids)).ToArray();
         }
 
-        public virtual async Task DeletePricesAsync(string[] ids)
+        public Task SavePricelistAssignmentsAsync(PricelistAssignment[] assignments)
         {
-            using (var repository = _repositoryFactory())
-            {
-                var prices = await GetPricesByIdAsync(ids);
-                var changedEntries = prices.Select(x => new GenericChangedEntry<Price>(x, EntryState.Deleted));
-
-                await _eventPublisher.Publish(new PriceChangingEvent(changedEntries));
-
-                await repository.DeletePricesAsync(ids);
-                await repository.UnitOfWork.CommitAsync();
-
-                foreach (var id in ids)
-                {
-                    PricesCacheRegion.ExpirePrice(id);
-                }
-                ResetCache();
-
-                await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
-            }
-        }
-        public virtual async Task DeletePricelistsAsync(string[] ids)
-        {
-            using (var repository = _repositoryFactory())
-            {
-                var pricelists = await GetPricelistsByIdAsync(ids);
-                var changedEntries = pricelists.Select(x => new GenericChangedEntry<Pricelist>(x, EntryState.Deleted));
-
-                await _eventPublisher.Publish(new PricelistChangingEvent(changedEntries));
-
-                await repository.DeletePricelistsAsync(ids);
-                await repository.UnitOfWork.CommitAsync();
-
-                foreach (var id in ids)
-                {
-                    PricelistsCacheRegion.ExpirePricelist(id);
-                }
-                ResetCache();
-
-                await _eventPublisher.Publish(new PricelistChangedEvent(changedEntries));
-            }
+            return _pricelistAssignmentService.SaveChangesAsync(assignments);
         }
 
-        public virtual async Task DeletePricelistsAssignmentsAsync(string[] ids)
+        public Task SavePricelistsAsync(Pricelist[] priceLists)
         {
-            using (var repository = _repositoryFactory())
-            {
-                var assignments = await GetPricelistAssignmentsByIdAsync(ids);
-                var changedEntries = assignments.Select(x => new GenericChangedEntry<PricelistAssignment>(x, EntryState.Deleted));
-
-                await _eventPublisher.Publish(new PricelistAssignmentChangingEvent(changedEntries));
-
-                await repository.DeletePricelistAssignmentsAsync(ids);
-                await repository.UnitOfWork.CommitAsync();
-
-                foreach (var id in ids)
-                {
-                    PricelistAssignmentsCacheRegion.ExpirePricelistAssignment(id);
-                }
-                ResetCache();
-
-                await _eventPublisher.Publish(new PricelistAssignmentChangedEvent(changedEntries));
-            }
-        }
-        #endregion
-
-        private static string GetDefaultPriceListName(string currency)
-        {
-            var retVal = "Default" + currency;
-            return retVal;
+            return _pricelistService.SaveChangesAsync(priceLists);
         }
 
-        private void ResetCache()
+        public Task SavePricesAsync(Price[] prices)
         {
-            //Clear cache (Smart cache implementation) 
-            PricingCacheRegion.ExpireRegion();
-            PricingSearchCacheRegion.ExpireRegion();
+            return _priceService.SaveChangesAsync(prices);
         }
-
     }
 }

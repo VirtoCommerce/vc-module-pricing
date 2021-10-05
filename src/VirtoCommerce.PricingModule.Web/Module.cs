@@ -15,6 +15,7 @@ using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -23,7 +24,9 @@ using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Security.Authorization;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Events;
+using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
+using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Common;
 using VirtoCommerce.PricingModule.Data.ExportImport;
@@ -31,6 +34,8 @@ using VirtoCommerce.PricingModule.Data.Handlers;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
+
+#pragma warning disable CS0618 // Allow to use obsoleted
 
 namespace VirtoCommerce.PricingModule.Web
 {
@@ -52,7 +57,13 @@ namespace VirtoCommerce.PricingModule.Web
 
             serviceCollection.AddTransient<IPricingRepository, PricingRepositoryImpl>();
             serviceCollection.AddTransient<Func<IPricingRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPricingRepository>());
-
+            serviceCollection.AddTransient<IPricingEvaluatorService, PricingEvaluatorService>();
+            serviceCollection.AddTransient<ISearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment>, PricelistAssignmentSearchService>();
+            serviceCollection.AddTransient<ISearchService<PricelistSearchCriteria, PricelistSearchResult, Pricelist>, PricelistSearchService> ();
+            serviceCollection.AddTransient<ISearchService<PricesSearchCriteria, PriceSearchResult, Price>, PriceSearchService> ();
+            serviceCollection.AddTransient<ICrudService<PricelistAssignment>, PricelistAssignmentService> ();
+            serviceCollection.AddTransient<ICrudService<Pricelist>, PricelistService> ();
+            serviceCollection.AddTransient<ICrudService<Price>, PriceService> ();
             serviceCollection.AddTransient<IPricingService, PricingServiceImpl>();
             serviceCollection.AddTransient<IPricingSearchService, PricingSearchServiceImpl>();
             serviceCollection.AddTransient<IPricingPriorityFilterPolicy, DefaultPricingPriorityFilterPolicy>();
@@ -157,18 +168,18 @@ namespace VirtoCommerce.PricingModule.Web
 
         #region ISupportExportImportModule Members
 
-        public async Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
+        public Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
             ICancellationToken cancellationToken)
         {
             var exportJob = _applicationBuilder.ApplicationServices.GetRequiredService<PricingExportImport>();
-            await exportJob.DoExportAsync(outStream, progressCallback, cancellationToken);
+            return exportJob.DoExportAsync(outStream, progressCallback, cancellationToken);
         }
 
-        public async Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
+        public Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
             ICancellationToken cancellationToken)
         {
             var importJob = _applicationBuilder.ApplicationServices.GetRequiredService<PricingExportImport>();
-            await importJob.DoImportAsync(inputStream, progressCallback, cancellationToken);
+            return importJob.DoImportAsync(inputStream, progressCallback, cancellationToken);
         }
 
         #endregion       

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Model
 {
-    public class PricelistEntity : AuditableEntity
+    public class PricelistEntity : AuditableEntity, IDataEntity<PricelistEntity, Pricelist>
     {
         [Required]
         [StringLength(128)]

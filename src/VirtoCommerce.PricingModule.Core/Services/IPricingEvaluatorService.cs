@@ -1,25 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Core.Services
 {
-    [Obsolete("Interface was decoupled to IPricingEvaluatorService, ICrudService<PricelistAssignment>, ICrudService<Pricelist>, ICrudService<Price>")]
-    public interface IPricingService
+    public interface IPricingEvaluatorService
     {
-        Task<Price[]> GetPricesByIdAsync(string[] ids);
-        Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids);
-        Task<PricelistAssignment[]> GetPricelistAssignmentsByIdAsync(string[] ids);
-
-        Task SavePricesAsync(Price[] prices);
-        Task SavePricelistsAsync(Pricelist[] priceLists);
-        Task SavePricelistAssignmentsAsync(PricelistAssignment[] assignments);
-
-        Task DeletePricelistsAsync(string[] ids);
-        Task DeletePricesAsync(string[] ids);
-        Task DeletePricelistsAssignmentsAsync(string[] ids);
-
         /// <summary>
         /// Evaluate pricelists for special context. All resulting pricelists ordered by priority
         /// </summary>

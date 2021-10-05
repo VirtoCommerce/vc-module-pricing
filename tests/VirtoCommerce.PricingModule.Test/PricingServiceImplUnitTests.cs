@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -18,6 +17,8 @@ using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Services;
 using Xunit;
 
+#pragma warning disable CS0618 // Allow to use obsoleted
+
 namespace VirtoCommerce.PricingModule.Test
 {
     public class PricingServiceImplUnitTests
@@ -25,7 +26,7 @@ namespace VirtoCommerce.PricingModule.Test
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IPricingRepository> _repositoryMock;
         private readonly Mock<IItemService> _productServiceMock;
-        private readonly Mock<ILogger<PricingServiceImpl>> _loggerMock;
+        private readonly Mock<ILogger<PricingEvaluatorService>> _loggerMock;
         private readonly Mock<IEventPublisher> _eventPublisherMock;
         private readonly Mock<IPricingPriorityFilterPolicy> _pricingPriorityFilterPolicyMock;
 
@@ -34,7 +35,7 @@ namespace VirtoCommerce.PricingModule.Test
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _repositoryMock = new Mock<IPricingRepository>();
             _productServiceMock = new Mock<IItemService>();
-            _loggerMock = new Mock<ILogger<PricingServiceImpl>>();
+            _loggerMock = new Mock<ILogger<PricingEvaluatorService>>();
             _eventPublisherMock = new Mock<IEventPublisher>();
             _pricingPriorityFilterPolicyMock = new Mock<IPricingPriorityFilterPolicy>();
         }
@@ -51,11 +52,15 @@ namespace VirtoCommerce.PricingModule.Test
                 .Callback(() =>
                 {
                     _repositoryMock.Setup(o => o.GetPricesByIdsAsync(new[] { id }))
-                        .ReturnsAsync(new[] { newPriceEntity });
+                        .ReturnsAsync(new List<PriceEntity>(new[] { newPriceEntity }));
                 });
 
+            _repositoryMock.Setup(o => o.GetPricesByIdsAsync(new[] { id }))
+                .ReturnsAsync(new List<PriceEntity>());
+            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(new List<PricelistEntity>());
             //Act
-            var nullPrice = await service.GetPricesByIdAsync(new []{ id });
+            var nullPrice = await service.GetPricesByIdAsync(new[] { id });
             await service.SavePricesAsync(new[] { newPrice });
             var price = await service.GetPricesByIdAsync(new[] { id });
 
@@ -75,8 +80,11 @@ namespace VirtoCommerce.PricingModule.Test
                 .Callback(() =>
                 {
                     _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }))
-                        .ReturnsAsync(new[] { newPricelistEntity });
+                        .ReturnsAsync(new List<PricelistEntity>(new[] { newPricelistEntity }));
                 });
+
+            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }))
+                .ReturnsAsync(new List<PricelistEntity>());
 
             //Act
             var nullPricelist = await service.GetPricelistsByIdAsync(new[] { id });
@@ -99,9 +107,11 @@ namespace VirtoCommerce.PricingModule.Test
                 .Callback(() =>
                 {
                     _repositoryMock.Setup(o => o.GetPricelistAssignmentsByIdAsync(new[] { id }))
-                        .ReturnsAsync(new[] { newPricelistAssignmentEntity });
+                        .ReturnsAsync(new List<PricelistAssignmentEntity>(new[] { newPricelistAssignmentEntity }));
                 });
 
+            _repositoryMock.Setup(o => o.GetPricelistAssignmentsByIdAsync(new[] { id }))
+                .ReturnsAsync(new List<PricelistAssignmentEntity>());
             //Act
             var nullPricelistAssignment = await service.GetPricelistAssignmentsByIdAsync(new[] { id });
             await service.SavePricelistAssignmentsAsync(new[] { newPricelistAssignment });
@@ -125,12 +135,16 @@ namespace VirtoCommerce.PricingModule.Test
         {
 
             return new PricingServiceImpl(
-                () => pricingRepository,
-                _productServiceMock.Object,
-                _loggerMock.Object,
-                platformMemoryCache,
-                _eventPublisherMock.Object,
-                _pricingPriorityFilterPolicyMock.Object
+                new PricelistAssignmentService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
+                new PricelistService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
+                new PriceService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object, new PricelistService(() => pricingRepository, platformMemoryCache, null)),
+                new PricingEvaluatorService(
+                        () => pricingRepository,
+                        _productServiceMock.Object,
+                        _loggerMock.Object,
+                        platformMemoryCache,
+                        _pricingPriorityFilterPolicyMock.Object
+                    )
                 );
         }
     }
