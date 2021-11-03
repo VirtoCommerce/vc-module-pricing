@@ -40,7 +40,8 @@ namespace VirtoCommerce.PricingModule.Core
                     Name = "VirtoCommerce.Search.IndexingJobs.IndexationDate.Pricing.Calendar",
                     GroupName = "Pricing|Search",
                     ValueType = SettingValueType.DateTime,
-                    DefaultValue = default(DateTime)
+                    DefaultValue = default(DateTime),
+                    IsHidden = true
                 };
 
                 public static SettingDescriptor PricingIndexing { get; } = new SettingDescriptor
