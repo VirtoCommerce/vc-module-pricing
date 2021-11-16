@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.Pricing</id>
-  <version>3.27.0</version>
+  <version>3.28.0</version>
   <version-tag />
-  <platformVersion>3.80.0</platformVersion>
+  <platformVersion>3.81.0</platformVersion>
   <title>Pricing module</title>
   <description>Robust pricing management functionality based on price list and dynamic evaluation</description>
   <authors>
@@ -24,6 +24,7 @@
     <dependency id="VirtoCommerce.Catalog" version="3.0.0" />
     <dependency id="VirtoCommerce.Export" version="3.0.0" />
     <dependency id="VirtoCommerce.Search" version="3.0.0" />
+    <dependency id="VirtoCommerce.Assets" version="1.0.0" />
   </dependencies>
   <groups>
     <group>commerce</group>
