@@ -10,8 +10,12 @@
     <EmbeddedResource Include="Resources\TestSerializedCondition.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="MockQueryable.Moq" Version="3.1.1" />
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="MockQueryable.Moq" Version="5.0.1" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.200.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.200.0" />
