@@ -18,6 +18,7 @@ namespace VirtoCommerce.PricingModule.Core.Model
 		public string OrganizationId { get; set; }
 		public DateTime? CertainDate { get; set; }
 		public string Currency { get; set; }
+        public bool SkipAssignmentValidation { get; set; }
 
         public object Clone()
         {
