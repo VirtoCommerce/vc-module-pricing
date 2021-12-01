@@ -42,35 +42,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _productService = productService;
         }
 
-
         public virtual async Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
         {
             List <PricelistAssignment> assignmentsToReturn;
-            var cacheKey = CacheKey.With(GetType(), nameof(EvaluatePriceListsAsync));
-            var priceListAssignments = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
-            {
-                cacheEntry.AddExpirationToken(GenericCachingRegion<PricelistAssignment>.CreateChangeToken());
-
-                return await GetAllPricelistAssignments();
-            });
-
-            var query = priceListAssignments.AsQueryable();
-
-            if (evalContext.CatalogId != null)
-            {
-                query = query.Where(x => x.CatalogId == evalContext.CatalogId);
-            }
-
-            if (evalContext.Currency != null)
-            {
-                query = query.Where(x => x.Pricelist.Currency == evalContext.Currency.ToString());
-            }
-
-            if (evalContext.CertainDate != null)
-            {
-                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
-            }
-
+            var query =  await PriceListAssignmentAsync(evalContext);
             if (evalContext.SkipAssignmentValidation)
             {
                 assignmentsToReturn = await query.ToListAsync();
@@ -97,6 +72,36 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
+        }
+
+        public virtual async Task<IQueryable<PricelistAssignment>> PriceListAssignmentAsync(PriceEvaluationContext evalContext)
+        {
+            var cacheKey = CacheKey.With(GetType(), nameof(EvaluatePriceListsAsync));
+            var priceListAssignments = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
+            {
+                cacheEntry.AddExpirationToken(GenericCachingRegion<PricelistAssignment>.CreateChangeToken());
+
+                return await GetAllPricelistAssignments();
+            });
+
+            var query = priceListAssignments.AsQueryable();
+
+            if (evalContext.CatalogId != null)
+            {
+                query = query.Where(x => x.CatalogId == evalContext.CatalogId);
+            }
+
+            if (evalContext.Currency != null)
+            {
+                query = query.Where(x => x.Pricelist.Currency == evalContext.Currency.ToString());
+            }
+
+            if (evalContext.CertainDate != null)
+            {
+                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
+            }
+
+            return query;
         }
 
         public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()
