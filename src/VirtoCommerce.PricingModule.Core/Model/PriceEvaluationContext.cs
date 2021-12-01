@@ -18,7 +18,7 @@ namespace VirtoCommerce.PricingModule.Core.Model
 		public string OrganizationId { get; set; }
 		public DateTime? CertainDate { get; set; }
 		public string Currency { get; set; }
-        // Set this flag to true for indexing from all given pricelists  
+        // Set this flag to true for indexing from all given pricelists and skip Dynamic Conditions except Start and End Date  
         public bool SkipAssignmentValidation { get; set; }
 
         public object Clone()
