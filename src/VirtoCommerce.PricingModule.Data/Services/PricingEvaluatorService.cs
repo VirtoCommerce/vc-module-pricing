@@ -42,8 +42,39 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _productService = productService;
         }
 
-
         public virtual async Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
+        {
+            List <PricelistAssignment> assignmentsToReturn;
+            var query =  await PriceListAssignmentAsync(evalContext);
+            if (evalContext.SkipAssignmentValidation)
+            {
+                assignmentsToReturn = query.ToList();
+            }
+            else
+            {
+                var assignments = query.ToList();
+                assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
+
+                foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
+                {
+                    try
+                    {
+                        if (assignment.DynamicExpression.IsSatisfiedBy(evalContext) && assignmentsToReturn.All(x => x.PricelistId != assignment.PricelistId))
+                        {
+                            assignmentsToReturn.Add(assignment);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to evaluate price assignment condition.");
+                    }
+                }
+            }
+
+            return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
+        }
+
+        public virtual async Task<IQueryable<PricelistAssignment>> PriceListAssignmentAsync(PriceEvaluationContext evalContext)
         {
             var cacheKey = CacheKey.With(GetType(), nameof(EvaluatePriceListsAsync));
             var priceListAssignments = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
@@ -70,25 +101,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
             }
 
-            var assignments = query.ToList();
-            var assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
-
-            foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
-            {
-                try
-                {
-                    if (assignment.DynamicExpression.IsSatisfiedBy(evalContext) && assignmentsToReturn.All(x => x.PricelistId != assignment.PricelistId))
-                    {
-                        assignmentsToReturn.Add(assignment);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to evaluate price assignment condition.");
-                }
-            }
-
-            return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
+            return query;
         }
 
         public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()
