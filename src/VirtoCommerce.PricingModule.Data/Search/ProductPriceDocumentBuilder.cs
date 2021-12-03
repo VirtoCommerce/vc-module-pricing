@@ -68,6 +68,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
             var evalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             evalContext.ProductIds = productIds.ToArray();
             evalContext.CertainDate = DateTime.UtcNow;
+            evalContext.SkipAssignmentValidation = true;
+            evalContext.ReturnAllMatchedPrices = true;
 
             return (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToList();
         }
