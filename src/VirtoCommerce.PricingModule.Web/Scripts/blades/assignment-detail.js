@@ -163,17 +163,5 @@ angular.module('virtoCommerce.pricingModule')
     $scope.pricelistDataSource = (criteria) => pricelists.search(criteria);
     $scope.storeDataSource = (criteria) => stores.search(criteria);
 
-    //$scope.catalogDataSource = function (criteria) {
-    //    return catalogs.search(criteria);
-    //};
-
-    //$scope.pricelistDataSource = function (criteria) {
-    //    return pricelists.search(criteria);
-    //};
-
-    //$scope.storeDataSource = function (criteria) {
-    //    return stores.search(criteria);
-    //};
-
     blade.refresh();
 }]);
