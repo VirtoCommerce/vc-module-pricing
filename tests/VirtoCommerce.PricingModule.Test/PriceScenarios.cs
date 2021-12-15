@@ -12,6 +12,7 @@ using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
+using VirtoCommerce.PricingModule.Data.Validators;
 using Xunit;
 
 #pragma warning disable CS0618 // Allow to use obsoleted
@@ -136,7 +137,7 @@ namespace VirtoCommerce.PricingModule.Test
             var mockRepository = new Mock<IPricingRepository>();
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
 
-            var service = new PricingServiceImpl(new PricelistAssignmentService(() => mockRepository.Object, null, null),
+            var service = new PricingServiceImpl(new PricelistAssignmentService(() => mockRepository.Object, null, null, new PricelistAssignmentsValidator()),
                         new PricelistService(() => mockRepository.Object, null, null),
                         new PriceService(() => mockRepository.Object, null, null, null),
                         new PricingEvaluatorService(
@@ -181,7 +182,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(4, prices.Single().List);
         }
 
-        
+
 
         //[Fact]
         //public async Task Can_return_pri()
@@ -271,7 +272,7 @@ namespace VirtoCommerce.PricingModule.Test
 
         //    if (AbstractTypeFactory<IConditionTree>.AllTypeInfos.All(t => t.Type != typeof(UserGroupsContainsCondition)))
         //        AbstractTypeFactory<IConditionTree>.RegisterType<UserGroupsContainsCondition>();
-            
+
 
         //}
     }

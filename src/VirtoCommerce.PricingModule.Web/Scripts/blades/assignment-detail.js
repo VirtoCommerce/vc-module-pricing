@@ -1,5 +1,5 @@
 angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.assignmentDetailController', ['$scope', 'virtoCommerce.catalogModule.catalogs', 'virtoCommerce.pricingModule.pricelists', 'virtoCommerce.pricingModule.pricelistAssignments', 'platformWebApp.bladeNavigationService', 'virtoCommerce.coreModule.common.dynamicExpressionService', function ($scope, catalogs, pricelists, assignments, bladeNavigationService, dynamicExpressionService) {
+    .controller('virtoCommerce.pricingModule.assignmentDetailController', ['$scope', 'virtoCommerce.catalogModule.catalogs', 'virtoCommerce.pricingModule.pricelists', 'virtoCommerce.pricingModule.pricelistAssignments', 'virtoCommerce.storeModule.stores', 'platformWebApp.bladeNavigationService', 'virtoCommerce.coreModule.common.dynamicExpressionService', 'platformWebApp.dialogService', function ($scope, catalogs, pricelists, assignments, stores, bladeNavigationService, dynamicExpressionService, dialogService) {
     var blade = $scope.blade;
     blade.updatePermission = 'pricing:update';
 
@@ -58,7 +58,12 @@ angular.module('virtoCommerce.pricingModule')
     }
 
     function canSave() {
-        return isDirty() && $scope.formScope && $scope.formScope.$valid;
+        return isDirty() && $scope.formScope && $scope.formScope.$valid && validateAssignment();
+    }
+
+    function validateAssignment() {
+        return (!blade.currentEntity.storeId || !blade.currentEntity.catalogId) &&
+            (blade.currentEntity.storeId || blade.currentEntity.catalogId)
     }
 
     $scope.setForm = function (form) { $scope.formScope = form; };
@@ -68,6 +73,18 @@ angular.module('virtoCommerce.pricingModule')
     };
 
     $scope.saveChanges = function () {
+        // can't set dynamic "required" attribute in ui-scroll-drop-down template
+        // so check if both "storeId" and "catalogId" are not null and only one of them is filled
+        if (!validateAssignment()) {
+            var dialog = {
+                id: "assignmentSaveValidationError",
+                title: "pricing.dialogs.assignment-save-validation.title",
+                message: "pricing.dialogs.assignment-save-validation.message",
+            }
+            dialogService.showErrorDialog(dialog);
+            return;
+        }
+
         blade.isLoading = true;
         if (blade.currentEntity.dynamicExpression) {
             blade.currentEntity.dynamicExpression.availableChildren = undefined;
@@ -142,9 +159,21 @@ angular.module('virtoCommerce.pricingModule')
         _.each(expressionElement.children, stripOffUiInformation);
     };
 
+    $scope.catalogDataSource = (criteria) => catalogs.search(criteria);
+    $scope.pricelistDataSource = (criteria) => pricelists.search(criteria);
+    $scope.storeDataSource = (criteria) => stores.search(criteria);
 
-    $scope.catalogDataSource = (criteria) => catalogs.search(criteria).$promise;
-    $scope.pricelistDataSource = (criteria) => pricelists.search(criteria).$promise;
+    //$scope.catalogDataSource = function (criteria) {
+    //    return catalogs.search(criteria);
+    //};
+
+    //$scope.pricelistDataSource = function (criteria) {
+    //    return pricelists.search(criteria);
+    //};
+
+    //$scope.storeDataSource = function (criteria) {
+    //    return stores.search(criteria);
+    //};
 
     blade.refresh();
 }]);

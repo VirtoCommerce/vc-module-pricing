@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentValidation;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
@@ -15,9 +16,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricelistAssignmentService : CrudService<PricelistAssignment, PricelistAssignmentEntity, PricelistAssignmentChangingEvent, PricelistAssignmentChangedEvent>
     {
-        public PricelistAssignmentService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IEventPublisher eventPublisher)
+        private readonly AbstractValidator<IEnumerable<PricelistAssignment>> _validator;
+
+        public PricelistAssignmentService(Func<IPricingRepository> repositoryFactory,
+            IPlatformMemoryCache platformMemoryCache,
+            IEventPublisher eventPublisher,
+            AbstractValidator<IEnumerable<PricelistAssignment>> validator)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
+            _validator = validator;
         }
 
         protected override async Task<IEnumerable<PricelistAssignmentEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
@@ -25,6 +32,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return await ((IPricingRepository)repository).GetPricelistAssignmentsByIdAsync(ids);
         }
 
+        protected override Task BeforeSaveChanges(IEnumerable<PricelistAssignment> models)
+        {
+            _validator.ValidateAndThrow(models);
+
+            return base.BeforeSaveChanges(models);
+        }
 
         protected override void ClearCache(IEnumerable<PricelistAssignment> models)
         {

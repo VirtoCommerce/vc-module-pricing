@@ -44,8 +44,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         public virtual async Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
         {
-            List <PricelistAssignment> assignmentsToReturn;
-            var query =  await PriceListAssignmentAsync(evalContext);
+            List<PricelistAssignment> assignmentsToReturn;
+            var query = await PriceListAssignmentAsync(evalContext);
             if (evalContext.SkipAssignmentValidation)
             {
                 assignmentsToReturn = query.ToList();
@@ -85,6 +85,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
             });
 
             var query = priceListAssignments.AsQueryable();
+
+            if (evalContext.StoreId != null)
+            {
+                query = query.Where(x => x.StoreId == evalContext.StoreId);
+            }
 
             if (evalContext.CatalogId != null)
             {

@@ -10,6 +10,7 @@ namespace VirtoCommerce.PricingModule.Core.Model
 	public class PricelistAssignment : AuditableEntity, ICloneable
     {
         public string CatalogId { get; set; }
+        public string StoreId { get; set; }
         public string PricelistId { get; set; }
         public Pricelist Pricelist { get; set; }
         public string Name { get; set; }

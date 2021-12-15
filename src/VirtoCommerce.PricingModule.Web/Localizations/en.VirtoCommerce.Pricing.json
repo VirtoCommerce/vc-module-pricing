@@ -92,6 +92,7 @@
           "assignment-name": "Assignment name",
           "price-list": "Price list",
           "catalog": "Catalog",
+          "store": "Store",
           "priority": "Priority",
           "priority-description": "The higher will be used first",
           "description": "Description",
@@ -105,6 +106,7 @@
           "assignment-name": "Enter name",
           "price-list": "Select...",
           "catalog": "Select...",
+          "store":  "Select...",
           "description": "Enter description"
         }
       },
@@ -190,6 +192,10 @@
       "assignment-save": {
         "title": "Save changes",
         "message": "The catalog assignment has been modified. Do you want to save changes?"
+      },
+      "assignment-save-validation": {
+        "title": "Save changes",
+        "message": "Price list assignment can only have Catalog or Store. Both can't be empty."
       }
     },
     "commands": {
