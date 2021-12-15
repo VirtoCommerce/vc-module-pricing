@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -127,6 +128,34 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.NotEqual(nullPricelistAssignment, PricelistAssignment);
         }
 
+        [Fact]
+        public Task SavePricelistAssignment_StoreAndCatalogNotNull_ValidationExceptionThrown()
+        {
+            //Arrange
+            var newPricelistAssignment = new PricelistAssignment
+            {
+                StoreId = Guid.NewGuid().ToString(),
+                CatalogId = Guid.NewGuid().ToString(),
+            };
+
+            var service = GetPricingServiceImplWithPlatformMemoryCache();
+
+            // Assert
+            return Assert.ThrowsAsync<ValidationException>(() => service.SavePricelistAssignmentsAsync(new[] { newPricelistAssignment }));
+        }
+
+        [Fact]
+        public Task SavePricelistAssignment_StoreAndCatalogNull_ValidationExceptionThrown()
+        {
+            //Arrange
+            var newPricelistAssignment = new PricelistAssignment();
+
+            var service = GetPricingServiceImplWithPlatformMemoryCache();
+
+            // Assert
+            return Assert.ThrowsAsync<ValidationException>(() => service.SavePricelistAssignmentsAsync(new[] { newPricelistAssignment }));
+        }
+
 
         private PricingServiceImpl GetPricingServiceImplWithPlatformMemoryCache()
         {
@@ -139,7 +168,6 @@ namespace VirtoCommerce.PricingModule.Test
 
         private PricingServiceImpl GetPricingServiceImpl(IPlatformMemoryCache platformMemoryCache, IPricingRepository pricingRepository)
         {
-
             return new PricingServiceImpl(
                 new PricelistAssignmentService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object, new PricelistAssignmentsValidator()),
                 new PricelistService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
