@@ -130,6 +130,7 @@
           "name": "Price List",
           "currency": "Currency",
           "catalog": "Catalog",
+          "store": "Store",
           "list-price": "List price",
           "sale-price": "Sale price",
           "min-quantity": "Min. quantity",

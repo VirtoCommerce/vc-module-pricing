@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
-    function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
+    .controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'virtoCommerce.storeModule.stores', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
+        function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, stores, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
         $scope.uiGridConstants = uiGridConstants;
         var blade = $scope.blade;
         blade.updatePermission = 'pricing:update';
@@ -38,12 +38,21 @@ angular.module('virtoCommerce.pricingModule')
                                         currency: pricelistWithPrices.currency
                                     };
 
-                                    var catalogsId = _.pluck(pricelistWithPrices.assignments, 'catalogId');
+                                    var catalogsId = _.pluck(_.filter(pricelistWithPrices.assignments, function (assignemnt) { return assignemnt.catalogId }), 'catalogId');
                                     var catalogsName = _.map(catalogsId,
-                                        function(catalogId) {
-                                            return _.findWhere($scope.catalogsList, { id: catalogId }).name;
+                                        function (catalogId) {
+                                            var catalog = _.findWhere($scope.catalogsList, { id: catalogId });
+                                            if (catalog) {
+                                                return catalog.name;
+                                            }
+                                            else {
+                                                return null;
+                                            }
                                         });
                                     priceListData.catalog = catalogsName.join(', ');
+
+                                    var storeIds = _.pluck(_.filter(pricelistWithPrices.assignments, function (assignemnt) { return assignemnt.storeId }), 'storeId');
+                                    priceListData.store = storeIds.join(', ');;
 
                                     _.each(pricelistWithPrices.prices,
                                         function(price) {
