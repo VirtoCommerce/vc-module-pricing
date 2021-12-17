@@ -49,11 +49,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
             var query = await PriceListAssignmentAsync(evalContext);
             if (evalContext.SkipAssignmentValidation)
             {
-                assignmentsToReturn = query.ToList();
+                assignmentsToReturn = await query.ToListAsync();
             }
             else
             {
-                var assignments = query.ToList();
+                var assignments = await query.ToListAsync();
                 assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
 
                 foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
