@@ -54,7 +54,7 @@ angular.module('virtoCommerce.pricingModule')
                                             var store = _.findWhere($scope.storeList, { id: storeId });
                                             return store ? store.name : null;
                                         });
-                                    priceListData.store = storeName.join(', ');;
+                                    priceListData.store = storeName.join(', ');
 
                                     _.each(pricelistWithPrices.prices,
                                         function (price) {
