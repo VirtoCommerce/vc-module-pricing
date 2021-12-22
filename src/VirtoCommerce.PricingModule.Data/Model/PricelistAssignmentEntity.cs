@@ -29,8 +29,10 @@ namespace VirtoCommerce.PricingModule.Data.Model
         public string PredicateVisualTreeSerialized { get; set; }
 
         [StringLength(128)]
-        [Required]
         public string CatalogId { get; set; }
+
+        [StringLength(128)]
+        public string StoreId { get; set; }
 
         [StringLength(128)]
         public string OuterId { get; set; }
@@ -55,6 +57,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
             assignment.OuterId = OuterId;
 
             assignment.CatalogId = CatalogId;
+            assignment.StoreId = StoreId;
             assignment.Description = Description;
             assignment.Name = Name;
             assignment.PricelistId = PricelistId;
@@ -95,6 +98,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
             OuterId = assignment.OuterId;
 
             CatalogId = assignment.CatalogId;
+            StoreId = assignment.StoreId;
             Description = assignment.Description;
             Name = assignment.Name;
             PricelistId = assignment.PricelistId;
@@ -118,6 +122,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
             target.Name = Name;
             target.Description = Description;
             target.CatalogId = CatalogId;
+            target.StoreId = StoreId;
             target.PricelistId = PricelistId;
             target.Priority = Priority;
             target.PredicateVisualTreeSerialized = PredicateVisualTreeSerialized;

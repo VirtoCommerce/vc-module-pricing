@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -44,10 +45,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         public virtual async Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
         {
-            List <PricelistAssignment> assignmentsToReturn;
-            var query =  await PriceListAssignmentAsync(evalContext);
+            List<PricelistAssignment> assignmentsToReturn;
+            var query = await PriceListAssignmentAsync(evalContext);
             if (evalContext.SkipAssignmentValidation)
             {
+                // do NOT use ToListAsync as "query" is not EF IAsyncQuerable
                 assignmentsToReturn = query.ToList();
             }
             else
@@ -86,10 +88,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             var query = priceListAssignments.AsQueryable();
 
-            if (evalContext.CatalogId != null)
-            {
-                query = query.Where(x => x.CatalogId == evalContext.CatalogId);
-            }
+            var predictate = GetEvaluationPredicate(evalContext);
+            query = query.Where(predictate);
 
             if (evalContext.Currency != null)
             {
@@ -102,6 +102,28 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             return query;
+        }
+
+        private Expression<Func<PricelistAssignment, bool>> GetEvaluationPredicate(PriceEvaluationContext evalContext)
+        {
+            if (evalContext.StoreId == null && evalContext.CatalogId == null)
+            {
+                return PredicateBuilder.True<PricelistAssignment>();
+            }
+
+            var predicate = PredicateBuilder.False<PricelistAssignment>();
+
+            if (evalContext.StoreId != null)
+            {
+                predicate = PredicateBuilder.Or(predicate, x => x.StoreId == evalContext.StoreId);
+            }
+
+            if (evalContext.CatalogId != null)
+            {
+                predicate = PredicateBuilder.Or(predicate, x => x.CatalogId == evalContext.CatalogId);
+            }
+
+            return predicate;
         }
 
         public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()

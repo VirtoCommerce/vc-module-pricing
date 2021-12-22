@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.pricingModule')
-.controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
-    function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
+    .controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'virtoCommerce.storeModule.stores', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
+        function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, stores, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
         $scope.uiGridConstants = uiGridConstants;
         var blade = $scope.blade;
         blade.updatePermission = 'pricing:update';
@@ -11,14 +11,16 @@ angular.module('virtoCommerce.pricingModule')
                 function (pricelists) {
                     //Loading catalogs for assignments because they do not contains them
                     //Need to display name of catalog in assignments grid
-                    catalogs.search({ take: 1000, responseGroup: 'Info' },
-                        function(data) {
-                            $scope.catalogsList = data.results;
+                    catalogs.search({ take: 1000, responseGroup: 'Info' }, function (catalogData) {
+                        stores.search({ take: 1000, responseGroup: 'StoreInfo' }, function (storeData) {
+                            $scope.catalogsList = catalogData.results;
+                            $scope.storeList = storeData.results;
+
                             blade.origEntity = [];
 
                             //Collect all available pricelists
                             blade.pricelistList = _.map(pricelists,
-                                function(pricelist) {
+                                function (pricelist) {
                                     return {
                                         id: pricelist.id,
                                         code: pricelist.name,
@@ -30,23 +32,32 @@ angular.module('virtoCommerce.pricingModule')
                             blade.selectedPricelist = _.first(blade.pricelistList);
 
                             var pricelistsWithPrices = _.filter(pricelists,
-                                function(pricelist) { return pricelist.prices.length > 0; });
+                                function (pricelist) { return pricelist.prices.length > 0; });
                             _.each(pricelistsWithPrices,
-                                function(pricelistWithPrices) {
+                                function (pricelistWithPrices) {
                                     var priceListData = {
                                         name: pricelistWithPrices.name,
                                         currency: pricelistWithPrices.currency
                                     };
 
-                                    var catalogsId = _.pluck(pricelistWithPrices.assignments, 'catalogId');
+                                    var catalogsId = _.pluck(_.filter(pricelistWithPrices.assignments, function (assignemnt) { return assignemnt.catalogId }), 'catalogId');
                                     var catalogsName = _.map(catalogsId,
-                                        function(catalogId) {
-                                            return _.findWhere($scope.catalogsList, { id: catalogId }).name;
+                                        function (catalogId) {
+                                            var catalog = _.findWhere($scope.catalogsList, { id: catalogId });
+                                            return catalog ? catalog.name : null;
                                         });
                                     priceListData.catalog = catalogsName.join(', ');
 
+                                    var storeIds = _.pluck(_.filter(pricelistWithPrices.assignments, function (assignemnt) { return assignemnt.storeId }), 'storeId');
+                                    var storeName = _.map(storeIds,
+                                        function (storeId) {
+                                            var store = _.findWhere($scope.storeList, { id: storeId });
+                                            return store ? store.name : null;
+                                        });
+                                    priceListData.store = storeName.join(', ');
+
                                     _.each(pricelistWithPrices.prices,
-                                        function(price) {
+                                        function (price) {
                                             var priceData = angular.copy(priceListData);
                                             priceData = angular.extend(price, priceData);
                                             blade.origEntity.push(priceData);
@@ -56,6 +67,7 @@ angular.module('virtoCommerce.pricingModule')
                             blade.currentEntities = angular.copy(blade.origEntity);
                             priceValidatorsService.setAllPrices(blade.currentEntities);
                             blade.isLoading = false;
+                            });                                                
                         });
                 });
         };
