@@ -15,7 +15,6 @@
     <PackageReference Include="MockQueryable.Moq" Version="3.1.1" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="System.Linq.Async" Version="5.1.0" />
-    <PackageReference Include="System.Linq.Async.Queryable" Version="5.1.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.1.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.1.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.1.0" />
