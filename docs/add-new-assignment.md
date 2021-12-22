@@ -12,7 +12,7 @@
 1. The user clicks the **Add** button and the system opens the **New Price List Assignment** screen. The screen will display the following elements:
     1. Assignment Name input field - required
     1. Catalog drop down - disabled if Store is selected.
-    1. Store drop down - disabled is Catalog is selected. 
+    1. Store drop down - disabled if Catalog is selected. 
     1. Price List drop down- required
     1. Priority input field - required
     1. Description input field- optional
