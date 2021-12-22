@@ -11,7 +11,8 @@
 1. The system opens a new screen with an active **Add** button that enables the user to add a new Assignment to the selected Price List
 1. The user clicks the **Add** button and the system opens the **New Price List Assignment** screen. The screen will display the following elements:
     1. Assignment Name input field - required
-    1. Catalog drop down - required.
+    1. Catalog drop down - disabled if Store is selected.
+    1. Store drop down - disabled if Catalog is selected. 
     1. Price List drop down- required
     1. Priority input field - required
     1. Description input field- optional
@@ -25,7 +26,7 @@
     1. **Create** button becomes active only when required fields are filled out
 1. The user fills out the required data:
     1. Enters the Assignment Name
-    1. Selects the Catalog from the drop-down list
+    1. Selects the Catalog or Store from the drop-down list. User can select either Catalog or Store to attach an assignment to.
     1. Selects the Price List from the drop-down list
     1. Specifies the Priority (1, 2, 3, etc.). The system will then display on the Storefront the Price List with the highest priority
     1. The user can also fill out the fill out the **Description** field, but it’s optional

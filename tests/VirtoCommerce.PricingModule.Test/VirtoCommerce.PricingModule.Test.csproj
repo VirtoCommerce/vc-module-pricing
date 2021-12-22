@@ -10,9 +10,11 @@
     <EmbeddedResource Include="Resources\TestSerializedCondition.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="MockQueryable.Moq" Version="3.1.1" />
     <PackageReference Include="Moq" Version="4.13.1" />
+    <PackageReference Include="System.Linq.Async" Version="5.1.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.1.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.1.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.1.0" />

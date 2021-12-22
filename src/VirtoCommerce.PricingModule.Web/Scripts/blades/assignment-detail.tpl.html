@@ -1,4 +1,4 @@
-﻿<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
+<div class="blade-static __bottom" ng-include="'$(Platform)/Scripts/common/templates/create.tpl.html'" ng-if="blade.isNew"></div>
 <div class="blade-content __medium-wide">
     <div class="blade-inner">
         <div class="inner-block">
@@ -11,28 +11,46 @@
                                 <input ng-model="blade.currentEntity.name" required placeholder="{{'pricing.blades.assignment-detail.placeholders.assignment-name' | translate}}" />
                             </div>
                         </div>
-                        <ui-scroll
-                            data="pricelistDataSource(criteria)"
-                            label="'pricing.blades.assignment-detail.labels.price-list'" 
-                            placeholder="'pricing.blades.assignment-detail.placeholders.price-list'"
-                            selected-id="blade.currentEntity.pricelistId" > </ui-scroll>
-                    </div>
-                    <div class="column">
-                        <ui-scroll
-                            data="catalogDataSource(criteria)"
-                            label="'pricing.blades.assignment-detail.labels.catalog'" 
-                            placeholder="'pricing.blades.assignment-detail.placeholders.catalog'"
-                            selected-id="blade.currentEntity.catalogId"> </ui-scroll>
+                        <!--Store-->
+                        <div class="form-group">
+                            <label class="form-label">{{'pricing.blades.assignment-detail.labels.store' | translate}}</label>
+                            <ui-scroll-drop-down data="storeDataSource(criteria)"
+                                                 placeholder="'pricing.blades.assignment-detail.placeholders.store'"
+                                                 ng-model="blade.currentEntity.storeId"
+                                                 disabled="blade.currentEntity.catalogId">
+                            </ui-scroll-drop-down>
+                        </div>
+                        <!--Priority-->
                         <div class="form-group">
                             <label class="form-label">{{'pricing.blades.assignment-detail.labels.priority' | translate}}</label>
                             <div class="form-input __number list __info">
-                                <input smart-float num-type="integer" required ng-model="blade.currentEntity.priority" type="text" >
+                                <input smart-float num-type="integer" required ng-model="blade.currentEntity.priority" type="text">
                                 <div class="list-descr">{{'pricing.blades.assignment-detail.labels.priority-description' | translate}}</div>
                             </div>
                         </div>
                     </div>
+                    <div class="column">
+                        <!--PriceList-->
+                        <div class="form-group">
+                            <label class="form-label">{{'pricing.blades.assignment-detail.labels.price-list' | translate}}</label>
+                            <ui-scroll-drop-down data="pricelistDataSource(criteria)"
+                                                 placeholder="'pricing.blades.assignment-detail.placeholders.price-list'"
+                                                 ng-model="blade.currentEntity.pricelistId"
+                                                 required>
+                            </ui-scroll-drop-down>
+                        </div>
+                        <!--Catalog-->
+                        <div class="form-group">
+                            <label class="form-label">{{'pricing.blades.assignment-detail.labels.catalog' | translate}}</label>
+                            <ui-scroll-drop-down data="catalogDataSource(criteria)"
+                                                 placeholder="'pricing.blades.assignment-detail.placeholders.catalog'"
+                                                 ng-model="blade.currentEntity.catalogId"
+                                                 disabled="blade.currentEntity.storeId">
+                            </ui-scroll-drop-down>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="padding-top: 10px;">
                     <label class="form-label">{{'pricing.blades.assignment-detail.labels.description' | translate}}</label>
                     <div class="form-input">
                         <textarea class="form-control" cols="30" rows="3" ng-model="blade.currentEntity.description" placeholder="{{'pricing.blades.assignment-detail.placeholders.description' | translate}}"></textarea>
