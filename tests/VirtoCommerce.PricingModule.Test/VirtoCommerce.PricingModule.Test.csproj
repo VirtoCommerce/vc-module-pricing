@@ -14,9 +14,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+	<PackageReference Include="FluentAssertions" Version="6.2.0" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="MockQueryable.Moq" Version="5.0.1" />
     <PackageReference Include="Moq" Version="4.13.1" />
+	<PackageReference Include="System.Linq.Async" Version="5.1.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.200.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.200.0" />
     <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.200.0" />

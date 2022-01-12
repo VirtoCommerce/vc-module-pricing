@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,7 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Services;
+using VirtoCommerce.PricingModule.Data.Validators;
 using Xunit;
 
 #pragma warning disable CS0618 // Allow to use obsoleted
@@ -100,7 +102,12 @@ namespace VirtoCommerce.PricingModule.Test
         {
             //Arrange
             var id = Guid.NewGuid().ToString();
-            var newPricelistAssignment = new PricelistAssignment { Id = id };
+            var newPricelistAssignment = new PricelistAssignment
+            {
+                Id = id,
+                StoreId = Guid.NewGuid().ToString()
+            };
+
             var newPricelistAssignmentEntity = AbstractTypeFactory<PricelistAssignmentEntity>.TryCreateInstance().FromModel(newPricelistAssignment, new PrimaryKeyResolvingMap());
             var service = GetPricingServiceImplWithPlatformMemoryCache();
             _repositoryMock.Setup(x => x.Add(newPricelistAssignmentEntity))
@@ -121,6 +128,34 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.NotEqual(nullPricelistAssignment, PricelistAssignment);
         }
 
+        [Fact]
+        public Task SavePricelistAssignment_StoreAndCatalogNotNull_ValidationExceptionThrown()
+        {
+            //Arrange
+            var newPricelistAssignment = new PricelistAssignment
+            {
+                StoreId = Guid.NewGuid().ToString(),
+                CatalogId = Guid.NewGuid().ToString(),
+            };
+
+            var service = GetPricingServiceImplWithPlatformMemoryCache();
+
+            // Assert
+            return Assert.ThrowsAsync<ValidationException>(() => service.SavePricelistAssignmentsAsync(new[] { newPricelistAssignment }));
+        }
+
+        [Fact]
+        public Task SavePricelistAssignment_StoreAndCatalogNull_ValidationExceptionThrown()
+        {
+            //Arrange
+            var newPricelistAssignment = new PricelistAssignment();
+
+            var service = GetPricingServiceImplWithPlatformMemoryCache();
+
+            // Assert
+            return Assert.ThrowsAsync<ValidationException>(() => service.SavePricelistAssignmentsAsync(new[] { newPricelistAssignment }));
+        }
+
 
         private PricingServiceImpl GetPricingServiceImplWithPlatformMemoryCache()
         {
@@ -133,9 +168,8 @@ namespace VirtoCommerce.PricingModule.Test
 
         private PricingServiceImpl GetPricingServiceImpl(IPlatformMemoryCache platformMemoryCache, IPricingRepository pricingRepository)
         {
-
             return new PricingServiceImpl(
-                new PricelistAssignmentService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
+                new PricelistAssignmentService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object, new PricelistAssignmentsValidator()),
                 new PricelistService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object),
                 new PriceService(() => pricingRepository, platformMemoryCache, _eventPublisherMock.Object, new PricelistService(() => pricingRepository, platformMemoryCache, null)),
                 new PricingEvaluatorService(

@@ -4,6 +4,8 @@ namespace VirtoCommerce.PricingModule.Core.Model.Search
     {
         public string PriceListId { get; set; }
         public string[] CatalogIds { get; set; }
+        public string[] StoreIds { get; set; }
+
         private string[] _priceListIds;
         public string[] PriceListIds
         {

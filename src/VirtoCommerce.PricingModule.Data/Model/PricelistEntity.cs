@@ -57,6 +57,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
                 var assignment = AbstractTypeFactory<PricelistAssignment>.TryCreateInstance();
                 assignment.Id = assignmentEntity.Id;
                 assignment.CatalogId = assignmentEntity.CatalogId;
+                assignment.StoreId = assignmentEntity.StoreId;
                 assignment.Description = assignmentEntity.Description;
                 assignment.Name = assignmentEntity.Name;
                 assignment.Priority = assignmentEntity.Priority;

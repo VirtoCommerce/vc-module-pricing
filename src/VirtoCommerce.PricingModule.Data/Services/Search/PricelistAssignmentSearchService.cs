@@ -35,6 +35,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => x.Name.Contains(criteria.Keyword) || x.Description.Contains(criteria.Keyword));
             }
 
+            if (!criteria.StoreIds.IsNullOrEmpty())
+            {
+                query = query.Where(x => criteria.StoreIds.Contains(x.StoreId));
+            }
+
             if (!criteria.CatalogIds.IsNullOrEmpty())
             {
                 query = query.Where(x => criteria.CatalogIds.Contains(x.CatalogId));

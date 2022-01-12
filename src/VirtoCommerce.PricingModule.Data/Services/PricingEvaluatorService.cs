@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -42,8 +43,40 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _productService = productService;
         }
 
-
         public virtual async Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
+        {
+            List<PricelistAssignment> assignmentsToReturn;
+            var query = await PriceListAssignmentAsync(evalContext);
+            if (evalContext.SkipAssignmentValidation)
+            {
+                // do NOT use ToListAsync as "query" is not EF IAsyncQuerable
+                assignmentsToReturn = query.ToList();
+            }
+            else
+            {
+                var assignments = query.ToList();
+                assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
+
+                foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
+                {
+                    try
+                    {
+                        if (assignment.DynamicExpression.IsSatisfiedBy(evalContext) && assignmentsToReturn.All(x => x.PricelistId != assignment.PricelistId))
+                        {
+                            assignmentsToReturn.Add(assignment);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to evaluate price assignment condition.");
+                    }
+                }
+            }
+
+            return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
+        }
+
+        public virtual async Task<IQueryable<PricelistAssignment>> PriceListAssignmentAsync(PriceEvaluationContext evalContext)
         {
             var cacheKey = CacheKey.With(GetType(), nameof(EvaluatePriceListsAsync));
             var priceListAssignments = await _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
@@ -55,10 +88,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             var query = priceListAssignments.AsQueryable();
 
-            if (evalContext.CatalogId != null)
-            {
-                query = query.Where(x => x.CatalogId == evalContext.CatalogId);
-            }
+            var predictate = GetEvaluationPredicate(evalContext);
+            query = query.Where(predictate);
 
             if (evalContext.Currency != null)
             {
@@ -70,25 +101,29 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
             }
 
-            var assignments = query.ToList();
-            var assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null).ToList();
+            return query;
+        }
 
-            foreach (var assignment in assignments.Where(x => x.DynamicExpression != null))
+        private Expression<Func<PricelistAssignment, bool>> GetEvaluationPredicate(PriceEvaluationContext evalContext)
+        {
+            if (evalContext.StoreId == null && evalContext.CatalogId == null)
             {
-                try
-                {
-                    if (assignment.DynamicExpression.IsSatisfiedBy(evalContext) && assignmentsToReturn.All(x => x.PricelistId != assignment.PricelistId))
-                    {
-                        assignmentsToReturn.Add(assignment);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to evaluate price assignment condition.");
-                }
+                return PredicateBuilder.True<PricelistAssignment>();
             }
 
-            return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
+            var predicate = PredicateBuilder.False<PricelistAssignment>();
+
+            if (evalContext.StoreId != null)
+            {
+                predicate = PredicateBuilder.Or(predicate, x => x.StoreId == evalContext.StoreId);
+            }
+
+            if (evalContext.CatalogId != null)
+            {
+                predicate = PredicateBuilder.Or(predicate, x => x.CatalogId == evalContext.CatalogId);
+            }
+
+            return predicate;
         }
 
         public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()
