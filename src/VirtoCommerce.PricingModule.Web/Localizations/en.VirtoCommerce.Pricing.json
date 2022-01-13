@@ -15,7 +15,7 @@
         }
       },
       "pricelist-list": {
-        "subtitle": "Manage Price lists",
+        "subtitle": "Manage price lists",
         "labels": {
           "name": "Name",
           "currency": "Currency",
@@ -23,31 +23,31 @@
         }
       },
       "pricelist-detail": {
-        "title-new": "New Price list",
+        "title-new": "New price list",
         "labels": {
           "name": "Name",
           "currency": "Currency",
           "description": "Description"
         },
         "placeholders": {
-          "name": "Enter name",
-          "currency": "Select...",
-          "description": "Enter description"
+          "name": "Please enter name",
+          "currency": "Please select...",
+          "description": "Please provide description..."
         }
       },
       "pricelist-item-list": {
-        "subtitle": "Select Product to manage Prices",
+        "subtitle": "Please select a product to manage the prices for",
         "labels": {
-          "picture": "Pic",
+          "picture": "Image",
           "item-name": "Item name",
           "item-code": "Item code",
           "price-range": "Price range",
           "price-count": "Price count",
-          "prices-count": "Prices count in this price list",
-          "no-product-row-name": "Product with the given Id does not exist"
+          "prices-count": "Price count in this price list",
+          "no-product-row-name": "There is no product item with this ID"
         },
         "placeholders": {
-          "search-item": "Search Item by name..."
+          "search-item": "Search item by name..."
         }
       },
       "prices-list": {
@@ -57,9 +57,9 @@
           "currency": "Currency",
           "list-price": "List price",
           "sale-price": "Sale price",
-          "min-quantity": "Min. quantity",
+          "min-quantity": "Min quantity",
           "startDate": "Valid from",
-          "endDate": "Valid to",
+          "endDate": "Valid until",
           "last-modified": "Modified"
         }
       },
@@ -94,7 +94,7 @@
           "catalog": "Catalog",
           "store": "Store",
           "priority": "Priority",
-          "priority-description": "The higher will be used first",
+          "priority-description": "The higher item will be used first",
           "description": "Description",
           "enable-date": "Enable date",
           "enable-date-description": "Leave blank if always available",
@@ -103,29 +103,29 @@
           "eligible-shoppers": "Eligible shoppers"
         },
         "placeholders": {
-          "assignment-name": "Enter name",
-          "price-list": "Select...",
-          "catalog": "Select...",
-          "store":  "Select...",
-          "description": "Enter description"
+          "assignment-name": "Please enter name",
+          "price-list": "Please select...",
+          "catalog": "Please select...",
+          "store": "Please select...",
+          "description": "Please provide description..."
         }
       },
       "item-pricelists-list": {
-        "subtitle": "Select Price list to manage prices",
+        "subtitle": "Select a price list to manage prices",
         "labels": {
-          "name": "Price List",
+          "name": "Price list",
           "currency": "Currency",
           "priority": "Priority",
-          "prices-count": "Prices count"
+          "prices-count": "Price count"
         },
-        "no-assignments": "Catalog does not have assigned price lists. Please assign a price list by following this link ",
+        "no-assignments": "This catalog does not have any assigned price lists. Please assign a price list by following this link ",
         "manage-pricelists": "Manage pricing"
       },
       "item-prices": {
         "title": "Prices for {{name}}",
         "subtitle": "Edit prices",
-        "head-label": "Price list for new price",
-        "pricelist-select-placeholder": "Select a pricelist to add new price...",
+        "head-label": "Price list for the new price",
+        "pricelist-select-placeholder": "Select a price list to add the new price to...",
         "labels": {
           "name": "Price List",
           "currency": "Currency",
@@ -133,18 +133,18 @@
           "store": "Store",
           "list-price": "List price",
           "sale-price": "Sale price",
-          "min-quantity": "Min. quantity",
+          "min-quantity": "Min quantity",
           "startDate": "Valid from",
-          "endDate": "Valid to"
+          "endDate": "Valid until"
         }
       },
       "exporter": {
-        "priceTitle": "Prices export",
-        "priceSubtitle": "Export prices to json or csv",
-        "priceListTitle": "Pricelist export",
-        "pricelistSubtitle": "Export priceslist to json or csv",
-        "priceAssignmentTitle": "Price Assignment export",
-        "priceAssignmentSubtitle": "Export price assignment to json or csv"
+        "priceTitle": "Export prices",
+        "priceSubtitle": "Export prices to a JSON or CSV file",
+        "priceListTitle": "Export price lists",
+        "pricelistSubtitle": "Export your price list to a JSON or CSV file",
+        "priceAssignmentTitle": "Export price assignments",
+        "priceAssignmentSubtitle": "Export your price assignment to a JSON or CSV file"
       }
     },
     "widgets": {
@@ -153,7 +153,7 @@
       },
       "itemPricesWidget": {
         "title": "Price",
-        "assign-pricelist": "Assign Price list"
+        "assign-pricelist": "Assign price list"
       },
       "prices": {
         "title": "Prices"
@@ -161,34 +161,34 @@
     },
     "dialogs": {
       "assignments-delete": {
-        "title": "Delete confirmation",
-        "message": "Are you sure you want to delete selected price list assignments?"
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to delete the selected price list assignments?"
       },
       "assignments-delete-all": {
-        "title": "Delete confirmation",
-        "warning": "WARNING: this change is permanent and can't be undone afterwards. It can lead to data loss.",
+        "title": "Confirm Delete",
+        "warning": "WARNING: This change is permanent and cannot be undone. Applying this change may result in a data loss.",
         "message": "All filtered items will be deleted",
-        "instruction": "Enter 'yes' to enable deletion:"
+        "instruction": "Type Yes to delete:"
       },
       "pricelists-delete": {
-        "title": "Delete confirmation",
-        "message": "Are you sure you want to delete selected Price lists?"
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to delete the selected price lists?"
       },
       "pricelist-item-list-delete": {
-        "title": "Delete confirmation",
-        "message": "Are you sure you want to delete ALL prices for selected Products in this Price list?"
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to delete all prices for the selected products in this price list?"
       },
       "item-prices-delete": {
-        "title": "Delete confirmation",
-        "message": "Are you sure you want to delete selected Prices?"
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to delete the selected prices?"
       },
       "prices-save": {
         "title": "Save changes",
-        "message": "The Prices has been modified. Do you want to save changes?"
+        "message": "The prices have been modified. Do you want to save changes?"
       },
       "pricelist-save": {
         "title": "Save changes",
-        "message": "The Price list has been modified. Do you want to save changes?"
+        "message": "The price list has been modified. Do you want to save changes?"
       },
       "assignment-save": {
         "title": "Save changes",
@@ -196,7 +196,7 @@
       },
       "assignment-save-validation": {
         "title": "Save changes",
-        "message": "Price list assignment can only have Catalog or Store. Both can't be empty."
+        "message": "For a price list assignment, you must provide either a catalog or a store. You cannot leave both fields blank."
       }
     },
     "commands": {
@@ -209,7 +209,6 @@
         "modified-since": "Modified since",
         "products": "Products",
         "currencies": "Currencies"
-
       },
       "labels": {
         "select": "Select",
@@ -221,7 +220,7 @@
       },
       "blades": {
         "titles": {
-          "select-products": "Select Catalog products…"
+          "select-products": "Select catalog products…"
         }
       }
     }
@@ -240,8 +239,8 @@
           "IndexationDate": {
             "Pricing": {
               "Calendar": {
-                "title": "Pricing indexation date and time",
-                "description": "Date and time of the pricing indexation task to start"
+                "title": "Pricing indexing date and time",
+                "description": "Date and time the price indexing task will start at"
               }
             }
           }
@@ -251,30 +250,29 @@
     "Pricing": {
       "ExportImport": {
         "PageSize": {
-          "title": "The page size being used for Export / Import",
-          "description": "High value may cause slow performance"
+          "title": "Page size being used for Export / Import",
+          "description": "Providing high values may lead to slow performance"
         }
       },
       "LogPricingChanges": {
         "title": "Log pricing changes",
-        "description": "Log changes into the platform operation log. This might impact database size if prices are changed relatively often."
+        "description": "Log changes into the platform operation log. This might impact database size in case prices get changed often."
       },
       "Indexing": {
         "Enable": {
           "title": "Enable product price indexing",
-          "description": "If this setting is turned on, product price will be included to the product index. This will also cause product re-indexing after changing its prices."
+          "description": "Enable this option to include the product price into the product index. This will also cause product re-indexing once the price gets changed."
         },
         "StorePricesInIndex": {
-          "title": "Store all product prices as object in index",
-          "description": "When this setting enabled, all product prices will be stored in the index in a nested field with name  __price"
-
+          "title": "Store all product prices as an index object",
+          "description": "Enable this option to store all product prices in the index within a nested field as <ProductName_price>"
         }
       },
       "Search": {
         "EventBasedIndexation": {
           "Enable": {
-            "title": "Enable event-based indexation for pricing entities",
-            "description": "Any changes to the catalog entity will trigger a background task that will apply these changes in the search index."
+            "title": "Enable event-based indexing for pricing entities",
+            "description": "Any changes to a catalog entity will trigger a background task that will apply these changes to the search index."
           }
         }
       }
@@ -282,32 +280,32 @@
   },
   "module": {
     "VirtoCommerce.Pricing": {
-      "description": "Export/Import price lists, assignments and prices"
+      "description": "Export or import price lists, assignments, and prices"
     }
   },
   "export": {
     "types": {
       "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
-        "name": "Pricelist full data",
-        "description": "Pricelist data with related objects. Supports JSON export provider only"
+        "name": "Full price list data",
+        "description": "Price list data with related objects. Supports JSON export provider only"
       },
       "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
         "name": "Price",
         "description": "Prices without related objects"
       },
       "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
-        "name": "Pricelist",
-        "description": "Pricelists only"
+        "name": "Price list",
+        "description": "Price lists only"
       },
       "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
-        "name": "Pricelist assignment",
-        "description": "Export pricelist assignments"
+        "name": "Price list assignment",
+        "description": "Export price list assignments"
       }
     },
     "groups": {
       "VirtoCommerce.PricingModule.Data.ExportImport": {
         "name": "Pricing",
-        "description": "Prices, pricelists & assignments"
+        "description": "Prices, price lists, and assignments"
       }
     }
   }
