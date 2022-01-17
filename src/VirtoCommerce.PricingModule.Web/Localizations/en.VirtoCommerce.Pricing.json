@@ -4,18 +4,18 @@
     "blades": {
       "pricing-main": {
         "title": "Pricing",
-        "subtitle": "Merchandise management",
+        "subtitle": "Manage your merchandise pricing",
         "menu": {
           "pricelist-list": {
-            "title": "Price lists"
+            "title": "Price Lists"
           },
           "pricelist-assignment-list": {
-            "title": "Price list assignments"
+            "title": "Price List Assignments"
           }
         }
       },
       "pricelist-list": {
-        "subtitle": "Manage price lists",
+        "subtitle": "Managing your price lists",
         "labels": {
           "name": "Name",
           "currency": "Currency",
@@ -23,14 +23,14 @@
         }
       },
       "pricelist-detail": {
-        "title-new": "New price list",
+        "title-new": "New Price List",
         "labels": {
           "name": "Name",
           "currency": "Currency",
           "description": "Description"
         },
         "placeholders": {
-          "name": "Please enter name",
+          "name": "Please enter name...",
           "currency": "Please select...",
           "description": "Please provide description..."
         }
@@ -64,7 +64,7 @@
         }
       },
       "pricelist-assignment-list": {
-        "subtitle": "Manage assigned catalogs",
+        "subtitle": "Managing assigned catalogs",
         "labels": {
           "assignment-name": "Assignment name",
           "catalog": "Catalog",
@@ -72,7 +72,7 @@
         }
       },
       "assignment-list": {
-        "subtitle": "Merchandise management",
+        "subtitle": "Manage your merchandise pricing",
         "labels": {
           "name": "Name",
           "catalog": "Catalog",
@@ -86,15 +86,15 @@
         }
       },
       "assignment-detail": {
-        "new-title": "New price list assignment",
-        "subtitle": "Edit catalog assignment",
+        "new-title": "New Price List Assignment",
+        "subtitle": "Editing catalog assignment",
         "labels": {
           "assignment-name": "Assignment name",
           "price-list": "Price list",
           "catalog": "Catalog",
           "store": "Store",
           "priority": "Priority",
-          "priority-description": "The higher item will be used first",
+          "priority-description": "The higher priority item will be used first",
           "description": "Description",
           "enable-date": "Enable date",
           "enable-date-description": "Leave blank if always available",
@@ -103,7 +103,7 @@
           "eligible-shoppers": "Eligible shoppers"
         },
         "placeholders": {
-          "assignment-name": "Please enter name",
+          "assignment-name": "Please enter name...",
           "price-list": "Please select...",
           "catalog": "Please select...",
           "store": "Please select...",
@@ -139,11 +139,11 @@
         }
       },
       "exporter": {
-        "priceTitle": "Export prices",
+        "priceTitle": "Export Prices",
         "priceSubtitle": "Export prices to a JSON or CSV file",
-        "priceListTitle": "Export price lists",
+        "priceListTitle": "Export Price Lists",
         "pricelistSubtitle": "Export your price list to a JSON or CSV file",
-        "priceAssignmentTitle": "Export price assignments",
+        "priceAssignmentTitle": "Export Price Assignments",
         "priceAssignmentSubtitle": "Export your price assignment to a JSON or CSV file"
       }
     },
@@ -162,25 +162,25 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Confirm Delete",
-        "message": "Are you sure you want to delete the selected price list assignments?"
+        "message": "Are you sure you want to delete the selected price list assignment(s)?"
       },
       "assignments-delete-all": {
         "title": "Confirm Delete",
-        "warning": "WARNING: This change is permanent and cannot be undone. Applying this change may result in a data loss.",
+        "warning": "WARNING: This change is final and cannot be undone. Applying this change may result in a data loss.",
         "message": "All filtered items will be deleted",
         "instruction": "Type Yes to delete:"
       },
       "pricelists-delete": {
         "title": "Confirm Delete",
-        "message": "Are you sure you want to delete the selected price lists?"
+        "message": "Are you sure you want to delete the selected price list(s)?"
       },
       "pricelist-item-list-delete": {
         "title": "Confirm Delete",
-        "message": "Are you sure you want to delete all prices for the selected products in this price list?"
+        "message": "Are you sure you want to delete all prices for the selected product(s) in this price list?"
       },
       "item-prices-delete": {
         "title": "Confirm Delete",
-        "message": "Are you sure you want to delete the selected prices?"
+        "message": "Are you sure you want to delete the selected price(s)?"
       },
       "prices-save": {
         "title": "Save changes",
@@ -256,7 +256,7 @@
       },
       "LogPricingChanges": {
         "title": "Log pricing changes",
-        "description": "Log changes into the platform operation log. This might impact database size in case prices get changed often."
+        "description": "Logs changes into the platform operation log. This might impact database size in case prices get changed often."
       },
       "Indexing": {
         "Enable": {
