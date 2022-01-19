@@ -188,8 +188,17 @@ angular.module('virtoCommerce.pricingModule')
 
             var catalogsId = _.pluck(targetPricelist.assignments, 'catalogId');
             var catalogsName = _.map(catalogsId, function (catalogId) {
-                return _.findWhere($scope.catalogsList, { id: catalogId }).name;
+                var catalog = _.findWhere($scope.catalogsList, { id: catalogId });
+                return catalog ? catalog.name : null;
             });
+            catalogsName = _.filter(catalogsName, function (catalogName) { return catalogName !== null; });
+
+            var storesId = _.pluck(targetPricelist.assignments, 'storeId');
+            var storesName = _.map(storesId, function (storeId) {
+                var store = _.findWhere($scope.storeList, { id: storeId });
+                return store ? store.name : null;
+            });
+            storesName = _.filter(storesName, function (storeName) { return storeName !== null; });
 
             var newPrice = {
                 productId: blade.itemId,
@@ -198,7 +207,8 @@ angular.module('virtoCommerce.pricingModule')
                 currency: targetPricelist.currency,
                 pricelistId: targetPricelist.id,
                 name: targetPricelist.code,
-                catalog: catalogsName.join(', ')
+                catalog: catalogsName.join(', '),
+                store: storesName.join(', ')
             };
             blade.currentEntities.push(newPrice);
             $scope.validateGridData();
