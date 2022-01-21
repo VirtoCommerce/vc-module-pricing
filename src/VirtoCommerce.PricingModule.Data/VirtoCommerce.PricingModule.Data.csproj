@@ -9,6 +9,10 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
+    <PropertyGroup>
+        <!-- Project is not a test project -->
+        <SonarQubeTestProject>false</SonarQubeTestProject>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.2" />
         <PackageReference Include="Hangfire" Version="1.7.14" />
