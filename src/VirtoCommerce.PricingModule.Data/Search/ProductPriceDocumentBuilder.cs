@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
-using VirtoCommerce.PricingModule.Core;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
@@ -35,7 +35,6 @@ namespace VirtoCommerce.PricingModule.Data.Search
             return result;
         }
 
-
         protected virtual IndexDocument CreateDocument(string productId, IList<Price> prices)
         {
             var document = new IndexDocument(productId);
@@ -49,12 +48,11 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 foreach (var price in prices)
                 {
                     document.Add(new IndexDocumentField($"price_{price.Currency}_{price.PricelistId}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true });
-
-                    // Save additional pricing fields for convinient user searches, store price with currency and without one
-                    document.Add(new IndexDocumentField($"price_{price.Currency}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
-                    document.Add(new IndexDocumentField("price", price.EffectiveValue) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
                 }
-                
+
+                IndexPrice(document, prices);
+                IndexPriceByCurrency(document, prices);
+
                 document.Add(new IndexDocumentField("is", prices.Any(x => x.Sale > 0) ? "sale" : "nosale") { IsRetrievable = true, IsFilterable = true, IsCollection = true });
             }
 
@@ -72,6 +70,21 @@ namespace VirtoCommerce.PricingModule.Data.Search
             evalContext.ReturnAllMatchedPrices = true;
 
             return (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToList();
+        }
+
+        protected virtual void IndexPrice(IndexDocument document, IList<Price> prices)
+        {
+            var maxPrice = prices.Max(x => x.EffectiveValue);
+            document.Add(new IndexDocumentField("price", maxPrice) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+        }
+
+        protected virtual void IndexPriceByCurrency(IndexDocument document, IList<Price> prices)
+        {
+            foreach (var group in prices.GroupBy(x => x.Currency))
+            {
+                var maxCurrencyPrice = group.Max(x => x.EffectiveValue);
+                document.Add(new IndexDocumentField($"price_{group.Key}".ToLowerInvariant(), maxCurrencyPrice) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+            }
         }
     }
 }
