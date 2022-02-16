@@ -30,6 +30,7 @@ namespace VirtoCommerce.PricingModule.Test
                 new OperationLogEntity { ModifiedDate = new DateTime(2018, 11, 01), ObjectId = "2", ObjectType = nameof(PriceEntity) },
                 new OperationLogEntity { ModifiedDate = new DateTime(2018, 11, 01), ObjectId = "3", ObjectType = nameof(PriceEntity) },
             };
+
             var mockPrices = new PriceEntity[] {
                 //Without from/till dates (unbounded)
                 new PriceEntity { Id = "1", ProductId = "1" },
@@ -40,31 +41,44 @@ namespace VirtoCommerce.PricingModule.Test
                 //with from/till dates (bounded)
                 new PriceEntity { Id = "4", ProductId = "4", StartDate = new DateTime(2018, 06, 01), EndDate = new DateTime(2018, 12, 01) }
             }.AsQueryable().BuildMock();
+
             var mockPricingRepository = new Mock<IPricingRepository>();
             mockPricingRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
             mockPricingRepository.Setup(x => x.GetPricesByIdsAsync(It.IsAny<string[]>())).ReturnsAsync(mockPrices.Object.ToArray());
+
             var mockPlatformRepository = new Mock<IPlatformRepository>();
             mockPlatformRepository.SetupGet(x => x.OperationLogs).Returns(mockOperationsLogs.AsQueryable());
+
             var mockSettingManager = new Mock<ISettingsManager>();
             mockSettingManager.Setup(s => s.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new ObjectSettingEntry() { Value = DateTime.MinValue });
+
             var mockChangeLogSearchService = new Mock<IChangeLogSearchService>();
             mockChangeLogSearchService.Setup(x => x.SearchAsync(It.IsAny<ChangeLogSearchCriteria>()))
-                .ReturnsAsync(new ChangeLogSearchResult { Results = mockOperationsLogs.Select(o => o.ToModel(AbstractTypeFactory<OperationLog>.TryCreateInstance())).ToList() });
+                .ReturnsAsync(new ChangeLogSearchResult
+                {
+                    Results = mockOperationsLogs.Select(o => o.ToModel(AbstractTypeFactory<OperationLog>.TryCreateInstance())).ToList(),
+                    TotalCount = mockOperationsLogs.Select(o => o.ToModel(AbstractTypeFactory<OperationLog>.TryCreateInstance())).Count()
+                });
+
             var changesProvider = new ProductPriceDocumentChangesProvider(mockChangeLogSearchService.Object, mockSettingManager.Object, () => mockPricingRepository.Object);
 
             var startDate = new DateTime(2018, 06, 01);
             var endDate = new DateTime(2018, 12, 01);
+
             var totalCount = changesProvider.GetTotalChangesCountAsync(startDate, endDate).GetAwaiter().GetResult();
             var changes = changesProvider.GetChangesAsync(startDate, endDate, 0, 5).GetAwaiter().GetResult();
+
             Assert.Equal(5, totalCount);
             Assert.Equal(new[] { "1", "2", "3", "3", "4" }, changes.Select(x => x.DocumentId));
+
             //Do not return calendar changes for not determined date interval
             changes = changesProvider.GetChangesAsync(startDate, null, 0, 5).GetAwaiter().GetResult();
             Assert.Equal(new[] { "1", "2", "3" }, changes.Select(x => x.DocumentId));
 
             mockSettingManager.Setup(s => s.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new ObjectSettingEntry() { Value = DateTime.MinValue });
+
             //Paginated request for  multiple data sources (skip 2 from OperationLogEntity and take 3 from both data sources (OperationLogEntity, CalendarChanges))
             changes = changesProvider.GetChangesAsync(startDate, endDate, 2, 3).GetAwaiter().GetResult();
             Assert.Equal(new[] { "3", "3", "4" }, changes.Select(x => x.DocumentId));

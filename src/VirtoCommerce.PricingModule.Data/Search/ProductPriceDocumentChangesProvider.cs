@@ -11,7 +11,6 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.SearchModule.Core.Model;
-using VirtoCommerce.SearchModule.Core.Services;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
@@ -44,7 +43,9 @@ namespace VirtoCommerce.PricingModule.Data.Search
             else
             {
                 // Get changes count from operation log
-                result = (await InnerGetChangesAsync(startDate, endDate)).TotalCount;
+                result = await InnerGetTotalCountAsync(startDate, endDate);
+
+                return result;
             }
 
             return result;
@@ -92,14 +93,12 @@ namespace VirtoCommerce.PricingModule.Data.Search
         protected virtual async Task<GenericSearchResult<IndexDocumentChange>> InnerGetChangesAsync(DateTime? startDate, DateTime? endDate, int skip = 0, int take = 0)
         {
             var result = new GenericSearchResult<IndexDocumentChange>();
-            var workSkip = 0;
-            var workTake = 0;
 
-            var changedProductIds = await GetProductIdsForChangedPricesAsync(startDate, endDate);
+            var changedProductIds = await GetProductIdsForChangedPricesAsync(startDate, endDate, take, skip);
 
             result.TotalCount = changedProductIds.Count;
-            workSkip = Math.Min(result.TotalCount, skip);
-            workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
+            var workSkip = Math.Min(result.TotalCount, skip);
+            var workTake = Math.Min(take, Math.Max(0, result.TotalCount - skip));
 
             if (workTake > 0)
             {
@@ -126,13 +125,38 @@ namespace VirtoCommerce.PricingModule.Data.Search
             return result;
         }
 
+        protected virtual async Task<int> InnerGetTotalCountAsync(DateTime? startDate, DateTime? endDate)
+        {
+            var criteria = new ChangeLogSearchCriteria
+            {
+                ObjectType = _changeLogObjectType,
+                StartDate = startDate,
+                EndDate = endDate,
+                Take = 0,
+                Skip = 0
+            };
+
+            // Get changes from operation log
+            var result = await _changeLogSearchService.SearchAsync(criteria);
+
+            //Re-index calendar prices only once per defined time interval
+            var lastIndexDate = _settingsManager.GetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, (DateTime?)null) ?? DateTime.MinValue;
+            if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval && startDate != null && endDate != null)
+            {
+                var calendarChanges = await GetCalendarChangesAsync(startDate.Value, endDate.Value, 0, 0);
+                result.TotalCount += calendarChanges.TotalCount;
+            }
+
+            return result.TotalCount;
+        }
+
         /// <summary>
         /// Retrieves all price changes and groups them by the product Id they are associated with.
         /// </summary>
         /// <param name="startDate">The date time period from</param>
         /// <param name="endDate">The date time period to</param>
         /// <returns>The unique list of products identifiers associated with changed prices for passed period</returns>
-        protected virtual async Task<ICollection<string>> GetProductIdsForChangedPricesAsync(DateTime? startDate, DateTime? endDate)
+        protected virtual async Task<ICollection<string>> GetProductIdsForChangedPricesAsync(DateTime? startDate, DateTime? endDate, int take = 0, int skip = 0)
         {
             var result = new HashSet<string>();
 
@@ -141,7 +165,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 ObjectType = _changeLogObjectType,
                 StartDate = startDate,
                 EndDate = endDate,
-                Take = 0
+                Take = take,
+                Skip = skip
             };
 
             // Get changes from operation log
