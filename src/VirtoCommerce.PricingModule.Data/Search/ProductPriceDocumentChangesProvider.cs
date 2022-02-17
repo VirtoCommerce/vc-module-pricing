@@ -155,6 +155,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
         /// </summary>
         /// <param name="startDate">The date time period from</param>
         /// <param name="endDate">The date time period to</param>
+        /// <param name="take">Take count for the search criteria</param>
+        /// <param name="skip">Skip count for the search criteria</param>
         /// <returns>The unique list of products identifiers associated with changed prices for passed period</returns>
         protected virtual async Task<ICollection<string>> GetProductIdsForChangedPricesAsync(DateTime? startDate, DateTime? endDate, int take = 0, int skip = 0)
         {
