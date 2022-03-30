@@ -27,10 +27,16 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return result;
         }
 
-        public virtual async Task<ICollection<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds)
+        public virtual async Task<ICollection<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds, string responseGroup)
         {
-            // TODO: replace Include with separate query
-            var result = await Pricelists.Include(x => x.Assignments)
+            var query = Pricelists;
+            if (!string.Equals(responseGroup, "NoDetails", System.StringComparison.OrdinalIgnoreCase))
+            {
+                // TODO: replace Include with separate query
+                query = query.Include(x => x.Assignments);
+            }
+
+            var result = await query
                                          .Where(x => pricelistIds.Contains(x.Id))
                                          .ToListAsync();
             return result;

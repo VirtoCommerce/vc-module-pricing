@@ -259,7 +259,8 @@ angular.module('virtoCommerce.pricingModule')
                     keyword: filter.keyword,
                     sort: uiGridHelper.getSortExpression($scope),
                     skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-                    take: $scope.pageSettings.itemsPerPageCount
+                    take: $scope.pageSettings.itemsPerPageCount,
+                    responseGroup: "NoDetails"
                 };
 
                 if (filter.current) {

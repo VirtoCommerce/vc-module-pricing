@@ -9,7 +9,7 @@ namespace VirtoCommerce.PricingModule.Core.Services
     public interface IPricingService
     {
         Task<Price[]> GetPricesByIdAsync(string[] ids);
-        Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids);
+        Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids, string responseGroup = null);
         Task<PricelistAssignment[]> GetPricelistAssignmentsByIdAsync(string[] ids);
 
         Task SavePricesAsync(Price[] prices);

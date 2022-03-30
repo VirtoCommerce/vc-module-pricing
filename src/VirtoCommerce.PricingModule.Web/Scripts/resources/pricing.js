@@ -16,6 +16,12 @@ angular.module('virtoCommerce.pricingModule')
             update: { method: 'PUT' }
         });
     }])
+    .factory('virtoCommerce.pricingModule.pricelistsshort', ['$resource', function ($resource) {
+        return $resource('api/pricing/pricelistsshort/:id', {}, {
+            search: { url: 'api/pricing/pricelists' },
+            update: { method: 'PUT' }
+        });
+    }])
     .factory('virtoCommerce.pricingModule.pricelistAssignments', ['$resource', function ($resource) {
         return $resource('api/pricing/assignments/:id', { id: '@Id' }, {
             search: { url: 'api/pricing/assignments' },
