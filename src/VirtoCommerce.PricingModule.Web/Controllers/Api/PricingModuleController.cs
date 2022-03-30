@@ -353,7 +353,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelistsshort/{id}")]
         public async Task<ActionResult<Pricelist>> GetPriceListInShortById(string id)
         {
-            var pricelist = (await _pricingService.GetPricelistsByIdAsync(new[] { id }, "NoDetails")).FirstOrDefault();
+            var pricelist = (await _pricingService.GetPricelistsByIdAsync(new[] { id }, nameof(PriceListResponseGroup.NoDetails))).FirstOrDefault();
             return Ok(pricelist);
         }
 

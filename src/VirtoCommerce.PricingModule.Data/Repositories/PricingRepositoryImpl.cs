@@ -3,8 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient; //https://github.com/dotnet/efcore/issues/16812
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Repositories
@@ -29,8 +31,10 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         public virtual async Task<ICollection<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds, string responseGroup)
         {
+            var pricelistResponseGroup = EnumUtility.SafeParseFlags(responseGroup, PriceListResponseGroup.Full);
+
             var query = Pricelists;
-            if (!string.Equals(responseGroup, "NoDetails", System.StringComparison.OrdinalIgnoreCase))
+            if (pricelistResponseGroup == PriceListResponseGroup.Full)
             {
                 // TODO: replace Include with separate query
                 query = query.Include(x => x.Assignments);
