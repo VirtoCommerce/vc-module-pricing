@@ -21,7 +21,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         protected override async Task<IEnumerable<PricelistEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
         {
-            return await ((IPricingRepository)repository).GetPricelistByIdsAsync(ids);
+            return await ((IPricingRepository)repository).GetPricelistByIdsAsync(ids, responseGroup);
         }
     }
 }

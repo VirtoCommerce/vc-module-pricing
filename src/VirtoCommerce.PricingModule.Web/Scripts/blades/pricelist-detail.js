@@ -1,6 +1,6 @@
-﻿angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.pricelistDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.pricelists', 'platformWebApp.settings', 'virtoCommerce.coreModule.currency.currencyUtils',
-        function ($scope, bladeNavigationService, pricelists, settings, currencyUtils) {
+angular.module('virtoCommerce.pricingModule')
+    .controller('virtoCommerce.pricingModule.pricelistDetailController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.pricelists', 'virtoCommerce.pricingModule.pricelistsshort', 'platformWebApp.settings', 'virtoCommerce.coreModule.currency.currencyUtils',
+        function ($scope, bladeNavigationService, pricelists, pricelistsshort, settings, currencyUtils) {
             var blade = $scope.blade;
             blade.updatePermission = 'pricing:update';
 
@@ -8,7 +8,7 @@
                 if (blade.isNew) {
                     initializeBlade({ productPrices: [], assignments: [] });
                 } else {
-                    pricelists.get({ id: blade.currentEntityId }, function (data) {
+                    pricelistsshort.get({ id: blade.currentEntityId }, function (data) {
                         initializeBlade(data);
                         if (parentRefresh) {
                             blade.parentBlade.refresh();

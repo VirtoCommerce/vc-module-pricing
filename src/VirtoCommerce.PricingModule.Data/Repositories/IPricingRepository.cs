@@ -14,7 +14,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         IQueryable<PricelistAssignmentEntity> PricelistAssignments { get; }
 
         Task<ICollection<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds);
-        Task<ICollection<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds);
+        Task<ICollection<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds, string responseGroup);
         Task<ICollection<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId);
 
         Task DeletePricesAsync(IEnumerable<string> ids);
