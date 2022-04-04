@@ -60,9 +60,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return (await _pricelistAssignmentService.GetByIdsAsync(ids)).ToArray();
         }
 
-        public async Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids)
+        public async Task<Pricelist[]> GetPricelistsByIdAsync(string[] ids, string responseGroup = null)
         {
-            return (await _pricelistService.GetByIdsAsync(ids)).ToArray();
+            return (await _pricelistService.GetByIdsAsync(ids, responseGroup)).ToArray();
         }
 
         public async Task<Price[]> GetPricesByIdAsync(string[] ids)

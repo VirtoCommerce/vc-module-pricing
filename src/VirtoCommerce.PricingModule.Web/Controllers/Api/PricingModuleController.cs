@@ -345,6 +345,18 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             return Ok(pricelist);
         }
 
+        /// <summary>
+        /// Get pricelist in short mode (without assignments to avoid redundant assignments read)
+        /// </summary>
+        /// <param name="id">Pricelist id</param>
+        [HttpGet]
+        [Route("api/pricing/pricelistsshort/{id}")]
+        public async Task<ActionResult<Pricelist>> GetPriceListInShortById(string id)
+        {
+            var pricelist = (await _pricingService.GetPricelistsByIdAsync(new[] { id }, nameof(PriceListResponseGroup.NoDetails))).FirstOrDefault();
+            return Ok(pricelist);
+        }
+
 
         /// <summary>
         /// Create pricelist

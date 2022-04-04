@@ -59,7 +59,7 @@ namespace VirtoCommerce.PricingModule.Test
 
             _repositoryMock.Setup(o => o.GetPricesByIdsAsync(new[] { id }))
                 .ReturnsAsync(new List<PriceEntity>());
-            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(It.IsAny<IEnumerable<string>>()))
+            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(It.IsAny<IEnumerable<string>>(), null))
                 .ReturnsAsync(new List<PricelistEntity>());
             //Act
             var nullPrice = await service.GetPricesByIdAsync(new[] { id });
@@ -81,11 +81,11 @@ namespace VirtoCommerce.PricingModule.Test
             _repositoryMock.Setup(x => x.Add(newPricelistEntity))
                 .Callback(() =>
                 {
-                    _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }))
+                    _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }, null))
                         .ReturnsAsync(new List<PricelistEntity>(new[] { newPricelistEntity }));
                 });
 
-            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }))
+            _repositoryMock.Setup(o => o.GetPricelistByIdsAsync(new[] { id }, null))
                 .ReturnsAsync(new List<PricelistEntity>());
 
             //Act
