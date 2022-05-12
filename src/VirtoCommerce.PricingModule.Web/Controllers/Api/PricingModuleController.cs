@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -15,6 +16,7 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
 using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Model;
 
 #pragma warning disable CS0618 // Allow to use obsoleted
 
@@ -371,6 +373,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         public async Task<ActionResult<Pricelist>> CreatePriceList([FromBody] Pricelist priceList)
         {
             var validationResult = await _priceListValidator.ValidateAsync(priceList);
+
+
 
             if (!validationResult.IsValid)
             {
