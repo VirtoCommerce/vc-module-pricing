@@ -374,8 +374,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         {
             var validationResult = await _priceListValidator.ValidateAsync(priceList);
 
-
-
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
