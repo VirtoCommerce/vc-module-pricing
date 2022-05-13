@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +16,7 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
 using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Model;
 
 #pragma warning disable CS0618 // Allow to use obsoleted
 
@@ -26,18 +30,20 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         private readonly IPricingSearchService _pricingSearchService;
         private readonly IItemService _itemService;
         private readonly IBlobUrlResolver _blobUrlResolver;
-
+        private readonly AbstractValidator<Pricelist> _priceListValidator;
 
         public PricingModuleController(
-            IPricingService pricingService
-            , IItemService itemService
-            , IPricingSearchService pricingSearchService
-            , IBlobUrlResolver blobUrlResolver)
+            IPricingService pricingService,
+            IItemService itemService,
+            IPricingSearchService pricingSearchService,
+            IBlobUrlResolver blobUrlResolver,
+            AbstractValidator<Pricelist> priceListValidator)
         {
             _pricingService = pricingService;
             _itemService = itemService;
             _pricingSearchService = pricingSearchService;
             _blobUrlResolver = blobUrlResolver;
+            _priceListValidator = priceListValidator;
         }
 
         /// <summary>
@@ -366,6 +372,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<Pricelist>> CreatePriceList([FromBody] Pricelist priceList)
         {
+            var validationResult = await _priceListValidator.ValidateAsync(priceList);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
+            }
+
             await _pricingService.SavePricelistsAsync(new[] { priceList });
             return Ok(priceList);
         }

@@ -65,7 +65,7 @@ The Pricelist Assignment has the following key characteristics:
 1. Installation: https://www.virtocommerce.com/docs/latest/user-guide/modules/
 1. Home: https://virtocommerce.com
 1. Community: https://www.virtocommerce.org
-1. [Download Latest Release](https://github.com/mayaalsamarrai/vc-module-pricing/releases)
+1. [Download Latest Release](https://github.com/VirtoCommerce/vc-module-pricing/releases)
 
 ## License
 

@@ -78,6 +78,7 @@ namespace VirtoCommerce.PricingModule.Web
             serviceCollection.AddTransient<IndexPricesProductChangedEventHandler>();
             serviceCollection.AddTransient<ObjectSettingEntryChangedEventHandler>();
             serviceCollection.AddTransient<AbstractValidator<IEnumerable<PricelistAssignment>>, PricelistAssignmentsValidator>();
+            serviceCollection.AddTransient<AbstractValidator<Pricelist>, PriceListValidator>();
 
             serviceCollection.AddTransient<ModuleConfigurator>();
 
