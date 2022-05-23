@@ -19,7 +19,7 @@ namespace VirtoCommerce.PricingModule.Data.Validators
         public PriceListValidator()
         {
             RuleFor(x => x.Description)
-                .Must(x => x.Length <= _descriptionMaxLength)
+                .Must(x => x == null || x.Length <= _descriptionMaxLength)
                 .WithMessage(string.Format(DescriptionMessage, _descriptionMaxLength));
         }
     }
