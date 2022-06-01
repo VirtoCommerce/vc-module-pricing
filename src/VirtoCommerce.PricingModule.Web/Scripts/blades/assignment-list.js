@@ -95,9 +95,15 @@ angular.module('virtoCommerce.pricingModule')
                         if (!confirm)
                             return;
                         closeChildrenBlades();
-                        blade.isLoading = true;
+                        blade.isLoading = true;               
+                        var pricelistIds;
+                        if (filter.current) {
+                            pricelistIds = filter.current.pricelistIds;
+                        } else {
+                            pricelistIds = blade.pricelistId ? [blade.pricelistId] : [];
+                        }
                         assignments.removeFiltered({
-                            pricelistId: blade.pricelistId,
+                            pricelistIds: pricelistIds,
                             keyword: filter.keyword
                         }, function () {
                             blade.refresh();
