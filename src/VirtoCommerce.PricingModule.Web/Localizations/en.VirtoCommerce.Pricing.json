@@ -178,9 +178,13 @@
         "title": "Confirm Delete",
         "message": "Are you sure you want to delete all prices for the selected product(s) in this price list?"
       },
-      "item-prices-delete": {
+      "item-prices-delete-confirmation": {
         "title": "Confirm Delete",
         "message": "Are you sure you want to delete the selected price(s)?"
+      },
+      "item-prices-delete-error": {
+        "title": "Error",
+        "message": "You must have at least one price per single unit (with minimum quantity at 1)."
       },
       "prices-save": {
         "title": "Save changes",
