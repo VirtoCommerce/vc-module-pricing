@@ -150,10 +150,24 @@ angular.module('virtoCommerce.pricingModule')
                     var selection = $scope.gridApi.selection.getSelectedRows();
                     var ids = _.map(selection, function (item) { return item.id; });
 
+                    if (selection.some(x => x.minQuantity == 1)) {
+                        var unselected = _.difference(blade.currentEntities, selection);
+
+                        if (unselected.length && !unselected.some(x => x.minQuantity == 1)) {
+                            var errorDialog = {
+                                    id: "itemDeleteError",
+                                    title: "pricing.dialogs.item-prices-delete-error.title",
+                                    message: "pricing.dialogs.item-prices-delete-error.message"
+                            }
+                            dialogService.showErrorDialog(errorDialog);
+                            return;
+                        }
+                    }
+
                     var dialog = {
                         id: "confirmDeleteItem",
-                        title: "pricing.dialogs.item-prices-delete.title",
-                        message: "pricing.dialogs.item-prices-delete.message",
+                        title: "pricing.dialogs.item-prices-delete-confirmation.title",
+                        message: "pricing.dialogs.item-prices-delete-confirmation.message",
                         callback: function (remove) {
                             if (remove) {
                                 prices.removePrice({ priceIds: ids }, function () {
