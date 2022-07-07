@@ -164,13 +164,16 @@ namespace VirtoCommerce.PricingModule.Data.Services
                                              .Where(x => evalContext.ProductIds.Contains(x.ProductId))
                                              .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
 
-                evalContext.Pricelists = evalContext.Pricelists.IsNullOrEmpty()
-                    ? (await EvaluatePriceListsAsync(evalContext)).ToArray()
-                    : evalContext.Pricelists;
+                if (evalContext.PricelistIds.IsNullOrEmpty())
+                {
+                    evalContext.Pricelists = evalContext.Pricelists.IsNullOrEmpty()
+                        ? (await EvaluatePriceListsAsync(evalContext)).ToArray()
+                        : evalContext.Pricelists;
 
-                var pricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
-                
-                query = query.Where(x => pricelistIds.Contains(x.PricelistId));
+                    evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
+                }
+
+                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
 
                 // Filter by date expiration
                 // Always filter on date, so that we limit the results to process.

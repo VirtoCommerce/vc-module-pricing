@@ -26,30 +26,44 @@ namespace VirtoCommerce.PricingModule.Data.Services
             // and it's backwards compatible.
             var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
 
+            Dictionary<string, int> priorities;
+
+            if (evalContext.Pricelists.IsNullOrEmpty())
+            {
+                var ids = evalContext.PricelistIds.ToList();
+
+                // As priceListOrdererList is sorted by priority (descending), we save inverted PricelistId's index as Priority
+                priorities = ids.ToDictionary(x => x, x => ids.Count - ids.IndexOf(x));
+            }
+            else
+            {
+                priorities = evalContext.Pricelists.ToDictionary(x => x.Id, x => x.Priority);
+            }
+
             var result = new List<Price>();
             if (evalContext.ReturnAllMatchedPrices)
             {
                 // Get all prices, ordered by currency and amount.
                 result = prices.OrderBy(x => x.Currency).ThenBy(x => Math.Min(x.Sale ?? x.List, x.List)).ToList();
             }
-            else if (!evalContext.Pricelists.IsNullOrEmpty())
+            else if (!evalContext.Pricelists.IsNullOrEmpty() || !evalContext.PricelistIds.IsNullOrEmpty())
             {
                 foreach (var productPrices in prices.GroupBy(x => x.ProductId))
                 {
-                    result.AddRange(SelectBestProductPrices(productPrices, evalContext.Pricelists, certainDate));
+                    result.AddRange(SelectBestProductPrices(productPrices, priorities, certainDate));
                 }
             }
             return result;
         }
 
-        private static List<Price> SelectBestProductPrices(IGrouping<string, Price> productPrices, IEnumerable<Pricelist> pricelists, DateTime certainDate)
+        private static List<Price> SelectBestProductPrices(IGrouping<string, Price> productPrices, Dictionary<string, int> priorities, DateTime certainDate)
         {
             var result = new List<Price>();
 
             var priceTuples = productPrices
                 .Select(x => new
                 {
-                    Price = x, x.Currency, x.MinQuantity, pricelists.FirstOrDefault(y => y.Id == x.PricelistId)?.Priority
+                    Price = x, x.Currency, x.MinQuantity, Priority = priorities.TryGetValue(x.PricelistId, out var priority) ? (int?)priority : null
                 })
                 .Where(x => x.Priority != null);
 
