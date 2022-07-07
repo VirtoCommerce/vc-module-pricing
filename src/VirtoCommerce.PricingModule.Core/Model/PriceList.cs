@@ -11,6 +11,7 @@ namespace VirtoCommerce.PricingModule.Core.Model
         public string Description { get; set; }
         public string Currency { get; set; }
         public string OuterId { get; set; }
+        public int Priority { get; set; }
         public ICollection<Price> Prices { get; set; }
         public ICollection<PricelistAssignment> Assignments { get; set; }
 

@@ -88,20 +88,27 @@ namespace VirtoCommerce.PricingModule.Test
         [Fact]
         public void Can_return_prices_from_many_pricelists_by_priority()
         {
+            var pricelists = new Pricelist[]
+            {
+                new() { Id = "Pricelist 1", Priority = 3 },
+                new() { Id = "Pricelist 2", Priority = 2 },
+                new() { Id = "Pricelist 3", Priority = 1 }
+            };
+
             var evalContext = new PriceEvaluationContext
             {
                 ProductIds = new[] { "ProductId" },
-                PricelistIds = new[] { "Pricelist 1", "Pricelist 2", "Pricelist 3" }
+                Pricelists = pricelists
             };
 
             var mockPrices = new[] {
                 new Price { Id = "1", List = 10, MinQuantity = 2, PricelistId = "Pricelist 1", ProductId = "ProductId" },
 
-                new Price {  Id = "2",List = 9, MinQuantity = 1, PricelistId = "Pricelist 2", ProductId = "ProductId" },
-                new Price {  Id = "3",List = 10, MinQuantity = 2, PricelistId = "Pricelist 2", ProductId = "ProductId" },
+                new Price { Id = "2", List = 9, MinQuantity = 1, PricelistId = "Pricelist 2", ProductId = "ProductId" },
+                new Price { Id = "3", List = 10, MinQuantity = 2, PricelistId = "Pricelist 2", ProductId = "ProductId" },
 
-                new Price {  Id = "4",List = 6, MinQuantity = 2, PricelistId = "Pricelist 3", ProductId = "ProductId" },
-                new Price { Id = "5", List = 5, MinQuantity = 3,  PricelistId = "Pricelist 3", ProductId = "ProductId" }
+                new Price { Id = "4", List = 6, MinQuantity = 2, PricelistId = "Pricelist 3", ProductId = "ProductId" },
+                new Price { Id = "5", List = 5, MinQuantity = 3, PricelistId = "Pricelist 3", ProductId = "ProductId" }
             };
 
             var prices = new DefaultPricingPriorityFilterPolicy().FilterPrices(mockPrices, evalContext).ToArray();
@@ -113,7 +120,10 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.DoesNotContain(prices, x => x.MinQuantity == 3);
 
             // Pricelist priority changed
-            evalContext.PricelistIds = new[] { "Pricelist 3", "Pricelist 2", "Pricelist 1" };
+            evalContext.Pricelists[0].Priority = 1;
+            evalContext.Pricelists[1].Priority = 2;
+            evalContext.Pricelists[2].Priority = 3;
+
             prices = new DefaultPricingPriorityFilterPolicy().FilterPrices(mockPrices, evalContext).ToArray();
 
             // 3 prices returned, but not from "Pricelist 1"
@@ -127,10 +137,12 @@ namespace VirtoCommerce.PricingModule.Test
         [Fact]
         public void Can_return_price_from_many_prices_with_start_and_end_date()
         {
+            var pricelist = new Pricelist { Id = "List1", Priority = 0, };
+
             var evalContext = new PriceEvaluationContext
             {
                 ProductIds = new[] { "ProductId" },
-                PricelistIds = new[] { "List1" }
+                Pricelists = new [] { pricelist }
             };
 
             var mockPrices = new PriceEntity[] {
@@ -196,7 +208,40 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(4, prices.Single().List);
         }
 
+        [Fact]
+        public void Can_return_prices_from_many_pricelists_by_price()
+        {
+            var pricelists = new Pricelist[]
+            {
+                new() { Id = "Pricelist 1", Priority = 1 },
+                new() { Id = "Pricelist 2", Priority = 1 },
+                new() { Id = "Pricelist 3", Priority = 1 }
+            };
 
+            var evalContext = new PriceEvaluationContext
+            {
+                ProductIds = new[] { "ProductId" },
+                Pricelists = pricelists
+            };
+
+            var mockPrices = new[] {
+                new Price { Id = "1", List = 4, MinQuantity = 1, PricelistId = "Pricelist 1", ProductId = "ProductId" },
+                new Price { Id = "2", List = 5, MinQuantity = 1, PricelistId = "Pricelist 2", ProductId = "ProductId" },
+                new Price { Id = "3", List = 6, MinQuantity = 1, PricelistId = "Pricelist 2", ProductId = "ProductId" },
+            };
+
+            var prices = new DefaultPricingPriorityFilterPolicy().FilterPrices(mockPrices, evalContext).ToArray();
+
+            Assert.Single(prices);
+            Assert.Equal(mockPrices[0].Id, prices.First().Id);
+
+            mockPrices[1].List = 3;
+
+            prices = new DefaultPricingPriorityFilterPolicy().FilterPrices(mockPrices, evalContext).ToArray();
+
+            Assert.Single(prices);
+            Assert.Equal(mockPrices[1].Id, prices.First().Id);
+        }
 
         //[Fact]
         //public async Task Can_return_pri()
