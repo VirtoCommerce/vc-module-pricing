@@ -26,19 +26,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             // and it's backwards compatible.
             var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
 
-            Dictionary<string, int> priorities;
-
-            if (evalContext.Pricelists.IsNullOrEmpty())
-            {
-                var ids = evalContext.PricelistIds.ToList();
-
-                // As priceListOrdererList is sorted by priority (descending), we save inverted PricelistId's index as Priority
-                priorities = ids.ToDictionary(x => x, x => ids.Count - ids.IndexOf(x));
-            }
-            else
-            {
-                priorities = evalContext.Pricelists.ToDictionary(x => x.Id, x => x.Priority);
-            }
+            var priorities = GetPriorities(evalContext);
 
             var result = new List<Price>();
             if (evalContext.ReturnAllMatchedPrices)
@@ -54,6 +42,25 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
             }
             return result;
+        }
+
+        private static Dictionary<string, int> GetPriorities(PriceEvaluationContext evalContext)
+        {
+            Dictionary<string, int> priorities;
+
+            if (evalContext.Pricelists.IsNullOrEmpty())
+            {
+                var ids = evalContext.PricelistIds.ToList();
+
+                // As priceListOrdererList is sorted by priority (descending), we save inverted PricelistId's index as Priority
+                priorities = ids.ToDictionary(x => x, x => ids.Count - ids.IndexOf(x));
+            }
+            else
+            {
+                priorities = evalContext.Pricelists.ToDictionary(x => x.Id, x => x.Priority);
+            }
+
+            return priorities;
         }
 
         private static List<Price> SelectBestProductPrices(IGrouping<string, Price> productPrices, Dictionary<string, int> priorities, DateTime certainDate)
