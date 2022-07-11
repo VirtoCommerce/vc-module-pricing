@@ -25,9 +25,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             // If no certain date is set, default to now, because that's probably the intention of the requester
             // and it's backwards compatible.
             var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
-
-            var priorities = GetPriorities(evalContext);
-
+            
             var result = new List<Price>();
             if (evalContext.ReturnAllMatchedPrices)
             {
@@ -36,6 +34,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
             else if (!evalContext.Pricelists.IsNullOrEmpty() || !evalContext.PricelistIds.IsNullOrEmpty())
             {
+                var priorities = GetPriorities(evalContext);
+
                 foreach (var productPrices in prices.GroupBy(x => x.ProductId))
                 {
                     result.AddRange(SelectBestProductPrices(productPrices, priorities, certainDate));
@@ -57,7 +57,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
             else
             {
-                priorities = evalContext.Pricelists.ToDictionary(x => x.Id, x => x.Priority);
+                priorities = evalContext.Pricelists.Distinct().ToDictionary(x => x.Id, x => x.Priority);
             }
 
             return priorities;
