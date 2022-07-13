@@ -73,7 +73,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 }
             }
 
-            return assignmentsToReturn.OrderByDescending(x => x.Priority).ThenByDescending(x => x.Name).Select(x => x.Pricelist);
+            return assignmentsToReturn
+                .OrderByDescending(x => x.Priority)
+                .ThenByDescending(x => x.Name)
+                .Select(x =>
+                {
+                    x.Pricelist.Priority = x.Priority;
+                    return x.Pricelist;
+                });
         }
 
         public virtual async Task<IQueryable<PricelistAssignment>> PriceListAssignmentAsync(PriceEvaluationContext evalContext)
@@ -157,8 +164,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                                              .Where(x => evalContext.ProductIds.Contains(x.ProductId))
                                              .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
 
-                evalContext.PricelistIds = evalContext.PricelistIds.IsNullOrEmpty() ? (await EvaluatePriceListsAsync(evalContext)).Select(x => x.Id).ToArray()
-                                                                                    : evalContext.PricelistIds;
+                if (evalContext.PricelistIds.IsNullOrEmpty())
+                {
+                    evalContext.Pricelists = evalContext.Pricelists.IsNullOrEmpty()
+                        ? (await EvaluatePriceListsAsync(evalContext)).ToArray()
+                        : evalContext.Pricelists;
+
+                    evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
+                }
 
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
 
@@ -172,7 +185,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 prices = queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance()));
             }
 
-            //Apply pricing filtration strategy for found prices
+            result.AddRange(await PostProcessPrices(evalContext, prices));
+
+            return result;
+        }
+
+        private async Task<List<Price>> PostProcessPrices(PriceEvaluationContext evalContext, IEnumerable<Price> prices)
+        {
+            var result = new List<Price>();
+
             result.AddRange(_pricingPriorityFilterPolicy.FilterPrices(prices, evalContext));
 
             if (_productService == null)
@@ -180,7 +201,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 return result;
             }
             //Then variation inherited prices
-            var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct());
+            var productIdsWithoutPrice = evalContext.ProductIds.Except(result.Select(x => x.ProductId).Distinct()).ToArray();
             if (!productIdsWithoutPrice.Any())
             {
                 return result;
@@ -188,7 +209,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             //Try to inherit prices for variations from their main product
             //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
-            var variations = (await _productService.GetByIdsAsync(productIdsWithoutPrice.ToArray(), ItemResponseGroup.ItemInfo.ToString()))
+            var variations = (await _productService.GetByIdsAsync(productIdsWithoutPrice, ItemResponseGroup.ItemInfo.ToString()))
                 .Where(x => x.MainProductId != null).ToList();
             evalContext = evalContext.Clone() as PriceEvaluationContext;
             evalContext.ProductIds = variations.Select(x => x.MainProductId).Distinct().ToArray();
