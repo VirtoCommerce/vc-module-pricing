@@ -11,6 +11,7 @@ namespace VirtoCommerce.PricingModule.Core.Model
         // The ordered list of price-list IDs, evaluation logic will return only matched product prices from the first price-list from this list
         // To return all the prices found, simply set ReturnAllMatchedPrices to true
 		public string[] PricelistIds { get; set; }
+        public Pricelist[] Pricelists { get; set; }
         // Set this flag to true for return all matched prices from all given pricelists 
 	    public bool ReturnAllMatchedPrices { get; set; }
         public decimal Quantity { get; set; }
