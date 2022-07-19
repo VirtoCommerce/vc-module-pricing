@@ -34,6 +34,9 @@ angular.module('virtoCommerce.pricingModule')
                         blade.currentEntities = priceAssignments;
                     });
                 });
+                blade.toolbarCommands[3].name = (filter.current || filter.keyword)
+                    ? "pricing.commands.delete-filtered"
+                    : "pricing.commands.delete-all";
             };
 
             $scope.selectNode = function (node, isNew) {
@@ -147,7 +150,7 @@ angular.module('virtoCommerce.pricingModule')
                     permission: 'pricing:delete'
                 },
                 {
-                    name: "pricing.commands.delete-all-filtered",
+                    name: "pricing.commands.delete-all",
                     icon: 'fas fa-trash-alt',
                     executeMethod: function () {
                         $scope.deleteAllFiltered();
