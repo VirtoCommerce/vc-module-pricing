@@ -205,7 +205,8 @@
     },
     "commands": {
       "add-selected": "Add selected",
-      "delete-all-filtered": "Delete all filtered"
+      "delete-all": "Delete all",
+      "delete-filtered": "Delete filtered"
     },
     "selectors": {
       "titles": {
