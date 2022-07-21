@@ -168,7 +168,7 @@
         "title": "Confirm Delete",
         "warning": "WARNING: This change is final and cannot be undone. Applying this change may result in a data loss.",
         "message": "All filtered items will be deleted",
-        "instruction": "Type Yes to delete:"
+        "instruction": "Type 'yes' to delete:"
       },
       "pricelists-delete": {
         "title": "Confirm Delete",
