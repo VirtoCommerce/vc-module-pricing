@@ -16,6 +16,7 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Services;
+using VirtoCommerce.PricingModule.Test.Helpers;
 using Xunit;
 
 namespace VirtoCommerce.PricingModule.Test
@@ -56,7 +57,7 @@ namespace VirtoCommerce.PricingModule.Test
             new PricelistAssignmentEntity
             {
                 StoreId = "TestStore_2",
-            }
+            },
         };
 
         [Fact]
@@ -139,6 +140,43 @@ namespace VirtoCommerce.PricingModule.Test
             assignments.Should().HaveCount(2);
             assignments.Should().ContainSingle(x => x.StoreId == "TestStore_1");
             assignments.Should().ContainSingle(x => x.CatalogId == "TestCatalog_1");
+        }
+
+        [Fact]
+        public async Task PriceListAssignmentAsync_HasUserGroupsConditionAssigment_AssignmentReturned()
+        {
+            ConditionExpressionHelper.RegisterTypes();
+
+            var userGroupsCondition = await ConditionExpressionHelper.ReadTextFromEmbeddedResourceAsync("UserGroupsSerializedCondition.json");
+            var inputAssignments = new List<PricelistAssignmentEntity>
+            {
+                new PricelistAssignmentEntity
+                {
+                    StoreId = "TestStore_1",
+                    PredicateVisualTreeSerialized = userGroupsCondition,
+                },
+                new PricelistAssignmentEntity
+                {
+                    StoreId = "TestStore_2",
+                },
+            };
+
+            // Arrange
+            var target = GetPricingEvaluatorService(inputAssignments);
+
+            var context = new PriceEvaluationContext()
+            {
+                StoreId = "TestStore_1",
+                UserGroups = new string[] { "VIP" },
+            };
+
+            // Act
+            var result = await target.PriceListAssignmentAsync(context);
+
+            // Assert
+            var assignments = result.ToList();
+            assignments.Should().HaveCount(1);
+            assignments.Should().ContainSingle(x => x.StoreId == "TestStore_1");
         }
 
         private PricingEvaluatorService GetPricingEvaluatorService(List<PricelistAssignmentEntity> assignments)

@@ -1,31 +1,17 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using VirtoCommerce.CoreModule.Core.Conditions;
 using VirtoCommerce.CoreModule.Core.Conditions.Browse;
-using VirtoCommerce.CoreModule.Core.Conditions.GeoConditions;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
+using VirtoCommerce.PricingModule.Test.Helpers;
 using Xunit;
 
 namespace VirtoCommerce.PricingModule.Test
 {
     public class ConditionJsonSerializerTests
     {
-        private static async Task<string> ReadTextFromEmbeddedResourceAsync(string filePath)
-        {
-            var currentAssembly = typeof(ConditionJsonSerializerTests).Assembly;
-            var resourcePath = $"{currentAssembly.GetName().Name}.{filePath}";
-
-            using (var resourceStream = currentAssembly.GetManifestResourceStream(resourcePath))
-            using (var textReader = new StreamReader(resourceStream))
-            {
-                return await textReader.ReadToEndAsync();
-            }
-        }
-
         [Fact]
         public async Task TestConditionSerialization()
         {
@@ -58,21 +44,21 @@ namespace VirtoCommerce.PricingModule.Test
                 Children = new List<IConditionTree> { condition }
             };
 
-            var serializedConditionTree = (await ReadTextFromEmbeddedResourceAsync("Resources.TestSerializedCondition.json"))?.Trim();
+            var serializedConditionTree = await ConditionExpressionHelper.ReadTextFromEmbeddedResourceAsync("TestSerializedCondition.json");
 
-            //// Act
+            // Act
             var actualResult = JsonConvert.SerializeObject(conditionTree);
 
             // Assert
-            Assert.Equal(serializedConditionTree, actualResult);
+            Assert.Equal(serializedConditionTree, actualResult, ignoreLineEndingDifferences: true, ignoreWhiteSpaceDifferences: true);
         }
 
         [Fact]
         public async Task TestExpressionDeserialization()
         {
             // Arrange
-            var serializedConditionTree = (await ReadTextFromEmbeddedResourceAsync("Resources.TestSerializedCondition.json"))?.Trim();
-            RegisterTypes();
+            var serializedConditionTree = await ConditionExpressionHelper.ReadTextFromEmbeddedResourceAsync("TestSerializedCondition.json");
+            ConditionExpressionHelper.RegisterTypes();
 
             // Act
             var result = JsonConvert.DeserializeObject<PriceConditionTree>(serializedConditionTree, new ConditionJsonConverter());
@@ -110,24 +96,6 @@ namespace VirtoCommerce.PricingModule.Test
 
             context.ShopperAge = 21;
             Assert.True(result.IsSatisfiedBy(context));
-        }
-
-
-        private void RegisterTypes()
-        {
-            AbstractTypeFactory<IConditionTree>.RegisterType<PriceConditionTree>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<BlockPricingCondition>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionAgeIs>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionGenderIs>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionLanguageIs>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionStoreSearchedPhrase>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionUrlIs>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionGeoCity>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionGeoCountry>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionGeoState>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionGeoTimeZone>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<ConditionGeoZipCode>();
-            AbstractTypeFactory<IConditionTree>.RegisterType<UserGroupsContainsCondition>();
         }
     }
 }

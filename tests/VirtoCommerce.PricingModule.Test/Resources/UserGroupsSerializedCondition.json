@@ -1,0 +1,21 @@
+{
+  "All": true,
+  "Not": false,
+  "Id": "PriceConditionTree",
+  "Children": [
+    {
+      "All": false,
+      "Not": false,
+      "Id": "BlockPricingCondition",
+      "AvailableChildren": [],
+      "Children": [
+        {
+          "Group": "VIP",
+          "Id": "UserGroupsContainsCondition",
+          "AvailableChildren": [],
+          "Children": []
+        }
+      ]
+    }
+  ]
+}
