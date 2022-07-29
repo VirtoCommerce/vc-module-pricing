@@ -5,9 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\TestSerializedCondition.json" />
+    <None Remove="Resources\UserGroupsSerializedCondition.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\TestSerializedCondition.json" />
+    <EmbeddedResource Include="Resources\UserGroupsSerializedCondition.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="3.1.0">

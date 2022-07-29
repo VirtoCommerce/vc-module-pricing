@@ -1,1 +1,38 @@
-{"All":true,"Not":false,"Id":"PriceConditionTree","AvailableChildren":[],"Children":[{"All":false,"Not":false,"Id":"BlockPricingCondition","AvailableChildren":[],"Children":[{"Value":"test","MatchCondition":"Contains","Id":"ConditionStoreSearchedPhrase","AvailableChildren":[],"Children":[]},{"Value":"male","MatchCondition":"Matching","Id":"ConditionGenderIs","AvailableChildren":[],"Children":[]},{"Value":18,"SecondValue":0,"CompareCondition":"IsGreaterThanOrEqual","Id":"ConditionAgeIs","AvailableChildren":[],"Children":[]}]}]}
+{
+  "All": true,
+  "Not": false,
+  "Id": "PriceConditionTree",
+  "AvailableChildren": [],
+  "Children": [
+    {
+      "All": false,
+      "Not": false,
+      "Id": "BlockPricingCondition",
+      "AvailableChildren": [],
+      "Children": [
+        {
+          "Value": "test",
+          "MatchCondition": "Contains",
+          "Id": "ConditionStoreSearchedPhrase",
+          "AvailableChildren": [],
+          "Children": []
+        },
+        {
+          "Value": "male",
+          "MatchCondition": "Matching",
+          "Id": "ConditionGenderIs",
+          "AvailableChildren": [],
+          "Children": []
+        },
+        {
+          "Value": 18,
+          "SecondValue": 0,
+          "CompareCondition": "IsGreaterThanOrEqual",
+          "Id": "ConditionAgeIs",
+          "AvailableChildren": [],
+          "Children": []
+        }
+      ]
+    }
+  ]
+}
