@@ -14,12 +14,10 @@ namespace VirtoCommerce.PricingModule.Data.Search
     public class ProductPriceDocumentBuilder : IIndexDocumentBuilder
     {
         private readonly IPricingService _pricingService;
-        private readonly ISettingsManager _settingsManager;
 
         public ProductPriceDocumentBuilder(IPricingService pricingService, ISettingsManager settingsManager)
         {
             _pricingService = pricingService;
-            _settingsManager = settingsManager;
         }
 
         public virtual async Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
