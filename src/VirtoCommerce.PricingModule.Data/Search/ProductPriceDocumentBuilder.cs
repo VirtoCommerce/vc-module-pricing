@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
-using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.SearchModule.Core.Model;
@@ -41,10 +40,6 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
             if (prices != null)
             {
-                if (_settingsManager.GetValue(ModuleConstants.Settings.General.StorePricesInIndex.Name, false))
-                {
-                    document.Add(new IndexDocumentField("__prices", prices) { IsRetrievable = false, IsFilterable = false, IsCollection = false });
-                }
                 foreach (var price in prices)
                 {
                     document.Add(new IndexDocumentField($"price_{price.Currency}_{price.PricelistId}".ToLowerInvariant(), price.EffectiveValue) { IsRetrievable = true, IsFilterable = true });
