@@ -1,4 +1,4 @@
-# v1.1.13
+# v3.200.16
 name: Module CI
 
 on:
@@ -11,6 +11,7 @@ on:
       - 'README.md'
       - 'LICENSE'
       - '**/argoDeploy.json'
+      - '**/cloudDeploy.json'
       - samples/**
     branches:
       [master, dev]
@@ -23,12 +24,15 @@ on:
       - 'README.md'
       - 'LICENSE'
       - '**/argoDeploy.json'
+      - '**/cloudDeploy.json'
       - samples/**
     
 jobs:
   ci:
-    if: ${{ github.actor != 'dependabot[bot]' && (github.event.pull_request.head.repo.full_name == github.repository || github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
-    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && 
+        (github.event.pull_request.head.repo.full_name == github.repository || 
+        github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
+    runs-on: ubuntu-20.04
     env:
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
@@ -44,6 +48,7 @@ jobs:
     outputs:
       artifactUrl: ${{ steps.artifactUrl.outputs.download_url }}
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      version: ${{ steps.artifact_ver.outputs.shortVersion }}
       moduleId: ${{ steps.artifact_ver.outputs.moduleId }}
 
     steps:
@@ -53,7 +58,7 @@ jobs:
         run: |
           echo "RELEASE_STATUS=true" >> $GITHUB_ENV
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -207,7 +212,7 @@ jobs:
   deploy:
     if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/master') && github.event_name == 'push' }}
     needs: ci
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
@@ -308,7 +313,7 @@ jobs:
           environment-type: ${{ steps.deployConfig.outputs.environmentType }}
 
   module-katalon-tests:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ (github.ref == 'refs/heads/dev') && github.event_name == 'push' }}
     needs: 'ci'
     uses: VirtoCommerce/.github/.github/workflows/e2e.yml@main
     with:
@@ -322,3 +327,19 @@ jobs:
     secrets:
       envPAT: ${{ secrets.REPO_TOKEN }}
       katalonApiKey: ${{ secrets.KATALON_API_KEY }}
+
+  deploy-cloud-demo:
+    if: ${{ (github.ref == 'refs/heads/master') && github.event_name == 'push' }}
+    needs: ci
+    uses: VirtoCommerce/.github/.github/workflows/deploy-cloud.yml@v3.200.16
+    with:
+      releaseSource: module
+      releaseType: GithubReleases
+      moduleId: ${{ needs.ci.outputs.moduleId }}
+      moduleVer: ${{ needs.ci.outputs.version }}
+      argoServer: 'argo.virtocommerce.cloud'
+      matrix: '{"include":[{"envName": "prod", "confPath": "cloudDeploy.json"}]}'
+    secrets:
+      envPAT: ${{ secrets.REPO_TOKEN }}
+      argoLogin: ${{ secrets.ARGOCD_LOGIN }}
+      argoPassword: ${{ secrets.ARGOCD_PASSWORD }}
