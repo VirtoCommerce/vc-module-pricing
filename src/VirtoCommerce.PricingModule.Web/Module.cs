@@ -36,6 +36,7 @@ using VirtoCommerce.PricingModule.Data.Handlers;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
+using VirtoCommerce.PricingModule.Data.Services.Search;
 using VirtoCommerce.PricingModule.Data.Validators;
 
 #pragma warning disable CS0618 // Allow to use obsoleted
@@ -79,6 +80,8 @@ namespace VirtoCommerce.PricingModule.Web
             serviceCollection.AddTransient<ObjectSettingEntryChangedEventHandler>();
             serviceCollection.AddTransient<AbstractValidator<IEnumerable<PricelistAssignment>>, PricelistAssignmentsValidator>();
             serviceCollection.AddTransient<AbstractValidator<Pricelist>, PriceListValidator>();
+
+            serviceCollection.AddTransient<IMergedPriceSearchService, MergedPriceSearchService>();
 
             serviceCollection.AddTransient<ModuleConfigurator>();
 

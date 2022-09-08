@@ -68,7 +68,61 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             return ExecuteSqlCommandAsync("DELETE FROM PricelistAssignment WHERE Id IN ({0})", ids);
         }
 
+        /// <summary>
+        /// Readonly only DBSet, do not try to insert/update/delete anything here
+        /// </summary>
+        public IQueryable<MergedPriceEntity> GetMergedPrices(string basePriceListId, string priorityPriceListId)
+        {
+            var command = GetSearchMergedPricesCommand(basePriceListId, priorityPriceListId);
+            var query = DbContext.Set<MergedPriceEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray());
+            return query;
+        }
 
+        #region Raw queries
+        private Command GetSearchMergedPricesCommand(string basePriceListId, string priorityPriceListId)
+        {
+            var template = @"
+            select a.* from
+            (select p.Id, p.ProductId, p.List, p.Sale, p.MinQuantity, p.PricelistId, 2 as [State]
+		        FROM Price AS p
+		        JOIN Price AS b
+		        on p.ProductId = b.ProductId and p.MinQuantity = b.MinQuantity
+		        WHERE b.PricelistId = @basePriceListId AND p.PricelistId = @priorityPriceListId
+	        union 
+	        select Id, ProductId, List, Sale, MinQuantity, PricelistId, 0 as [State]
+		        from Price c 
+		        where c.PricelistId = @basePriceListId and NOT EXISTS 
+		        (
+		        select p.ProductId, p.MinQuantity
+		        FROM Price AS p
+		        JOIN Price AS b
+		        on p.ProductId = c.ProductId and p.MinQuantity = c.MinQuantity
+		        WHERE b.PricelistId = @basePriceListId AND p.PricelistId = @priorityPriceListId
+		        )
+	        union
+		    select Id, ProductId, List, Sale, MinQuantity, PricelistId, 1 as [State]
+		        from Price s
+		        where s.PricelistId = @priorityPriceListId and NOT EXISTS 
+		        (
+		        select p.ProductId, p.MinQuantity
+		        FROM Price AS p
+		        JOIN Price AS b
+		        on b.ProductId = s.ProductId and b.MinQuantity = s.MinQuantity
+		        WHERE b.PricelistId = @basePriceListId AND p.PricelistId = @priorityPriceListId
+		        )) a";
+
+            var basePriceListIdParam = new SqlParameter("@basePriceListId", basePriceListId);
+            var priorityPriceListIdParam = new SqlParameter("@priorityPriceListId", priorityPriceListId);
+
+            return new Command
+            {
+                Text = template,
+                Parameters = new List<object> { basePriceListIdParam, priorityPriceListIdParam }
+            };
+        }
+        #endregion
+
+        #region Commands
         protected virtual Task ExecuteSqlCommandAsync(string commandTemplate, IEnumerable<string> parameterValues)
         {
             if (parameterValues?.Count() > 0)
@@ -96,5 +150,6 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             public string Text { get; set; }
             public IEnumerable<object> Parameters { get; set; }
         }
+        #endregion
     }
 }
