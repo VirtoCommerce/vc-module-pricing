@@ -8,11 +8,11 @@ namespace VirtoCommerce.PricingModule.Core.Model
 
         public string ProductCode { get; set; }
 
-        public string ProductImg { get; set; }
+        public string ProductImgSrc { get; set; }
 
         public int GroupPricesCount { get; set; }
 
-        public MergedPriceGroupState GroupState { get; set; }
+        public MergedPriceState GroupState { get; set; }
 
         public decimal? MinSalePrice { get; set; }
         public decimal? MaxSalePrice { get; set; }

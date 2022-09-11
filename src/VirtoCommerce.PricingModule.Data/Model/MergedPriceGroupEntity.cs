@@ -20,7 +20,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
         {
             model.ProductId = ProductId;
             model.GroupPricesCount = GroupPricesCount;
-            model.GroupState = (MergedPriceGroupState)GroupState;
+            model.GroupState = (MergedPriceState)GroupState;
             model.MinSalePrice = MinSalePrice;
             model.MaxSalePrice = MaxSalePrice;
             model.MinListPrice = MinListPrice;

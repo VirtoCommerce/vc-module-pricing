@@ -5,7 +5,7 @@ namespace VirtoCommerce.PricingModule.Core.Services
 {
     public interface IMergedPriceSearchService
     {
-        Task<MergedPriceSearchResult> SearchAsync(MergedPriceSearchCriteria criteria);
+        Task<MergedPriceSearchResult> SearchGroupPricesAsync(MergedPriceSearchCriteria criteria);
 
         Task<MergedPriceGroupSearchResult> SearchGroupsAsync(MergedPriceSearchCriteria criteria);
     }

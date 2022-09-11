@@ -5,7 +5,7 @@ namespace VirtoCommerce.PricingModule.Core.Model.Search
 {
     public class MergedPriceSearchCriteria : SearchCriteriaBase
     {
-        public bool GroupByProducts { get; set; }
+        public bool All { get; set; }
 
         public string BasePriceListId { get; set; }
 

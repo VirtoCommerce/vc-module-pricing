@@ -26,7 +26,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
             model.PricelistId = PricelistId;
             model.ProductId = ProductId;
             model.Sale = Sale;
-            model.State = (MergedPriceGroupState)State;
+            model.State = (MergedPriceState)State;
 
             return model;
         }

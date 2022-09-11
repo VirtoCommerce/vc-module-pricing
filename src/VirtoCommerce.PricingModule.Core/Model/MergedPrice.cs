@@ -4,6 +4,8 @@ namespace VirtoCommerce.PricingModule.Core.Model
 {
     public class MergedPrice : Entity
     {
+        public string Currency { get; set; }
+
         public string PricelistId { get; set; }
 
         public string ProductId { get; set; }
@@ -14,6 +16,6 @@ namespace VirtoCommerce.PricingModule.Core.Model
 
         public int MinQuantity { get; set; }
 
-        public MergedPriceGroupState State { get; set; }
+        public MergedPriceState State { get; set; }
     }
 }
