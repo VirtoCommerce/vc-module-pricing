@@ -79,7 +79,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         }
 
         #region Raw queries
-        private Command GetSearchMergedPricesCommand(string basePriceListId, string priorityPriceListId)
+        private static Command GetSearchMergedPricesCommand(string basePriceListId, string priorityPriceListId)
         {
             var template = @"
             select a.* from
