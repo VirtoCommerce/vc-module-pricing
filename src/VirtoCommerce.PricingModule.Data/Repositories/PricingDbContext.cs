@@ -32,6 +32,9 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             modelBuilder.Entity<PricelistAssignmentEntity>().HasOne(x => x.Pricelist).WithMany(x => x.Assignments).IsRequired().HasForeignKey(x => x.PricelistId);
             modelBuilder.Entity<PricelistAssignmentEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
 
+            // ugly hack because EFCore removed ultra useful DbQuery type in 3.0
+            modelBuilder.Entity<MergedPriceEntity>().HasNoKey().ToView("empty");
+
             base.OnModelCreating(modelBuilder);
         }
     }

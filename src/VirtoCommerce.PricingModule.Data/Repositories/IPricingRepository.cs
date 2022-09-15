@@ -20,5 +20,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         Task DeletePricesAsync(IEnumerable<string> ids);
         Task DeletePricelistsAsync(IEnumerable<string> ids);
         Task DeletePricelistAssignmentsAsync(IEnumerable<string> ids);
+
+        IQueryable<MergedPriceEntity> GetMergedPrices(string basePriceListId, string priorityPriceListId);
     }
 }
