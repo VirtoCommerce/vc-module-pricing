@@ -6,6 +6,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 {
     public class PricingDbContext : DbContextWithTriggers
     {
+#pragma warning disable S109
         public PricingDbContext(DbContextOptions<PricingDbContext> options)
             : base(options)
         {
@@ -22,6 +23,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             modelBuilder.Entity<PriceEntity>().Property(x => x.Id).HasMaxLength(128).ValueGeneratedOnAdd();
             modelBuilder.Entity<PriceEntity>().HasOne(x => x.Pricelist).WithMany(x => x.Prices).IsRequired().HasForeignKey(x => x.PricelistId);
             modelBuilder.Entity<PriceEntity>().HasIndex(x => new { x.PricelistId, x.ProductId, x.StartDate, x.EndDate }).HasDatabaseName("IX_PricelistProductDates");
+            modelBuilder.Entity<PriceEntity>().Property(x => x.MinQuantity).HasPrecision(18, 2);
             modelBuilder.Entity<PriceEntity>();
 
             modelBuilder.Entity<PricelistEntity>().ToTable("Pricelist").HasKey(x => x.Id);
@@ -34,8 +36,12 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
             // ugly hack because EFCore removed ultra useful DbQuery type in 3.0
             modelBuilder.Entity<MergedPriceEntity>().HasNoKey().ToView("empty");
+            modelBuilder.Entity<MergedPriceEntity>().Property(x => x.List).HasPrecision(18, 2);
+            modelBuilder.Entity<MergedPriceEntity>().Property(x => x.MinQuantity).HasPrecision(18, 2);
+            modelBuilder.Entity<MergedPriceEntity>().Property(x => x.Sale).HasPrecision(18, 2);
 
             base.OnModelCreating(modelBuilder);
         }
+#pragma warning restore S109
     }
 }
