@@ -6,6 +6,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 {
     public class PricingDbContext : DbContextWithTriggers
     {
+#pragma warning disable S109
         public PricingDbContext(DbContextOptions<PricingDbContext> options)
             : base(options)
         {
@@ -41,5 +42,6 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
             base.OnModelCreating(modelBuilder);
         }
+#pragma warning restore S109
     }
 }
