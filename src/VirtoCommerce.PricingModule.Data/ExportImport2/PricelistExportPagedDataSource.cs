@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Data.Services;
@@ -11,8 +10,6 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 {
     public class PricelistExportPagedDataSource : ExportPagedDataSource<PricelistExportDataQuery, PricelistSearchCriteria>
     {
-        const int BatchSize = 5000;
-
         private readonly IPricingSearchService _searchService;
         private readonly IPricingService _pricingService;
         private readonly PricelistExportDataQuery _dataQuery;
