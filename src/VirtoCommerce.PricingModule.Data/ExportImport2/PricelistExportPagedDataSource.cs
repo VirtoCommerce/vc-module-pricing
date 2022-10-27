@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Data.Services;
@@ -10,6 +11,8 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 {
     public class PricelistExportPagedDataSource : ExportPagedDataSource<PricelistExportDataQuery, PricelistSearchCriteria>
     {
+        const int BatchSize = 5000;
+
         private readonly IPricingSearchService _searchService;
         private readonly IPricingService _pricingService;
         private readonly PricelistExportDataQuery _dataQuery;
@@ -51,15 +54,6 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
                 totalCount = pricelistSearchResult.TotalCount;
             }
 
-            if (!result.IsNullOrEmpty())
-            {
-                var pricelistIds = result.Select(x => x.Id).ToArray();
-                var prices = _searchService.SearchPricesAsync(new PricesSearchCriteria() { PriceListIds = pricelistIds, Take = int.MaxValue }).GetAwaiter().GetResult();
-                foreach (var pricelist in result)
-                {
-                    pricelist.Prices = prices.Results.Where(x => x.PricelistId == pricelist.Id).ToArray();
-                }
-            }
 
             return new ExportableSearchResult()
             {
