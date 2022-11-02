@@ -11,7 +11,7 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
 {
     public class DeletePricesProductChangedEventHandler : IEventHandler<ProductChangedEvent>
     {
-        const int BatchSize = 100;
+        private const int _batchSize = 100;
 
         private readonly IPricingService _pricingService;
         private readonly IPricingSearchService _pricingSearchService;
@@ -34,22 +34,22 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
                                                           .Distinct().ToArray();
             if (!deletedProductIds.IsNullOrEmpty())
             {
-                PriceSearchResult searchResult = null;
+                PriceSearchResult searchResult;
                 do
                 {
                     searchResult = await _pricingSearchService.SearchPricesAsync(
                         new PricesSearchCriteria
                         {
                             ProductIds = deletedProductIds,
-                            Take = BatchSize
+                            Take = _batchSize
                         });
 
-                    if (searchResult != null && searchResult.Results.Any())
+                    if (searchResult.Results.Any())
                     {
                         await _pricingService.DeletePricesAsync(searchResult.Results.Select(p => p.Id).ToArray());
                     }
                 }
-                while (searchResult != null && searchResult.Results.Any());
+                while (searchResult.TotalCount > 0);
             }
         }
     }
