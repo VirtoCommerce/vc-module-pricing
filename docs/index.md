@@ -69,8 +69,7 @@ The Pricelist Assignment has the following key characteristics:
 
 ## Web API
 
-Web API documentation for each module is built out automatically and can be accessed by following the link bellow:
-<https://admin-demo.virtocommerce.com/docs/index.html?urls.primaryName=VirtoCommerce.Pricing>
+Web API documentation for each module is built out automatically and can be accessed [here](https://virtocommerce.com/request-demo).
 
 ## Database Model
 
