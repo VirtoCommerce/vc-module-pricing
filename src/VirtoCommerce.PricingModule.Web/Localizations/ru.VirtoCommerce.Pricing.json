@@ -1,219 +1,317 @@
 {
-    "pricing": {
-        "main-menu-title": "Ценообразование",
-        "blades": {
-            "pricing-main": {
-                "title": "Ценообразование",
-                "subtitle": "Управление товарами",
-                "menu": {
-                    "pricelist-list": {
-                        "title": "Прайс-лист"
-                    },
-                    "pricelist-assignment-list": {
-                        "title": "Назначение прайс-листов"
-                    }
-                }
-            },
-            "pricelist-list": {
-                "subtitle": "Управление Прайс-листами",
-                "labels": {
-                    "name": "Название",
-                    "currency": "Валюта",
-                    "last-modified": "Изменено"
-                }
-            },
-            "pricelist-detail": {
-                "title-new": "Новый Прайс-лист",
-                "labels": {
-                    "name": "Название",
-                    "currency": "Валюта",
-                    "description": "Описание"
-                },
-                "placeholders": {
-                    "name": "Введите название",
-                    "currency": "Выбрать...",
-                    "description": "Введите описание"
-                }
-            },
-            "pricelist-item-list": {
-                "subtitle": "Выберите Продукт для управления Ценами",
-                "labels": {
-                    "picture": "Картинка",
-                    "item-name": "Название продукта",
-                    "item-code": "Код продукта",
-                    "price-range": "Ценовой диапазон",
-                    "prices-count": "Общее значение цен"
-                },
-                "placeholders": {
-                    "search-item": "Поиск товара по названию..."
-                }
-            },
-            "prices-list": {
-                "title": "Цены {{name}}",
-                "subtitle": "Редактировать цены",
-                "labels": {
-                    "currency": "Валюта",
-                    "list-price": "Цена по прайс-листу",
-                    "sale-price": "Цена со скидкой",
-                    "min-quantity": "Минимальное количество",
-                    "last-modified": "Изменено"
-                }
-            },
-            "pricelist-assignment-list": {
-                "subtitle": "Управление установленными каталогами",
-                "labels": {
-                    "assignment-name": "Присвоенное название",
-                    "catalog": "Каталог",
-                    "priority": "Приоритет"
-                }
-            },
-            "assignment-list": {
-                "subtitle": "Управление товарными запасами",
-                "labels": {
-                    "name": "Название",
-                    "catalog": "Каталог",
-                    "pricelist": "Прайс-лист",
-                    "pricelist-currency": "Валюта",
-                    "priority": "Приоритет",
-                    "activation": "Активация",
-                    "expiration": "Деактивация",
-                    "last-modified": "Изменено",
-                    "modified-by": "Изменено"
-                }
-            },
-            "assignment-detail": {
-                "new-title": "Назначение нового прайс-листа",
-                "subtitle": "Редактировать назначение каталога",
-                "labels": {
-                    "assignment-name": "Присвоенное название",
-                    "price-list": "Прайс-лист",
-                    "catalog": "Каталог",
-                    "priority": "Приоритет",
-                    "priority-description": "Более высокий будет использован в первую очередь",
-                    "description": "Описание",
-                    "enable-date": "Срок действия",
-                    "enable-date-description": "Оставьте пустым, если доступен всегда",
-                    "expiration-date": "Дата окончания",
-                    "expiration-date-description": "Оставьте пустым, если доступен всегда",
-                    "eligible-shoppers": "Желательные покупатели"
-                },
-                "placeholders": {
-                    "assignment-name": "Введите название",
-                    "price-list": "Выбрать...",
-                    "catalog": "Выбрать...",
-                    "description": "Введите описание"
-                }
-            },
-            "item-pricelists-list": {
-                "subtitle": "Выбрать Прайс-лист для управления ценами",
-                "labels": {
-                    "name": "Прайс-лист",
-                    "currency": "Валюта",
-                    "priority": "Приоритет",
-                    "prices-count": "Общее значение цен"
-                },
-                "no-assignments": "В каталоге нет указанных прайс-листов. Пожалуйста, укажите прайс-лист, следуя данной ссылке ",
-                "manage-pricelists": "Управление ценообразованием"
-            },
-            "item-prices": {
-                "title": "Цены для {{name}}",
-                "subtitle": "Редактировать цены",
-                "head-label": "Прайс-лист для новой цены",
-                "pricelist-select-placeholder": "Выбрать прайс-лист для добавления новой цены...",
-                "labels": {
-                    "name": "Прайс-лист",
-                    "currency": "Валюта",
-                    "catalog": "Каталог",
-                    "list-price": "Цена по прайс-листу",
-                    "sale-price": "Цена со скидкой",
-                    "min-quantity": "Минимальное количество"
-                }
-            },
-            "exporter": {
-                "priceTitle": "Экспорт цен",
-                "priceSubtitle": "Экспорт цен в формате json или CSV",
-                "priceListTitle": "Экспорт прайс-листов",
-                "pricelistSubtitle": "Экспорт прайс-листов в json или csv",
-                "priceAssignmentTitle": "Экспорт товарных запасов",
-                "priceAssignmentSubtitle": "Экспорт товарных запасов в json или csv"
-            }
-
-        },
-        "widgets": {
-            "assignments": {
-                "title": "Назначение"
-            },
-            "itemPricesWidget": {
-                "title": "Цена",
-                "assign-pricelist": "Назначить прайс-лист"
-            },
-            "prices": {
-                "title": "Цены"
-            }
-        },
-      "dialogs": {
-        "assignments-delete": {
-          "title": "Подтверждение удаления",
-          "message": "Вы уверены, что хотите удалить выбранные установленные прайс-листы?"
-        },
-        "catalog-items-delete": {
-          "title": "Подтверждение удаления",
-          "warning": "ПРЕДУПРЕЖДЕНИЕ: это изменение является постоянным и не может быть отменено впоследствии. Это может привести к потере данных.",
-          "message": "Будут удалены все отфильтрованные элементы",
-          "instruction": "Введите 'yes', чтобы начать удаление:"
-        },
-        "pricelists-delete": {
-          "title": "Подтверждение удаления",
-          "message": "Вы уверены, что хотите удалить выбранные Прайс-листы?"
-        },
-        "pricelist-item-list-delete": {
-          "title": "Подтверждение удаления",
-          "message": "Вы уверены, что хотите удалить ВСЕ цены для выбранных Продуктов в этом Прайс-листе?"
-        },
-        "item-prices-delete-confirmation": {
-          "title": "Подтверждение удаления",
-          "message": "Вы уверены, что хотите удалить выбранные Цены?"
-        },
-        "item-prices-delete-error": {
-          "title": "Ошибка",
-          "message": "Должна быть по крайней мере одна цена с минимальным количеством товара равным 1."
-        },
-        "prices-save": {
-          "title": "Сохранение изменений",
-          "message": "Цены были изменены. Вы хотите сохранить изменения?"
-        },
-        "pricelist-save": {
-          "title": "Сохранение изменений",
-          "message": "Прайс-лист был изменен. Вы хотите сохранить изменения?"
-        },
-        "assignment-save": {
-          "title": "Сохранение изменений",
-          "message": "Назначение каталога было изменено. Вы хотите сохранить изменения?"
+  "pricing": {
+    "main-menu-title": "Ценообразование",
+    "blades": {
+      "pricing-main": {
+        "title": "Ценообразование",
+        "subtitle": "Управление товарами",
+        "menu": {
+          "pricelist-list": {
+            "title": "Прайс-лист"
+          },
+          "pricelist-assignment-list": {
+            "title": "Назначение прайс-листов"
+          }
         }
       },
-        "commands": {
-            "add-selected": "Добавить выбранное"
+      "pricelist-list": {
+        "subtitle": "Управление Прайс-листами",
+        "labels": {
+          "name": "Название",
+          "currency": "Валюта",
+          "last-modified": "Изменено"
         }
-    },
-    "permissions": {
-        "pricing:access": "Доступ к данным ценообразования",
-        "pricing:create": "Создание новой записи о ценообразовании",
-        "pricing:read": "Просмотр подробностей о ценообразовании",
-        "pricing:update": "Обновление существующих записей о ценообразовании",
-        "pricing:delete": "Удаление данных о ценообразовании"
-    },
-    "settings": {
-      "Pricing": {
-        "ExportImport": {
-          "PageSize": {
-            "title": "Размер страницы данных при экспорте и импорте",
-            "description": "Количество записей, которое будет считано/записано в БД при экспорте/импорте. Большие значения могут привести к ухудшению производительности."
-          }
+      },
+      "pricelist-detail": {
+        "title-new": "Новый Прайс-лист",
+        "labels": {
+          "name": "Название",
+          "currency": "Валюта",
+          "description": "Описание"
         },
-        "LogPricingChanges": {
-          "title": "Сохранение аудита изменений ценообразования",
-          "description": "Сохранять изменения в лог операций платформы. Если цены меняются относительно часто, это увеличивает размер БД."
+        "placeholders": {
+          "name": "Введите название",
+          "currency": "Выбрать...",
+          "description": "Введите описание"
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Выберите Продукт для управления Ценами",
+        "labels": {
+          "picture": "Картинка",
+          "item-name": "Название продукта",
+          "item-code": "Код продукта",
+          "price-range": "Ценовой диапазон",
+          "prices-count": "Общее значение цен",
+          "prices-count": "Цена указана в этом прайс-листе",
+          "no-product-row-name": "Продукт с таким ID отсутствует"
+        },
+        "placeholders": {
+          "search-item": "Поиск товара по названию..."
+        }
+      },
+      "prices-list": {
+        "title": "Цены {{name}}",
+        "subtitle": "Редактировать цены",
+        "labels": {
+          "currency": "Валюта",
+          "list-price": "Цена по прайс-листу",
+          "sale-price": "Цена со скидкой",
+          "min-quantity": "Минимальное количество",
+          "startDate": "Действителен с",
+          "endDate": "Действителен до",
+          "last-modified": "Изменено"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Управление установленными каталогами",
+        "labels": {
+          "assignment-name": "Присвоенное название",
+          "catalog": "Каталог",
+          "priority": "Приоритет"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Управление товарными запасами",
+        "labels": {
+          "name": "Название",
+          "catalog": "Каталог",
+          "pricelist": "Прайс-лист",
+          "pricelist-currency": "Валюта",
+          "priority": "Приоритет",
+          "activation": "Активация",
+          "expiration": "Деактивация",
+          "last-modified": "Изменено",
+          "modified-by": "Изменено"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Назначение нового прайс-листа",
+        "subtitle": "Редактировать назначение каталога",
+        "labels": {
+          "assignment-name": "Присвоенное название",
+          "price-list": "Прайс-лист",
+          "catalog": "Каталог",
+          "store": "Магазин",
+          "priority": "Приоритет",
+          "priority-description": "Более высокий будет использован в первую очередь",
+          "description": "Описание",
+          "enable-date": "Срок действия",
+          "enable-date-description": "Оставьте пустым, если доступен всегда",
+          "expiration-date": "Дата окончания",
+          "expiration-date-description": "Оставьте пустым, если доступен всегда",
+          "eligible-shoppers": "Желательные покупатели"
+        },
+        "placeholders": {
+          "assignment-name": "Введите название",
+          "price-list": "Выбрать...",
+          "catalog": "Выбрать...",
+          "store": "Выбрать...",
+          "description": "Введите описание"
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Выбрать Прайс-лист для управления ценами",
+        "labels": {
+          "name": "Прайс-лист",
+          "currency": "Валюта",
+          "priority": "Приоритет",
+          "prices-count": "Общее значение цен"
+        },
+        "no-assignments": "В каталоге нет указанных прайс-листов. Пожалуйста, укажите прайс-лист, следуя данной ссылке ",
+        "manage-pricelists": "Управление ценообразованием"
+      },
+      "item-prices": {
+        "title": "Цены для {{name}}",
+        "subtitle": "Редактировать цены",
+        "head-label": "Прайс-лист для новой цены",
+        "pricelist-select-placeholder": "Выбрать прайс-лист для добавления новой цены...",
+        "labels": {
+          "name": "Прайс-лист",
+          "currency": "Валюта",
+          "catalog": "Каталог",
+          "store": "Магазин",
+          "list-price": "Цена по прайс-листу",
+          "sale-price": "Цена со скидкой",
+          "min-quantity": "Минимальное количество",
+          "startDate": "Действителен с",
+          "endDate": "Действителен до"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Экспорт цен",
+        "priceSubtitle": "Экспорт цен в формате json или CSV",
+        "priceListTitle": "Экспорт прайс-листов",
+        "pricelistSubtitle": "Экспорт прайс-листов в json или csv",
+        "priceAssignmentTitle": "Экспорт товарных запасов",
+        "priceAssignmentSubtitle": "Экспорт товарных запасов в json или csv"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Назначение"
+      },
+      "itemPricesWidget": {
+        "title": "Цена",
+        "assign-pricelist": "Назначить прайс-лист"
+      },
+      "prices": {
+        "title": "Цены"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Подтверждение удаления",
+        "message": "Вы уверены, что хотите удалить выбранные установленные прайс-листы?"
+      },
+      "catalog-items-delete": {
+        "title": "Подтверждение удаления",
+        "warning": "ПРЕДУПРЕЖДЕНИЕ: это изменение является постоянным и не может быть отменено впоследствии. Это может привести к потере данных.",
+        "message": "Будут удалены все отфильтрованные элементы",
+        "instruction": "Введите 'yes', чтобы начать удаление:"
+      },
+      "pricelists-delete": {
+        "title": "Подтверждение удаления",
+        "message": "Вы уверены, что хотите удалить выбранные Прайс-листы?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Подтверждение удаления",
+        "message": "Вы уверены, что хотите удалить ВСЕ цены для выбранных Продуктов в этом Прайс-листе?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Подтверждение удаления",
+        "message": "Вы уверены, что хотите удалить выбранные Цены?"
+      },
+      "item-prices-delete-error": {
+        "title": "Ошибка",
+        "message": "Должна быть по крайней мере одна цена с минимальным количеством товара равным 1."
+      },
+      "prices-save": {
+        "title": "Сохранение изменений",
+        "message": "Цены были изменены. Вы хотите сохранить изменения?"
+      },
+      "pricelist-save": {
+        "title": "Сохранение изменений",
+        "message": "Прайс-лист был изменен. Вы хотите сохранить изменения?"
+      },
+      "assignment-save": {
+        "title": "Сохранение изменений",
+        "message": "Назначение каталога было изменено. Вы хотите сохранить изменения?"
+      },
+      "assignment-save-validation": {
+        "title": "Сохранить изменения",
+        "message": "Для назначения прайс-листа необходимо указать либо каталог, либо магазин. Нельзя оставлять оба поля пустыми."
+      }
+    },
+    "commands": {
+      "add-selected": "Добавить выбранное",
+      "delete-all": "Удалить все",
+      "delete-filtered": "Удалить отфильтрованное"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Прайс-листы",
+        "modified-since": "Изменено с",
+        "products": "Продукты",
+        "currencies": "Валюты"
+      },
+      "labels": {
+        "select": "Выберите",
+        "selected": "Selected: "
+      },
+      "placeholders": {
+        "price-lists": "Select price lists…",
+        "catalog-lists": "Select catalog…"
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Select catalog products…"
         }
       }
     }
+  },
+  "permissions": {
+    "pricing:access": "Доступ к данным ценообразования",
+    "pricing:create": "Создание новой записи о ценообразовании",
+    "pricing:read": "Просмотр подробностей о ценообразовании",
+    "pricing:update": "Обновление существующих записей о ценообразовании",
+    "pricing:delete": "Удаление данных о ценообразовании"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Дата и время индексации прайса",
+                "description": "Дата и время начала старта задачи индексации цен"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Размер страницы данных при экспорте и импорте",
+          "description": "Количество записей, которое будет считано/записано в БД при экспорте/импорте. Большие значения могут привести к ухудшению производительности."
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Сохранение аудита изменений ценообразования",
+        "description": "Сохранять изменения в лог операций платформы. Если цены меняются относительно часто, это увеличивает размер БД."
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Включить индексацию цен на продукцию",
+          "description": "Включите эту опцию, чтобы включить цену продукта в индекс продукта. Это также приведет к переиндексации продукта после изменения цены."
+        },
+        "StorePricesInIndex": {
+          "title": "Хранить все цены на товары как индексный объект",
+          "description": "Включите этот параметр, чтобы хранить все цены продуктов в индексе во вложенном поле как <ProductName_price>."
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Включить индексирование на основе событий для объектов ценообразования",
+            "description": "Любые изменения объекта каталога вызовут фоновую задачу, которая применит эти изменения к поисковому индексу."
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Экспорт или импорт прайс-листов, назначений и цен"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Полный прайс-лист",
+        "description": "Данные прайс-листа со связанными объектами. Поддержка экспорта только в JSON"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Прайс",
+        "description": "Цены без сопутствующих объектов"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Прайс-лист",
+        "description": "Только прайс-лист"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Назначение прайс-листа",
+        "description": "Экспорт назначений прайс-листа"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Ценообразование",
+        "description": "Цены, прайс-листы и назначения"
+      }
+    }
+  }
 }
