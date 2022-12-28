@@ -7,17 +7,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
-namespace VirtoCommerce.PricingModule.Data.Migrations
+namespace VirtoCommerce.PricingModule.Data.SqlServer.Migrations
 {
     [DbContext(typeof(PricingDbContext))]
-    [Migration("20210119074026_AddProductPriceDatesIndex")]
-    partial class AddProductPriceDatesIndex
+    [Migration("20190613202636_AddPricingOuterId")]
+    partial class AddPricingOuterId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
+                .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -25,58 +25,44 @@ namespace VirtoCommerce.PricingModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("CreatedDate");
 
                     b.Property<decimal>("List")
                         .HasColumnType("Money");
 
-                    b.Property<decimal>("MinQuantity")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("MinQuantity");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<string>("OuterId")
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("PricelistId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(128)");
+                        .IsRequired();
 
                     b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(1024)")
                         .HasMaxLength(1024);
 
                     b.Property<decimal?>("Sale")
                         .HasColumnType("Money");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("PricelistId", "ProductId", "StartDate", "EndDate")
-                        .HasName("IX_PricelistProductDates");
+                    b.HasIndex("PricelistId");
+
+                    b.HasIndex("ProductId", "PricelistId")
+                        .HasName("IX_PriceId");
 
                     b.ToTable("Price");
                 });
@@ -85,59 +71,44 @@ namespace VirtoCommerce.PricingModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CatalogId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
-                    b.Property<string>("ConditionExpression")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ConditionExpression");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(512)")
                         .HasMaxLength(512);
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("EndDate");
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("OuterId")
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
-                    b.Property<string>("PredicateVisualTreeSerialized")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PredicateVisualTreeSerialized");
 
                     b.Property<string>("PricelistId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(128)");
+                        .IsRequired();
 
-                    b.Property<int>("Priority")
-                        .HasColumnType("int");
+                    b.Property<int>("Priority");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("StartDate");
 
                     b.HasKey("Id");
 
@@ -150,44 +121,33 @@ namespace VirtoCommerce.PricingModule.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("Currency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(512)")
                         .HasMaxLength(512);
 
                     b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.Property<string>("OuterId")
-                        .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OuterId");
 
                     b.ToTable("Pricelist");
                 });

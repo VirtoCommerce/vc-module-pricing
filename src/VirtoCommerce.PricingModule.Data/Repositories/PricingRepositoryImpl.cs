@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient; //https://github.com/dotnet/efcore/issues/16812
 using Microsoft.EntityFrameworkCore;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Domain;
@@ -24,7 +23,6 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         public virtual async Task<ICollection<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds)
         {
-            // TODO: replace Include with separate query
             var result = await Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToListAsync();
             return result;
         }
@@ -36,36 +34,33 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             var query = Pricelists;
             if (pricelistResponseGroup == PriceListResponseGroup.Full)
             {
-                // TODO: replace Include with separate query
                 query = query.Include(x => x.Assignments);
             }
 
-            var result = await query
-                                         .Where(x => pricelistIds.Contains(x.Id))
+            var result = await query.Where(x => pricelistIds.Contains(x.Id))
                                          .ToListAsync();
             return result;
         }
 
         public virtual async Task<ICollection<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId)
         {
-            // TODO: replace Include with separate query
             var result = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToListAsync();
             return result;
         }
 
         public Task DeletePricesAsync(IEnumerable<string> ids)
         {
-            return ExecuteSqlCommandAsync("DELETE FROM Price WHERE Id IN ({0})", ids);
+            return ExecuteSqlCommandAsync("DELETE FROM \"Price\" WHERE Id IN ({0})", ids);
         }
 
         public Task DeletePricelistsAsync(IEnumerable<string> ids)
         {
-            return ExecuteSqlCommandAsync("DELETE FROM Pricelist WHERE Id IN ({0})", ids);
+            return ExecuteSqlCommandAsync("DELETE FROM \"Pricelist\" WHERE Id IN ({0})", ids);
         }
 
         public Task DeletePricelistAssignmentsAsync(IEnumerable<string> ids)
         {
-            return ExecuteSqlCommandAsync("DELETE FROM PricelistAssignment WHERE Id IN ({0})", ids);
+            return ExecuteSqlCommandAsync("DELETE FROM \"PricelistAssignment\" WHERE Id IN ({0})", ids);
         }
 
         /// <summary>
@@ -81,43 +76,41 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         #region Raw queries
         private static Command GetSearchMergedPricesCommand(string basePriceListId, string priorityPriceListId)
         {
-            var template = @"
-            select a.* from
-            (select p.Id, p.ProductId, p.List, p.Sale, p.MinQuantity, p.PricelistId, 2 as [State]
-		        FROM Price AS p
-		        JOIN Price AS b
-		        on p.ProductId = b.ProductId and p.MinQuantity = b.MinQuantity
-		        WHERE b.PricelistId = @basePriceListId AND p.PricelistId = @priorityPriceListId
-	        union 
-	        select Id, ProductId, List, Sale, MinQuantity, PricelistId, 0 as [State]
-		        from Price c 
-		        where c.PricelistId = @basePriceListId and NOT EXISTS 
-		        (
-		        select p.ProductId, p.MinQuantity
-		        FROM Price AS p
-		        JOIN Price AS b
-		        on p.ProductId = c.ProductId and p.MinQuantity = c.MinQuantity
-		        WHERE b.PricelistId = @basePriceListId AND p.PricelistId = @priorityPriceListId
-		        )
-	        union
-		    select Id, ProductId, List, Sale, MinQuantity, PricelistId, 1 as [State]
-		        from Price s
-		        where s.PricelistId = @priorityPriceListId and NOT EXISTS 
-		        (
-		        select p.ProductId, p.MinQuantity
-		        FROM Price AS p
-		        JOIN Price AS b
-		        on b.ProductId = s.ProductId and b.MinQuantity = s.MinQuantity
-		        WHERE b.PricelistId = @basePriceListId AND p.PricelistId = @priorityPriceListId
-		        )) a";
-
-            var basePriceListIdParam = new SqlParameter("@basePriceListId", basePriceListId);
-            var priorityPriceListIdParam = new SqlParameter("@priorityPriceListId", priorityPriceListId);
+            var template = @"SELECT A.* FROM
+(
+    SELECT P.""Id"", P.""ProductId"", P.""List"", P.""Sale"", P.""MinQuantity"", P.""PricelistId"", 2 as ""State""
+        FROM ""Price"" AS P
+            JOIN ""Price"" AS B
+            ON P.""ProductId"" = B.""ProductId"" and P.""MinQuantity"" = B.""MinQuantity""
+        WHERE B.""PricelistId"" = {0} AND P.""PricelistId"" = {1}
+    UNION 
+    SELECT ""Id"", ""ProductId"", ""List"", ""Sale"", ""MinQuantity"", ""PricelistId"", 0 as ""State""
+        FROM ""Price"" C
+        WHERE C.""PricelistId"" = {0} and NOT EXISTS 
+        (
+            SELECT P.""ProductId"", P.""MinQuantity""
+                FROM ""Price"" AS P
+                    JOIN ""Price"" AS B
+                    ON P.""ProductId"" = C.""ProductId"" AND P.""MinQuantity"" = C.""MinQuantity""
+                WHERE B.""PricelistId"" = {0} AND P.""PricelistId"" = {1}
+        )
+    UNION
+    SELECT  ""Id"", ""ProductId"", ""List"", ""Sale"", ""MinQuantity"", ""PricelistId"", 1 as ""State""
+        FROM ""Price"" S
+        WHERE S.""PricelistId"" = {1} AND NOT EXISTS 
+        (
+            SELECT P.""ProductId"", P.""MinQuantity""
+                FROM ""Price"" AS P
+                    JOIN ""Price"" AS B
+                    ON B.""ProductId"" = S.""ProductId"" and B.""MinQuantity"" = S.""MinQuantity""
+                WHERE B.""PricelistId"" = {0} AND P.""PricelistId"" = {1}
+         )
+) A";
 
             return new Command
             {
                 Text = template,
-                Parameters = new List<object> { basePriceListIdParam, priorityPriceListIdParam }
+                Parameters = new List<object> { basePriceListId, priorityPriceListId }
             };
         }
         #endregion
@@ -135,8 +128,8 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
         {
-            var parameters = parameterValues.Select((v, i) => new SqlParameter($"@p{i}", v));
-            var parameterNames = string.Join(",", parameters.Select(p => p.ParameterName));
+            var parameters = parameterValues.Select((v, i) => "{{{i}}}");
+            var parameterNames = string.Join(",", parameters);
 
             return new Command
             {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.0.32112.339
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.PricingModule.Core", "src\VirtoCommerce.PricingModule.Core\VirtoCommerce.PricingModule.Core.csproj", "{EA833691-97E4-44A3-966F-AA933A73CB3D}"
 EndProject
@@ -14,6 +14,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{646E0CA3-A74D-4084-A095-744F3CF61E6F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.PricingModule.Test", "tests\VirtoCommerce.PricingModule.Test\VirtoCommerce.PricingModule.Test.csproj", "{ABA252C7-268C-4351-A8A2-A726C3D2BF11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.PricingModule.Data.SqlServer", "src\VirtoCommerce.PricingModule.Data.SqlServer\VirtoCommerce.PricingModule.Data.SqlServer.csproj", "{0FE65433-E7BE-4CA3-9366-D20F49B64583}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.PricingModule.Data.PostgreSql", "src\VirtoCommerce.PricingModule.Data.PostgreSql\VirtoCommerce.PricingModule.Data.PostgreSql.csproj", "{70DAA006-01CE-4144-AD56-67956A5A69CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.PricingModule.Data.MySql", "src\VirtoCommerce.PricingModule.Data.MySql\VirtoCommerce.PricingModule.Data.MySql.csproj", "{24BE5744-FA68-466F-BBE7-A551F32E7746}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +43,18 @@ Global
 		{ABA252C7-268C-4351-A8A2-A726C3D2BF11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABA252C7-268C-4351-A8A2-A726C3D2BF11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABA252C7-268C-4351-A8A2-A726C3D2BF11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FE65433-E7BE-4CA3-9366-D20F49B64583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FE65433-E7BE-4CA3-9366-D20F49B64583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FE65433-E7BE-4CA3-9366-D20F49B64583}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FE65433-E7BE-4CA3-9366-D20F49B64583}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70DAA006-01CE-4144-AD56-67956A5A69CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70DAA006-01CE-4144-AD56-67956A5A69CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70DAA006-01CE-4144-AD56-67956A5A69CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70DAA006-01CE-4144-AD56-67956A5A69CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24BE5744-FA68-466F-BBE7-A551F32E7746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24BE5744-FA68-466F-BBE7-A551F32E7746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24BE5744-FA68-466F-BBE7-A551F32E7746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24BE5744-FA68-466F-BBE7-A551F32E7746}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +64,9 @@ Global
 		{5DAB1AE3-CC3F-4003-BB00-4066C1C853F8} = {00764CFA-5B17-4EE1-AD87-9CDBDBC89C28}
 		{1362E662-7EB8-42E9-8E2D-9F6F538E46F5} = {00764CFA-5B17-4EE1-AD87-9CDBDBC89C28}
 		{ABA252C7-268C-4351-A8A2-A726C3D2BF11} = {646E0CA3-A74D-4084-A095-744F3CF61E6F}
+		{0FE65433-E7BE-4CA3-9366-D20F49B64583} = {00764CFA-5B17-4EE1-AD87-9CDBDBC89C28}
+		{70DAA006-01CE-4144-AD56-67956A5A69CE} = {00764CFA-5B17-4EE1-AD87-9CDBDBC89C28}
+		{24BE5744-FA68-466F-BBE7-A551F32E7746} = {00764CFA-5B17-4EE1-AD87-9CDBDBC89C28}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2C5BCF5-42AA-406F-8F40-1FF807DED53C}

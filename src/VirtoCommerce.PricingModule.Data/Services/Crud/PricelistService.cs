@@ -23,5 +23,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
         {
             return await ((IPricingRepository)repository).GetPricelistByIdsAsync(ids, responseGroup);
         }
+
     }
 }

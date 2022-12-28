@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace VirtoCommerce.PricingModule.Data.Migrations
+namespace VirtoCommerce.PricingModule.Data.SqlServer.Migrations
 {
     public partial class UpdatePricingV2 : Migration
     {

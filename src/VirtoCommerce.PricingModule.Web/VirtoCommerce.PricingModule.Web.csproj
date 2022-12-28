@@ -30,6 +30,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.PricingModule.Core\VirtoCommerce.PricingModule.Core.csproj" />
+    <ProjectReference Include="..\VirtoCommerce.PricingModule.Data.MySql\VirtoCommerce.PricingModule.Data.MySql.csproj" />
+    <ProjectReference Include="..\VirtoCommerce.PricingModule.Data.PostgreSql\VirtoCommerce.PricingModule.Data.PostgreSql.csproj" />
+    <ProjectReference Include="..\VirtoCommerce.PricingModule.Data.SqlServer\VirtoCommerce.PricingModule.Data.SqlServer.csproj" />
     <ProjectReference Include="..\VirtoCommerce.PricingModule.Data\VirtoCommerce.PricingModule.Data.csproj" />
   </ItemGroup>
 </Project>
