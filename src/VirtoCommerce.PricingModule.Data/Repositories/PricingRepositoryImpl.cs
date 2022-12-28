@@ -128,7 +128,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         protected virtual Command CreateCommand(string commandTemplate, IEnumerable<string> parameterValues)
         {
-            var parameters = parameterValues.Select((v, i) => "{{{i}}}");
+            var parameters = parameterValues.Select((v, i) => $"{{{i}}}");
             var parameterNames = string.Join(",", parameters);
 
             return new Command
