@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
-namespace VirtoCommerce.PricingModule.Data.Migrations
+namespace VirtoCommerce.PricingModule.Data.SqlServer.Migrations
 {
     [DbContext(typeof(PricingDbContext))]
     [Migration("20000000000000_UpdatePricingV2")]

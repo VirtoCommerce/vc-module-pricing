@@ -1,22 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Services;
-using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
 using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
-using VirtoCommerce.PricingModule.Data.Model;
 
 #pragma warning disable CS0618 // Allow to use obsoleted
 
@@ -31,11 +29,13 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         private readonly IItemService _itemService;
         private readonly IBlobUrlResolver _blobUrlResolver;
         private readonly AbstractValidator<Pricelist> _priceListValidator;
+        private readonly IMergedPriceSearchService _mergedPriceSearchService;
 
         public PricingModuleController(
             IPricingService pricingService,
             IItemService itemService,
             IPricingSearchService pricingSearchService,
+            IMergedPriceSearchService mergedPriceSearchService,
             IBlobUrlResolver blobUrlResolver,
             AbstractValidator<Pricelist> priceListValidator)
         {
@@ -44,6 +44,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             _pricingSearchService = pricingSearchService;
             _blobUrlResolver = blobUrlResolver;
             _priceListValidator = priceListValidator;
+            _mergedPriceSearchService = mergedPriceSearchService;
         }
 
         /// <summary>
@@ -489,5 +490,35 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             await _pricingService.DeletePricelistsAsync(ids);
             return NoContent();
         }
+
+
+        /// <summary>
+        /// Merge base and priority price list and returns MergedPriceGroup.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/pricing/mergedpricegroups")]
+        [Authorize(ModuleConstants.Security.Permissions.Read)]
+        public async Task<ActionResult<MergedPriceGroupSearchResult>> SearchGroups([FromBody] MergedPriceSearchCriteria criteria)
+        {
+            var result = await _mergedPriceSearchService.SearchGroupsAsync(criteria);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Merge base and priority price list and returns MergedPrice.
+        /// </summary>
+        /// <param name="criteria"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("api/pricing/mergedprices")]
+        [Authorize(ModuleConstants.Security.Permissions.Read)]
+        public async Task<ActionResult<MergedPriceSearchResult>> SearchGroupPrices([FromBody] MergedPriceSearchCriteria criteria)
+        {
+            var result = await _mergedPriceSearchService.SearchGroupPricesAsync(criteria);
+            return Ok(result);
+        }
+
     }
 }

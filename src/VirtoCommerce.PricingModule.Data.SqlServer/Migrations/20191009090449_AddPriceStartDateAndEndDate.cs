@@ -1,7 +1,6 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace VirtoCommerce.PricingModule.Data.Migrations
+namespace VirtoCommerce.PricingModule.Data.SqlServer.Migrations
 {
     public partial class AddPriceStartDateAndEndDate : Migration
     {
