@@ -271,6 +271,10 @@
         "StorePricesInIndex": {
           "title": "Store all product prices as an index object",
           "description": "Enable this option to store all product prices in the index within a nested field as <ProductName_price>"
+        },
+        "PriceIndexingValue": {
+          "title": "Price indexing value",
+          "description": "Determines product price value that'll be stored in the product inde."
         }
       },
       "Search": {

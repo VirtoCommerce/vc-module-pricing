@@ -27,6 +27,9 @@ namespace VirtoCommerce.PricingModule.Core
         {
             public static class General
             {
+                public const string PriceIndexingValueMax = "Max";
+                public const string PriceIndexingValueMin = "Min";
+
                 public static SettingDescriptor ExportImportPageSize { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.ExportImport.PageSize",
@@ -69,6 +72,15 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = false,
                 };
 
+                public static SettingDescriptor PriceIndexingValue { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Indexing.PriceIndexingValue",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = PriceIndexingValueMax,
+                    AllowedValues = new[] { PriceIndexingValueMax, PriceIndexingValueMin }
+                };
+
                 public static IEnumerable<SettingDescriptor> AllSettings
                 {
                     get
@@ -80,6 +92,7 @@ namespace VirtoCommerce.PricingModule.Core
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,
                                    EventBasedIndexation,
+                                   PriceIndexingValue,
                                };
                     }
                 }
