@@ -91,7 +91,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
         private bool UseMaxIndexationPrice()
         {
-            var value = _settingsManager.GetValue(ModuleConstants.Settings.General.PriceIndexingValue.Name, ModuleConstants.Settings.General.PriceIndexingValueMax);
+            var value = _settingsManager.GetValue<string>(ModuleConstants.Settings.General.PriceIndexingValue.Name, ModuleConstants.Settings.General.PriceIndexingValue.DefaultValue as string);
             return value.EqualsInvariant(ModuleConstants.Settings.General.PriceIndexingValueMax);
         }
     }

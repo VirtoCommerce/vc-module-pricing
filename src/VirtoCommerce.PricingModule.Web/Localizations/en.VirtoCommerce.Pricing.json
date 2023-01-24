@@ -274,7 +274,7 @@
         },
         "PriceIndexingValue": {
           "title": "Price indexing value",
-          "description": "Determines product price value that'll be stored in the product inde."
+          "description": "Determines product price value that'll be stored in the product index."
         }
       },
       "Search": {
