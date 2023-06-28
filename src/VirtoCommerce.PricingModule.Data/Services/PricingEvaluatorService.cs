@@ -16,8 +16,6 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
-#pragma warning disable CS0618 // Allow to use obsoleted
-
 namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricingEvaluatorService : IPricingEvaluatorService
@@ -43,13 +41,13 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _productService = productService;
         }
 
-        public virtual async Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
+        public virtual async Task<IList<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
         {
             List<PricelistAssignment> assignmentsToReturn;
             var query = await PriceListAssignmentAsync(evalContext);
             if (evalContext.SkipAssignmentValidation)
             {
-                // do NOT use ToListAsync as "query" is not EF IAsyncQuerable
+                // do NOT use ToListAsync as "query" is not EF IAsyncQueryable
                 assignmentsToReturn = query.ToList();
             }
             else
@@ -80,7 +78,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     x.Pricelist.Priority = x.Priority;
                     return x.Pricelist;
-                });
+                })
+                .ToList();
         }
 
         public virtual async Task<IQueryable<PricelistAssignment>> PriceListAssignmentAsync(PriceEvaluationContext evalContext)
@@ -95,12 +94,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             var query = priceListAssignments.AsQueryable();
 
-            var predictate = GetEvaluationPredicate(evalContext);
-            query = query.Where(predictate);
+            var predicate = GetEvaluationPredicate(evalContext);
+            query = query.Where(predicate);
 
             if (evalContext.Currency != null)
             {
-                query = query.Where(x => x.Pricelist.Currency == evalContext.Currency.ToString());
+                query = query.Where(x => x.Pricelist.Currency == evalContext.Currency);
             }
 
             if (evalContext.CertainDate != null)
@@ -122,12 +121,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             if (evalContext.StoreId != null)
             {
-                predicate = PredicateBuilder.Or(predicate, x => x.StoreId == evalContext.StoreId);
+                predicate = predicate.Or(x => x.StoreId == evalContext.StoreId);
             }
 
             if (evalContext.CatalogId != null)
             {
-                predicate = PredicateBuilder.Or(predicate, x => x.CatalogId == evalContext.CatalogId);
+                predicate = predicate.Or(x => x.CatalogId == evalContext.CatalogId);
             }
 
             return predicate;
@@ -144,7 +143,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
         }
 
-        public virtual async Task<IEnumerable<Price>> EvaluateProductPricesAsync(PriceEvaluationContext evalContext)
+        public virtual async Task<IList<Price>> EvaluateProductPricesAsync(PriceEvaluationContext evalContext)
         {
             if (evalContext == null)
             {
@@ -209,9 +208,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             //Try to inherit prices for variations from their main product
             //Need find products without price it may be a variation without implicitly price defined and try to get price from main product
-            var variations = (await _productService.GetByIdsAsync(productIdsWithoutPrice, ItemResponseGroup.ItemInfo.ToString()))
+            var variations = (await _productService.GetNoCloneAsync(productIdsWithoutPrice, ItemResponseGroup.ItemInfo.ToString()))
                 .Where(x => x.MainProductId != null).ToList();
-            evalContext = evalContext.Clone() as PriceEvaluationContext;
+            evalContext = evalContext.CloneTyped();
             evalContext.ProductIds = variations.Select(x => x.MainProductId).Distinct().ToArray();
 
             if (evalContext.ProductIds.IsNullOrEmpty())
@@ -224,7 +223,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
                 {
-                    var variationPrice = inheritedPrice.Clone() as Price;
+                    var variationPrice = inheritedPrice.CloneTyped();
                     //Reset id for correct override price in possible update 
                     variationPrice.Id = null;
                     variationPrice.ProductId = variation.Id;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
@@ -15,30 +16,41 @@ using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Search;
+using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PriceSearchService : SearchService<PricesSearchCriteria, PriceSearchResult, Price, PriceEntity>
+    public class PriceSearchService : SearchService<PricesSearchCriteria, PriceSearchResult, Price, PriceEntity>, IPriceSearchService
     {
         /// <summary>
         /// Limits counts of products that can be found by keyword for price search
         /// </summary>
-        const int maxSearchProductByKeywordResults = 1000;
+        private const int _maxSearchProductByKeywordResults = 1000;
 
+        private readonly Func<IPricingRepository> _repositoryFactory;
+        private readonly IPlatformMemoryCache _platformMemoryCache;
+        private readonly IPriceService _crudService;
         private readonly IProductIndexedSearchService _productIndexedSearchService;
-        private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _pricesSortingAliases = new();
 
-        public PriceSearchService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache,
-            ICrudService<Price> priceService, IProductIndexedSearchService productIndexedSearchService)
-           : base(repositoryFactory, platformMemoryCache, priceService)
+        public PriceSearchService(
+            Func<IPricingRepository> repositoryFactory,
+            IPlatformMemoryCache platformMemoryCache,
+            IPriceService crudService,
+            IOptions<CrudOptions> crudOptions,
+            IProductIndexedSearchService productIndexedSearchService)
+           : base(repositoryFactory, platformMemoryCache, crudService, crudOptions)
         {
             _pricesSortingAliases["prices"] = ReflectionUtility.GetPropertyName<Price>(x => x.List);
+            _repositoryFactory = repositoryFactory;
+            _platformMemoryCache = platformMemoryCache;
+            _crudService = crudService;
             _productIndexedSearchService = productIndexedSearchService;
         }
 
-        public override Task<PriceSearchResult> SearchAsync(PricesSearchCriteria criteria)
+        public override Task<PriceSearchResult> SearchAsync(PricesSearchCriteria criteria, bool clone = true)
         {
             var cacheKey = CacheKey.With(GetType(), nameof(SearchAsync), criteria.GetCacheKey());
             return _platformMemoryCache.GetOrCreateExclusiveAsync(cacheKey, async cacheEntry =>
@@ -59,14 +71,17 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     if (criteria.GroupByProducts)
                     {
                         // unique priced product IDs
-                        var pricedProductsQuery = query.Select(x => x.ProductId).OrderBy(x => x).Distinct();
+                        var pricedProductsQuery = query.Select(x => x.ProductId).Distinct();
                         result.TotalCount = await pricedProductsQuery.CountAsync();
 
                         if (criteria.Take > 0)
                         {
-                            query = query.Where(x => pricedProductsQuery
-                                                        .OrderBy(x => x)
-                                                        .Skip(criteria.Skip).Take(criteria.Take).Contains(x.ProductId));
+                            query = query
+                                .Where(x => pricedProductsQuery
+                                    .OrderBy(y => y)
+                                    .Skip(criteria.Skip)
+                                    .Take(criteria.Take)
+                                    .Contains(x.ProductId));
                         }
                     }
                     else
@@ -83,7 +98,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                                                     .AsNoTracking()
                                                     .ToListAsync();
 
-                        var unorderedResults = await _crudService.GetByIdsAsync(priceIds);
+                        var unorderedResults = await _crudService.GetAsync(priceIds, responseGroup: null, clone);
                         result.Results = unorderedResults.OrderBy(x => priceIds.IndexOf(x.Id)).ToList();
                     }
                 }
@@ -136,7 +151,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var searchCriteria = AbstractTypeFactory<ProductIndexedSearchCriteria>.TryCreateInstance();
                 searchCriteria.Keyword = criteria.Keyword;
                 searchCriteria.Skip = 0;
-                searchCriteria.Take = maxSearchProductByKeywordResults;
+                searchCriteria.Take = _maxSearchProductByKeywordResults;
                 searchCriteria.Sort = criteria.Sort.Replace("product.", string.Empty);
                 searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
                 searchCriteria.WithHidden = true;

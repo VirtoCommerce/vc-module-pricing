@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Moq;
@@ -19,40 +20,38 @@ namespace VirtoCommerce.PricingModule.Test
         {
             var data = GetSampleDataStream();
 
-            var pricingService = GetPricingService();
+            var priceService = new Mock<IPriceService>();
+            var pricelistService = new Mock<IPricelistService>();
+            var pricelistAssignmentService = new Mock<IPricelistAssignmentService>();
 
-            var settingsManager = GetSettingsManager();
-
+            var settingsManager = new Mock<ISettingsManager>();
             settingsManager.Setup(s => s.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new ObjectSettingEntry { Value = 2 });
 
-            var importProcessor = GetImportExportProcessor(pricingService.Object, settingsManager.Object);
+            var importProcessor = GetImportExportProcessor(priceService.Object, pricelistService.Object, pricelistAssignmentService.Object, settingsManager.Object);
 
             var cancellationTokenMock = new Mock<ICancellationToken>();
             await importProcessor.DoImportAsync(data, GetProgressCallback, cancellationTokenMock.Object);
 
-            pricingService.Verify(p => p.SavePricesAsync(It.IsAny<Price[]>()), Times.Exactly(2));
-            pricingService.Verify(p => p.SavePricelistsAsync(It.IsAny<Pricelist[]>()), Times.Exactly(1));
-            pricingService.Verify(p => p.SavePricelistAssignmentsAsync(It.IsAny<PricelistAssignment[]>()), Times.Exactly(1));
+            priceService.Verify(p => p.SaveChangesAsync(It.IsAny<IList<Price>>()), Times.Exactly(2));
+            pricelistService.Verify(p => p.SaveChangesAsync(It.IsAny<IList<Pricelist>>()), Times.Exactly(1));
+            pricelistAssignmentService.Verify(p => p.SaveChangesAsync(It.IsAny<IList<PricelistAssignment>>()), Times.Exactly(1));
         }
 
-        private PricingExportImport GetImportExportProcessor(IPricingService pricingService, ISettingsManager settingsManager)
+        private PricingExportImport GetImportExportProcessor(
+            IPriceService priceService,
+            IPricelistService pricelistService,
+            IPricelistAssignmentService pricelistAssignmentService,
+            ISettingsManager settingsManager)
         {
-            return new PricingExportImport(pricingService, GetPricingSearchService(), settingsManager, GetJsonSerializer());
-        }
-
-        private Mock<IPricingService> GetPricingService()
-        {
-            return new Mock<IPricingService>();
-        }
-
-        private IPricingSearchService GetPricingSearchService()
-        {
-            return new Mock<IPricingSearchService>().Object;
-        }
-
-        private Mock<ISettingsManager> GetSettingsManager()
-        {
-            return new Mock<ISettingsManager>();
+            return new PricingExportImport(
+                new Mock<IPriceSearchService>().Object,
+                priceService,
+                new Mock<IPricelistSearchService>().Object,
+                pricelistService,
+                new Mock<IPricelistAssignmentSearchService>().Object,
+                pricelistAssignmentService,
+                settingsManager,
+                GetJsonSerializer());
         }
 
         private Stream GetStreamFromString(string value)
