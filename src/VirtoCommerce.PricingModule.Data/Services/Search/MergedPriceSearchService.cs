@@ -10,6 +10,7 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Search;
@@ -17,19 +18,18 @@ using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
-namespace VirtoCommerce.PricingModule.Data.Services
+namespace VirtoCommerce.PricingModule.Data.Services.Search
 {
     public class MergedPriceSearchService : IMergedPriceSearchService
     {
         private readonly Func<IPricingRepository> _repositoryFactory;
-        private readonly IPricelistService _pricelistService;
+        private readonly ICrudService<Pricelist> _pricelistService;
         private readonly IItemService _itemService;
         private readonly IProductIndexedSearchService _productIndexedSearchService;
         private readonly IPlatformMemoryCache _platformMemoryCache;
 
-        public MergedPriceSearchService(
-            Func<IPricingRepository> repositoryFactory,
-            IPricelistService pricelistService,
+        public MergedPriceSearchService(Func<IPricingRepository> repositoryFactory,
+            ICrudService<Pricelist> pricelistService,
             IItemService itemService,
             IProductIndexedSearchService productIndexedSearchService,
             IPlatformMemoryCache platformMemoryCache)
@@ -87,8 +87,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 if (result.Results.Any())
                 {
-                    var productIds = result.Results.Select(x => x.ProductId).ToList();
-                    var products = await _itemService.GetNoCloneAsync(productIds, ItemResponseGroup.ItemInfo.ToString());
+                    var products = await _itemService.GetByIdsAsync(result.Results.Select(x => x.ProductId).ToArray(), ItemResponseGroup.ItemInfo.ToString());
                     foreach (var group in result.Results)
                     {
                         var product = products.FirstOrDefault(x => x.Id == group.ProductId);
@@ -147,7 +146,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 if (result.Results.Any())
                 {
                     // get currency from base pricelist
-                    var priceList = await _pricelistService.GetNoCloneAsync(criteria.BasePriceListId, PriceListResponseGroup.NoDetails.ToString());
+                    var priceList = await _pricelistService.GetByIdAsync(criteria.BasePriceListId, PriceListResponseGroup.NoDetails.ToString());
                     if (priceList != null)
                     {
                         foreach (var price in result.Results)

@@ -6,35 +6,26 @@ using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model;
-using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PriceService : CrudService<Price, PriceEntity, PriceChangingEvent, PriceChangedEvent>, IPriceService
+    public class PriceService : CrudService<Price, PriceEntity, PriceChangingEvent, PriceChangedEvent>
     {
-        private readonly Func<IPricingRepository> _repositoryFactory;
-        private readonly IEventPublisher _eventPublisher;
-        private readonly IPricelistService _pricelistService;
-
-        public PriceService(
-            Func<IPricingRepository> repositoryFactory,
-            IPlatformMemoryCache platformMemoryCache,
-            IEventPublisher eventPublisher,
-            IPricelistService pricelistService)
+        private readonly ICrudService<Pricelist> _pricelistService;
+        public PriceService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IEventPublisher eventPublisher, ICrudService<Pricelist> pricelistService)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
-            _repositoryFactory = repositoryFactory;
-            _eventPublisher = eventPublisher;
             _pricelistService = pricelistService;
         }
 
 
-        public override async Task SaveChangesAsync(IList<Price> models)
+        public override async Task SaveChangesAsync(IEnumerable<Price> models)
         {
             var pkMap = new PrimaryKeyResolvingMap();
             var changedEntries = new List<GenericChangedEntry<Price>>();
@@ -46,9 +37,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 foreach (var priceWithoutPricelistGroup in models.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
                 {
                     var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
-                    var pricelist = await _pricelistService.GetNoCloneAsync(defaultPriceListId);
-                    if (pricelist == null)
-                    {
+                    var pricelists = await _pricelistService.GetByIdsAsync(new[] { defaultPriceListId });
+                    if (pricelists.IsNullOrEmpty())
+                    {                        
                         repository.Add(AbstractTypeFactory<PricelistEntity>.TryCreateInstance().FromModel(GetDefaultPriceList(priceWithoutPricelistGroup, defaultPriceListId), pkMap));
                     }
                     foreach (var priceWithoutPricelist in priceWithoutPricelistGroup)
@@ -84,12 +75,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
         }
 
-        protected override Task<IList<PriceEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
+        protected override async Task<IEnumerable<PriceEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
         {
-            return ((IPricingRepository)repository).GetPricesByIdsAsync(ids);
+            return await ((IPricingRepository)repository).GetPricesByIdsAsync(ids);
         }
 
-        protected override void ClearCache(IList<Price> models)
+        protected override void ClearCache(IEnumerable<Price> models)
         {
             GenericCachingRegion<Price>.ExpireRegion();
             base.ClearCache(models);

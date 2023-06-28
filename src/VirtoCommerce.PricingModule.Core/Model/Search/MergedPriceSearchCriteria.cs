@@ -11,6 +11,6 @@ namespace VirtoCommerce.PricingModule.Core.Model.Search
 
         public string PriorityPriceListId { get; set; }
 
-        public IList<string> ProductIds { get; set; }
+        public List<string> ProductIds { get; set; }
     }
 }

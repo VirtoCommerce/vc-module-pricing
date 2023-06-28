@@ -6,7 +6,6 @@ using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.Settings;
-using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.SearchModule.Core.Model;
@@ -26,9 +25,9 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
             _configurations = configurations;
         }
 
-        public async Task Handle(PriceChangedEvent message)
+        public Task Handle(PriceChangedEvent message)
         {
-            if (await _settingsManager.GetValueAsync<bool>(ModuleConstants.Settings.General.EventBasedIndexation))
+            if (_settingsManager.GetValue(Core.ModuleConstants.Settings.General.EventBasedIndexation.Name, false))
             {
                 if (message == null)
                 {
@@ -42,6 +41,8 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
                 IndexingJobs.EnqueueIndexAndDeleteDocuments(indexEntries,
                     JobPriority.Normal, _configurations.GetBuildersForProvider(typeof(ProductPriceDocumentChangesProvider)).ToList());
             }
+
+            return Task.CompletedTask;
         }
     }
 }

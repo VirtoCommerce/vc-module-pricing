@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace VirtoCommerce.PricingModule.Core.Model.Search
 {
@@ -10,8 +9,8 @@ namespace VirtoCommerce.PricingModule.Core.Model.Search
 
         public string PriceListId { get; set; }
 
-        private IList<string> _priceListIds;
-        public IList<string> PriceListIds
+        private string[] _priceListIds;
+        public string[] PriceListIds
         {
             get
             {
@@ -29,8 +28,8 @@ namespace VirtoCommerce.PricingModule.Core.Model.Search
 
         public string ProductId { get; set; }
 
-        private IList<string> _productIds;
-        public IList<string> ProductIds
+        private string[] _productIds;
+        public string[] ProductIds
         {
             get
             {

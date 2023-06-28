@@ -14,12 +14,12 @@ namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentBuilder : IIndexDocumentBuilder
     {
-        private readonly IPricingEvaluatorService _pricingEvaluatorService;
+        private readonly IPricingService _pricingService;
         private readonly ISettingsManager _settingsManager;
 
-        public ProductPriceDocumentBuilder(IPricingEvaluatorService pricingEvaluatorService, ISettingsManager settingsManager)
+        public ProductPriceDocumentBuilder(IPricingService pricingService, ISettingsManager settingsManager)
         {
-            _pricingEvaluatorService = pricingEvaluatorService;
+            _pricingService = pricingService;
             _settingsManager = settingsManager;
         }
 
@@ -27,7 +27,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
         {
             var prices = await GetProductPrices(documentIds);
 
-            var useMaxIndexationPrice = await UseMaxIndexationPrice();
+            var useMaxIndexationPrice = UseMaxIndexationPrice();
 
             IList<IndexDocument> result = prices
                 .GroupBy(p => p.ProductId)
@@ -67,7 +67,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             evalContext.SkipAssignmentValidation = true;
             evalContext.ReturnAllMatchedPrices = true;
 
-            return (await _pricingEvaluatorService.EvaluateProductPricesAsync(evalContext)).ToList();
+            return (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToList();
         }
 
         protected virtual void IndexPrice(IndexDocument document, IList<Price> prices, bool useMaxIndexationPrice)
@@ -89,9 +89,9 @@ namespace VirtoCommerce.PricingModule.Data.Search
             }
         }
 
-        private async Task<bool> UseMaxIndexationPrice()
+        private bool UseMaxIndexationPrice()
         {
-            var value = await _settingsManager.GetValueAsync<string>(ModuleConstants.Settings.General.PriceIndexingValue);
+            var value = _settingsManager.GetValue(ModuleConstants.Settings.General.PriceIndexingValue.Name, ModuleConstants.Settings.General.PriceIndexingValue.DefaultValue as string);
             return value.EqualsInvariant(ModuleConstants.Settings.General.PriceIndexingValueMax);
         }
     }

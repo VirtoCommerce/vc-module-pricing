@@ -12,7 +12,10 @@ using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
+using VirtoCommerce.PricingModule.Data.Validators;
 using Xunit;
+
+#pragma warning disable CS0618 // Allow to use obsoleted
 
 namespace VirtoCommerce.PricingModule.Test
 {
@@ -28,7 +31,7 @@ namespace VirtoCommerce.PricingModule.Test
                 new OperationLogEntity { ModifiedDate = new DateTime(2018, 11, 01), ObjectId = "3", ObjectType = nameof(PriceEntity) },
             };
 
-            var mockPrices = new[] {
+            var mockPrices = new PriceEntity[] {
                 //Without from/till dates (unbounded)
                 new PriceEntity { Id = "1", ProductId = "1" },
                 //Without from date (unbounded)
@@ -179,10 +182,10 @@ namespace VirtoCommerce.PricingModule.Test
             var evalContext = new PriceEvaluationContext
             {
                 ProductIds = new[] { "ProductId" },
-                Pricelists = new[] { pricelist }
+                Pricelists = new [] { pricelist }
             };
 
-            var mockPrices = new[] {
+            var mockPrices = new PriceEntity[] {
                 // Unbounded past.
                 new PriceEntity { Id = "1", List = 1, EndDate = new DateTime(2018, 09, 10), PricelistId = "List1" , ProductId = "ProductId" },
                 // Bounded past.
@@ -200,7 +203,12 @@ namespace VirtoCommerce.PricingModule.Test
             var mockRepository = new Mock<IPricingRepository>();
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices.Object);
 
-            var service = new PricingEvaluatorService(() => mockRepository.Object, null, null, null, new DefaultPricingPriorityFilterPolicy());
+            var service = new PricingServiceImpl(new PricelistAssignmentService(() => mockRepository.Object, null, null, new PricelistAssignmentsValidator()),
+                        new PricelistService(() => mockRepository.Object, null, null),
+                        new PriceService(() => mockRepository.Object, null, null, null),
+                        new PricingEvaluatorService(
+                        () => mockRepository.Object, null, null, null,
+                        new DefaultPricingPriorityFilterPolicy()));
 
             // Eval with date and no matches, this should result in default price.
             evalContext.CertainDate = new DateTime(2018, 09, 20);
@@ -233,7 +241,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(4, prices.Single().List);
 
             // Eval without date, should result in unbounded future price.
-            // This is also a backwards compatibility test.
+            // This is also a backwards compatibilty test.
             // CertainDate was not used in previous price evaluation. Default to 'now' behaviour.
             evalContext.CertainDate = null;
             prices = service.EvaluateProductPricesAsync(evalContext).GetAwaiter().GetResult();

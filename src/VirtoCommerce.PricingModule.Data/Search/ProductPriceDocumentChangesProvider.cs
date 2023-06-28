@@ -107,7 +107,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             }
 
             //Re-index calendar prices only once per defined time interval
-            var lastIndexDate = await _settingsManager.GetValueAsync<DateTime>(ModuleConstants.Settings.General.IndexationDatePricingCalendar);
+            var lastIndexDate = _settingsManager.GetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, (DateTime?)null) ?? DateTime.MinValue;
             if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval && startDate != null && endDate != null)
             {
                 workSkip = skip - workSkip;
@@ -117,7 +117,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 result.TotalCount += calendarChanges.TotalCount;
                 if (workTake > 0)
                 {
-                    await _settingsManager.SetValueAsync(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, DateTime.UtcNow);
+                    _settingsManager.SetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, DateTime.UtcNow);
                     result.Results.AddRange(calendarChanges.Results);
                 }
             }
@@ -140,7 +140,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             var result = await _changeLogSearchService.SearchAsync(criteria);
 
             //Re-index calendar prices only once per defined time interval
-            var lastIndexDate = await _settingsManager.GetValueAsync<DateTime>(ModuleConstants.Settings.General.IndexationDatePricingCalendar);
+            var lastIndexDate = _settingsManager.GetValue(ModuleConstants.Settings.General.IndexationDatePricingCalendar.Name, (DateTime?)null) ?? DateTime.MinValue;
             if ((DateTime.UtcNow - lastIndexDate) > _calendarChangesInterval && startDate != null && endDate != null)
             {
                 var calendarChanges = await GetCalendarChangesAsync(startDate.Value, endDate.Value, 0, 0);
@@ -172,11 +172,11 @@ namespace VirtoCommerce.PricingModule.Data.Search
             };
 
             // Get changes from operation log
-            var operations = (await _changeLogSearchService.SearchAsync(criteria)).Results.Select(x => x.ObjectId).ToList();
+            var operations = (await _changeLogSearchService.SearchAsync(criteria)).Results.Select(x => x.ObjectId);
 
             using (var repository = _repositoryFactory())
             {
-                var totalCount = operations.Count;
+                var totalCount = operations.Count();
 
                 for (var i = 0; i < totalCount; i += _batchSize)
                 {

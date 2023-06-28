@@ -1,27 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Options;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Search;
-using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricelistAssignmentSearchService : SearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment, PricelistAssignmentEntity>, IPricelistAssignmentSearchService
+    public class PricelistAssignmentSearchService : SearchService<PricelistAssignmentsSearchCriteria, PricelistAssignmentSearchResult, PricelistAssignment, PricelistAssignmentEntity>
     {
-        public PricelistAssignmentSearchService(
-            Func<IPricingRepository> repositoryFactory,
-            IPlatformMemoryCache platformMemoryCache,
-            IPricelistAssignmentService crudService,
-            IOptions<CrudOptions> crudOptions)
-           : base(repositoryFactory, platformMemoryCache, crudService, crudOptions)
+
+        public PricelistAssignmentSearchService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache,
+            ICrudService<PricelistAssignment> pricelistAssignmentService)
+           : base(repositoryFactory, platformMemoryCache, pricelistAssignmentService)
         {
         }
 

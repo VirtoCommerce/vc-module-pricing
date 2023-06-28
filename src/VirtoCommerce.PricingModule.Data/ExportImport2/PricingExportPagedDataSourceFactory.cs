@@ -7,31 +7,15 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 {
     public class PricingExportPagedDataSourceFactory : IPricingExportPagedDataSourceFactory
     {
-        private readonly IPriceSearchService _priceSearchService;
-        private readonly IPriceService _priceService;
-        private readonly IPricelistSearchService _pricelistSearchService;
-        private readonly IPricelistService _pricelistService;
-        private readonly IPricelistAssignmentSearchService _pricelistAssignmentSearchService;
-        private readonly IPricelistAssignmentService _pricelistAssignmentService;
+        private readonly IPricingSearchService _searchService;
+        private readonly IPricingService _pricingService;
         private readonly IItemService _itemService;
         private readonly ICatalogService _catalogService;
 
-        public PricingExportPagedDataSourceFactory(
-            IPriceSearchService priceSearchService,
-            IPriceService priceService,
-            IPricelistSearchService pricelistSearchService,
-            IPricelistService pricelistService,
-            IPricelistAssignmentSearchService pricelistAssignmentSearchService,
-            IPricelistAssignmentService pricelistAssignmentService,
-            IItemService itemService,
-            ICatalogService catalogService)
+        public PricingExportPagedDataSourceFactory(IPricingSearchService searchService, IPricingService pricingService, IItemService itemService, ICatalogService catalogService)
         {
-            _priceSearchService = priceSearchService;
-            _priceService = priceService;
-            _pricelistSearchService = pricelistSearchService;
-            _pricelistService = pricelistService;
-            _pricelistAssignmentSearchService = pricelistAssignmentSearchService;
-            _pricelistAssignmentService = pricelistAssignmentService;
+            _searchService = searchService;
+            _pricingService = pricingService;
             _itemService = itemService;
             _catalogService = catalogService;
         }
@@ -42,15 +26,15 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
             if (dataQuery is PriceExportDataQuery priceExportDataQuery)
             {
-                result = new PriceExportPagedDataSource(priceExportDataQuery, _priceSearchService, _priceService, _pricelistService, _itemService);
-            }
-            else if (dataQuery is PricelistExportDataQuery pricelistExportDataQuery)
-            {
-                result = new PricelistExportPagedDataSource(pricelistExportDataQuery, _pricelistSearchService, _pricelistService);
+                result = new PriceExportPagedDataSource(_searchService, _pricingService, _itemService, priceExportDataQuery);
             }
             else if (dataQuery is PricelistAssignmentExportDataQuery pricelistAssignmentExportDataQuery)
             {
-                result = new PricelistAssignmentExportPagedDataSource(pricelistAssignmentExportDataQuery, _pricelistAssignmentSearchService, _pricelistAssignmentService, _pricelistService, _catalogService);
+                result = new PricelistAssignmentExportPagedDataSource(_searchService, _pricingService, _catalogService, pricelistAssignmentExportDataQuery);
+            }
+            else if (dataQuery is PricelistExportDataQuery pricelistExportDataQuery)
+            {
+                result = new PricelistExportPagedDataSource(_searchService, _pricingService, pricelistExportDataQuery);
             }
 
             return result ?? throw new ArgumentException($"Unsupported export query type: {dataQuery.GetType().Name}");

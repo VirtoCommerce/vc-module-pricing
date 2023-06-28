@@ -30,7 +30,7 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
 
         protected virtual async Task InnerHandle<T>(GenericChangedEntryEvent<T> @event) where T : IEntity
         {
-            var logPricingChangesEnabled = await _settingsManager.GetValueAsync<bool>(ModuleConstants.Settings.General.LogPricingChanges);
+            var logPricingChangesEnabled = await _settingsManager.GetValueAsync(ModuleConstants.Settings.General.LogPricingChanges.Name, (bool)ModuleConstants.Settings.General.LogPricingChanges.DefaultValue);
 
             if (logPricingChangesEnabled)
             {
