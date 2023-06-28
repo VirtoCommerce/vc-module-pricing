@@ -14,21 +14,25 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 {
     public class PricelistAssignmentExportPagedDataSource : ExportPagedDataSource<PricelistAssignmentExportDataQuery, PricelistAssignmentsSearchCriteria>
     {
-        private readonly IPricingSearchService _searchService;
-        private readonly IPricingService _pricingService;
+        private readonly IPricelistAssignmentSearchService _pricelistAssignmentSearchService;
+        private readonly IPricelistAssignmentService _pricelistAssignmentService;
+        private readonly IPricelistService _pricelistService;
         private readonly ICatalogService _catalogService;
         private readonly PricelistAssignmentExportDataQuery _dataQuery;
 
         public PricelistAssignmentExportPagedDataSource(
-           IPricingSearchService searchService,
-           IPricingService pricingService,
-           ICatalogService catalogService,
-           PricelistAssignmentExportDataQuery dataQuery) : base(dataQuery)
+            PricelistAssignmentExportDataQuery dataQuery,
+            IPricelistAssignmentSearchService pricelistAssignmentSearchService,
+            IPricelistAssignmentService pricelistAssignmentService,
+            IPricelistService pricelistService,
+            ICatalogService catalogService)
+            : base(dataQuery)
         {
-            _searchService = searchService;
-            _pricingService = pricingService;
-            _catalogService = catalogService;
             _dataQuery = dataQuery;
+            _pricelistAssignmentSearchService = pricelistAssignmentSearchService;
+            _pricelistAssignmentService = pricelistAssignmentService;
+            _pricelistService = pricelistService;
+            _catalogService = catalogService;
         }
 
         protected override PricelistAssignmentsSearchCriteria BuildSearchCriteria(PricelistAssignmentExportDataQuery exportDataQuery)
@@ -44,18 +48,18 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
         protected override ExportableSearchResult FetchData(PricelistAssignmentsSearchCriteria searchCriteria)
         {
-            PricelistAssignment[] result;
+            IList<PricelistAssignment> result;
             int totalCount;
 
             if (searchCriteria.ObjectIds.Any(x => !string.IsNullOrWhiteSpace(x)))
             {
-                result = _pricingService.GetPricelistAssignmentsByIdAsync(Enumerable.ToArray(searchCriteria.ObjectIds)).GetAwaiter().GetResult();
-                totalCount = result.Length;
+                result = _pricelistAssignmentService.GetNoCloneAsync(searchCriteria.ObjectIds).GetAwaiter().GetResult();
+                totalCount = result.Count;
             }
             else
             {
-                var pricelistAssignmentSearchResult = _searchService.SearchPricelistAssignmentsAsync(searchCriteria).GetAwaiter().GetResult();
-                result = pricelistAssignmentSearchResult.Results.ToArray();
+                var pricelistAssignmentSearchResult = _pricelistAssignmentSearchService.SearchNoCloneAsync(searchCriteria).GetAwaiter().GetResult();
+                result = pricelistAssignmentSearchResult.Results;
                 totalCount = pricelistAssignmentSearchResult.TotalCount;
             }
 
@@ -84,8 +88,8 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             var models = viewableMap.Keys;
             var catalogIds = models.Select(x => x.CatalogId).Distinct().ToArray();
             var pricelistIds = models.Select(x => x.PricelistId).Distinct().ToArray();
-            var catalogs = _catalogService.GetByIdsAsync(catalogIds, CatalogResponseGroup.Info.ToString()).GetAwaiter().GetResult();
-            var pricelists = _pricingService.GetPricelistsByIdAsync(pricelistIds).GetAwaiter().GetResult();
+            var catalogs = _catalogService.GetNoCloneAsync(catalogIds, CatalogResponseGroup.Info.ToString()).GetAwaiter().GetResult();
+            var pricelists = _pricelistService.GetNoCloneAsync(pricelistIds).GetAwaiter().GetResult();
 
             foreach (var kvp in viewableMap)
             {

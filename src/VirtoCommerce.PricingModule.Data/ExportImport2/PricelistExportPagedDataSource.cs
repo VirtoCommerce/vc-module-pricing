@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.ExportModule.Core.Model;
 using VirtoCommerce.ExportModule.Data.Services;
@@ -10,18 +11,19 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 {
     public class PricelistExportPagedDataSource : ExportPagedDataSource<PricelistExportDataQuery, PricelistSearchCriteria>
     {
-        private readonly IPricingSearchService _searchService;
-        private readonly IPricingService _pricingService;
+        private readonly IPricelistSearchService _pricelistSearchService;
+        private readonly IPricelistService _pricelistService;
         private readonly PricelistExportDataQuery _dataQuery;
 
         public PricelistExportPagedDataSource(
-            IPricingSearchService searchService,
-            IPricingService pricingService,
-            PricelistExportDataQuery dataQuery) : base(dataQuery)
+            PricelistExportDataQuery dataQuery,
+            IPricelistSearchService pricelistSearchService,
+            IPricelistService pricelistService)
+            : base(dataQuery)
         {
-            _searchService = searchService;
-            _pricingService = pricingService;
             _dataQuery = dataQuery;
+            _pricelistSearchService = pricelistSearchService;
+            _pricelistService = pricelistService;
         }
 
         protected override PricelistSearchCriteria BuildSearchCriteria(PricelistExportDataQuery exportDataQuery)
@@ -36,21 +38,20 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
         protected override ExportableSearchResult FetchData(PricelistSearchCriteria searchCriteria)
         {
-            Pricelist[] result;
+            IList<Pricelist> result;
             int totalCount;
 
             if (searchCriteria.ObjectIds.Any(x => !string.IsNullOrWhiteSpace(x)))
             {
-                result = _pricingService.GetPricelistsByIdAsync(searchCriteria.ObjectIds.ToArray()).GetAwaiter().GetResult();
-                totalCount = result.Length;
+                result = _pricelistService.GetNoCloneAsync(searchCriteria.ObjectIds).GetAwaiter().GetResult();
+                totalCount = result.Count;
             }
             else
             {
-                var pricelistSearchResult = _searchService.SearchPricelistsAsync(searchCriteria).GetAwaiter().GetResult();
-                result = pricelistSearchResult.Results.ToArray();
+                var pricelistSearchResult = _pricelistSearchService.SearchNoCloneAsync(searchCriteria).GetAwaiter().GetResult();
+                result = pricelistSearchResult.Results;
                 totalCount = pricelistSearchResult.TotalCount;
             }
-
 
             return new ExportableSearchResult()
             {

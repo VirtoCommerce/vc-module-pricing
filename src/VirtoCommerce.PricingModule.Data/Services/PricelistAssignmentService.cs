@@ -9,16 +9,18 @@ using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model;
+using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricelistAssignmentService : CrudService<PricelistAssignment, PricelistAssignmentEntity, PricelistAssignmentChangingEvent, PricelistAssignmentChangedEvent>
+    public class PricelistAssignmentService : CrudService<PricelistAssignment, PricelistAssignmentEntity, PricelistAssignmentChangingEvent, PricelistAssignmentChangedEvent>, IPricelistAssignmentService
     {
         private readonly AbstractValidator<IEnumerable<PricelistAssignment>> _validator;
 
-        public PricelistAssignmentService(Func<IPricingRepository> repositoryFactory,
+        public PricelistAssignmentService(
+            Func<IPricingRepository> repositoryFactory,
             IPlatformMemoryCache platformMemoryCache,
             IEventPublisher eventPublisher,
             AbstractValidator<IEnumerable<PricelistAssignment>> validator)
@@ -27,19 +29,19 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _validator = validator;
         }
 
-        protected override async Task<IEnumerable<PricelistAssignmentEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
+        protected override Task<IList<PricelistAssignmentEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
         {
-            return await ((IPricingRepository)repository).GetPricelistAssignmentsByIdAsync(ids);
+            return ((IPricingRepository)repository).GetPricelistAssignmentsByIdAsync(ids);
         }
 
-        protected override Task BeforeSaveChanges(IEnumerable<PricelistAssignment> models)
+        protected override Task BeforeSaveChanges(IList<PricelistAssignment> models)
         {
             _validator.ValidateAndThrow(models);
 
             return base.BeforeSaveChanges(models);
         }
 
-        protected override void ClearCache(IEnumerable<PricelistAssignment> models)
+        protected override void ClearCache(IList<PricelistAssignment> models)
         {
             foreach (var assignment in models)
             {

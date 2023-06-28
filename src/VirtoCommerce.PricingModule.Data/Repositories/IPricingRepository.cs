@@ -13,13 +13,13 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         IQueryable<PriceEntity> Prices { get; }
         IQueryable<PricelistAssignmentEntity> PricelistAssignments { get; }
 
-        Task<ICollection<PriceEntity>> GetPricesByIdsAsync(IEnumerable<string> priceIds);
-        Task<ICollection<PricelistEntity>> GetPricelistByIdsAsync(IEnumerable<string> pricelistIds, string responseGroup);
-        Task<ICollection<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IEnumerable<string> assignmentsId);
+        Task<IList<PriceEntity>> GetPricesByIdsAsync(IList<string> priceIds);
+        Task<IList<PricelistEntity>> GetPricelistByIdsAsync(IList<string> pricelistIds, string responseGroup);
+        Task<IList<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IList<string> assignmentsId);
 
-        Task DeletePricesAsync(IEnumerable<string> ids);
-        Task DeletePricelistsAsync(IEnumerable<string> ids);
-        Task DeletePricelistAssignmentsAsync(IEnumerable<string> ids);
+        Task DeletePricesAsync(IList<string> ids);
+        Task DeletePricelistsAsync(IList<string> ids);
+        Task DeletePricelistAssignmentsAsync(IList<string> ids);
 
         IQueryable<MergedPriceEntity> GetMergedPrices(string basePriceListId, string priorityPriceListId);
     }
