@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
-using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.PricingModule.Core;
@@ -18,16 +17,16 @@ namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentBuilder : IIndexDocumentBuilder
     {
-        private readonly IPricingService _pricingService;
+        private readonly IPricingEvaluatorService _pricingService;
         private readonly ISettingsManager _settingsManager;
-        private readonly IItemService _itemService;
         private readonly IProductSearchService _productsSearchService;
 
-        public ProductPriceDocumentBuilder(IPricingService pricingService, ISettingsManager settingsManager, IItemService itemService, IProductSearchService productsSearchService)
+        private const int BatchSize = 50;
+
+        public ProductPriceDocumentBuilder(IPricingEvaluatorService pricingService, ISettingsManager settingsManager, IProductSearchService productsSearchService)
         {
             _pricingService = pricingService;
             _settingsManager = settingsManager;
-            _itemService = itemService;
             _productsSearchService = productsSearchService;
         }
 
@@ -68,7 +67,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 // load all variations prices
                 if (variationIds.Any())
                 {
-                    var bucket = (IList<Price>)new List<Price>(); //to IEnum
+                    var bucket = default(IList<Price>);
 
                     // check if variation prices are already loaded
                     if (variationIds.All(x => documentIds.Contains(x)))
@@ -148,13 +147,13 @@ namespace VirtoCommerce.PricingModule.Data.Search
             return value.EqualsInvariant(ModuleConstants.Settings.General.PriceIndexingValueMax);
         }
 
-        private ProductSearchCriteria GetVariationSearchCriteria(string productId)
+        private static ProductSearchCriteria GetVariationSearchCriteria(string productId)
         {
             var criteria = AbstractTypeFactory<ProductSearchCriteria>.TryCreateInstance();
 
             criteria.MainProductId = productId;
             criteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
-            criteria.Take = 50;
+            criteria.Take = BatchSize;
 
             return criteria;
         }
