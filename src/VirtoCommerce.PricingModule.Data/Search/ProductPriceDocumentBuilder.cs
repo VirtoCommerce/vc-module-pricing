@@ -165,7 +165,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 return;
             }
 
-            var minPricesByCurrency = new List<IndexedPrice>();
+            // needs to list of objects - workaroung for a bug in ES provider
+            var minPricesByCurrency = new List<object>();
 
             foreach (var group in prices.GroupBy(x => x.Currency))
             {
