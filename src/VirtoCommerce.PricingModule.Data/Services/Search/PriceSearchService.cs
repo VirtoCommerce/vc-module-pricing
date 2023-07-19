@@ -130,8 +130,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 var searchCriteria = AbstractTypeFactory<ProductIndexedSearchCriteria>.TryCreateInstance();
                 searchCriteria.Keyword = criteria.Keyword;
-                searchCriteria.Skip = criteria.Skip;
-                searchCriteria.Take = criteria.Take;
+                searchCriteria.Skip = 0;
+                searchCriteria.Take = 1000;
                 searchCriteria.Sort = criteria.Sort.Replace("product.", string.Empty);
                 searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
                 searchCriteria.WithHidden = true;
