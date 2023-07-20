@@ -22,6 +22,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PriceSearchService : SearchService<PricesSearchCriteria, PriceSearchResult, Price, PriceEntity>
     {
+        /// <summary>
+        /// Limits counts of products that can be found by keyword for price search
+        /// </summary>
+        const int maxSearchProductByKeywordResults = 1000;
+
         private readonly IProductIndexedSearchService _productIndexedSearchService;
         private readonly Dictionary<string, string> _pricesSortingAliases = new Dictionary<string, string>();
 
@@ -130,8 +135,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 var searchCriteria = AbstractTypeFactory<ProductIndexedSearchCriteria>.TryCreateInstance();
                 searchCriteria.Keyword = criteria.Keyword;
-                searchCriteria.Skip = criteria.Skip;
-                searchCriteria.Take = criteria.Take;
+                searchCriteria.Skip = 0;
+                searchCriteria.Take = maxSearchProductByKeywordResults;
                 searchCriteria.Sort = criteria.Sort.Replace("product.", string.Empty);
                 searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
                 searchCriteria.WithHidden = true;
