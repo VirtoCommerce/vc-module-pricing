@@ -6,6 +6,7 @@ using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Model.Search;
 using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.GenericCrud;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
@@ -17,15 +18,15 @@ namespace VirtoCommerce.PricingModule.Data.Search
 {
     public class ProductPriceDocumentBuilder : IIndexDocumentBuilder
     {
-        private readonly IPricingEvaluatorService _pricingService;
+        private const int _batchSize = 50;
+
+        private readonly IPricingEvaluatorService _pricingEvaluatorService;
         private readonly ISettingsManager _settingsManager;
         private readonly IProductSearchService _productsSearchService;
 
-        private const int BatchSize = 50;
-
-        public ProductPriceDocumentBuilder(IPricingEvaluatorService pricingService, ISettingsManager settingsManager, IProductSearchService productsSearchService)
+        public ProductPriceDocumentBuilder(IPricingEvaluatorService pricingEvaluatorService, ISettingsManager settingsManager, IProductSearchService productsSearchService)
         {
-            _pricingService = pricingService;
+            _pricingEvaluatorService = pricingEvaluatorService;
             _settingsManager = settingsManager;
             _productsSearchService = productsSearchService;
         }
@@ -41,50 +42,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 .Select(g => CreateDocument(g.Key, g.ToArray(), useMaxIndexationPrice))
                 .ToArray();
 
-            // index min variation price
-            foreach (var productId in documentIds)
-            {
-                var variationIds = new List<string>();
-
-                var variationsSearchCriteria = GetVariationSearchCriteria(productId);
-                var skipCount = 0;
-                int totalCount;
-                do
-                {
-                    variationsSearchCriteria.Skip = skipCount;
-                    var productVariations = await _productsSearchService.SearchNoCloneAsync(variationsSearchCriteria);
-
-                    variationIds.AddRange(productVariations.Results.Select(x => x.Id));
-
-                    totalCount = productVariations.TotalCount;
-                    skipCount += variationsSearchCriteria.Take;
-                }
-                while (skipCount < totalCount);
-
-                // main product prices are already loaded above
-                var variationPrices = prices.Where(x => x.ProductId == productId).ToList();
-
-                // load all variations prices
-                if (variationIds.Any())
-                {
-                    var bucket = default(IList<Price>);
-
-                    // check if variation prices are already loaded
-                    if (variationIds.All(x => documentIds.Contains(x)))
-                    {
-                        bucket = prices.Where(x => variationIds.Contains(x.ProductId)).ToList();
-                    }
-                    else
-                    {
-                        bucket = await GetProductPrices(variationIds);
-                    }
-
-                    variationPrices.AddRange(bucket);
-                }
-
-                var document = result.FirstOrDefault(x => x.Id == productId);
-                AddMinVariationPrice(document, variationPrices);
-            }
+            await AddMinPrices(result, documentIds, prices);
 
             return result;
         }
@@ -119,7 +77,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             evalContext.SkipAssignmentValidation = true;
             evalContext.ReturnAllMatchedPrices = true;
 
-            return (await _pricingService.EvaluateProductPricesAsync(evalContext)).ToList();
+            return (await _pricingEvaluatorService.EvaluateProductPricesAsync(evalContext)).ToList();
         }
 
         protected virtual void IndexPrice(IndexDocument document, IList<Price> prices, bool useMaxIndexationPrice)
@@ -147,37 +105,67 @@ namespace VirtoCommerce.PricingModule.Data.Search
             return value.EqualsInvariant(ModuleConstants.Settings.General.PriceIndexingValueMax);
         }
 
-        private static ProductSearchCriteria GetVariationSearchCriteria(string productId)
+        private async Task AddMinPrices(IList<IndexDocument> documents, IList<string> documentIds, IList<Price> prices)
         {
-            var criteria = AbstractTypeFactory<ProductSearchCriteria>.TryCreateInstance();
+            foreach (var document in documents)
+            {
+                var productId = document.Id;
 
-            criteria.MainProductId = productId;
-            criteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
-            criteria.Take = BatchSize;
+                // Main product prices are already loaded above
+                var productPrices = prices.Where(x => x.ProductId == productId).ToList();
 
-            return criteria;
+                // Load all variation prices
+                var variationIds = await GetVariationIds(productId);
+
+                if (variationIds.Any())
+                {
+                    var variationPrices = prices.Where(x => variationIds.Contains(x.ProductId)).ToList();
+                    productPrices.AddRange(variationPrices);
+
+                    var missingVariationIds = variationIds.Except(documentIds).ToList();
+                    if (missingVariationIds.Any())
+                    {
+                        var missingPrices = await GetProductPrices(missingVariationIds);
+                        productPrices.AddRange(missingPrices);
+                    }
+                }
+
+                if (productPrices.Any())
+                {
+                    AddMinPrice(document, productPrices);
+                }
+            }
         }
 
-        private static void AddMinVariationPrice(IndexDocument document, IList<Price> prices)
+        private async Task<List<string>> GetVariationIds(string productId)
         {
-            if (document == null || prices.IsNullOrEmpty())
+            var variationIds = new List<string>();
+
+            var searchCriteria = AbstractTypeFactory<ProductSearchCriteria>.TryCreateInstance();
+            searchCriteria.MainProductId = productId;
+            searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
+            searchCriteria.Take = _batchSize;
+
+            await foreach (var searchResult in _productsSearchService.SearchBatches(searchCriteria))
             {
-                return;
+                variationIds.AddRange(searchResult.Results.Select(x => x.Id));
             }
 
-            // needs to list of objects - workaroung for a bug in ES provider
-            var minPricesByCurrency = new List<object>();
+            return variationIds;
+        }
 
-            foreach (var group in prices.GroupBy(x => x.Currency))
-            {
-                var price = group.MinBy(x => x.EffectiveValue);
-                var newPrice = new IndexedPrice
+        private static void AddMinPrice(IndexDocument document, IList<Price> prices)
+        {
+            // Needs a list of objects - workaround for a bug in ES provider
+            var minPricesByCurrency = prices
+                .GroupBy(x => x.Currency)
+                .Select(group => group.MinBy(x => x.EffectiveValue))
+                .Select(price => new IndexedPrice
                 {
                     Currency = price.Currency,
                     Value = price.EffectiveValue,
-                };
-                minPricesByCurrency.Add(newPrice);
-            }
+                })
+                .ToList<object>();
 
             document.Add(new IndexDocumentField("__minVariationPrice", minPricesByCurrency) { ValueType = IndexDocumentFieldValueType.Complex, IsRetrievable = false, IsFilterable = false, IsCollection = false });
         }
