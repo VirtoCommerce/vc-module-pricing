@@ -7,22 +7,22 @@ using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model;
+using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricelistService : CrudService<Pricelist, PricelistEntity, PricelistChangingEvent, PricelistChangedEvent>
+    public class PricelistService : CrudService<Pricelist, PricelistEntity, PricelistChangingEvent, PricelistChangedEvent>, IPricelistService
     {
         public PricelistService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IEventPublisher eventPublisher)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
         {
         }
 
-        protected override async Task<IEnumerable<PricelistEntity>> LoadEntities(IRepository repository, IEnumerable<string> ids, string responseGroup)
+        protected override Task<IList<PricelistEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
         {
-            return await ((IPricingRepository)repository).GetPricelistByIdsAsync(ids, responseGroup);
+            return ((IPricingRepository)repository).GetPricelistByIdsAsync(ids, responseGroup);
         }
-
     }
 }

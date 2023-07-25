@@ -14,21 +14,25 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 {
     public class PriceExportPagedDataSource : ExportPagedDataSource<PriceExportDataQuery, PricesSearchCriteria>
     {
-        private readonly IPricingSearchService _searchService;
-        private readonly IPricingService _pricingService;
+        private readonly IPriceSearchService _priceSearchService;
+        private readonly IPriceService _priceService;
+        private readonly IPricelistService _pricelistService;
         private readonly IItemService _itemService;
         private readonly PriceExportDataQuery _dataQuery;
 
         public PriceExportPagedDataSource(
-            IPricingSearchService searchService,
-            IPricingService pricingService,
-            IItemService itemService,
-            PriceExportDataQuery dataQuery) : base(dataQuery)
+            PriceExportDataQuery dataQuery,
+            IPriceSearchService priceSearchService,
+            IPriceService priceService,
+            IPricelistService pricelistService,
+            IItemService itemService)
+            : base(dataQuery)
         {
-            _searchService = searchService;
-            _pricingService = pricingService;
-            _itemService = itemService;
             _dataQuery = dataQuery;
+            _priceSearchService = priceSearchService;
+            _priceService = priceService;
+            _pricelistService = pricelistService;
+            _itemService = itemService;
         }
 
 
@@ -46,18 +50,18 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
         protected override ExportableSearchResult FetchData(PricesSearchCriteria searchCriteria)
         {
-            Price[] result;
+            IList<Price> result;
             int totalCount;
 
             if (searchCriteria.ObjectIds.Any(x => !string.IsNullOrWhiteSpace(x)))
             {
-                result = _pricingService.GetPricesByIdAsync(Enumerable.ToArray(searchCriteria.ObjectIds)).GetAwaiter().GetResult();
-                totalCount = result.Length;
+                result = _priceService.GetNoCloneAsync(searchCriteria.ObjectIds).GetAwaiter().GetResult();
+                totalCount = result.Count;
             }
             else
             {
-                var priceSearchResult = _searchService.SearchPricesAsync(searchCriteria).GetAwaiter().GetResult();
-                result = priceSearchResult.Results.ToArray();
+                var priceSearchResult = _priceSearchService.SearchNoCloneAsync(searchCriteria).GetAwaiter().GetResult();
+                result = priceSearchResult.Results;
                 totalCount = priceSearchResult.TotalCount;
             }
 
@@ -85,15 +89,15 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             var models = viewableMap.Keys;
             var productIds = models.Select(x => x.ProductId).Distinct().ToArray();
             var pricelistIds = models.Select(x => x.PricelistId).Distinct().ToArray();
-            var products = _itemService.GetByIdsAsync(productIds, ItemResponseGroup.ItemInfo.ToString()).GetAwaiter().GetResult();
-            var pricelists = _pricingService.GetPricelistsByIdAsync(pricelistIds).GetAwaiter().GetResult();
+            var products = _itemService.GetNoCloneAsync(productIds, ItemResponseGroup.ItemInfo.ToString()).GetAwaiter().GetResult();
+            var pricelists = _pricelistService.GetNoCloneAsync(pricelistIds).GetAwaiter().GetResult();
 
             foreach (var kvp in viewableMap)
             {
                 var model = kvp.Key;
                 var viewableEntity = kvp.Value;
-                var product = products.FirstOrDefault(x => x.Id == model.ProductId);
-                var pricelist = pricelists.FirstOrDefault(x => x.Id == model.PricelistId);
+                var product = products?.FirstOrDefault(x => x.Id == model.ProductId);
+                var pricelist = pricelists?.FirstOrDefault(x => x.Id == model.PricelistId);
 
                 viewableEntity.Code = product?.Code;
                 viewableEntity.ImageUrl = product?.ImgSrc;

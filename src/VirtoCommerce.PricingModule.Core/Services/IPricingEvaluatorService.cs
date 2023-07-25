@@ -11,7 +11,7 @@ namespace VirtoCommerce.PricingModule.Core.Services
         /// </summary>
         /// <param name="evalContext"></param>
         /// <returns></returns>
-        Task<IEnumerable<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext);
+        Task<IList<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext);
 
         /// <summary>
         /// Evaluation product prices.
@@ -19,6 +19,6 @@ namespace VirtoCommerce.PricingModule.Core.Services
         /// </summary>
         /// <param name="evalContext"></param>
         /// <returns></returns>
-        Task<IEnumerable<Price>> EvaluateProductPricesAsync(PriceEvaluationContext evalContext);
+        Task<IList<Price>> EvaluateProductPricesAsync(PriceEvaluationContext evalContext);
     }
 }

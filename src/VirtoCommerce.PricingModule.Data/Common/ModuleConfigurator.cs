@@ -30,10 +30,7 @@ namespace VirtoCommerce.PricingModule.Data.Common
                 // Add or remove price document source to catalog product indexing configuration
                 foreach (var configuration in _documentIndexingConfigurations.Where(c => c.DocumentType == KnownDocumentTypes.Product))
                 {
-                    if (configuration.RelatedSources == null)
-                    {
-                        configuration.RelatedSources = new List<IndexDocumentSource>();
-                    }
+                    configuration.RelatedSources ??= new List<IndexDocumentSource>();
 
                     var oldSource = configuration.RelatedSources.FirstOrDefault(x => x.ChangesProvider.GetType() == _changesProvider.GetType() && x.DocumentBuilder.GetType() == _priceDocumentBuilder.GetType());
                     if (oldSource != null)
@@ -41,7 +38,7 @@ namespace VirtoCommerce.PricingModule.Data.Common
                         configuration.RelatedSources.Remove(oldSource);
                     }
 
-                    var priceIndexingEnabled = await _settingsManager.GetValueAsync(Core.ModuleConstants.Settings.General.PricingIndexing.Name, true);
+                    var priceIndexingEnabled = await _settingsManager.GetValueAsync<bool>(Core.ModuleConstants.Settings.General.PricingIndexing);
                     if (priceIndexingEnabled)
                     {
                         var productPriceDocumentSource = new IndexDocumentSource
