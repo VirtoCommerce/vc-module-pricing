@@ -13,10 +13,11 @@ using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
+using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
-    public class ProductPriceDocumentBuilder : IIndexDocumentBuilder
+    public class ProductPriceDocumentBuilder : IIndexSchemaBuilder, IIndexDocumentBuilder
     {
         private const int _batchSize = 50;
 
@@ -29,6 +30,15 @@ namespace VirtoCommerce.PricingModule.Data.Search
             _pricingEvaluatorService = pricingEvaluatorService;
             _settingsManager = settingsManager;
             _productsSearchService = productsSearchService;
+        }
+
+        public Task BuildSchemaAsync(IndexDocument schema)
+        {
+            schema.AddFilterableCollection("is");
+            AddDecimalCollection(schema, "price");
+            AddMinVariationPrice(schema);
+
+            return Task.CompletedTask;
         }
 
         public virtual async Task<IList<IndexDocument>> GetDocumentsAsync(IList<string> documentIds)
@@ -85,7 +95,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
             var price = useMaxIndexationPrice
                 ? prices.Max(x => x.EffectiveValue)
                 : prices.Min(x => x.EffectiveValue);
-            document.Add(new IndexDocumentField("price", price, IndexDocumentFieldValueType.Decimal) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+
+            AddDecimalCollection(document, "price", price);
         }
 
         protected virtual void IndexPriceByCurrency(IndexDocument document, IList<Price> prices, bool useMaxIndexationPrice)
@@ -95,7 +106,8 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 var currencyPrice = useMaxIndexationPrice
                     ? group.Max(x => x.EffectiveValue)
                     : group.Min(x => x.EffectiveValue);
-                document.Add(new IndexDocumentField($"price_{group.Key}".ToLowerInvariant(), currencyPrice, IndexDocumentFieldValueType.Decimal) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+
+                AddDecimalCollection(document, $"price_{group.Key}".ToLowerInvariant(), currencyPrice);
             }
         }
 
@@ -167,7 +179,18 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 })
                 .ToList<object>();
 
-            document.Add(new IndexDocumentField("__minVariationPrice", minPricesByCurrency, IndexDocumentFieldValueType.Complex) { IsRetrievable = false, IsFilterable = false, IsCollection = false });
+            AddMinVariationPrice(document, minPricesByCurrency);
+        }
+
+        private static void AddDecimalCollection(IndexDocument document, string name, decimal value = 0m)
+        {
+            document.Add(new IndexDocumentField(name, value, IndexDocumentFieldValueType.Decimal) { IsRetrievable = true, IsFilterable = true, IsCollection = true });
+        }
+
+        private static void AddMinVariationPrice(IndexDocument document, List<object> value = null)
+        {
+            value ??= new List<object> { new IndexedPrice { Currency = SchemaStringValue } };
+            document.Add(new IndexDocumentField("__minVariationPrice", value, IndexDocumentFieldValueType.Complex) { IsRetrievable = false, IsFilterable = false, IsCollection = false });
         }
     }
 }
