@@ -167,7 +167,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
                 })
                 .ToList<object>();
 
-            document.Add(new IndexDocumentField("__minVariationPrice", minPricesByCurrency, IndexDocumentFieldValueType.Complex) { IsRetrievable = false, IsFilterable = false, IsCollection = false });
+            document.Add(new IndexDocumentField("__minVariationPrice", minPricesByCurrency, IndexDocumentFieldValueType.Complex) { IsRetrievable = true, IsFilterable = false, IsCollection = true });
         }
     }
 }
