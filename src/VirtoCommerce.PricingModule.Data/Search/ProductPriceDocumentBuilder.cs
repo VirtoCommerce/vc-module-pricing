@@ -190,7 +190,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
         private static void AddMinVariationPrice(IndexDocument document, List<object> value = null)
         {
             value ??= new List<object> { new IndexedPrice { Currency = SchemaStringValue } };
-            document.Add(new IndexDocumentField("__minVariationPrice", value, IndexDocumentFieldValueType.Complex) { IsRetrievable = false, IsFilterable = false, IsCollection = false });
+            document.Add(new IndexDocumentField("__minVariationPrice", value, IndexDocumentFieldValueType.Complex) { IsRetrievable = true, IsFilterable = false, IsCollection = true });
         }
     }
 }
