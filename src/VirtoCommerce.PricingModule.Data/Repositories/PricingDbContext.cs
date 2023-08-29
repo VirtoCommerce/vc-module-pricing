@@ -1,11 +1,11 @@
 using System.Reflection;
-using EntityFrameworkCore.Triggers;
 using Microsoft.EntityFrameworkCore;
+using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Data.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Repositories
 {
-    public class PricingDbContext : DbContextWithTriggers
+    public class PricingDbContext : DbContextBase
     {
 #pragma warning disable S109
         public PricingDbContext(DbContextOptions<PricingDbContext> options)
