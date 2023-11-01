@@ -69,6 +69,12 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
         public IQueryable<MergedPriceEntity> GetMergedPrices(string basePriceListId, string priorityPriceListId)
         {
             var command = GetSearchMergedPricesCommand(basePriceListId, priorityPriceListId);
+
+            if (DbContext.Database.ProviderName == "Pomelo.EntityFrameworkCore.MySql")
+            {
+                command.Text = command.Text.Replace("\"", "");
+            }
+
             var query = DbContext.Set<MergedPriceEntity>().FromSqlRaw(command.Text, command.Parameters.ToArray());
             return query;
         }
