@@ -158,7 +158,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
             searchCriteria.Take = _batchSize;
 
-            await foreach (var searchResult in _productsSearchService.SearchBatches(searchCriteria))
+            await foreach (var searchResult in _productsSearchService.SearchBatchesAsync(searchCriteria))
             {
                 variationIds.AddRange(searchResult.Results.Select(x => x.Id));
             }
