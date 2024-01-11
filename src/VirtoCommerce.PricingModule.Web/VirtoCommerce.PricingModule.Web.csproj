@@ -24,7 +24,7 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.AssetsModule.Core" Version="3.800.0-alpha.108-pt-14740-net8" />
+    <PackageReference Include="VirtoCommerce.AssetsModule.Core" Version="3.800.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.PricingModule.Core\VirtoCommerce.PricingModule.Core.csproj" />
