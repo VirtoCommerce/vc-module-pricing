@@ -21,9 +21,9 @@
     <PackageReference Include="MockQueryable.Moq" Version="7.0.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.800.0-alpha.225-pt-14740-net8" />
-    <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.800.0-alpha.225-pt-14740-net8" />
-    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.800.0-alpha.225-pt-14740-net8" />
+    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.800.0" />
+    <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.800.0" />
+    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.800.0" />
     <PackageReference Include="xunit" Version="2.6.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
   </ItemGroup>
