@@ -1,5 +1,5 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', function ($scope, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate) {
+    .controller('virtoCommerce.pricingModule.pricelistItemListController', ['$scope', '$injector', 'virtoCommerce.pricingModule.prices', '$filter', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'platformWebApp.dialogService', '$translate', function ($scope, $injector, prices, $filter, bladeNavigationService, uiGridConstants, uiGridHelper, bladeUtils, dialogService, $translate) {
         $scope.uiGridConstants = uiGridConstants;
         $scope.noProductRowName = $translate.instant('pricing.blades.pricelist-item-list.labels.no-product-row-name');
         var blade = $scope.blade;
@@ -9,6 +9,7 @@ angular.module('virtoCommerce.pricingModule')
                 exportTypeName: 'PriceExportDataQuery'
             }
         };
+        blade.exportFeaturesEnabled = $injector.modules['virtoCommerce.exportModule'];
 
         blade.getSearchCriteria = function() {
             var result = {
@@ -217,8 +218,11 @@ angular.module('virtoCommerce.pricingModule')
                     return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());
                 },
                 permission: blade.updatePermission
-            },
-            {
+            }
+        ];
+
+        if (blade.exportFeaturesEnabled) {
+            blade.toolbarCommands.push({
                 name: "platform.commands.export",
                 icon: 'fa fa-upload',
                 canExecuteMethod: function () {
@@ -227,8 +231,8 @@ angular.module('virtoCommerce.pricingModule')
                 executeMethod: function () {
                     blade.exportPrices();
                 }
-            }
-        ];
+            });
+        }
 
         $scope.getPriceRange = function (priceGroup) {
             var retVal;

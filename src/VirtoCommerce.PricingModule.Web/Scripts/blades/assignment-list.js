@@ -1,6 +1,6 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.assignmentListController', ['$scope', 'virtoCommerce.pricingModule.pricelistAssignments', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'virtoCommerce.catalogModule.catalogs', '$localStorage',
-        function ($scope, assignments, dialogService, uiGridHelper, bladeUtils, catalogs, $localStorage) {
+    .controller('virtoCommerce.pricingModule.assignmentListController', ['$scope', '$injector', 'virtoCommerce.pricingModule.pricelistAssignments', 'platformWebApp.dialogService', 'platformWebApp.uiGridHelper', 'platformWebApp.bladeUtils', 'virtoCommerce.catalogModule.catalogs', '$localStorage',
+        function ($scope, $injector, assignments, dialogService, uiGridHelper, bladeUtils, catalogs, $localStorage) {
             $scope.uiGridConstants = uiGridHelper.uiGridConstants;
             var blade = $scope.blade;
             var bladeNavigationService = bladeUtils.bladeNavigationService;
@@ -12,6 +12,7 @@ angular.module('virtoCommerce.pricingModule')
             };
             var exportDataRequest = angular.copy(defaultDataRequest);
             var filter = blade.filter = $scope.filter = {};
+            blade.exportFeaturesEnabled = $injector.modules['virtoCommerce.exportModule'];
 
             blade.refresh = function () {
 
@@ -159,8 +160,11 @@ angular.module('virtoCommerce.pricingModule')
                         return blade.currentEntities && blade.currentEntities.length > 0;
                     },
                     permission: 'pricing:delete'
-                },
-                {
+                }
+            ];
+
+            if (blade.exportFeaturesEnabled) {
+                blade.toolbarCommands.push({
                     name: "platform.commands.export",
                     icon: 'fa fa-upload',
                     canExecuteMethod: function () {
@@ -193,11 +197,10 @@ angular.module('virtoCommerce.pricingModule')
                         };
                         bladeNavigationService.showBlade(newBlade, blade);
                     }
-                }
-            ];
+                });
+            }
 
             filter.criteriaChanged = function () {
-
                 if ($scope.pageSettings.currentPage > 1) {
                     blade.refresh();
                     $scope.pageSettings.currentPage = 1;
@@ -205,6 +208,7 @@ angular.module('virtoCommerce.pricingModule')
                     blade.refresh();
                 }
             };
+
             // ui-grid
             $scope.setGridOptions = function (gridOptions) {
                 $scope.gridOptions = gridOptions;
@@ -250,7 +254,7 @@ angular.module('virtoCommerce.pricingModule')
 
             $scope.exportSearchFilterId = $localStorage.exportSearchFilterIds[exportDataRequest.exportTypeName];
 
-            if ($scope.exportSearchFilterId) {
+            if ($scope.exportSearchFilterId && blade.exportFeaturesEnabled) {
                 filter.current = _.findWhere($scope.exportSearchFilters, { id: $scope.exportSearchFilterId });
             }
 

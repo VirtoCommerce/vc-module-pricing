@@ -13,9 +13,10 @@ using VirtoCommerce.CoreModule.Core.Conditions;
 using VirtoCommerce.ExportModule.Core.Services;
 using VirtoCommerce.ExportModule.Data.Extensions;
 using VirtoCommerce.ExportModule.Data.Services;
-using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.Extensions;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -40,12 +41,15 @@ using VirtoCommerce.PricingModule.Data.Validators;
 
 namespace VirtoCommerce.PricingModule.Web
 {
-    public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration
+    public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration, IHasModuleCatalog
     {
         private IApplicationBuilder _applicationBuilder;
 
         public ManifestModuleInfo ModuleInfo { get; set; }
         public IConfiguration Configuration { get; set; }
+        public IModuleCatalog ModuleCatalog { get; set; }
+
+        private const string GenericExportModuleId = "VirtoCommerce.Export";
 
         public void Initialize(IServiceCollection serviceCollection)
         {
@@ -131,41 +135,43 @@ namespace VirtoCommerce.PricingModule.Web
             }
 
             //Subscribe for Search configuration changes
-            var handlerRegistrar = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
-            handlerRegistrar.RegisterHandler<ObjectSettingChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<ObjectSettingEntryChangedEventHandler>().Handle(message));
+            appBuilder.RegisterEventHandler<ObjectSettingChangedEvent, ObjectSettingEntryChangedEventHandler>();
 
             //Configure Search
             var moduleConfigurator = appBuilder.ApplicationServices.GetService<ModuleConfigurator>();
             moduleConfigurator.ConfigureSearchAsync().GetAwaiter().GetResult();
 
-            handlerRegistrar.RegisterHandler<PriceChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<LogChangesChangedEventHandler>().Handle(message));
-            handlerRegistrar.RegisterHandler<ProductChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<DeletePricesProductChangedEventHandler>().Handle(message));
-            handlerRegistrar.RegisterHandler<PriceChangedEvent>(async (message, _) => await appBuilder.ApplicationServices.GetService<IndexPricesProductChangedEventHandler>().Handle(message));
+            appBuilder.RegisterEventHandler<PriceChangedEvent, LogChangesChangedEventHandler>();
+            appBuilder.RegisterEventHandler<ProductChangedEvent, DeletePricesProductChangedEventHandler>();
+            appBuilder.RegisterEventHandler<PriceChangedEvent, IndexPricesProductChangedEventHandler>();
 
             foreach (var conditionTree in AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance().Traverse<IConditionTree>(x => x.AvailableChildren))
             {
                 AbstractTypeFactory<IConditionTree>.RegisterType(conditionTree.GetType());
             }
 
-            var exportTypesRegistrar = appBuilder.ApplicationServices.GetService<IKnownExportTypesRegistrar>();
+            if (ModuleCatalog.IsModuleInstalled(GenericExportModuleId))
+            {
+                var exportTypesRegistrar = appBuilder.ApplicationServices.GetService<IKnownExportTypesRegistrar>();
 
-            exportTypesRegistrar.RegisterType(
-                 ExportedTypeDefinitionBuilder.Build<ExportablePrice, PriceExportDataQuery>()
-                    .WithDataSourceFactory(appBuilder.ApplicationServices.GetService<IPricingExportPagedDataSourceFactory>())
-                    .WithMetadata(typeof(ExportablePrice).GetPropertyNames())
-                    .WithTabularMetadata(typeof(TabularPrice).GetPropertyNames()));
+                exportTypesRegistrar.RegisterType(
+                     ExportedTypeDefinitionBuilder.Build<ExportablePrice, PriceExportDataQuery>()
+                        .WithDataSourceFactory(appBuilder.ApplicationServices.GetService<IPricingExportPagedDataSourceFactory>())
+                        .WithMetadata(typeof(ExportablePrice).GetPropertyNames())
+                        .WithTabularMetadata(typeof(TabularPrice).GetPropertyNames()));
 
-            exportTypesRegistrar.RegisterType(
-                 ExportedTypeDefinitionBuilder.Build<ExportablePricelist, PricelistExportDataQuery>()
-                    .WithDataSourceFactory(appBuilder.ApplicationServices.GetService<IPricingExportPagedDataSourceFactory>())
-                    .WithMetadata(typeof(ExportablePricelist).GetPropertyNames())
-                    .WithTabularMetadata(typeof(TabularPricelist).GetPropertyNames()));
+                exportTypesRegistrar.RegisterType(
+                     ExportedTypeDefinitionBuilder.Build<ExportablePricelist, PricelistExportDataQuery>()
+                        .WithDataSourceFactory(appBuilder.ApplicationServices.GetService<IPricingExportPagedDataSourceFactory>())
+                        .WithMetadata(typeof(ExportablePricelist).GetPropertyNames())
+                        .WithTabularMetadata(typeof(TabularPricelist).GetPropertyNames()));
 
-            exportTypesRegistrar.RegisterType(
-                 ExportedTypeDefinitionBuilder.Build<ExportablePricelistAssignment, PricelistAssignmentExportDataQuery>()
-                    .WithDataSourceFactory(appBuilder.ApplicationServices.GetService<IPricingExportPagedDataSourceFactory>())
-                    .WithMetadata(typeof(ExportablePricelistAssignment).GetPropertyNames())
-                    .WithTabularMetadata(typeof(TabularPricelistAssignment).GetPropertyNames()));
+                exportTypesRegistrar.RegisterType(
+                     ExportedTypeDefinitionBuilder.Build<ExportablePricelistAssignment, PricelistAssignmentExportDataQuery>()
+                        .WithDataSourceFactory(appBuilder.ApplicationServices.GetService<IPricingExportPagedDataSourceFactory>())
+                        .WithMetadata(typeof(ExportablePricelistAssignment).GetPropertyNames())
+                        .WithTabularMetadata(typeof(TabularPricelistAssignment).GetPropertyNames()));
+            }
         }
 
         public void Uninstall()
