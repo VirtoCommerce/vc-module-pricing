@@ -11,7 +11,7 @@
     <dependency id="VirtoCommerce.Export" version="3.800.0" optional="true"/>
     <dependency id="VirtoCommerce.Search" version="3.800.0" />
   </dependencies>
-  <title>Pricing module</title>
+  <title>Pricing</title>
   <description>Robust pricing management functionality based on price list and dynamic evaluation</description>
   <authors>
     <author>Eugeney Tatarincev</author>
