@@ -1,16 +1,16 @@
 <div class="blade-static">
     <div class="form-group searchrow">
-        <div class="form-input column-half">
+        <div class="form-input" ng-class="{'column-half': blade.exportFeaturesEnabled, 'column': !blade.exportFeaturesEnabled}">
             <input placeholder="{{ 'platform.placeholders.search-keyword' | translate }}" ng-model="filter.keyword" ng-keyup="$event.which === 13 && filter.criteriaChanged()">
             <button class="btn" title="Clear" ng-click="filter.keyword=null;filter.criteriaChanged()"></button>
         </div>
-        <ui-select ng-model="filter.current" ng-change="filter.change()" class="column-half">
+        <ui-select ng-model="filter.current" ng-change="filter.change()" class="column-half" ng-if="blade.exportFeaturesEnabled">
             <ui-select-match allow-clear="true" placeholder="{{'export.blades.export-generic-viewer.placeholders.select-filter' | translate}}">{{$select.selected.name | translate}}</ui-select-match>
             <ui-select-choices repeat="x in exportSearchFilters | filter: $select.search">
                 <span ng-bind-html="x.name | translate | highlight: $select.search"></span>
             </ui-select-choices>
         </ui-select>
-        <a href="" ng-click="filter.edit()" class="filter-edit"><i class="fa fa-pencil"></i></a>
+        <a href="" ng-click="filter.edit()" class="filter-edit" ng-if="blade.exportFeaturesEnabled"><i class="fa fa-pencil"></i></a>
     </div>
 </div>
 <div class="blade-static __bottom" ng-if="pageSettings.itemsPerPageCount < pageSettings.totalItems" ng-include="'pagerTemplate.html'"></div>
