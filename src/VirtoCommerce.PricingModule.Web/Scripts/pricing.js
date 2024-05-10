@@ -69,7 +69,6 @@ angular.module(moduleName, ['ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.validate
                     $compile(response.data);
                 });
 
-                
                 metaFormsService.registerMetaFields('VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice' + 'ExportFilter', [
                     {
                         name: 'pricelistSelector',
