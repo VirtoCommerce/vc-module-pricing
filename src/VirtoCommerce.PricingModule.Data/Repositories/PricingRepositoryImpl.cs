@@ -23,7 +23,10 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         public virtual async Task<IList<PriceEntity>> GetPricesByIdsAsync(IList<string> priceIds)
         {
-            var result = await Prices.Include(x => x.Pricelist).Where(x => priceIds.Contains(x.Id)).ToListAsync();
+            var result = await Prices
+                .Include(x => x.Pricelist).AsSingleQuery()
+                .Where(x => priceIds.Contains(x.Id))
+                .ToListAsync();
             return result;
         }
 
@@ -34,7 +37,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             var query = Pricelists;
             if (pricelistResponseGroup == PriceListResponseGroup.Full)
             {
-                query = query.Include(x => x.Assignments);
+                query = query.Include(x => x.Assignments).AsSplitQuery();
             }
 
             var result = await query.Where(x => pricelistIds.Contains(x.Id))
@@ -44,7 +47,9 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
 
         public virtual async Task<IList<PricelistAssignmentEntity>> GetPricelistAssignmentsByIdAsync(IList<string> assignmentsId)
         {
-            var result = await PricelistAssignments.Include(x => x.Pricelist).Where(x => assignmentsId.Contains(x.Id)).ToListAsync();
+            var result = await PricelistAssignments
+                .Include(x => x.Pricelist).AsSingleQuery()
+                .Where(x => assignmentsId.Contains(x.Id)).ToListAsync();
             return result;
         }
 
