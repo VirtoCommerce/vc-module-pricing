@@ -138,7 +138,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 repository.DisableChangesTracking();
 
-                return (await repository.PricelistAssignments.Include(x => x.Pricelist).AsNoTracking().ToListAsync())
+                return (await repository.PricelistAssignments
+                    .Include(x => x.Pricelist).AsSingleQuery().AsNoTracking().ToListAsync())
                     .Select(x => x.ToModel(AbstractTypeFactory<PricelistAssignment>.TryCreateInstance())).ToArray();
             }
         }
@@ -159,9 +160,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (var repository = _repositoryFactory())
             {
                 //Get a price range satisfying by passing context
-                var query = (repository).Prices.Include(x => x.Pricelist)
-                                             .Where(x => evalContext.ProductIds.Contains(x.ProductId))
-                                             .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
+                var query = (repository).Prices
+                    .Include(x => x.Pricelist).AsSingleQuery()
+                    .Where(x => evalContext.ProductIds.Contains(x.ProductId))
+                    .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
 
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
