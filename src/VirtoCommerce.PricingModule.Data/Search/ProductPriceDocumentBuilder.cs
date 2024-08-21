@@ -160,7 +160,9 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
             await foreach (var searchResult in _productsSearchService.SearchBatchesAsync(searchCriteria))
             {
-                variationIds.AddRange(searchResult.Results.Select(x => x.Id));
+                variationIds.AddRange(searchResult.Results
+                    .Where(x => x.IsActive == true)
+                    .Select(x => x.Id));
             }
 
             return variationIds;
