@@ -1,6 +1,26 @@
 angular.module('virtoCommerce.pricingModule')
-    .controller('virtoCommerce.pricingModule.itemPriceListController', ['$scope', 'platformWebApp.bladeNavigationService', 'uiGridConstants', 'virtoCommerce.pricingModule.prices', 'virtoCommerce.catalogModule.catalogs', 'virtoCommerce.storeModule.stores', 'platformWebApp.ui-grid.extension', 'platformWebApp.objCompareService', 'virtoCommerce.pricingModule.priceValidatorsService', 'platformWebApp.dialogService',
-        function ($scope, bladeNavigationService, uiGridConstants, prices, catalogs, stores, gridOptionExtension, objCompareService, priceValidatorsService, dialogService) {
+    .controller('virtoCommerce.pricingModule.itemPriceListController', [
+        '$scope',
+        'uiGridConstants',
+        'platformWebApp.bladeNavigationService',
+        'platformWebApp.ui-grid.extension',
+        'platformWebApp.objCompareService',
+        'platformWebApp.dialogService',
+        'virtoCommerce.pricingModule.prices',
+        'virtoCommerce.catalogModule.catalogs',
+        'virtoCommerce.storeModule.stores',
+        'virtoCommerce.pricingModule.priceValidatorsService',
+        function ($scope,
+            uiGridConstants,
+            bladeNavigationService,
+            gridOptionExtension,
+            objCompareService,
+            dialogService,
+            prices,
+            catalogs,
+            stores,
+            priceValidatorsService) {
+
             $scope.uiGridConstants = uiGridConstants;
             var blade = $scope.blade;
             blade.updatePermission = 'pricing:update';
@@ -98,7 +118,8 @@ angular.module('virtoCommerce.pricingModule')
             };
 
             blade.onClose = function (closeCallback) {
-                bladeNavigationService.showConfirmationIfNeeded(isDirty(), canSave(), blade, $scope.saveChanges, closeCallback, "pricing.dialogs.prices-save.title", "pricing.dialogs.prices-save.message");
+                bladeNavigationService.showConfirmationIfNeeded(isDirty(), canSave(), blade, $scope.saveChanges, closeCallback,
+                    "pricing.dialogs.prices-save.title", "pricing.dialogs.prices-save.message");
             };
 
             function isDirty() {
@@ -137,7 +158,9 @@ angular.module('virtoCommerce.pricingModule')
                 }
             };
 
-            $scope.setForm = function (form) { $scope.formScope = form; };
+            $scope.setForm = function (form) {
+                $scope.formScope = form;
+            };
 
             blade.toolbarCommands = [
                 {
