@@ -231,14 +231,22 @@ angular.module('virtoCommerce.pricingModule')
                         allPrices.length === 0 ||
                         hasSingleItemPriceForPricelist(price.pricelistId);
                 }
-                var pricelistIds = _.uniq(_.map(allPrices, function (x) { return x.pricelistId; }));
+                var pricelistIds = _.uniq(_.map(allPrices, function (x) {
+                    return x.pricelistId;
+                }));
                 return pricelistIds.length === 0 || _.all(pricelistIds, hasSingleItemPriceForPricelist);
             }
         };
     }])
 
-    .run(
-        ['platformWebApp.ui-grid.extension', 'virtoCommerce.pricingModule.priceValidatorsService', 'uiGridValidateService', function (gridOptionExtension, priceValidatorsService, uiGridValidateService) {
+    .run([
+        'platformWebApp.ui-grid.extension',
+        'virtoCommerce.pricingModule.priceValidatorsService',
+        'uiGridValidateService',
+        function (
+            gridOptionExtension,
+            priceValidatorsService,
+            uiGridValidateService) {
 
             uiGridValidateService.setValidator('listValidator', function (argument) {
                 return function (oldValue, newValue, rowEntity, colDef) {
