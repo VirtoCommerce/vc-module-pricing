@@ -165,17 +165,13 @@ angular.module('virtoCommerce.pricingModule')
         var allPrices = [];
 
         function hasSingleItemPriceForPricelist(pricelistId) {
-            var result = _.some(allPrices, function (x) {
+            return _.some(allPrices, function (x) {
                 return x.pricelistId === pricelistId && isSingleItemPrice(x);
             });
-            console.log('hasSingleItemPriceForPricelist', allPrices.length, pricelistId, result);
-            return result;
         }
 
         function isSingleItemPrice(price) {
-            var result = Math.round(price.minQuantity) === 1 && !price.startDate && !price.EndDate;
-            console.log('isSingleItemPrice', price.pricelistId, price.minQuantity, price.startDate, price.EndDate, result);
-            return result;
+            return Math.round(price.minQuantity) === 1 && !price.startDate && !price.EndDate;
         }
 
         return {
