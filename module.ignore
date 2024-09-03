@@ -1,2 +1,5 @@
 Antlr4.Runtime.Standard.dll
 TimeZoneConverter.dll
+VirtoCommerce.Platform.Data.MySql.dll
+VirtoCommerce.Platform.Data.PostgreSql.dll
+VirtoCommerce.Platform.Data.SqlServer.dll
