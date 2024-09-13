@@ -13,7 +13,7 @@ namespace VirtoCommerce.PricingModule.Data.PostgreSql
 
             builder.UseNpgsql(
                 connectionString,
-                db => db.MigrationsAssembly(typeof(PostgreSqlDbContextFactory).Assembly.GetName().Name));
+                db => db.MigrationsAssembly(typeof(PostgreSqlDataAssemblyMarker).Assembly.GetName().Name));
 
             return new PricingDbContext(builder.Options);
         }
