@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using MockQueryable.Moq;
+using MockQueryable;
 using Moq;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.Common;
@@ -173,7 +173,7 @@ namespace VirtoCommerce.PricingModule.Test
         }
 
         [Fact]
-        public async void Can_return_price_from_many_prices_with_start_and_end_date()
+        public async Task Can_return_price_from_many_prices_with_start_and_end_date()
         {
             var pricelist = new Pricelist { Id = "List1", Priority = 0, };
 

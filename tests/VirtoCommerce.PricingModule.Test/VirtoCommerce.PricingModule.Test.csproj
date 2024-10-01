@@ -16,16 +16,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.2.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="MockQueryable.Moq" Version="7.0.0" />
-    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="MockQueryable.Moq" Version="7.0.3" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
-    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.800.0" />
-    <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.800.0" />
-    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.800.0" />
-    <PackageReference Include="xunit" Version="2.6.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
+    <PackageReference Include="VirtoCommerce.ExportModule.CsvProvider" Version="3.803.0" />
+    <PackageReference Include="VirtoCommerce.ExportModule.JsonProvider" Version="3.803.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\VirtoCommerce.PricingModule.Core\VirtoCommerce.PricingModule.Core.csproj" />
