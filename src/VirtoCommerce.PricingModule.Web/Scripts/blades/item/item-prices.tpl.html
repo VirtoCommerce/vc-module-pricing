@@ -75,7 +75,10 @@
 <!-- Date Cell Write -->
 <script type="text/ng-template" id="date-cellTextEditor">
   <div class="form-editor form-input __calendar">
-    <input type="text" class="form-input" date ng-model="MODEL_COL_FIELD" datepicker-popup="short" datepicker-popup-dropless="true" is-open="grid.appScope.datepickers[col.colDef.name]">
+    <input type="text" class="form-input" date ng-model="MODEL_COL_FIELD" placeholder="yyyy-mm-ddThh:mm:ss" datepicker-popup is-open="grid.appScope.datepickers[col.colDef.name]">
+    <button class="btn" type="button" ng-click="grid.appScope.open($event, col.colDef.name)">
+      <i class="btn-ico fa fa-calendar"></i>
+    </button>
   </div>
 </script>
 
