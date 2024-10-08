@@ -68,7 +68,7 @@
 <script type="text/ng-template" id="ui-grid/dateCellTemplate">
   <div class="ui-grid-cell-contents" title="{{grid.validate.getTitleFormattedErrors(row.entity,col.colDef)}}">
     <div class="form-editor form-input">
-      <input class="ng-valid form-input" value="{{MODEL_COL_FIELD | date: 'short' }}" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" readonly="readonly" placeholder="N/A" />
+      <input class="ng-valid form-input" value="{{MODEL_COL_FIELD | date: 'medium' }}" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" readonly="readonly" placeholder="N/A" />
     </div>
   </div>
 </script>
