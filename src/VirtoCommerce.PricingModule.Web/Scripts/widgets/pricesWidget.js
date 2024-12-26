@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.pricingModule')
+angular.module('virtoCommerce.pricingModule')
 .controller('virtoCommerce.pricingModule.pricesWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.pricingModule.prices', function ($scope, bladeNavigationService, prices) {
     var blade = $scope.widget.blade;
 
@@ -7,6 +7,7 @@
 
         prices.search({
             priceListId: blade.currentEntityId,
+            groupByProducts: true,
             take: 0
         }, function (data) {
             $scope.priceCount = data.totalCount;
