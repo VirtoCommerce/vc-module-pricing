@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "Tarification",
+    "blades": {
+      "pricing-main": {
+        "title": "Tarification",
+        "subtitle": "Gérez la tarification de vos marchandises",
+        "menu": {
+          "pricelist-list": {
+            "title": "Listes de prix"
+          },
+          "pricelist-assignment-list": {
+            "title": "Attributions de listes de prix"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "Gestion de vos listes de prix",
+        "labels": {
+          "name": "Nom",
+          "currency": "Monnaie",
+          "last-modified": "Modifié"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "Nouvelle liste de prix",
+        "labels": {
+          "name": "Nom",
+          "currency": "Monnaie",
+          "description": "Description"
+        },
+        "placeholders": {
+          "name": "Entrez le nom",
+          "currency": "Sélectionner",
+          "description": "Fournissez une description..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Sélectionnez un produit pour gérer les prix",
+        "labels": {
+          "picture": "Image",
+          "item-name": "Nom de l'article",
+          "item-code": "Code de l'article",
+          "price-range": "Plage de prix",
+          "price-count": "Nombre de prix",
+          "prices-count": "Nombre de prix dans cette liste de prix",
+          "no-product-row-name": "Aucun produit avec cet ID"
+        },
+        "placeholders": {
+          "search-item": "Rechercher un article par nom"
+        }
+      },
+      "prices-list": {
+        "title": "Prix pour {{name}}",
+        "subtitle": "Modifier les prix",
+        "labels": {
+          "currency": "Monnaie",
+          "list-price": "Prix de liste",
+          "sale-price": "Prix de vente",
+          "min-quantity": "Quantité minimale",
+          "startDate": "Valable à partir de",
+          "endDate": "Valable jusqu'à",
+          "last-modified": "Modifié"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Gestion des catalogues assignés",
+        "labels": {
+          "assignment-name": "Nom de l'attribution",
+          "catalog": "Catalogue",
+          "priority": "Priorité"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Gérez la tarification de vos marchandises",
+        "labels": {
+          "name": "Nom",
+          "catalog": "Catalogue",
+          "pricelist": "Liste de prix",
+          "pricelist-currency": "Monnaie de la liste de prix",
+          "priority": "Priorité",
+          "activation": "Activation",
+          "expiration": "Expiration",
+          "last-modified": "Modifié",
+          "modified-by": "Modifié par"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Nouvelle attribution de liste de prix",
+        "subtitle": "Modification de l'attribution du catalogue",
+        "labels": {
+          "assignment-name": "Nom de l'attribution",
+          "price-list": "Liste de prix",
+          "catalog": "Catalogue",
+          "store": "Magasin",
+          "priority": "Priorité",
+          "priority-description": "L'élément avec la priorité la plus élevée sera utilisé en premier",
+          "description": "Description",
+          "enable-date": "Date d'activation",
+          "enable-date-description": "Laisser vide si toujours disponible",
+          "expiration-date": "Date d'expiration",
+          "expiration-date-description": "Laisser vide si toujours disponible",
+          "eligible-shoppers": "Acheteurs éligibles"
+        },
+        "placeholders": {
+          "assignment-name": "Entrez le nom...",
+          "price-list": "Sélectionner...",
+          "catalog": "Sélectionner...",
+          "store": "Sélectionner...",
+          "description": "Fournissez une description..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Sélectionnez une liste de prix pour gérer les prix",
+        "labels": {
+          "name": "Liste de prix",
+          "currency": "Monnaie",
+          "priority": "Priorité",
+          "prices-count": "Nombre de prix"
+        },
+        "no-assignments": "Ce catalogue n'a aucune liste de prix assignée. Assignez une liste de prix en suivant ce lien ",
+        "manage-pricelists": "Gérer la tarification"
+      },
+      "item-prices": {
+        "title": "Prix pour {{name}}",
+        "subtitle": "Modifier les prix",
+        "head-label": "Liste de prix pour le nouveau prix",
+        "pricelist-select-placeholder": "Sélectionnez une liste de prix pour ajouter le nouveau prix...",
+        "labels": {
+          "name": "Liste de prix",
+          "currency": "Monnaie",
+          "catalog": "Catalogue",
+          "store": "Magasin",
+          "list-price": "Prix de liste",
+          "sale-price": "Prix de vente",
+          "min-quantity": "Quantité minimale",
+          "startDate": "Valable à partir de",
+          "endDate": "Valable jusqu'à"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Exporter les prix",
+        "priceSubtitle": "Exporter les prix vers un fichier JSON ou CSV",
+        "priceListTitle": "Exporter les listes de prix",
+        "pricelistSubtitle": "Exporter votre liste de prix vers un fichier JSON ou CSV",
+        "priceAssignmentTitle": "Exporter les attributions de prix",
+        "priceAssignmentSubtitle": "Exporter vos attributions de prix vers un fichier JSON ou CSV"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Attributions"
+      },
+      "itemPricesWidget": {
+        "title": "Prix",
+        "assign-pricelist": "Attribuer une liste de prix"
+      },
+      "prices": {
+        "title": "Prix"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Confirmer la suppression",
+        "message": "Êtes-vous sûr de vouloir supprimer les attributions de listes de prix sélectionnées ?"
+      },
+      "assignments-delete-all": {
+        "title": "Confirmer la suppression",
+        "warning": "ATTENTION : Ce changement est définitif et ne peut pas être annulé. Appliquer ce changement peut entraîner une perte de données",
+        "message": "Tous les éléments filtrés seront supprimés",
+        "instruction": "Tapez 'yes' pour supprimer :"
+      },
+      "pricelists-delete": {
+        "title": "Confirmer la suppression",
+        "message": "Êtes-vous sûr de vouloir supprimer les listes de prix sélectionnées ?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Confirmer la suppression",
+        "message": "Êtes-vous sûr de vouloir supprimer tous les prix des produits sélectionnés dans cette liste de prix ?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Confirmer la suppression",
+        "message": "Êtes-vous sûr de vouloir supprimer les prix sélectionnés ?"
+      },
+      "item-prices-delete-error": {
+        "title": "Erreur",
+        "message": "Vous devez avoir au moins un prix par unité (avec une quantité minimale de 1)."
+      },
+      "prices-save": {
+        "title": "Enregistrer les modifications",
+        "message": "Les prix ont été modifiés. Voulez-vous enregistrer les modifications ?"
+      },
+      "pricelist-save": {
+        "title": "Enregistrer les modifications",
+        "message": "La liste de prix a été modifiée. Voulez-vous enregistrer les modifications ?"
+      },
+      "assignment-save": {
+        "title": "Enregistrer les modifications",
+        "message": "L'attribution du catalogue a été modifiée. Voulez-vous enregistrer les modifications ?"
+      },
+      "assignment-save-validation": {
+        "title": "Enregistrer les modifications",
+        "message": "Pour une attribution de liste de prix, vous devez spécifier soit un catalogue soit un magasin. Vous ne pouvez pas laisser les deux champs vides."
+      }
+    },
+    "commands": {
+      "add-selected": "Ajouter les sélectionnés",
+      "delete-all": "Supprimer tout",
+      "delete-filtered": "Supprimer les filtrés"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Listes de prix",
+        "modified-since": "Modifié depuis",
+        "products": "Produits",
+        "currencies": "Monnaies"
+      },
+      "labels": {
+        "select": "Sélectionner",
+        "selected": "Sélectionné : "
+      },
+      "placeholders": {
+        "price-lists": "Sélectionnez les listes de prix...",
+        "catalog-lists": "Sélectionnez un catalogue..."
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Sélectionnez les produits du catalogue..."
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "Ouvrir le menu de tarification",
+    "pricing:create": "Créer des données de tarification",
+    "pricing:read": "Voir les données de tarification",
+    "pricing:update": "Mettre à jour les données de tarification",
+    "pricing:delete": "Supprimer les données de tarification"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Date et heure d'indexation des prix",
+                "description": "Date et heure auxquelles la tâche d'indexation des prix commencera"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Taille du lot pour l'exportation/importation",
+          "description": "Spécifiez le nombre d'enregistrements traités par lot lors de l'exportation/importation. Fournir des valeurs élevées peut entraîner des performances plus lentes"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Enregistrer les modifications des prix",
+        "description": "Activer/désactiver cette option pour enregistrer les modifications dans le journal d'opérations de la plateforme. Cela peut affecter la taille de la base de données si les prix changent souvent"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Indexation des prix des produits",
+          "description": "Activer/désactiver cette option pour inclure le prix du produit dans l'index du produit. Cela entraînera également la réindexation du produit si le prix est modifié"
+        },
+        "StorePricesInIndex": {
+          "title": "Stocker tous les prix des produits en tant qu'objet d'index",
+          "description": "Activer/désactiver cette option pour stocker tous les prix des produits dans l'index au sein d'un champ imbriqué comme <NomProduit_prix>"
+        },
+        "PriceIndexingValue": {
+          "title": "Valeur d'indexation des prix",
+          "description": "Sélectionnez la valeur du prix du produit qui sera stockée dans l'index du produit"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Indexation basée sur les événements pour les entités de tarification",
+            "description": "Activer/désactiver l'indexation basée sur les événements pour les entités de tarification. Lorsqu'elle est activée, toute modification apportée à une entité de catalogue déclenchera automatiquement une tâche d'arrière-plan pour mettre à jour l'index de recherche"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Exporter ou importer des listes de prix, des attributions et des prix"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Données complètes de la liste de prix",
+        "description": "Données de la liste de prix avec objets liés. Prise en charge uniquement du fournisseur d'exportation JSON"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Prix",
+        "description": "Prix sans objets liés"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Liste de prix",
+        "description": "Uniquement les listes de prix"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Attribution de liste de prix",
+        "description": "Exporter les attributions de listes de prix"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Tarification",
+        "description": "Prix, listes de prix et attributions"
+      }
+    }
+  }
+}

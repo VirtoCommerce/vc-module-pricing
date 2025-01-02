@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "価格設定",
+    "blades": {
+      "pricing-main": {
+        "title": "価格設定",
+        "subtitle": "商品の価格設定を管理します",
+        "menu": {
+          "pricelist-list": {
+            "title": "価格リスト"
+          },
+          "pricelist-assignment-list": {
+            "title": "価格リストの割り当て"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "価格リストを管理しています",
+        "labels": {
+          "name": "名前",
+          "currency": "通貨",
+          "last-modified": "変更済み"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "新しい価格リスト",
+        "labels": {
+          "name": "名前",
+          "currency": "通貨",
+          "description": "説明"
+        },
+        "placeholders": {
+          "name": "名前を入力",
+          "currency": "選択",
+          "description": "説明を入力..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "価格を管理する製品を選択してください",
+        "labels": {
+          "picture": "画像",
+          "item-name": "商品名",
+          "item-code": "商品コード",
+          "price-range": "価格範囲",
+          "price-count": "価格数",
+          "prices-count": "この価格リストの価格数",
+          "no-product-row-name": "このIDの製品は存在しません"
+        },
+        "placeholders": {
+          "search-item": "名前で商品を検索"
+        }
+      },
+      "prices-list": {
+        "title": "{{name}}の価格",
+        "subtitle": "価格を編集",
+        "labels": {
+          "currency": "通貨",
+          "list-price": "定価",
+          "sale-price": "販売価格",
+          "min-quantity": "最小数量",
+          "startDate": "有効開始日",
+          "endDate": "有効終了日",
+          "last-modified": "変更済み"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "割り当てられたカタログの管理",
+        "labels": {
+          "assignment-name": "割り当て名",
+          "catalog": "カタログ",
+          "priority": "優先度"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "商品の価格設定を管理します",
+        "labels": {
+          "name": "名前",
+          "catalog": "カタログ",
+          "pricelist": "価格リスト",
+          "pricelist-currency": "価格リストの通貨",
+          "priority": "優先度",
+          "activation": "有効化",
+          "expiration": "有効期限",
+          "last-modified": "変更済み",
+          "modified-by": "変更者"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "新しい価格リストの割り当て",
+        "subtitle": "カタログの割り当てを編集",
+        "labels": {
+          "assignment-name": "割り当て名",
+          "price-list": "価格リスト",
+          "catalog": "カタログ",
+          "store": "店舗",
+          "priority": "優先度",
+          "priority-description": "優先度が高い項目が最初に使用されます",
+          "description": "説明",
+          "enable-date": "有効開始日",
+          "enable-date-description": "常に利用可能な場合は空白のままにします",
+          "expiration-date": "有効終了日",
+          "expiration-date-description": "常に利用可能な場合は空白のままにします",
+          "eligible-shoppers": "対象の購入者"
+        },
+        "placeholders": {
+          "assignment-name": "名前を入力...",
+          "price-list": "選択...",
+          "catalog": "選択...",
+          "store": "選択...",
+          "description": "説明を入力..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "価格を管理する価格リストを選択してください",
+        "labels": {
+          "name": "価格リスト",
+          "currency": "通貨",
+          "priority": "優先度",
+          "prices-count": "価格数"
+        },
+        "no-assignments": "このカタログには割り当てられた価格リストがありません。こちらのリンクに従って価格リストを割り当ててください",
+        "manage-pricelists": "価格設定を管理"
+      },
+      "item-prices": {
+        "title": "{{name}}の価格",
+        "subtitle": "価格を編集",
+        "head-label": "新しい価格の価格リスト",
+        "pricelist-select-placeholder": "新しい価格を追加する価格リストを選択してください...",
+        "labels": {
+          "name": "価格リスト",
+          "currency": "通貨",
+          "catalog": "カタログ",
+          "store": "店舗",
+          "list-price": "定価",
+          "sale-price": "販売価格",
+          "min-quantity": "最小数量",
+          "startDate": "有効開始日",
+          "endDate": "有効終了日"
+        }
+      },
+      "exporter": {
+        "priceTitle": "価格をエクスポート",
+        "priceSubtitle": "価格をJSONまたはCSVファイルにエクスポート",
+        "priceListTitle": "価格リストをエクスポート",
+        "pricelistSubtitle": "価格リストをJSONまたはCSVファイルにエクスポート",
+        "priceAssignmentTitle": "価格の割り当てをエクスポート",
+        "priceAssignmentSubtitle": "価格の割り当てをJSONまたはCSVファイルにエクスポート"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "割り当て"
+      },
+      "itemPricesWidget": {
+        "title": "価格",
+        "assign-pricelist": "価格リストを割り当て"
+      },
+      "prices": {
+        "title": "価格"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "削除を確認",
+        "message": "選択された価格リストの割り当てを削除してもよろしいですか？"
+      },
+      "assignments-delete-all": {
+        "title": "削除を確認",
+        "warning": "警告：この変更は最終的であり、元に戻すことはできません。この変更を適用するとデータが失われる可能性があります",
+        "message": "フィルターされたすべての項目が削除されます",
+        "instruction": "削除するには 'yes' と入力してください："
+      },
+      "pricelists-delete": {
+        "title": "削除を確認",
+        "message": "選択された価格リストを削除してもよろしいですか？"
+      },
+      "pricelist-item-list-delete": {
+        "title": "削除を確認",
+        "message": "この価格リストの選択された製品のすべての価格を削除してもよろしいですか？"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "削除を確認",
+        "message": "選択された価格を削除してもよろしいですか？"
+      },
+      "item-prices-delete-error": {
+        "title": "エラー",
+        "message": "単位あたり少なくとも1つの価格（最小数量1）が必要です。"
+      },
+      "prices-save": {
+        "title": "変更を保存",
+        "message": "価格が変更されました。変更を保存しますか？"
+      },
+      "pricelist-save": {
+        "title": "変更を保存",
+        "message": "価格リストが変更されました。変更を保存しますか？"
+      },
+      "assignment-save": {
+        "title": "変更を保存",
+        "message": "カタログの割り当てが変更されました。変更を保存しますか？"
+      },
+      "assignment-save-validation": {
+        "title": "変更を保存",
+        "message": "価格リストの割り当てには、カタログまたは店舗のいずれかを指定する必要があります。両方のフィールドを空白にすることはできません"
+      }
+    },
+    "commands": {
+      "add-selected": "選択を追加",
+      "delete-all": "すべて削除",
+      "delete-filtered": "フィルタされた項目を削除"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "価格リスト",
+        "modified-since": "以来変更",
+        "products": "製品",
+        "currencies": "通貨"
+      },
+      "labels": {
+        "select": "選択",
+        "selected": "選択: "
+      },
+      "placeholders": {
+        "price-lists": "価格リストを選択...",
+        "catalog-lists": "カタログを選択..."
+      },
+      "blades": {
+        "titles": {
+          "select-products": "カタログの製品を選択..."
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "価格メニューを開く",
+    "pricing:create": "価格データを作成",
+    "pricing:read": "価格データを表示",
+    "pricing:update": "価格データを更新",
+    "pricing:delete": "価格データを削除"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "価格インデックスの日付と時刻",
+                "description": "価格インデックス作業が開始される日付と時刻"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "エクスポート/インポートのバッチサイズ",
+          "description": "エクスポート/インポート中にバッチごとに処理されるレコード数を指定します。高い値を設定するとパフォーマンスが低下する可能性があります"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "価格変更をログに記録",
+        "description": "プラットフォームの操作ログに変更を記録するためにこのオプションを有効/無効にします。価格が頻繁に変更される場合、データベースのサイズに影響を与える可能性があります"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "商品の価格インデックス化",
+          "description": "商品の価格を商品インデックスに含めるためにこのオプションを有効/無効にします。これにより、価格が変更された場合に商品の再インデックス化も行われます"
+        },
+        "StorePricesInIndex": {
+          "title": "すべての商品価格をインデックスオブジェクトとして保存",
+          "description": "インデックス内のネストされたフィールド（例：<商品名_価格>）にすべての商品価格を保存するためにこのオプションを有効/無効にします"
+        },
+        "PriceIndexingValue": {
+          "title": "価格インデックス化値",
+          "description": "商品インデックスに保存される商品の価格値を選択します"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "価格エンティティのイベントベースインデックス化",
+            "description": "価格エンティティのイベントベースインデックス化を有効/無効にします。有効にすると、カタログエンティティに行われた変更が自動的に検索インデックスを更新するバックグラウンドタスクをトリガーします"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "価格リスト、割り当て、価格をエクスポートまたはインポートする"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "完全な価格リストデータ",
+        "description": "関連するオブジェクトを含む価格リストデータ。JSONエクスポートプロバイダーのみサポート"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "価格",
+        "description": "関連オブジェクトなしの価格"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "価格リスト",
+        "description": "価格リストのみ"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "価格リストの割り当て",
+        "description": "価格リストの割り当てをエクスポート"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "価格設定",
+        "description": "価格、価格リスト、割り当て"
+      }
+    }
+  }
+}

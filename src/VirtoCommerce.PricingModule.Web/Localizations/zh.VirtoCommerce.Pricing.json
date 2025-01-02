@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "定价",
+    "blades": {
+      "pricing-main": {
+        "title": "定价",
+        "subtitle": "管理您的商品定价",
+        "menu": {
+          "pricelist-list": {
+            "title": "价格表"
+          },
+          "pricelist-assignment-list": {
+            "title": "价格表分配"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "管理您的价格表",
+        "labels": {
+          "name": "名称",
+          "currency": "货币",
+          "last-modified": "修改时间"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "新建价格表",
+        "labels": {
+          "name": "名称",
+          "currency": "货币",
+          "description": "描述"
+        },
+        "placeholders": {
+          "name": "输入名称",
+          "currency": "选择",
+          "description": "提供描述..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "选择要管理价格的产品",
+        "labels": {
+          "picture": "图片",
+          "item-name": "商品名称",
+          "item-code": "商品代码",
+          "price-range": "价格范围",
+          "price-count": "价格数量",
+          "prices-count": "此价格表中的价格数量",
+          "no-product-row-name": "没有此ID的产品项"
+        },
+        "placeholders": {
+          "search-item": "按名称搜索商品"
+        }
+      },
+      "prices-list": {
+        "title": "{{name}}的价格",
+        "subtitle": "编辑价格",
+        "labels": {
+          "currency": "货币",
+          "list-price": "标价",
+          "sale-price": "促销价",
+          "min-quantity": "最小数量",
+          "startDate": "生效日期",
+          "endDate": "截止日期",
+          "last-modified": "修改时间"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "管理已分配的目录",
+        "labels": {
+          "assignment-name": "分配名称",
+          "catalog": "目录",
+          "priority": "优先级"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "管理您的商品定价",
+        "labels": {
+          "name": "名称",
+          "catalog": "目录",
+          "pricelist": "价格表",
+          "pricelist-currency": "货币",
+          "priority": "优先级",
+          "activation": "激活时间",
+          "expiration": "过期时间",
+          "last-modified": "修改时间",
+          "modified-by": "修改人"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "新建价格表分配",
+        "subtitle": "编辑目录分配",
+        "labels": {
+          "assignment-name": "分配名称",
+          "price-list": "价格表",
+          "catalog": "目录",
+          "store": "商店",
+          "priority": "优先级",
+          "priority-description": "优先级较高的项目将优先使用",
+          "description": "描述",
+          "enable-date": "启用日期",
+          "enable-date-description": "如果始终可用则留空",
+          "expiration-date": "过期日期",
+          "expiration-date-description": "如果始终可用则留空",
+          "eligible-shoppers": "符合条件的购物者"
+        },
+        "placeholders": {
+          "assignment-name": "输入名称...",
+          "price-list": "选择...",
+          "catalog": "选择...",
+          "store": "选择...",
+          "description": "提供描述..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "选择要管理价格的价格表",
+        "labels": {
+          "name": "价格表",
+          "currency": "货币",
+          "priority": "优先级",
+          "prices-count": "价格数量"
+        },
+        "no-assignments": "此目录没有分配的价格表。点击此链接分配价格表 ",
+        "manage-pricelists": "管理定价"
+      },
+      "item-prices": {
+        "title": "{{name}}的价格",
+        "subtitle": "编辑价格",
+        "head-label": "新价格的价格表",
+        "pricelist-select-placeholder": "选择要添加新价格的价格表...",
+        "labels": {
+          "name": "价格表",
+          "currency": "货币",
+          "catalog": "目录",
+          "store": "商店",
+          "list-price": "标价",
+          "sale-price": "促销价",
+          "min-quantity": "最小数量",
+          "startDate": "生效日期",
+          "endDate": "截止日期"
+        }
+      },
+      "exporter": {
+        "priceTitle": "导出价格",
+        "priceSubtitle": "将价格导出为JSON或CSV文件",
+        "priceListTitle": "导出价格表",
+        "pricelistSubtitle": "将价格表导出为JSON或CSV文件",
+        "priceAssignmentTitle": "导出价格分配",
+        "priceAssignmentSubtitle": "将价格分配导出为JSON或CSV文件"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "分配"
+      },
+      "itemPricesWidget": {
+        "title": "价格",
+        "assign-pricelist": "分配价格表"
+      },
+      "prices": {
+        "title": "价格"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "确认删除",
+        "message": "您确定要删除所选的价格表分配吗？"
+      },
+      "assignments-delete-all": {
+        "title": "确认删除",
+        "warning": "警告：此更改是最终的，无法撤消。应用此更改可能会导致数据丢失",
+        "message": "所有筛选的项目都将被删除",
+        "instruction": "输入'yes'以删除："
+      },
+      "pricelists-delete": {
+        "title": "确认删除",
+        "message": "您确定要删除所选的价格表吗？"
+      },
+      "pricelist-item-list-delete": {
+        "title": "确认删除",
+        "message": "您确定要删除此价格表中所选产品的所有价格吗？"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "确认删除",
+        "message": "您确定要删除所选的价格吗？"
+      },
+      "item-prices-delete-error": {
+        "title": "错误",
+        "message": "每个单位必须至少有一个价格（最小数量为1）。"
+      },
+      "prices-save": {
+        "title": "保存更改",
+        "message": "价格已被修改。您要保存更改吗？"
+      },
+      "pricelist-save": {
+        "title": "保存更改",
+        "message": "价格表已被修改。您要保存更改吗？"
+      },
+      "assignment-save": {
+        "title": "保存更改",
+        "message": "目录分配已被修改。您要保存更改吗？"
+      },
+      "assignment-save-validation": {
+        "title": "保存更改",
+        "message": "对于价格表分配，您必须指定目录或商店。不能两个字段都留空"
+      }
+    },
+    "commands": {
+      "add-selected": "添加所选",
+      "delete-all": "删除全部",
+      "delete-filtered": "删除已筛选"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "价格表",
+        "modified-since": "修改时间",
+        "products": "产品",
+        "currencies": "货币"
+      },
+      "labels": {
+        "select": "选择",
+        "selected": "已选择："
+      },
+      "placeholders": {
+        "price-lists": "选择价格表...",
+        "catalog-lists": "选择目录..."
+      },
+      "blades": {
+        "titles": {
+          "select-products": "选择目录产品..."
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "打开定价菜单",
+    "pricing:create": "创建定价数据",
+    "pricing:read": "查看定价数据",
+    "pricing:update": "更新定价数据",
+    "pricing:delete": "删除定价数据"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "价格索引日期和时间",
+                "description": "价格索引任务将开始的日期和时间"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "导出/导入使用的批量大小",
+          "description": "指定导出/导入期间每批处理的记录数。提供较高的值可能会导致性能较慢"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "记录价格变更",
+        "description": "启用/禁用此选项以将更改记录到平台操作日志中。如果价格经常变化，这可能会影响数据库大小"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "产品价格索引",
+          "description": "启用/禁用此选项以将产品价格包含在产品索引中。如果价格发生变化，这也会导致产品重新索引"
+        },
+        "StorePricesInIndex": {
+          "title": "将所有产品价格存储为索引对象",
+          "description": "启用/禁用此选项以将所有产品价格存储在索引中的嵌套字段中，如<ProductName_price>"
+        },
+        "PriceIndexingValue": {
+          "title": "价格索引值",
+          "description": "选择将存储在产品索引中的产品价格值"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "定价实体的事件驱动索引",
+            "description": "启用/禁用定价实体的事件驱动索引。启用后，对目录实体的任何更改都会自动触发后台任务以更新搜索索引"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "导出或导入价格表、分配和价格"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "完整价格表数据",
+        "description": "带有相关对象的价格表数据。仅支持JSON导出提供程序"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "价格",
+        "description": "不带相关对象的价格"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "价格表",
+        "description": "仅价格表"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "价格表分配",
+        "description": "导出价格表分配"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "定价",
+        "description": "价格、价格表和分配"
+      }
+    }
+  }
+}

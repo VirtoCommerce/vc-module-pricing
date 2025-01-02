@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "Prezzi",
+    "blades": {
+      "pricing-main": {
+        "title": "Prezzi",
+        "subtitle": "Gestisci la determinazione dei prezzi della tua merce",
+        "menu": {
+          "pricelist-list": {
+            "title": "Liste dei prezzi"
+          },
+          "pricelist-assignment-list": {
+            "title": "Assegnazioni delle liste dei prezzi"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "Gestione delle tue liste dei prezzi",
+        "labels": {
+          "name": "Nome",
+          "currency": "Valuta",
+          "last-modified": "Modificato"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "Nuova lista dei prezzi",
+        "labels": {
+          "name": "Nome",
+          "currency": "Valuta",
+          "description": "Descrizione"
+        },
+        "placeholders": {
+          "name": "Inserisci il nome",
+          "currency": "Seleziona",
+          "description": "Fornisci una descrizione..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Seleziona un prodotto per gestire i prezzi",
+        "labels": {
+          "picture": "Immagine",
+          "item-name": "Nome dell'articolo",
+          "item-code": "Codice dell'articolo",
+          "price-range": "Fascia di prezzo",
+          "price-count": "Numero di prezzi",
+          "prices-count": "Numero di prezzi in questa lista dei prezzi",
+          "no-product-row-name": "Non esiste un prodotto con questo ID"
+        },
+        "placeholders": {
+          "search-item": "Cerca articolo per nome"
+        }
+      },
+      "prices-list": {
+        "title": "Prezzi per {{name}}",
+        "subtitle": "Modifica i prezzi",
+        "labels": {
+          "currency": "Valuta",
+          "list-price": "Prezzo di listino",
+          "sale-price": "Prezzo di vendita",
+          "min-quantity": "Quantità minima",
+          "startDate": "Valido da",
+          "endDate": "Valido fino a",
+          "last-modified": "Modificato"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Gestione dei cataloghi assegnati",
+        "labels": {
+          "assignment-name": "Nome dell'assegnazione",
+          "catalog": "Catalogo",
+          "priority": "Priorità"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Gestisci la determinazione dei prezzi della tua merce",
+        "labels": {
+          "name": "Nome",
+          "catalog": "Catalogo",
+          "pricelist": "Lista dei prezzi",
+          "pricelist-currency": "Valuta della lista dei prezzi",
+          "priority": "Priorità",
+          "activation": "Attivazione",
+          "expiration": "Scadenza",
+          "last-modified": "Modificato",
+          "modified-by": "Modificato da"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Nuova assegnazione della lista dei prezzi",
+        "subtitle": "Modifica dell'assegnazione del catalogo",
+        "labels": {
+          "assignment-name": "Nome dell'assegnazione",
+          "price-list": "Lista dei prezzi",
+          "catalog": "Catalogo",
+          "store": "Negozio",
+          "priority": "Priorità",
+          "priority-description": "L'elemento con priorità più alta verrà utilizzato per primo",
+          "description": "Descrizione",
+          "enable-date": "Data di attivazione",
+          "enable-date-description": "Lascia vuoto se sempre disponibile",
+          "expiration-date": "Data di scadenza",
+          "expiration-date-description": "Lascia vuoto se sempre disponibile",
+          "eligible-shoppers": "Clienti ammissibili"
+        },
+        "placeholders": {
+          "assignment-name": "Inserisci il nome...",
+          "price-list": "Seleziona...",
+          "catalog": "Seleziona...",
+          "store": "Seleziona...",
+          "description": "Fornisci una descrizione..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Seleziona una lista dei prezzi per gestire i prezzi",
+        "labels": {
+          "name": "Lista dei prezzi",
+          "currency": "Valuta",
+          "priority": "Priorità",
+          "prices-count": "Numero di prezzi"
+        },
+        "no-assignments": "Questo catalogo non ha liste dei prezzi assegnate. Assegna una lista dei prezzi seguendo questo link ",
+        "manage-pricelists": "Gestisci i prezzi"
+      },
+      "item-prices": {
+        "title": "Prezzi per {{name}}",
+        "subtitle": "Modifica i prezzi",
+        "head-label": "Lista dei prezzi per il nuovo prezzo",
+        "pricelist-select-placeholder": "Seleziona una lista dei prezzi per aggiungere il nuovo prezzo...",
+        "labels": {
+          "name": "Lista dei prezzi",
+          "currency": "Valuta",
+          "catalog": "Catalogo",
+          "store": "Negozio",
+          "list-price": "Prezzo di listino",
+          "sale-price": "Prezzo di vendita",
+          "min-quantity": "Quantità minima",
+          "startDate": "Valido da",
+          "endDate": "Valido fino a"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Esporta prezzi",
+        "priceSubtitle": "Esporta i prezzi in un file JSON o CSV",
+        "priceListTitle": "Esporta liste dei prezzi",
+        "pricelistSubtitle": "Esporta la tua lista dei prezzi in un file JSON o CSV",
+        "priceAssignmentTitle": "Esporta assegnazioni dei prezzi",
+        "priceAssignmentSubtitle": "Esporta le tue assegnazioni dei prezzi in un file JSON o CSV"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Assegnazioni"
+      },
+      "itemPricesWidget": {
+        "title": "Prezzo",
+        "assign-pricelist": "Assegna lista dei prezzi"
+      },
+      "prices": {
+        "title": "Prezzi"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler eliminare le assegnazioni delle liste dei prezzi selezionate?"
+      },
+      "assignments-delete-all": {
+        "title": "Conferma eliminazione",
+        "warning": "AVVISO: Questa modifica è definitiva e non può essere annullata. Applicare questa modifica potrebbe comportare una perdita di dati",
+        "message": "Tutti gli elementi filtrati saranno eliminati",
+        "instruction": "Digita 'yes' per eliminare:"
+      },
+      "pricelists-delete": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler eliminare le liste dei prezzi selezionate?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler eliminare tutti i prezzi dei prodotti selezionati in questa lista dei prezzi?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler eliminare i prezzi selezionati?"
+      },
+      "item-prices-delete-error": {
+        "title": "Errore",
+        "message": "Devi avere almeno un prezzo per unità (con quantità minima di 1)."
+      },
+      "prices-save": {
+        "title": "Salva modifiche",
+        "message": "I prezzi sono stati modificati. Vuoi salvare le modifiche?"
+      },
+      "pricelist-save": {
+        "title": "Salva modifiche",
+        "message": "La lista dei prezzi è stata modificata. Vuoi salvare le modifiche?"
+      },
+      "assignment-save": {
+        "title": "Salva modifiche",
+        "message": "L'assegnazione del catalogo è stata modificata. Vuoi salvare le modifiche?"
+      },
+      "assignment-save-validation": {
+        "title": "Salva modifiche",
+        "message": "Per un'assegnazione della lista dei prezzi, devi specificare un catalogo o un negozio. Non puoi lasciare entrambi i campi vuoti"
+      }
+    },
+    "commands": {
+      "add-selected": "Aggiungi selezionati",
+      "delete-all": "Elimina tutto",
+      "delete-filtered": "Elimina filtrati"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Liste dei prezzi",
+        "modified-since": "Modificato da",
+        "products": "Prodotti",
+        "currencies": "Valute"
+      },
+      "labels": {
+        "select": "Seleziona",
+        "selected": "Selezionato: "
+      },
+      "placeholders": {
+        "price-lists": "Seleziona liste dei prezzi...",
+        "catalog-lists": "Seleziona catalogo..."
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Seleziona prodotti del catalogo..."
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "Apri menu prezzi",
+    "pricing:create": "Crea dati prezzi",
+    "pricing:read": "Visualizza dati prezzi",
+    "pricing:update": "Aggiorna dati prezzi",
+    "pricing:delete": "Elimina dati prezzi"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Data e ora di indicizzazione dei prezzi",
+                "description": "Data e ora in cui inizierà il compito di indicizzazione dei prezzi"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Dimensione del batch per esportazione/importazione",
+          "description": "Specifica il numero di record elaborati per batch durante l'esportazione/importazione. Fornire valori elevati può causare prestazioni più lente"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Registrare le modifiche dei prezzi",
+        "description": "Abilita/disabilita questa opzione per registrare le modifiche nel registro operativo della piattaforma. Questo può influire sulla dimensione del database se i prezzi cambiano frequentemente"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Indicizzazione dei prezzi dei prodotti",
+          "description": "Abilita/disabilita questa opzione per includere il prezzo del prodotto nell'indice del prodotto. Questo causerà anche la reinindicizzazione del prodotto se il prezzo viene modificato"
+        },
+        "StorePricesInIndex": {
+          "title": "Memorizza tutti i prezzi dei prodotti come oggetto di indice",
+          "description": "Abilita/disabilita questa opzione per memorizzare tutti i prezzi dei prodotti nell'indice all'interno di un campo annidato come <NomeProdotto_prezzo>"
+        },
+        "PriceIndexingValue": {
+          "title": "Valore di indicizzazione dei prezzi",
+          "description": "Seleziona il valore del prezzo del prodotto che sarà memorizzato nell'indice del prodotto"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Indicizzazione basata su eventi per entità di prezzi",
+            "description": "Abilita/disabilita l'indicizzazione basata su eventi per entità di prezzi. Quando è abilitato, qualsiasi modifica apportata a un'entità di catalogo innescherà automaticamente un compito in background per aggiornare l'indice di ricerca"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Esporta o importa liste dei prezzi, assegnazioni e prezzi"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Dati completi della lista dei prezzi",
+        "description": "Dati della lista dei prezzi con oggetti correlati. Supporta solo il fornitore di esportazione JSON"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Prezzo",
+        "description": "Prezzi senza oggetti correlati"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Lista dei prezzi",
+        "description": "Solo liste dei prezzi"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Assegnazione della lista dei prezzi",
+        "description": "Esporta le assegnazioni delle liste dei prezzi"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Prezzi",
+        "description": "Prezzi, liste dei prezzi e assegnazioni"
+      }
+    }
+  }
+}

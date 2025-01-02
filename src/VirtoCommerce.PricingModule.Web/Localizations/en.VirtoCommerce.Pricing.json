@@ -7,10 +7,10 @@
         "subtitle": "Manage your merchandise pricing",
         "menu": {
           "pricelist-list": {
-            "title": "Price Lists"
+            "title": "Price lists"
           },
           "pricelist-assignment-list": {
-            "title": "Price List Assignments"
+            "title": "Price list assignments"
           }
         }
       },
@@ -23,20 +23,20 @@
         }
       },
       "pricelist-detail": {
-        "title-new": "New Price List",
+        "title-new": "New price list",
         "labels": {
           "name": "Name",
           "currency": "Currency",
           "description": "Description"
         },
         "placeholders": {
-          "name": "Please enter name...",
-          "currency": "Please select...",
-          "description": "Please provide description..."
+          "name": "Enter name",
+          "currency": "Select",
+          "description": "Provide description..."
         }
       },
       "pricelist-item-list": {
-        "subtitle": "Please select a product to manage the prices for",
+        "subtitle": "Select a product to manage the prices for",
         "labels": {
           "picture": "Image",
           "item-name": "Item name",
@@ -47,7 +47,7 @@
           "no-product-row-name": "There is no product item with this ID"
         },
         "placeholders": {
-          "search-item": "Search item by name..."
+          "search-item": "Search item by name"
         }
       },
       "prices-list": {
@@ -59,7 +59,7 @@
           "sale-price": "Sale price",
           "min-quantity": "Min quantity",
           "startDate": "Valid from",
-          "endDate": "Valid until",
+          "endDate": "Valid till",
           "last-modified": "Modified"
         }
       },
@@ -86,7 +86,7 @@
         }
       },
       "assignment-detail": {
-        "new-title": "New Price List Assignment",
+        "new-title": "New price list assignment",
         "subtitle": "Editing catalog assignment",
         "labels": {
           "assignment-name": "Assignment name",
@@ -103,11 +103,11 @@
           "eligible-shoppers": "Eligible shoppers"
         },
         "placeholders": {
-          "assignment-name": "Please enter name...",
-          "price-list": "Please select...",
-          "catalog": "Please select...",
-          "store": "Please select...",
-          "description": "Please provide description..."
+          "assignment-name": "Enter name...",
+          "price-list": "Select...",
+          "catalog": "Select...",
+          "store": "Select...",
+          "description": "Provide description..."
         }
       },
       "item-pricelists-list": {
@@ -118,7 +118,7 @@
           "priority": "Priority",
           "prices-count": "Price count"
         },
-        "no-assignments": "This catalog does not have any assigned price lists. Please assign a price list by following this link ",
+        "no-assignments": "This catalog has no assigned price lists. Assign a price list by following this link ",
         "manage-pricelists": "Manage pricing"
       },
       "item-prices": {
@@ -127,7 +127,7 @@
         "head-label": "Price list for the new price",
         "pricelist-select-placeholder": "Select a price list to add the new price to...",
         "labels": {
-          "name": "Price List",
+          "name": "Price list",
           "currency": "Currency",
           "catalog": "Catalog",
           "store": "Store",
@@ -135,15 +135,15 @@
           "sale-price": "Sale price",
           "min-quantity": "Min quantity",
           "startDate": "Valid from",
-          "endDate": "Valid until"
+          "endDate": "Valid till"
         }
       },
       "exporter": {
-        "priceTitle": "Export Prices",
+        "priceTitle": "Export prices",
         "priceSubtitle": "Export prices to a JSON or CSV file",
-        "priceListTitle": "Export Price Lists",
+        "priceListTitle": "Export price lists",
         "pricelistSubtitle": "Export your price list to a JSON or CSV file",
-        "priceAssignmentTitle": "Export Price Assignments",
+        "priceAssignmentTitle": "Export price assignments",
         "priceAssignmentSubtitle": "Export your price assignment to a JSON or CSV file"
       }
     },
@@ -161,30 +161,30 @@
     },
     "dialogs": {
       "assignments-delete": {
-        "title": "Confirm Delete",
+        "title": "Confirm delete",
         "message": "Are you sure you want to delete the selected price list assignment(s)?"
       },
       "assignments-delete-all": {
-        "title": "Confirm Delete",
-        "warning": "WARNING: This change is final and cannot be undone. Applying this change may result in a data loss.",
+        "title": "Confirm delete",
+        "warning": "WARNING: This change is final and cannot be undone. Applying this change may result in a data loss",
         "message": "All filtered items will be deleted",
         "instruction": "Type 'yes' to delete:"
       },
       "pricelists-delete": {
-        "title": "Confirm Delete",
+        "title": "Confirm delete",
         "message": "Are you sure you want to delete the selected price list(s)?"
       },
       "pricelist-item-list-delete": {
-        "title": "Confirm Delete",
+        "title": "Confirm delete",
         "message": "Are you sure you want to delete all prices for the selected product(s) in this price list?"
       },
       "item-prices-delete-confirmation": {
-        "title": "Confirm Delete",
+        "title": "Confirm delete",
         "message": "Are you sure you want to delete the selected price(s)?"
       },
       "item-prices-delete-error": {
         "title": "Error",
-        "message": "You must have at least one price per single unit (with minimum quantity at 1)."
+        "message": "You must have at least one price per unit (with minimum quantity of 1)."
       },
       "prices-save": {
         "title": "Save changes",
@@ -200,7 +200,7 @@
       },
       "assignment-save-validation": {
         "title": "Save changes",
-        "message": "For a price list assignment, you must provide either a catalog or a store. You cannot leave both fields blank."
+        "message": "For a price list assignment, you must specify either a catalog or a store. You cannot leave both fields blank"
       }
     },
     "commands": {
@@ -255,33 +255,33 @@
     "Pricing": {
       "ExportImport": {
         "PageSize": {
-          "title": "Page size being used for Export / Import",
-          "description": "Providing high values may lead to slow performance"
+          "title": "Records per batch for export/ import",
+          "description": "Specify the number of records processed per batch during export/ import. Providing high values may lead to slower performance"
         }
       },
       "LogPricingChanges": {
         "title": "Log pricing changes",
-        "description": "Logs changes into the platform operation log. This might impact database size in case prices get changed often."
+        "description": "Enable/ disable this option to log changes into the platform operation log. This might impact database size if prices change often"
       },
       "Indexing": {
         "Enable": {
-          "title": "Enable product price indexing",
-          "description": "Enable this option to include the product price into the product index. This will also cause product re-indexing once the price gets changed."
+          "title": "Product price indexing",
+          "description": "Enable/ disable this option to include the product price into the product index. This will also cause product re-indexing if the price is changed"
         },
         "StorePricesInIndex": {
           "title": "Store all product prices as an index object",
-          "description": "Enable this option to store all product prices in the index within a nested field as <ProductName_price>"
+          "description": "Enable/ disable this option to store all product prices in the index within a nested field as <ProductName_price>"
         },
         "PriceIndexingValue": {
           "title": "Price indexing value",
-          "description": "Determines product price value that'll be stored in the product index."
+          "description": "Select product price value that will be stored in the product index"
         }
       },
       "Search": {
         "EventBasedIndexation": {
           "Enable": {
-            "title": "Enable event-based indexing for pricing entities",
-            "description": "Any changes to a catalog entity will trigger a background task that will apply these changes to the search index."
+            "title": "Event-based indexing for pricing entities",
+            "description": "Enable/ disable event-based indexing for pricing entities. When enabled, any changes made to a catalog entity will automatically trigger a background task to update the search index"
           }
         }
       }

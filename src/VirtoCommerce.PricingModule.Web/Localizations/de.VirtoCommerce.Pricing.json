@@ -1,181 +1,321 @@
 {
-    "pricing": {
-        "main-menu-title": "Preise",
-        "blades": {
-            "pricing-main": {
-                "title": "Preise",
-                "subtitle": "Warenwirtschaft",
-                "menu": {
-                    "pricelist-list": {
-                        "title": "Preislisten"
-                    },
-                    "pricelist-assignment-list": {
-                        "title": "Preisliste Zuordnungen"
-                    }
-                }
-            },
-            "pricelist-list": {
-                "subtitle": "Preislisten verwalten",
-                "labels": {
-                    "name": "Name",
-                    "currency": "Währung",
-                    "last-modified": "Geändert"
-                }
-            },
-            "pricelist-detail": {
-                "title-new": "Neue Preisliste",
-                "labels": {
-                    "name": "Name",
-                    "currency": "Währung",
-                    "description": "Beschreibung"
-                },
-                "placeholders": {
-                    "name": "Name eingeben",
-                    "currency": "Wählen Sie aus...",
-                    "description": "Beschreibung eingeben"
-                }
-            },
-            "pricelist-item-list": {
-                "subtitle": "Wählen Sie das Produkt, um die Preise zu verwalten",
-                "labels": {
-                    "picture": "Bild",
-                    "item-name": "Artikelname",
-                    "item-code": "Artikelcode",
-                    "price-range": "Preisspanne",
-                    "prices-count": "Preise zählen"
-                },
-                "placeholders": {
-                    "search-item": "Suchen Sie den Artikel bei Namen..."
-                }
-            },
-            "prices-list": {
-                "title": "Preise für {{name}}",
-                "subtitle": "Bearbeiten Sie die Preise",
-                "labels": {
-                    "currency": "Währung",
-                    "list-price": "Listenpreis",
-                    "sale-price": "Sonderangebot",
-                    "min-quantity": "Min. Menge",
-                    "last-modified": "Geändert"
-                }
-            },
-            "pricelist-assignment-list": {
-                "subtitle": "Zugewiesene Kataloge verwalten",
-                "labels": {
-                    "assignment-name": "Zuordnungsname",
-                    "catalog": "Katalog",
-                    "priority": "Priorität"
-                }
-            },
-            "assignment-list": {
-                "subtitle": "Warenwirtschaft",
-                "labels": {
-                    "name": "Name",
-                    "catalog": "Katalog",
-                    "pricelist": "Preisliste",
-                    "pricelist-currency": "Währung",
-                    "priority": "Priorität",
-                    "activation": "Aktivierung",
-                    "expiration": "Ablauf",
-                    "last-modified": "Geändert",
-                    "modified-by": "Geändert von"
-                }
-            },
-            "assignment-detail": {
-                "new-title": "Neue Preislistenzuordnung",
-                "subtitle": "Katalogzuordnung bearbeiten",
-                "labels": {
-                    "assignment-name": "Zuordnungsname",
-                    "price-list": "Preisliste",
-                    "catalog": "Katalog",
-                    "priority": "Priorität",
-                    "description": "Beschreibung",
-                    "enable-date": "Datum aktivieren (leer lassen, wenn Immer verfügbar)",
-                    "expiration-date": "Ablaufdatum (leer lassen, wenn Immer verfügbar)",
-                    "eligible-shoppers": "Berechtigte Kunden"
-                },
-                "placeholders": {
-                    "assignment-name": "Namen eingeben",
-                    "price-list": "Wählen Sie aus...",
-                    "catalog": "Wählen Sie aus...",
-                    "description": "Beschreibung eingeben"
-                }
-            },
-            "item-pricelists-list": {
-                "subtitle": "Preisliste auswählen zu verwalten",
-                "labels": {
-                    "name": "Preis Liste",
-                    "currency": "Währung",
-                    "priority": "Priorität",
-                    "prices-count": "Preise zählen"
-                },
-                "no-assignments": "Katalog nicht belegt Preislisten. Bitte weisen Sie eine Preisliste unter folgendem Link",
-                "manage-pricelists": "Verwalten Preise"
-            }
-        },
-        "widgets": {
-            "assignments": {
-                "title": "Zuweisungen"
-            },
-            "itemPricesWidget": {
-                "title": "Preis",
-                "assign-pricelist": "Preis Liste zuweisen"
-            },
-            "prices": {
-                "title": "Preise"
-            }
-        },
-        "dialogs": {
-            "assignments-delete": {
-                "title": "Bestätigung löschen",
-                "message": "Sind Sie sicher, dass Sie ausgewählte Preislistenzuordnungen löschen möchten?"
-            },
-            "assignments-delete-all": {
-                "title": "Bestätigung löschen",
-                "warning": "Warnung Diese Änderung ist endgültig und kann nicht rückgängig gemacht werden. Es kann zu Datenverlust führen.",
-                "message": "Alle gefilterte Elemente werden gelöscht",
-                "instruction": "Geben Sie 'yes', um den Löschvorgang zu aktivieren:"
-            },
-            "pricelists-delete": {
-                "title": "Bestätigung löschen",
-                "message": "Sind Sie sicher, dass Sie ausgewählte Preislisten löschen möchten?"
-            },
-            "pricelist-item-list-delete": {
-                "title": "Bestätigung löschen",
-                "message": "Sind Sie sicher, dass Sie alle Preise für ausgewählte Produkte in dieser Preisliste löschen möchten?"
-            },
-            "prices-save": {
-                "title": "Änderungen speichern",
-                "message": "Die Preise wurde geändert. Möchten Sie die Änderungen speichern?"
-            },
-            "pricelist-save": {
-                "title": "Änderungen speichern",
-                "message": "Die Preisliste wurde geändert. Möchten Sie die Änderungen speichern?"
-            },
-            "assignment-save": {
-                "title": "Änderungen speichern",
-                "message": "Der Katalog Zuordnung wurde geändert. Möchten Sie die Änderungen speichern?"
-            }
-        },
-        "commands": {
-            "add-selected": "Ausgewählte hinzufügen"
+  "pricing": {
+    "main-menu-title": "Preisgestaltung",
+    "blades": {
+      "pricing-main": {
+        "title": "Preisgestaltung",
+        "subtitle": "Verwalten Sie die Preisgestaltung Ihrer Waren",
+        "menu": {
+          "pricelist-list": {
+            "title": "Preislisten"
+          },
+          "pricelist-assignment-list": {
+            "title": "Preislistezuweisungen"
+          }
         }
-    },
-    "permissions": {
-        "pricing:access": "Öffnen Sie das Preismenü",
-        "pricing:create": "Erstellen Sie Preisdaten",
-        "pricing:read": "Preisdaten anzeigen",
-        "pricing:update": "Preisdaten aktualisieren",
-        "pricing:delete": "Löschen Sie die Preisdaten"
-    },
-    "settings": {
-        "Pricing": {
-            "ExportImport": {
-                "PageSize": {
-                    "title": "Die Seitengröße wird für den Export / Import verwendet",
-                    "description": "Hoher Wert kann zu langsamer Leistung führen"
-                }
-            }
+      },
+      "pricelist-list": {
+        "subtitle": "Verwaltung Ihrer Preislisten",
+        "labels": {
+          "name": "Name",
+          "currency": "Währung",
+          "last-modified": "Geändert"
         }
+      },
+      "pricelist-detail": {
+        "title-new": "Neue Preisliste",
+        "labels": {
+          "name": "Name",
+          "currency": "Währung",
+          "description": "Beschreibung"
+        },
+        "placeholders": {
+          "name": "Namen eingeben",
+          "currency": "Auswählen",
+          "description": "Beschreibung bereitstellen..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Wählen Sie ein Produkt zur Preisverwaltung aus",
+        "labels": {
+          "picture": "Bild",
+          "item-name": "Artikelname",
+          "item-code": "Artikelcode",
+          "price-range": "Preisspanne",
+          "price-count": "Anzahl der Preise",
+          "prices-count": "Anzahl der Preise in dieser Preisliste",
+          "no-product-row-name": "Es gibt kein Produkt mit dieser ID"
+        },
+        "placeholders": {
+          "search-item": "Artikel nach Namen suchen"
+        }
+      },
+      "prices-list": {
+        "title": "Preise für {{name}}",
+        "subtitle": "Preise bearbeiten",
+        "labels": {
+          "currency": "Währung",
+          "list-price": "Listenpreis",
+          "sale-price": "Verkaufspreis",
+          "min-quantity": "Mindestmenge",
+          "startDate": "Gültig ab",
+          "endDate": "Gültig bis",
+          "last-modified": "Geändert"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Verwaltung zugewiesener Kataloge",
+        "labels": {
+          "assignment-name": "Zuweisungsname",
+          "catalog": "Katalog",
+          "priority": "Priorität"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Verwalten Sie die Preisgestaltung Ihrer Waren",
+        "labels": {
+          "name": "Name",
+          "catalog": "Katalog",
+          "pricelist": "Preisliste",
+          "pricelist-currency": "Währung der Preisliste",
+          "priority": "Priorität",
+          "activation": "Aktivierung",
+          "expiration": "Ablauf",
+          "last-modified": "Geändert",
+          "modified-by": "Geändert von"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Neue Preislistezuweisung",
+        "subtitle": "Katalogzuweisung bearbeiten",
+        "labels": {
+          "assignment-name": "Zuweisungsname",
+          "price-list": "Preisliste",
+          "catalog": "Katalog",
+          "store": "Shop",
+          "priority": "Priorität",
+          "priority-description": "Das Element mit höherer Priorität wird zuerst verwendet",
+          "description": "Beschreibung",
+          "enable-date": "Aktivierungsdatum",
+          "enable-date-description": "Leer lassen, wenn immer verfügbar",
+          "expiration-date": "Ablaufdatum",
+          "expiration-date-description": "Leer lassen, wenn immer verfügbar",
+          "eligible-shoppers": "Berechtigte Käufer"
+        },
+        "placeholders": {
+          "assignment-name": "Namen eingeben...",
+          "price-list": "Auswählen...",
+          "catalog": "Auswählen...",
+          "store": "Auswählen...",
+          "description": "Beschreibung bereitstellen..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Wählen Sie eine Preisliste zur Preisverwaltung aus",
+        "labels": {
+          "name": "Preisliste",
+          "currency": "Währung",
+          "priority": "Priorität",
+          "prices-count": "Anzahl der Preise"
+        },
+        "no-assignments": "Dieser Katalog hat keine zugewiesenen Preislisten. Weisen Sie eine Preisliste zu, indem Sie diesem Link folgen ",
+        "manage-pricelists": "Preisgestaltung verwalten"
+      },
+      "item-prices": {
+        "title": "Preise für {{name}}",
+        "subtitle": "Preise bearbeiten",
+        "head-label": "Preisliste für den neuen Preis",
+        "pricelist-select-placeholder": "Wählen Sie eine Preisliste, um den neuen Preis hinzuzufügen...",
+        "labels": {
+          "name": "Preisliste",
+          "currency": "Währung",
+          "catalog": "Katalog",
+          "store": "Shop",
+          "list-price": "Listenpreis",
+          "sale-price": "Verkaufspreis",
+          "min-quantity": "Mindestmenge",
+          "startDate": "Gültig ab",
+          "endDate": "Gültig bis"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Preise exportieren",
+        "priceSubtitle": "Preise in eine JSON- oder CSV-Datei exportieren",
+        "priceListTitle": "Preislisten exportieren",
+        "pricelistSubtitle": "Ihre Preisliste in eine JSON- oder CSV-Datei exportieren",
+        "priceAssignmentTitle": "Preisinformationen exportieren",
+        "priceAssignmentSubtitle": "Ihre Preisinformationen in eine JSON- oder CSV-Datei exportieren"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Zuweisungen"
+      },
+      "itemPricesWidget": {
+        "title": "Preis",
+        "assign-pricelist": "Preisliste zuweisen"
+      },
+      "prices": {
+        "title": "Preise"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Löschen bestätigen",
+        "message": "Sind Sie sicher, dass Sie die ausgewählten Preislistezuweisungen löschen möchten?"
+      },
+      "assignments-delete-all": {
+        "title": "Löschen bestätigen",
+        "warning": "WARNUNG: Diese Änderung ist endgültig und kann nicht rückgängig gemacht werden. Durch Anwenden dieser Änderung kann es zu Datenverlust kommen",
+        "message": "Alle gefilterten Elemente werden gelöscht",
+        "instruction": "Geben Sie 'yes' ein, um zu löschen:"
+      },
+      "pricelists-delete": {
+        "title": "Löschen bestätigen",
+        "message": "Sind Sie sicher, dass Sie die ausgewählten Preislisten löschen möchten?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Löschen bestätigen",
+        "message": "Sind Sie sicher, dass Sie alle Preise für die ausgewählten Produkte in dieser Preisliste löschen möchten?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Löschen bestätigen",
+        "message": "Sind Sie sicher, dass Sie die ausgewählten Preise löschen möchten?"
+      },
+      "item-prices-delete-error": {
+        "title": "Fehler",
+        "message": "Sie müssen mindestens einen Preis pro Einheit (mit Mindestmenge von 1) haben."
+      },
+      "prices-save": {
+        "title": "Änderungen speichern",
+        "message": "Die Preise wurden geändert. Möchten Sie die Änderungen speichern?"
+      },
+      "pricelist-save": {
+        "title": "Änderungen speichern",
+        "message": "Die Preisliste wurde geändert. Möchten Sie die Änderungen speichern?"
+      },
+      "assignment-save": {
+        "title": "Änderungen speichern",
+        "message": "Die Katalogzuweisung wurde geändert. Möchten Sie die Änderungen speichern?"
+      },
+      "assignment-save-validation": {
+        "title": "Änderungen speichern",
+        "message": "Für eine Preislistezuweisung müssen Sie entweder einen Katalog oder einen Shop angeben. Sie können beide Felder nicht leer lassen"
+      }
+    },
+    "commands": {
+      "add-selected": "Ausgewählte hinzufügen",
+      "delete-all": "Alle löschen",
+      "delete-filtered": "Gefilterte löschen"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Preislisten",
+        "modified-since": "Seit geändert",
+        "products": "Produkte",
+        "currencies": "Währungen"
+      },
+      "labels": {
+        "select": "Auswählen",
+        "selected": "Ausgewählt: "
+      },
+      "placeholders": {
+        "price-lists": "Preislisten auswählen...",
+        "catalog-lists": "Katalog auswählen..."
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Katalogprodukte auswählen..."
+        }
+      }
     }
+  },
+  "permissions": {
+    "pricing:access": "Preismenu öffnen",
+    "pricing:create": "Preisdaten erstellen",
+    "pricing:read": "Preisdaten anzeigen",
+    "pricing:update": "Preisdaten aktualisieren",
+    "pricing:delete": "Preisdaten löschen"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Preisindexierungsdatum und -zeit",
+                "description": "Datum und Uhrzeit, zu der die Preisindexierung gestartet wird"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Batchgröße für Export/Import",
+          "description": "Geben Sie die Anzahl der Datensätze pro Batch während des Exports/Imports an. Hohe Werte können zu langsameren Leistungen führen"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Preisänderungen protokollieren",
+        "description": "Diese Option aktivieren/deaktivieren, um Änderungen in das Betriebsprotokoll der Plattform zu protokollieren. Dies kann die Größe der Datenbank beeinträchtigen, wenn Preise häufig geändert werden"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Produktpreisindizierung",
+          "description": "Diese Option aktivieren/deaktivieren, um den Produktpreis in den Produktindex einzubeziehen. Dies führt auch zur erneuten Indizierung des Produkts, wenn der Preis geändert wird"
+        },
+        "StorePricesInIndex": {
+          "title": "Alle Produktpreise als Indexobjekt speichern",
+          "description": "Diese Option aktivieren/deaktivieren, um alle Produktpreise innerhalb eines verschachtelten Feldes als <ProductName_price> im Index zu speichern"
+        },
+        "PriceIndexingValue": {
+          "title": "Preisindexierungswert",
+          "description": "Wählen Sie den Produktpreiswert aus, der im Produktindex gespeichert wird"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Ereignisbasiertes Indexieren für Preisentitäten",
+            "description": "Diese Option aktivieren/deaktivieren, um ereignisbasiertes Indexieren für Preisentitäten zu aktivieren. Wenn aktiviert, lösen Änderungen an einer Katalogentität automatisch eine Hintergrundaufgabe zur Aktualisierung des Suchindex aus"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Exportieren oder Importieren von Preislisten, Zuweisungen und Preisen"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Vollständige Preisliste",
+        "description": "Preisliste mit zugehörigen Objekten. Unterstützt nur JSON-Exportanbieter"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Preis",
+        "description": "Preise ohne zugehörige Objekte"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Preisliste",
+        "description": "Nur Preislisten"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Preislistezuweisung",
+        "description": "Preislistezuweisungen exportieren"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Preisgestaltung",
+        "description": "Preise, Preislisten und Zuweisungen"
+      }
+    }
+  }
 }

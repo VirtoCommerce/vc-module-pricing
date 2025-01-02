@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "Cennik",
+    "blades": {
+      "pricing-main": {
+        "title": "Cennik",
+        "subtitle": "Zarządzaj cenami swojej towarów",
+        "menu": {
+          "pricelist-list": {
+            "title": "Listy cen"
+          },
+          "pricelist-assignment-list": {
+            "title": "Przypisania list cen"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "Zarządzanie listami cen",
+        "labels": {
+          "name": "Nazwa",
+          "currency": "Waluta",
+          "last-modified": "Ostatnio zmodyfikowano"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "Nowa lista cen",
+        "labels": {
+          "name": "Nazwa",
+          "currency": "Waluta",
+          "description": "Opis"
+        },
+        "placeholders": {
+          "name": "Wprowadź nazwę",
+          "currency": "Wybierz",
+          "description": "Wprowadź opis..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Wybierz produkt, aby zarządzać cenami",
+        "labels": {
+          "picture": "Obrazek",
+          "item-name": "Nazwa produktu",
+          "item-code": "Kod produktu",
+          "price-range": "Zakres cen",
+          "price-count": "Liczba cen",
+          "prices-count": "Liczba cen w tej liście cen",
+          "no-product-row-name": "Nie ma produktu o tym ID"
+        },
+        "placeholders": {
+          "search-item": "Szukaj produktu po nazwie"
+        }
+      },
+      "prices-list": {
+        "title": "Ceny dla {{name}}",
+        "subtitle": "Edytuj ceny",
+        "labels": {
+          "currency": "Waluta",
+          "list-price": "Cena katalogowa",
+          "sale-price": "Cena sprzedaży",
+          "min-quantity": "Minimalna ilość",
+          "startDate": "Obowiązuje od",
+          "endDate": "Obowiązuje do",
+          "last-modified": "Ostatnio zmodyfikowano"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Zarządzanie przypisanymi katalogami",
+        "labels": {
+          "assignment-name": "Nazwa przypisania",
+          "catalog": "Katalog",
+          "priority": "Priorytet"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Zarządzaj cenami swojej towarów",
+        "labels": {
+          "name": "Nazwa",
+          "catalog": "Katalog",
+          "pricelist": "Lista cen",
+          "pricelist-currency": "Waluta listy cen",
+          "priority": "Priorytet",
+          "activation": "Aktywacja",
+          "expiration": "Wygaśnięcie",
+          "last-modified": "Ostatnio zmodyfikowano",
+          "modified-by": "Zmodyfikowany przez"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Nowe przypisanie listy cen",
+        "subtitle": "Edytowanie przypisania katalogu",
+        "labels": {
+          "assignment-name": "Nazwa przypisania",
+          "price-list": "Lista cen",
+          "catalog": "Katalog",
+          "store": "Sklep",
+          "priority": "Priorytet",
+          "priority-description": "Element o wyższym priorytecie będzie używany jako pierwszy",
+          "description": "Opis",
+          "enable-date": "Data aktywacji",
+          "enable-date-description": "Pozostaw puste, jeśli zawsze dostępne",
+          "expiration-date": "Data wygaśnięcia",
+          "expiration-date-description": "Pozostaw puste, jeśli zawsze dostępne",
+          "eligible-shoppers": "Uprawnieni kupujący"
+        },
+        "placeholders": {
+          "assignment-name": "Wprowadź nazwę...",
+          "price-list": "Wybierz...",
+          "catalog": "Wybierz...",
+          "store": "Wybierz...",
+          "description": "Wprowadź opis..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Wybierz listę cen, aby zarządzać cenami",
+        "labels": {
+          "name": "Lista cen",
+          "currency": "Waluta",
+          "priority": "Priorytet",
+          "prices-count": "Liczba cen"
+        },
+        "no-assignments": "Ten katalog nie ma przypisanych list cen. Przypisz listę cen, postępując według tego linku ",
+        "manage-pricelists": "Zarządzaj cenami"
+      },
+      "item-prices": {
+        "title": "Ceny dla {{name}}",
+        "subtitle": "Edytuj ceny",
+        "head-label": "Lista cen dla nowej ceny",
+        "pricelist-select-placeholder": "Wybierz listę cen, aby dodać nową cenę...",
+        "labels": {
+          "name": "Lista cen",
+          "currency": "Waluta",
+          "catalog": "Katalog",
+          "store": "Sklep",
+          "list-price": "Cena katalogowa",
+          "sale-price": "Cena sprzedaży",
+          "min-quantity": "Minimalna ilość",
+          "startDate": "Obowiązuje od",
+          "endDate": "Obowiązuje do"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Eksportuj ceny",
+        "priceSubtitle": "Eksportuj ceny do pliku JSON lub CSV",
+        "priceListTitle": "Eksportuj listy cen",
+        "pricelistSubtitle": "Eksportuj swoją listę cen do pliku JSON lub CSV",
+        "priceAssignmentTitle": "Eksportuj przypisania cen",
+        "priceAssignmentSubtitle": "Eksportuj swoje przypisania cen do pliku JSON lub CSV"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Przypisania"
+      },
+      "itemPricesWidget": {
+        "title": "Cena",
+        "assign-pricelist": "Przypisz listę cen"
+      },
+      "prices": {
+        "title": "Ceny"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Potwierdź usunięcie",
+        "message": "Czy na pewno chcesz usunąć wybrane przypisania list cen?"
+      },
+      "assignments-delete-all": {
+        "title": "Potwierdź usunięcie",
+        "warning": "OSTRZEŻENIE: Ta zmiana jest ostateczna i nie można jej cofnąć. Zastosowanie tej zmiany może spowodować utratę danych",
+        "message": "Wszystkie filtrowane elementy zostaną usunięte",
+        "instruction": "Wpisz 'yes', aby usunąć:"
+      },
+      "pricelists-delete": {
+        "title": "Potwierdź usunięcie",
+        "message": "Czy na pewno chcesz usunąć wybrane listy cen?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Potwierdź usunięcie",
+        "message": "Czy na pewno chcesz usunąć wszystkie ceny dla wybranych produktów na tej liście cen?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Potwierdź usunięcie",
+        "message": "Czy na pewno chcesz usunąć wybrane ceny?"
+      },
+      "item-prices-delete-error": {
+        "title": "Błąd",
+        "message": "Musisz mieć co najmniej jedną cenę na jednostkę (z minimalną ilością 1)."
+      },
+      "prices-save": {
+        "title": "Zapisz zmiany",
+        "message": "Ceny zostały zmienione. Czy chcesz zapisać zmiany?"
+      },
+      "pricelist-save": {
+        "title": "Zapisz zmiany",
+        "message": "Lista cen została zmieniona. Czy chcesz zapisać zmiany?"
+      },
+      "assignment-save": {
+        "title": "Zapisz zmiany",
+        "message": "Przypisanie katalogu zostało zmienione. Czy chcesz zapisać zmiany?"
+      },
+      "assignment-save-validation": {
+        "title": "Zapisz zmiany",
+        "message": "Dla przypisania listy cen musisz określić katalog lub sklep. Nie możesz pozostawić obu pól pustych"
+      }
+    },
+    "commands": {
+      "add-selected": "Dodaj wybrane",
+      "delete-all": "Usuń wszystko",
+      "delete-filtered": "Usuń filtrowane"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Listy cen",
+        "modified-since": "Zmodyfikowane od",
+        "products": "Produkty",
+        "currencies": "Waluty"
+      },
+      "labels": {
+        "select": "Wybierz",
+        "selected": "Wybrane: "
+      },
+      "placeholders": {
+        "price-lists": "Wybierz listy cen...",
+        "catalog-lists": "Wybierz katalog..."
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Wybierz produkty z katalogu..."
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "Otwórz menu cen",
+    "pricing:create": "Twórz dane cenowe",
+    "pricing:read": "Wyświetlaj dane cenowe",
+    "pricing:update": "Aktualizuj dane cenowe",
+    "pricing:delete": "Usuń dane cenowe"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Data i godzina indeksowania cen",
+                "description": "Data i godzina, kiedy rozpocznie się zadanie indeksowania cen"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Rozmiar partii dla eksportu/importu",
+          "description": "Określ liczbę rekordów przetwarzanych na partię podczas eksportu/importu. Podanie wysokich wartości może spowodować wolniejszą wydajność"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Rejestruj zmiany cen",
+        "description": "Włącz/wyłącz tę opcję, aby rejestrować zmiany w dzienniku operacyjnym platformy. Może to wpływać na rozmiar bazy danych, jeśli ceny często się zmieniają"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Indeksowanie cen produktów",
+          "description": "Włącz/wyłącz tę opcję, aby uwzględnić cenę produktu w indeksie produktu. Spowoduje to również ponowne indeksowanie produktu, jeśli cena zostanie zmieniona"
+        },
+        "StorePricesInIndex": {
+          "title": "Przechowuj wszystkie ceny produktów jako obiekt indeksu",
+          "description": "Włącz/wyłącz tę opcję, aby przechowywać wszystkie ceny produktów w indeksie w ramach zagnieżdżonego pola, np. <NazwaProduktu_cena>"
+        },
+        "PriceIndexingValue": {
+          "title": "Wartość indeksowania cen",
+          "description": "Wybierz wartość ceny produktu, która zostanie przechowana w indeksie produktu"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Indeksowanie oparte na zdarzeniach dla encji cenowych",
+            "description": "Włącz/wyłącz indeksowanie oparte na zdarzeniach dla encji cenowych. Gdy jest włączone, wszelkie zmiany dokonane w encji katalogu automatycznie uruchomią zadanie w tle do aktualizacji indeksu wyszukiwania"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Eksportuj lub importuj listy cen, przypisania i ceny"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Pełne dane listy cen",
+        "description": "Dane listy cen z powiązanymi obiektami. Obsługuje tylko dostawcę eksportu JSON"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Cena",
+        "description": "Ceny bez powiązanych obiektów"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Lista cen",
+        "description": "Tylko listy cen"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Przypisanie listy cen",
+        "description": "Eksportuj przypisania list cen"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Tarifikacja",
+        "description": "Ceny, listy cen i przypisania"
+      }
+    }
+  }
+}
