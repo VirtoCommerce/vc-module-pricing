@@ -21,6 +21,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
     [Authorize(ModuleConstants.Security.Permissions.Read)]
     public class PricingModuleController : Controller
     {
+        private const int _pageSize = 100;
+
         private readonly IPriceSearchService _priceSearchService;
         private readonly IPriceService _priceService;
         private readonly IPricelistSearchService _pricelistSearchService;
@@ -284,12 +286,12 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateProductsPrices([FromBody] ProductPrice[] productPrices)
         {
-            var result = await _priceSearchService.SearchAsync(new PricesSearchCriteria
+            var result = await _priceSearchService.SearchAllAsync(new PricesSearchCriteria
             {
                 ProductIds = productPrices.Select(x => x.ProductId).ToList(),
-                Take = int.MaxValue,
+                Take = _pageSize,
             });
-            var targetPricesGroups = result.Results.GroupBy(x => x.PricelistId).ToDictionary(g => g.Key);
+            var targetPricesGroups = result.GroupBy(x => x.PricelistId).ToDictionary(g => g.Key);
             var sourcePricesGroups = productPrices.SelectMany(x => x.Prices).GroupBy(x => x.PricelistId);
 
             var changedPrices = new List<Price>();
@@ -331,7 +333,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Update)]
         public Task<ActionResult> UpdateProductPrices([FromBody] ProductPrice productPrice)
         {
-            return UpdateProductsPrices(new[] { productPrice });
+            return UpdateProductsPrices([productPrice]);
         }
 
         /// <summary>
@@ -343,8 +345,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/catalog/products/{productId}/pricelists")]
         public async Task<ActionResult<Pricelist[]>> GetProductPriceLists(string productId)
         {
-            var productPrices = (await _priceSearchService.SearchNoCloneAsync(new PricesSearchCriteria { Take = int.MaxValue, ProductId = productId })).Results;
-            var priceLists = (await _pricelistSearchService.SearchAsync(new PricelistSearchCriteria { Take = int.MaxValue })).Results;
+            var productPrices = (await _priceSearchService.SearchAllNoCloneAsync(new PricesSearchCriteria { Take = _pageSize, ProductId = productId }));
+            var priceLists = (await _pricelistSearchService.SearchAllAsync(new PricelistSearchCriteria { Take = _pageSize }));
             foreach (var pricelist in priceLists)
             {
                 pricelist.Prices = productPrices.Where(x => x.PricelistId == pricelist.Id).ToList();
@@ -392,7 +394,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
             }
 
-            await _pricelistService.SaveChangesAsync(new[] { priceList });
+            await _pricelistService.SaveChangesAsync([priceList]);
             return Ok(priceList);
         }
 
@@ -446,10 +448,9 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
 
             var pricelistAssignmentsIds = result.Results.Select(x => x.Id).ToList();
 
-            const int batchSize = 20;
-            for (var skip = 0; skip < pricelistAssignmentsIds.Count; skip += batchSize)
+            for (var skip = 0; skip < pricelistAssignmentsIds.Count; skip += _pageSize)
             {
-                var idsBatch = pricelistAssignmentsIds.Skip(skip).Take(batchSize).ToList();
+                var idsBatch = pricelistAssignmentsIds.Skip(skip).Take(_pageSize).ToList();
                 await _pricelistAssignmentService.DeleteAsync(idsBatch);
             }
 
@@ -472,11 +473,11 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 PriceListId = pricelistId,
                 ProductIds = productIds,
-                Take = int.MaxValue,
+                Take = _pageSize,
             };
 
-            var searchResult = await _priceSearchService.SearchNoCloneAsync(searchCriteria);
-            await _priceService.DeleteAsync(searchResult.Results.Select(x => x.Id).ToList());
+            var searchResult = await _priceSearchService.SearchAllNoCloneAsync(searchCriteria);
+            await _priceService.DeleteAsync(searchResult.Select(x => x.Id).ToList());
 
             return NoContent();
         }
