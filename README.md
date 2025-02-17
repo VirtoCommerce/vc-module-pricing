@@ -4,7 +4,7 @@
 
 The **Pricing Module** is designed for storing, managing and evaluating product prices.
 
-The Pricing Module is consisted of three main objects:
+The Pricing Module consists of three main objects:
 
 1. Price
 1. Price list
@@ -53,19 +53,17 @@ The Pricelist Assignment has the following key characteristics:
 
 ## Documentation
 
-1. [Pricing Module Document](/docs/index.md)
+1. [Pricing Module Document](https://docs.virtocommerce.org/platform/user-guide/pricing/overview/)
 
 1. [View on Github](https://github.com/VirtoCommerce/vc-module-pricing)
 
-1. [Web API Documentation](<https://admin-demo.virtocommerce.com/docs/ui/index#/Pricing%2520module>)
-
 ## References
 
-1. Deploy: https://virtocommerce.com/docs/latest/developer-guide/deploy-module-from-source-code/
-1. Installation: https://www.virtocommerce.com/docs/latest/user-guide/modules/
-1. Home: https://virtocommerce.com
-1. Community: https://www.virtocommerce.org
-1. [Download Latest Release](https://github.com/VirtoCommerce/vc-module-pricing/releases)
+* Deploy: https://docs.virtocommerce.org/platform/developer-guide/Tutorials-and-How-tos/Tutorials/deploy-module-from-source-code/
+* Installation: https://docs.virtocommerce.org/platform/user-guide/modules-installation/
+* Home: https://virtocommerce.com
+* Community: https://www.virtocommerce.org
+* [Download Latest Release](https://github.com/VirtoCommerce/vc-module-pricing/releases)
 
 ## License
 
