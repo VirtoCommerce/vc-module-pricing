@@ -54,6 +54,7 @@ The Pricelist assignment has the following key characteristics:
 ## Documentation
 
 * [Pricing module user documentation](https://docs.virtocommerce.org/platform/user-guide/pricing/overview/)
+* [REST API](https://virtostart-demo-admin.govirto.com/docs/index.html?urls.primaryName=VirtoCommerce.Pricing)
 * [View on Github](https://github.com/VirtoCommerce/vc-module-pricing)
 
 ## References
