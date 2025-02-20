@@ -1,10 +1,8 @@
-# Overview
+# Virto Commerce Pricing Module
 
 [![CI status](https://github.com/VirtoCommerce/vc-module-pricing/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-pricing/actions?query=workflow%3A"Module+CI") [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-pricing&metric=alert_status&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-pricing) [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-pricing&metric=reliability_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-pricing) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-pricing&metric=security_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-pricing) [![Sqale rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-pricing&metric=sqale_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-pricing)
 
-The **Pricing** module is designed for storing, managing and evaluating product prices.
-
-The Pricing module consists of three main objects:
+The **Pricing** module is designed for storing, managing and evaluating product prices. The Pricing module consists of three main objects:
 
 1. Price
 1. Price list
