@@ -8,7 +8,7 @@ using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Model
 {
-    public class PricelistEntity : AuditableEntity, IDataEntity<PricelistEntity, Pricelist>
+    public class PricelistEntity : AuditableEntity, IHasOuterId, IDataEntity<PricelistEntity, Pricelist>
     {
         [Required]
         [StringLength(128)]

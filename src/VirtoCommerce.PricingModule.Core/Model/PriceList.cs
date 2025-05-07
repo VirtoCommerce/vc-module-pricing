@@ -5,7 +5,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Core.Model
 {
-    public class Pricelist : AuditableEntity, ICloneable
+    public class Pricelist : AuditableEntity, ICloneable, IHasOuterId
     {
         public string Name { get; set; }
         public string Description { get; set; }
