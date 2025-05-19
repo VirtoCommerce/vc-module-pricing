@@ -5,7 +5,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Core.Model
 {
-    public class Pricelist : AuditableEntity, ICloneable
+    public class Pricelist : AuditableEntity, IHasOuterId, ICloneable
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -18,13 +18,13 @@ namespace VirtoCommerce.PricingModule.Core.Model
         #region ICloneable members
         public virtual object Clone()
         {
-            var result = MemberwiseClone() as Pricelist;
+            var result = (Pricelist)MemberwiseClone();
 
-            result.Prices = Prices?.Select(x => x.Clone()).OfType<Price>().ToList();
-            result.Assignments = Assignments?.Select(x => x.Clone()).OfType<PricelistAssignment>().ToList();
+            result.Prices = Prices?.Select(x => x.CloneTyped()).ToList();
+            result.Assignments = Assignments?.Select(x => x.CloneTyped()).ToList();
 
             return result;
-        } 
+        }
         #endregion
     }
 }

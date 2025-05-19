@@ -3,7 +3,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Core.Model
 {
-    public class Price : AuditableEntity, ICloneable
+    public class Price : AuditableEntity, IHasOuterId, ICloneable
     {
         public string PricelistId { get; set; }
         public Pricelist Pricelist { get; set; }
@@ -39,9 +39,9 @@ namespace VirtoCommerce.PricingModule.Core.Model
 
         public virtual object Clone()
         {
-            var result = MemberwiseClone() as Price;
+            var result = (Price)MemberwiseClone();
 
-            result.Pricelist = Pricelist?.Clone() as Pricelist;
+            result.Pricelist = Pricelist?.CloneTyped();
 
             return result;
         }

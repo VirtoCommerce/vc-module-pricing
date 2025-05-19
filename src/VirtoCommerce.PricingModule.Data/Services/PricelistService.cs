@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
@@ -13,7 +14,7 @@ using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricelistService : CrudService<Pricelist, PricelistEntity, PricelistChangingEvent, PricelistChangedEvent>, IPricelistService
+    public class PricelistService : OuterEntityService<Pricelist, PricelistEntity, PricelistChangingEvent, PricelistChangedEvent>, IPricelistService
     {
         public PricelistService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache, IEventPublisher eventPublisher)
             : base(repositoryFactory, platformMemoryCache, eventPublisher)
@@ -23,6 +24,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
         protected override Task<IList<PricelistEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
         {
             return ((IPricingRepository)repository).GetPricelistByIdsAsync(ids, responseGroup);
+        }
+
+        protected override IQueryable<PricelistEntity> GetEntitiesQuery(IRepository repository)
+        {
+            return ((IPricingRepository)repository).Pricelists;
         }
     }
 }

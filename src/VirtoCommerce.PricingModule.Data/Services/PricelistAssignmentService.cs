@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using VirtoCommerce.Platform.Caching;
@@ -15,7 +16,7 @@ using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PricelistAssignmentService : CrudService<PricelistAssignment, PricelistAssignmentEntity, PricelistAssignmentChangingEvent, PricelistAssignmentChangedEvent>, IPricelistAssignmentService
+    public class PricelistAssignmentService : OuterEntityService<PricelistAssignment, PricelistAssignmentEntity, PricelistAssignmentChangingEvent, PricelistAssignmentChangedEvent>, IPricelistAssignmentService
     {
         private readonly AbstractValidator<IEnumerable<PricelistAssignment>> _validator;
 
@@ -32,6 +33,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
         protected override Task<IList<PricelistAssignmentEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
         {
             return ((IPricingRepository)repository).GetPricelistAssignmentsByIdAsync(ids);
+        }
+
+        protected override IQueryable<PricelistAssignmentEntity> GetEntitiesQuery(IRepository repository)
+        {
+            return ((IPricingRepository)repository).PricelistAssignments;
         }
 
         protected override Task BeforeSaveChanges(IList<PricelistAssignment> models)

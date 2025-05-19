@@ -3,6 +3,6 @@ using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Core.Services;
 
-public interface IPriceService : ICrudService<Price>
+public interface IPriceService : IOuterEntityService<Price>
 {
 }

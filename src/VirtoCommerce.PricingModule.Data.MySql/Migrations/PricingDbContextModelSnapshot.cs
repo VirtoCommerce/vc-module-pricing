@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
@@ -16,8 +17,10 @@ namespace VirtoCommerce.PricingModule.Data.MySql.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("VirtoCommerce.PricingModule.Data.Model.MergedPriceEntity", b =>
                 {
@@ -45,7 +48,9 @@ namespace VirtoCommerce.PricingModule.Data.MySql.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.ToView("empty");
+                    b.ToTable((string)null);
+
+                    b.ToView("empty", (string)null);
                 });
 
             modelBuilder.Entity("VirtoCommerce.PricingModule.Data.Model.PriceEntity", b =>
@@ -67,7 +72,7 @@ namespace VirtoCommerce.PricingModule.Data.MySql.Migrations
 
                     b.Property<decimal>("List")
                         .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal");
 
                     b.Property<decimal>("MinQuantity")
                         .HasPrecision(18, 2)
@@ -86,6 +91,7 @@ namespace VirtoCommerce.PricingModule.Data.MySql.Migrations
 
                     b.Property<string>("PricelistId")
                         .IsRequired()
+                        .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
                     b.Property<string>("ProductId")
@@ -98,12 +104,14 @@ namespace VirtoCommerce.PricingModule.Data.MySql.Migrations
 
                     b.Property<decimal?>("Sale")
                         .HasPrecision(18, 4)
-                        .HasColumnType("decimal(18,4)");
+                        .HasColumnType("decimal");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OuterId");
 
                     b.HasIndex("PricelistId", "ProductId", "StartDate", "EndDate")
                         .HasDatabaseName("IX_PricelistProductDates");
@@ -173,6 +181,8 @@ namespace VirtoCommerce.PricingModule.Data.MySql.Migrations
                         .HasColumnType("varchar(128)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OuterId");
 
                     b.HasIndex("PricelistId");
 
