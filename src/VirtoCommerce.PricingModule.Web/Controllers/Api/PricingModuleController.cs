@@ -387,7 +387,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/outer/{outerId}")]
         public async Task<ActionResult<Pricelist>> GetPricelistByOuterId(string outerId)
         {
-            var pricelist = await _pricelistService.GetNoCloneAsync(outerId);
+            var pricelist = await _pricelistService.GetByOuterIdNoCloneAsync(outerId);
             return Ok(pricelist);
         }
 
@@ -411,7 +411,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelistsshort/outer/{outerId}")]
         public async Task<ActionResult<Pricelist>> GetPricelistInShortByOuterId(string outerId)
         {
-            var pricelist = await _pricelistService.GetNoCloneAsync(outerId, nameof(PriceListResponseGroup.NoDetails));
+            var pricelist = await _pricelistService.GetByOuterIdNoCloneAsync(outerId, nameof(PriceListResponseGroup.NoDetails));
             return Ok(pricelist);
         }
 
