@@ -551,7 +551,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <param name="id">PricelistAssignment id</param>
         /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
-        [HttpPut]
+        [HttpPatch]
         [Route("api/pricing/assignments/{id}")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
