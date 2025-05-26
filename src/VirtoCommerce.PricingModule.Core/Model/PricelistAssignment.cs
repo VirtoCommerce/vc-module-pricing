@@ -7,7 +7,7 @@ namespace VirtoCommerce.PricingModule.Core.Model
     /// <summary>
     /// Used to assign pricelist to specific catalog by using conditional expression 
     /// </summary>
-	public class PricelistAssignment : AuditableEntity, ICloneable
+	public class PricelistAssignment : AuditableEntity, ICloneable, IHasOuterId
     {
         public string CatalogId { get; set; }
         public string StoreId { get; set; }

@@ -3,7 +3,7 @@ using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.PricingModule.Core.Model
 {
-    public class Price : AuditableEntity, ICloneable
+    public class Price : AuditableEntity, ICloneable, IHasOuterId
     {
         public string PricelistId { get; set; }
         public Pricelist Pricelist { get; set; }
