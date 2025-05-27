@@ -92,6 +92,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
         {
             ArgumentNullException.ThrowIfNull(target);
 
+            target.OuterId = OuterId;
             target.Name = Name;
             target.Currency = Currency;
             target.Description = Description;

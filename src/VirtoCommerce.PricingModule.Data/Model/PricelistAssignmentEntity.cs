@@ -46,8 +46,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual PricelistAssignment ToModel(PricelistAssignment assignment)
         {
-            if (assignment == null)
-                throw new ArgumentNullException(nameof(assignment));
+            ArgumentNullException.ThrowIfNull(assignment);
 
             assignment.Id = Id;
             assignment.CreatedBy = CreatedBy;
@@ -85,8 +84,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual PricelistAssignmentEntity FromModel(PricelistAssignment assignment, PrimaryKeyResolvingMap pkMap)
         {
-            if (assignment == null)
-                throw new ArgumentNullException(nameof(assignment));
+            ArgumentNullException.ThrowIfNull(assignment);
 
             pkMap.AddPair(assignment, this);
 
@@ -116,9 +114,9 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual void Patch(PricelistAssignmentEntity target)
         {
-            if (target == null)
-                throw new ArgumentNullException(nameof(target));
+            ArgumentNullException.ThrowIfNull(target);
 
+            target.OuterId = OuterId;
             target.Name = Name;
             target.Description = Description;
             target.CatalogId = CatalogId;
