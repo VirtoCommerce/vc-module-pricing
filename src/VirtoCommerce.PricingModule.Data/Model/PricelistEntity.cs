@@ -8,7 +8,7 @@ using VirtoCommerce.PricingModule.Core.Model;
 
 namespace VirtoCommerce.PricingModule.Data.Model
 {
-    public class PricelistEntity : AuditableEntity, IDataEntity<PricelistEntity, Pricelist>
+    public class PricelistEntity : AuditableEntity, IHasOuterId, IDataEntity<PricelistEntity, Pricelist>
     {
         [Required]
         [StringLength(128)]
@@ -36,8 +36,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual Pricelist ToModel(Pricelist pricelist)
         {
-            if (pricelist == null)
-                throw new ArgumentNullException(nameof(pricelist));
+            ArgumentNullException.ThrowIfNull(pricelist);
 
             pricelist.Id = Id;
             pricelist.CreatedBy = CreatedBy;
@@ -71,8 +70,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual PricelistEntity FromModel(Pricelist pricelist, PrimaryKeyResolvingMap pkMap)
         {
-            if (pricelist == null)
-                throw new ArgumentNullException(nameof(pricelist));
+            ArgumentNullException.ThrowIfNull(pricelist);
 
             pkMap.AddPair(pricelist, this);
 
@@ -92,9 +90,9 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual void Patch(PricelistEntity target)
         {
-            if (target == null)
-                throw new ArgumentNullException(nameof(target));
+            ArgumentNullException.ThrowIfNull(target);
 
+            target.OuterId = OuterId;
             target.Name = Name;
             target.Currency = Currency;
             target.Description = Description;

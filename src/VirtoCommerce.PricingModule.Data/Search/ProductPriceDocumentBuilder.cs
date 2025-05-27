@@ -114,7 +114,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
         private async Task<bool> UseMaxIndexationPrice()
         {
             var value = await _settingsManager.GetValueAsync<string>(ModuleConstants.Settings.General.PriceIndexingValue);
-            return value.EqualsInvariant(ModuleConstants.Settings.General.PriceIndexingValueMax);
+            return value.EqualsIgnoreCase(ModuleConstants.Settings.General.PriceIndexingValueMax);
         }
 
         private async Task AddMinPrices(IList<IndexDocument> documents, IList<string> documentIds, IList<Price> prices)
@@ -155,7 +155,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
             var searchCriteria = AbstractTypeFactory<ProductSearchCriteria>.TryCreateInstance();
             searchCriteria.MainProductId = productId;
-            searchCriteria.ResponseGroup = ItemResponseGroup.ItemInfo.ToString();
+            searchCriteria.ResponseGroup = nameof(ItemResponseGroup.ItemInfo);
             searchCriteria.Take = _batchSize;
 
             await foreach (var searchResult in _productsSearchService.SearchBatchesAsync(searchCriteria))
@@ -191,7 +191,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
 
         private static void AddMinVariationPrice(IndexDocument document, List<object> value = null)
         {
-            value ??= new List<object> { new IndexedPrice { Currency = SchemaStringValue } };
+            value ??= [new IndexedPrice { Currency = SchemaStringValue }];
             document.Add(new IndexDocumentField("__minVariationPrice", value, IndexDocumentFieldValueType.Complex) { IsRetrievable = true, IsFilterable = false, IsCollection = true });
         }
     }

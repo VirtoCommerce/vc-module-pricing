@@ -15,7 +15,7 @@ using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
 {
-    public class PriceService : CrudService<Price, PriceEntity, PriceChangingEvent, PriceChangedEvent>, IPriceService
+    public class PriceService : OuterEntityService<Price, PriceEntity, PriceChangingEvent, PriceChangedEvent>, IPriceService
     {
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly IEventPublisher _eventPublisher;
@@ -87,6 +87,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
         protected override Task<IList<PriceEntity>> LoadEntities(IRepository repository, IList<string> ids, string responseGroup)
         {
             return ((IPricingRepository)repository).GetPricesByIdsAsync(ids);
+        }
+
+        protected override IQueryable<PriceEntity> GetEntitiesQuery(IRepository repository)
+        {
+            return ((IPricingRepository)repository).Prices;
         }
 
         protected override void ClearCache(IList<Price> models)

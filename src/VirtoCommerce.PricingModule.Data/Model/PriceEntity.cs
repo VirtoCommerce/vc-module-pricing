@@ -33,15 +33,16 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         #region Navigation Properties
 
+        [StringLength(128)]
         public string PricelistId { get; set; }
+
         public virtual PricelistEntity Pricelist { get; set; }
 
         #endregion
 
         public virtual Price ToModel(Price price)
         {
-            if (price == null)
-                throw new ArgumentNullException(nameof(price));
+            ArgumentNullException.ThrowIfNull(price);
 
             price.Id = Id;
             price.CreatedBy = CreatedBy;
@@ -68,8 +69,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual PriceEntity FromModel(Price price, PrimaryKeyResolvingMap pkMap)
         {
-            if (price == null)
-                throw new ArgumentNullException(nameof(price));
+            ArgumentNullException.ThrowIfNull(price);
 
             pkMap.AddPair(price, this);
 
@@ -93,8 +93,7 @@ namespace VirtoCommerce.PricingModule.Data.Model
 
         public virtual void Patch(PriceEntity target)
         {
-            if (target == null)
-                throw new ArgumentNullException(nameof(target));
+            ArgumentNullException.ThrowIfNull(target);
 
             target.ProductId = ProductId;
             target.List = List;

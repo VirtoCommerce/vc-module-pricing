@@ -78,6 +78,22 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Get pricelist assignment by outer id
+        /// </summary>
+        /// <param name="outerId">Pricelist assignment outer id</param>
+        [HttpGet]
+        [Route("api/pricing/assignments/outer/{outerId}")]
+        public async Task<ActionResult<PricelistAssignment>> GetPricelistAssignmentByOuterId(string outerId)
+        {
+            var assignment = await pricelistAssignmentService.GetByOuterIdAsync(outerId);
+            if (assignment != null)
+            {
+                assignment.DynamicExpression?.MergeFromPrototype(AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance());
+            }
+            return Ok(assignment);
+        }
+
+        /// <summary>
         /// Get a new pricelist assignment
         /// </summary>
         /// <remarks>Get a new pricelist assignment object. Create new pricelist assignment, but does not save one.</remarks>
@@ -157,9 +173,9 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         public async Task<ActionResult<IList<Price>>> EvaluateProductPrices(string productId)
         {
             var priceEvalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
-            priceEvalContext.ProductIds = new[] { productId };
+            priceEvalContext.ProductIds = [productId];
 
-            var product = await itemService.GetNoCloneAsync(productId, ItemResponseGroup.ItemInfo.ToString());
+            var product = await itemService.GetNoCloneAsync(productId, nameof(ItemResponseGroup.ItemInfo));
             if (product != null)
             {
                 priceEvalContext.CatalogId = product.CatalogId;
@@ -178,7 +194,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         public Task<ActionResult<IList<Price>>> EvaluateProductPricesForCatalog(string productId, string catalogId)
         {
             var priceEvalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
-            priceEvalContext.ProductIds = new[] { productId };
+            priceEvalContext.ProductIds = [productId];
             priceEvalContext.CatalogId = catalogId;
 
             return EvaluatePrices(priceEvalContext);
@@ -193,7 +209,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<PricelistAssignment>> CreatePricelistAssignment([FromBody] PricelistAssignment assignment)
         {
-            await pricelistAssignmentService.SaveChangesAsync(new[] { assignment });
+            await pricelistAssignmentService.SaveChangesAsync([assignment]);
             return Ok(assignment);
         }
 
@@ -201,7 +217,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// Update pricelist assignment
         /// </summary>
         /// <param name="assignment">PricelistAssignment</param>
-        /// <todo>Return no any reason if can't update</todo>
         [HttpPut]
         [Route("api/pricing/assignments")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
@@ -237,7 +252,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 if (targetPricesGroups.TryGetValue(sourcePricesGroup.Key, out var targetPricesGroup))
                 {
-                    sourcePricesGroup.ToArray().CompareTo(targetPricesGroup.ToArray(), EqualityComparer<Price>.Default, (state, x, y) =>
+                    sourcePricesGroup.ToArray().CompareTo(targetPricesGroup.ToArray(), EqualityComparer<Price>.Default, (state, x, _) =>
                     {
                         switch (state)
                         {
@@ -307,6 +322,18 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         }
 
         /// <summary>
+        /// Get pricelist by outer id
+        /// </summary>
+        /// <param name="outerId">Pricelist outer id</param>
+        [HttpGet]
+        [Route("api/pricing/pricelists/outer/{outerId}")]
+        public async Task<ActionResult<Pricelist>> GetPricelistByOuterId(string outerId)
+        {
+            var pricelist = await pricelistService.GetByOuterIdNoCloneAsync(outerId);
+            return Ok(pricelist);
+        }
+
+        /// <summary>
         /// Get pricelist in short mode (without assignments to avoid redundant assignments read)
         /// </summary>
         /// <param name="id">Pricelist id</param>
@@ -314,7 +341,19 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelistsshort/{id}")]
         public async Task<ActionResult<Pricelist>> GetPriceListInShortById(string id)
         {
-            var pricelist = await pricelistService.GetNoCloneAsync(id, PriceListResponseGroup.NoDetails.ToString());
+            var pricelist = await pricelistService.GetNoCloneAsync(id, nameof(PriceListResponseGroup.NoDetails));
+            return Ok(pricelist);
+        }
+
+        /// <summary>
+        /// Get pricelist by outer id in short mode (without assignments)
+        /// </summary>
+        /// <param name="outerId">Pricelist outer id</param>
+        [HttpGet]
+        [Route("api/pricing/pricelistsshort/outer/{outerId}")]
+        public async Task<ActionResult<Pricelist>> GetPricelistInShortByOuterId(string outerId)
+        {
+            var pricelist = await pricelistService.GetByOuterIdNoCloneAsync(outerId, nameof(PriceListResponseGroup.NoDetails));
             return Ok(pricelist);
         }
 
@@ -333,7 +372,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
             }
 
-            await pricelistService.SaveChangesAsync(new[] { priceList });
+            await pricelistService.SaveChangesAsync([priceList]);
             return Ok(priceList);
         }
 
@@ -355,7 +394,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Delete pricelist assignment by given array of ids.</remarks>
         /// <param name="ids">An array of pricelist assignment ids</param>
-        /// <todo>Return no any reason if can't update</todo>
         [HttpDelete]
         [Route("api/pricing/assignments")]
         [Authorize(ModuleConstants.Security.Permissions.Delete)]
@@ -371,7 +409,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         /// </summary>
         /// <remarks>Delete pricelist assignments by given criteria.</remarks>
         /// <param name="criteria">Filter criteria</param>
-        /// <todo>Return no any reason if can't update</todo>
         [HttpDelete]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [Route("api/pricing/filteredAssignments")]
