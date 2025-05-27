@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.CatalogModule.Core.Model;
@@ -19,46 +20,20 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
 {
     [Route("")]
     [Authorize(ModuleConstants.Security.Permissions.Read)]
-    public class PricingModuleController : Controller
+    public class PricingModuleController(
+        IPriceSearchService priceSearchService,
+        IPriceService priceService,
+        IPricelistSearchService pricelistSearchService,
+        IPricelistService pricelistService,
+        IPricelistAssignmentSearchService pricelistAssignmentSearchService,
+        IPricelistAssignmentService pricelistAssignmentService,
+        IPricingEvaluatorService pricingEvaluatorService,
+        IItemService itemService,
+        IMergedPriceSearchService mergedPriceSearchService,
+        IBlobUrlResolver blobUrlResolver,
+        AbstractValidator<Pricelist> priceListValidator
+        ) : Controller
     {
-        private readonly IPriceSearchService _priceSearchService;
-        private readonly IPriceService _priceService;
-        private readonly IPricelistSearchService _pricelistSearchService;
-        private readonly IPricelistService _pricelistService;
-        private readonly IPricelistAssignmentSearchService _pricelistAssignmentSearchService;
-        private readonly IPricelistAssignmentService _pricelistAssignmentService;
-        private readonly IPricingEvaluatorService _pricingEvaluatorService;
-        private readonly IItemService _itemService;
-        private readonly IBlobUrlResolver _blobUrlResolver;
-        private readonly AbstractValidator<Pricelist> _priceListValidator;
-        private readonly IMergedPriceSearchService _mergedPriceSearchService;
-
-        public PricingModuleController(
-            IPriceSearchService priceSearchService,
-            IPriceService priceService,
-            IPricelistSearchService pricelistSearchService,
-            IPricelistService pricelistService,
-            IPricelistAssignmentSearchService pricelistAssignmentSearchService,
-            IPricelistAssignmentService pricelistAssignmentService,
-            IPricingEvaluatorService pricingEvaluatorService,
-            IItemService itemService,
-            IMergedPriceSearchService mergedPriceSearchService,
-            IBlobUrlResolver blobUrlResolver,
-            AbstractValidator<Pricelist> priceListValidator)
-        {
-            _priceSearchService = priceSearchService;
-            _priceService = priceService;
-            _pricelistSearchService = pricelistSearchService;
-            _pricelistService = pricelistService;
-            _pricelistAssignmentSearchService = pricelistAssignmentSearchService;
-            _pricelistAssignmentService = pricelistAssignmentService;
-            _pricingEvaluatorService = pricingEvaluatorService;
-            _itemService = itemService;
-            _blobUrlResolver = blobUrlResolver;
-            _priceListValidator = priceListValidator;
-            _mergedPriceSearchService = mergedPriceSearchService;
-        }
-
         /// <summary>
         /// Evaluate prices by given context
         /// </summary>
@@ -68,7 +43,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/evaluate")]
         public async Task<ActionResult<IList<Price>>> EvaluatePrices([FromBody] PriceEvaluationContext evalContext)
         {
-            var result = await _pricingEvaluatorService.EvaluateProductPricesAsync(evalContext);
+            var result = await pricingEvaluatorService.EvaluateProductPricesAsync(evalContext);
 
             return Ok(result);
         }
@@ -82,7 +57,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/evaluate")]
         public async Task<ActionResult<IList<Pricelist>>> EvaluatePriceLists([FromBody] PriceEvaluationContext evalContext)
         {
-            var result = await _pricingEvaluatorService.EvaluatePriceListsAsync(evalContext);
+            var result = await pricingEvaluatorService.EvaluatePriceListsAsync(evalContext);
             return Ok(result);
         }
 
@@ -94,7 +69,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/assignments/{id}")]
         public async Task<ActionResult<PricelistAssignment>> GetPricelistAssignmentById(string id)
         {
-            var assignment = await _pricelistAssignmentService.GetByIdAsync(id);
+            var assignment = await pricelistAssignmentService.GetByIdAsync(id);
             if (assignment != null)
             {
                 assignment.DynamicExpression?.MergeFromPrototype(AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance());
@@ -110,7 +85,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/assignments/outer/{outerId}")]
         public async Task<ActionResult<PricelistAssignment>> GetPricelistAssignmentByOuterId(string outerId)
         {
-            var assignment = await _pricelistAssignmentService.GetByOuterIdAsync(outerId);
+            var assignment = await pricelistAssignmentService.GetByOuterIdAsync(outerId);
             if (assignment != null)
             {
                 assignment.DynamicExpression?.MergeFromPrototype(AbstractTypeFactory<PriceConditionTreePrototype>.TryCreateInstance());
@@ -146,7 +121,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 criteria = new PricelistSearchCriteria();
             }
-            var result = await _pricelistSearchService.SearchNoCloneAsync(criteria);
+            var result = await pricelistSearchService.SearchNoCloneAsync(criteria);
             return Ok(result);
         }
 
@@ -162,7 +137,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             {
                 criteria = new PricelistAssignmentsSearchCriteria();
             }
-            var result = await _pricelistAssignmentSearchService.SearchNoCloneAsync(criteria);
+            var result = await pricelistAssignmentSearchService.SearchNoCloneAsync(criteria);
             return Ok(result);
         }
 
@@ -188,47 +163,6 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             return Ok(await InnerSearchProductPrices(criteria));
         }
 
-        private async Task<ProductPriceSearchResult> InnerSearchProductPrices(PricesSearchCriteria criteria)
-        {
-            if (criteria == null)
-            {
-                criteria = new PricesSearchCriteria();
-            }
-
-            var result = AbstractTypeFactory<ProductPriceSearchResult>.TryCreateInstance();
-            var searchResult = await _priceSearchService.SearchNoCloneAsync(criteria);
-            result.TotalCount = searchResult.TotalCount;
-            result.Results = new List<ProductPrice>();
-
-            var productIds = searchResult.Results.Select(x => x.ProductId).Distinct().ToList();
-            var products = await _itemService.GetNoCloneAsync(productIds, nameof(ItemResponseGroup.ItemInfo));
-            foreach (var productPricesGroup in searchResult.Results.GroupBy(x => x.ProductId))
-            {
-                var productPrice = new ProductPrice
-                {
-                    ProductId = productPricesGroup.Key,
-                    Prices = productPricesGroup.ToList()
-                };
-                var product = products.FirstOrDefault(x => x.Id == productPricesGroup.Key);
-                if (product != null)
-                {
-                    if (!product.Images.IsNullOrEmpty())
-                    {
-                        foreach (var image in product.Images)
-                        {
-                            image.RelativeUrl = image.Url;
-                            image.Url = _blobUrlResolver.GetAbsoluteUrl(image.Url);
-                        }
-                    }
-
-                    productPrice.Product = product;
-                }
-                result.Results.Add(productPrice);
-            }
-
-            return result;
-        }
-
         /// <summary>
         /// Evaluate  product prices
         /// </summary>
@@ -241,7 +175,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             var priceEvalContext = AbstractTypeFactory<PriceEvaluationContext>.TryCreateInstance();
             priceEvalContext.ProductIds = [productId];
 
-            var product = await _itemService.GetNoCloneAsync(productId, nameof(ItemResponseGroup.ItemInfo));
+            var product = await itemService.GetNoCloneAsync(productId, nameof(ItemResponseGroup.ItemInfo));
             if (product != null)
             {
                 priceEvalContext.CatalogId = product.CatalogId;
@@ -275,7 +209,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<PricelistAssignment>> CreatePricelistAssignment([FromBody] PricelistAssignment assignment)
         {
-            await _pricelistAssignmentService.SaveChangesAsync([assignment]);
+            await pricelistAssignmentService.SaveChangesAsync([assignment]);
             return Ok(assignment);
         }
 
@@ -289,17 +223,21 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdatePriceListAssignment([FromBody] PricelistAssignment assignment)
         {
-            await _pricelistAssignmentService.SaveChangesAsync([assignment]);
+            await pricelistAssignmentService.SaveChangesAsync([assignment]);
             return NoContent();
         }
 
+        /// <summary>
+        /// Update product prices
+        /// </summary>
+        /// <param name="productPrices">List of ProductPrice</param>
         [HttpPut]
         [Route("api/products/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateProductsPrices([FromBody] ProductPrice[] productPrices)
         {
-            var result = await _priceSearchService.SearchAsync(new PricesSearchCriteria
+            var result = await priceSearchService.SearchAsync(new PricesSearchCriteria
             {
                 ProductIds = productPrices.Select(x => x.ProductId).ToList(),
                 Take = int.MaxValue,
@@ -333,14 +271,18 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                     changedPrices.AddRange(sourcePricesGroup);
                 }
             }
-            await _priceService.SaveChangesAsync(changedPrices);
+            await priceService.SaveChangesAsync(changedPrices);
             if (!deletedPrices.IsNullOrEmpty())
             {
-                await _priceService.DeleteAsync(deletedPrices.Select(x => x.Id).ToList());
+                await priceService.DeleteAsync(deletedPrices.Select(x => x.Id).ToList());
             }
             return NoContent();
         }
 
+        /// <summary>
+        /// Update product prices
+        /// </summary>
+        /// <param name="productPrice">ProductPrice</param>
         [HttpPut]
         [Route("api/products/{productId}/prices")]
         [Authorize(ModuleConstants.Security.Permissions.Update)]
@@ -358,8 +300,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/catalog/products/{productId}/pricelists")]
         public async Task<ActionResult<Pricelist[]>> GetProductPriceLists(string productId)
         {
-            var productPrices = (await _priceSearchService.SearchNoCloneAsync(new PricesSearchCriteria { Take = int.MaxValue, ProductId = productId })).Results;
-            var priceLists = (await _pricelistSearchService.SearchAsync(new PricelistSearchCriteria { Take = int.MaxValue })).Results;
+            var productPrices = (await priceSearchService.SearchNoCloneAsync(new PricesSearchCriteria { Take = int.MaxValue, ProductId = productId })).Results;
+            var priceLists = (await pricelistSearchService.SearchAsync(new PricelistSearchCriteria { Take = int.MaxValue })).Results;
             foreach (var pricelist in priceLists)
             {
                 pricelist.Prices = productPrices.Where(x => x.PricelistId == pricelist.Id).ToList();
@@ -375,7 +317,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/{id}")]
         public async Task<ActionResult<Pricelist>> GetPriceListById(string id)
         {
-            var pricelist = await _pricelistService.GetNoCloneAsync(id);
+            var pricelist = await pricelistService.GetNoCloneAsync(id);
             return Ok(pricelist);
         }
 
@@ -387,7 +329,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelists/outer/{outerId}")]
         public async Task<ActionResult<Pricelist>> GetPricelistByOuterId(string outerId)
         {
-            var pricelist = await _pricelistService.GetByOuterIdNoCloneAsync(outerId);
+            var pricelist = await pricelistService.GetByOuterIdNoCloneAsync(outerId);
             return Ok(pricelist);
         }
 
@@ -399,7 +341,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelistsshort/{id}")]
         public async Task<ActionResult<Pricelist>> GetPriceListInShortById(string id)
         {
-            var pricelist = await _pricelistService.GetNoCloneAsync(id, nameof(PriceListResponseGroup.NoDetails));
+            var pricelist = await pricelistService.GetNoCloneAsync(id, nameof(PriceListResponseGroup.NoDetails));
             return Ok(pricelist);
         }
 
@@ -411,7 +353,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Route("api/pricing/pricelistsshort/outer/{outerId}")]
         public async Task<ActionResult<Pricelist>> GetPricelistInShortByOuterId(string outerId)
         {
-            var pricelist = await _pricelistService.GetByOuterIdNoCloneAsync(outerId, nameof(PriceListResponseGroup.NoDetails));
+            var pricelist = await pricelistService.GetByOuterIdNoCloneAsync(outerId, nameof(PriceListResponseGroup.NoDetails));
             return Ok(pricelist);
         }
 
@@ -423,14 +365,14 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Create)]
         public async Task<ActionResult<Pricelist>> CreatePriceList([FromBody] Pricelist priceList)
         {
-            var validationResult = await _priceListValidator.ValidateAsync(priceList);
+            var validationResult = await priceListValidator.ValidateAsync(priceList);
 
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
             }
 
-            await _pricelistService.SaveChangesAsync([priceList]);
+            await pricelistService.SaveChangesAsync([priceList]);
             return Ok(priceList);
         }
 
@@ -443,7 +385,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdatePriceList([FromBody] Pricelist priceList)
         {
-            await _pricelistService.SaveChangesAsync([priceList]);
+            await pricelistService.SaveChangesAsync([priceList]);
             return NoContent();
         }
 
@@ -458,7 +400,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteAssignments(string[] ids)
         {
-            await _pricelistAssignmentService.DeleteAsync(ids);
+            await pricelistAssignmentService.DeleteAsync(ids);
             return NoContent();
         }
 
@@ -478,7 +420,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 criteria = new PricelistAssignmentsSearchCriteria();
             }
 
-            var result = await _pricelistAssignmentSearchService.SearchNoCloneAsync(criteria);
+            var result = await pricelistAssignmentSearchService.SearchNoCloneAsync(criteria);
 
             var pricelistAssignmentsIds = result.Results.Select(x => x.Id).ToList();
 
@@ -486,7 +428,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             for (var skip = 0; skip < pricelistAssignmentsIds.Count; skip += batchSize)
             {
                 var idsBatch = pricelistAssignmentsIds.Skip(skip).Take(batchSize).ToList();
-                await _pricelistAssignmentService.DeleteAsync(idsBatch);
+                await pricelistAssignmentService.DeleteAsync(idsBatch);
             }
 
             return NoContent();
@@ -511,8 +453,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 Take = int.MaxValue,
             };
 
-            var searchResult = await _priceSearchService.SearchNoCloneAsync(searchCriteria);
-            await _priceService.DeleteAsync(searchResult.Results.Select(x => x.Id).ToList());
+            var searchResult = await priceSearchService.SearchNoCloneAsync(searchCriteria);
+            await priceService.DeleteAsync(searchResult.Results.Select(x => x.Id).ToList());
 
             return NoContent();
         }
@@ -528,7 +470,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteProductPrice(string[] priceIds)
         {
-            await _priceService.DeleteAsync(priceIds);
+            await priceService.DeleteAsync(priceIds);
             return NoContent();
         }
 
@@ -543,7 +485,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeletePricelists(string[] ids)
         {
-            await _pricelistService.DeleteAsync(ids);
+            await pricelistService.DeleteAsync(ids);
             return NoContent();
         }
 
@@ -557,7 +499,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Read)]
         public async Task<ActionResult<MergedPriceGroupSearchResult>> SearchGroups([FromBody] MergedPriceSearchCriteria criteria)
         {
-            var result = await _mergedPriceSearchService.SearchGroupsAsync(criteria);
+            var result = await mergedPriceSearchService.SearchGroupsAsync(criteria);
             return Ok(result);
         }
 
@@ -571,8 +513,149 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [Authorize(ModuleConstants.Security.Permissions.Read)]
         public async Task<ActionResult<MergedPriceSearchResult>> SearchGroupPrices([FromBody] MergedPriceSearchCriteria criteria)
         {
-            var result = await _mergedPriceSearchService.SearchGroupPricesAsync(criteria);
+            var result = await mergedPriceSearchService.SearchGroupPricesAsync(criteria);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Partial update for the specified ProductPrice by id
+        /// </summary>
+        /// <param name="id">ProductPrice id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
+        [HttpPatch]
+        [Route("api/products/prices/{id}")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> PatchProductPrice(string id, [FromBody] JsonPatchDocument<Price> patchDocument)
+        {
+            var price = await priceService.GetByIdAsync(id);
+            if (price == null)
+            {
+                return NotFound();
+            }
+
+            patchDocument.ApplyTo(price, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var productPrice = AbstractTypeFactory<ProductPrice>.TryCreateInstance();
+            productPrice.Prices = [price];
+
+            await UpdateProductPrices(productPrice);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Partial update for the specified Pricelist by id
+        /// </summary>
+        /// <param name="id">Pricelist id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
+        [HttpPatch]
+        [Route("api/pricing/pricelists/{id}")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> PatchPriceList(string id, [FromBody] JsonPatchDocument<Pricelist> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var priceList = await pricelistService.GetByIdAsync(id);
+            if (priceList == null)
+            {
+                return NotFound();
+            }
+
+            patchDocument.ApplyTo(priceList, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await pricelistService.SaveChangesAsync([priceList]);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Partial update for the specified pricelist assignment by id
+        /// </summary>
+        /// <param name="id">PricelistAssignment id</param>
+        /// <param name="patchDocument">JsonPatchDocument object with fields to update</param>
+        [HttpPatch]
+        [Route("api/pricing/assignments/{id}")]
+        [Authorize(ModuleConstants.Security.Permissions.Update)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> PatchPriceListAssignment(string id, [FromBody] JsonPatchDocument<PricelistAssignment> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var pricelistAssignment = await pricelistAssignmentService.GetByIdAsync(id);
+            if (pricelistAssignment == null)
+            {
+                return NotFound();
+            }
+
+            patchDocument.ApplyTo(pricelistAssignment, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await pricelistAssignmentService.SaveChangesAsync([pricelistAssignment]);
+
+            return NoContent();
+        }
+
+        private async Task<ProductPriceSearchResult> InnerSearchProductPrices(PricesSearchCriteria criteria)
+        {
+            if (criteria == null)
+            {
+                criteria = new PricesSearchCriteria();
+            }
+
+            var result = AbstractTypeFactory<ProductPriceSearchResult>.TryCreateInstance();
+            var searchResult = await priceSearchService.SearchNoCloneAsync(criteria);
+            result.TotalCount = searchResult.TotalCount;
+            result.Results = new List<ProductPrice>();
+
+            var productIds = searchResult.Results.Select(x => x.ProductId).Distinct().ToList();
+            var products = await itemService.GetNoCloneAsync(productIds, ItemResponseGroup.ItemInfo.ToString());
+            foreach (var productPricesGroup in searchResult.Results.GroupBy(x => x.ProductId))
+            {
+                var productPrice = new ProductPrice
+                {
+                    ProductId = productPricesGroup.Key,
+                    Prices = productPricesGroup.ToList()
+                };
+                var product = products.FirstOrDefault(x => x.Id == productPricesGroup.Key);
+                if (product != null)
+                {
+                    if (!product.Images.IsNullOrEmpty())
+                    {
+                        foreach (var image in product.Images)
+                        {
+                            image.RelativeUrl = image.Url;
+                            image.Url = blobUrlResolver.GetAbsoluteUrl(image.Url);
+                        }
+                    }
+
+                    productPrice.Product = product;
+                }
+                result.Results.Add(productPrice);
+            }
+
+            return result;
         }
     }
 }

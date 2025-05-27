@@ -17,7 +17,6 @@ namespace VirtoCommerce.PricingModule.Core.Model
         /// </summary>
         public ICollection<Price> Prices { get; set; }
 
-
         #region ICloneable members
         public override object Clone()
         {
