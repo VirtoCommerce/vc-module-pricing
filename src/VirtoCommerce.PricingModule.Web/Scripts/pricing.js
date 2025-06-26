@@ -31,8 +31,8 @@ angular.module(moduleName, ['ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.validate
         }]
     )
     .run(
-        ['$injector', '$http', '$compile', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'platformWebApp.authService', 'platformWebApp.metaFormsService',
-            function ($injector, $http, $compile, mainMenuService, widgetService, $state, authService, metaFormsService) {
+        ['$injector', 'platformWebApp.dynamicTemplateService', 'platformWebApp.mainMenuService', 'platformWebApp.widgetService', '$state', 'platformWebApp.authService', 'platformWebApp.metaFormsService',
+            function ($injector, dynamicTemplateService, mainMenuService, widgetService, $state, authService, metaFormsService) {
                 //Register module in main menu
                 var menuItem = {
                     path: 'browse/pricing',
@@ -64,10 +64,7 @@ angular.module(moduleName, ['ui.grid.cellNav', 'ui.grid.edit', 'ui.grid.validate
                     template: 'Modules/$(VirtoCommerce.Pricing)/Scripts/widgets/assignmentsWidget.tpl.html',
                 }, 'pricelistDetail');
 
-                $http.get('Modules/$(VirtoCommerce.Pricing)/Scripts/dynamicConditions/templates.html').then(function (response) {
-                    // compile the response, which will put stuff into the cache
-                    $compile(response.data);
-                });
+                dynamicTemplateService.ensureTemplateLoaded('Modules/$(VirtoCommerce.Pricing)/Scripts/dynamicConditions/templates.html');
 
                 metaFormsService.registerMetaFields('VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice' + 'ExportFilter', [
                     {
