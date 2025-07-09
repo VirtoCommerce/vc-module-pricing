@@ -87,13 +87,13 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     else
                     {
                         result.TotalCount = await query.CountAsync();
-
-                        query = query.Skip(criteria.Skip).Take(criteria.Take);
                     }
 
                     if (criteria.Take > 0)
                     {
                         var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
+                                                    .Skip(criteria.Skip)
+                                                    .Take(criteria.Take)
                                                     .Select(x => x.Id)
                                                     .AsNoTracking()
                                                     .ToListAsync();
