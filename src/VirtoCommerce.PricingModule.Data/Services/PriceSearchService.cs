@@ -70,38 +70,57 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     if (criteria.GroupByProducts)
                     {
-                        // unique priced product IDs
-                        var pricedProductsQuery = query.Select(x => x.ProductId).Distinct();
-                        result.TotalCount = await pricedProductsQuery.CountAsync();
+                        // Note: GroupByProducts breaks the products sorting
+                        var allProductIdsQuery = query.Select(x => x.ProductId).Distinct().OrderBy(x => x);
+
+                        result.TotalCount = await allProductIdsQuery.CountAsync();
 
                         if (criteria.Take > 0)
                         {
-                            query = query
-                                .Where(x => pricedProductsQuery
-                                    .OrderBy(y => y)
-                                    .Skip(criteria.Skip)
-                                    .Take(criteria.Take)
-                                    .Contains(x.ProductId));
+                            var pagedProductIds = await allProductIdsQuery
+                                .OrderBy(x => x)
+                                .Skip(criteria.Skip)
+                                .Take(criteria.Take)
+                                .ToListAsync();
+
+                            var priceIds = await query
+                                .Where(x => pagedProductIds.Contains(x.ProductId))
+                                .OrderBySortInfos(sortInfos)
+                                .ThenBy(x => x.Id)
+                                .Select(x => x.Id)
+                                .AsNoTracking()
+                                .ToListAsync();
+
+                            var unorderedResults = await _crudService.GetAsync(priceIds, responseGroup: null, clone);
+
+                            result.Results = unorderedResults
+                                .OrderBy(x => pagedProductIds.IndexOf(x.ProductId))
+                                .ThenBy(x => x.Id)
+                                .ToList();
                         }
                     }
                     else
                     {
                         result.TotalCount = await query.CountAsync();
-                    }
 
-                    if (criteria.Take > 0)
-                    {
-                        var priceIds = await query.OrderBySortInfos(sortInfos).ThenBy(x => x.Id)
-                                                    .Skip(criteria.Skip)
-                                                    .Take(criteria.Take)
-                                                    .Select(x => x.Id)
-                                                    .AsNoTracking()
-                                                    .ToListAsync();
+                        if (criteria.Take > 0)
+                        {
+                            var priceIds = await query
+                                .OrderBySortInfos(sortInfos)
+                                .ThenBy(x => x.Id)
+                                .Skip(criteria.Skip)
+                                .Take(criteria.Take)
+                                .Select(x => x.Id)
+                                .AsNoTracking()
+                                .ToListAsync();
 
-                        var unorderedResults = await _crudService.GetAsync(priceIds, responseGroup: null, clone);
-                        result.Results = unorderedResults.OrderBy(x => priceIds.IndexOf(x.Id)).ToList();
+                            var unorderedResults = await _crudService.GetAsync(priceIds, responseGroup: null, clone);
+
+                            result.Results = unorderedResults.OrderBy(x => priceIds.IndexOf(x.Id)).ToList();
+                        }
                     }
                 }
+
                 return result;
             });
         }
