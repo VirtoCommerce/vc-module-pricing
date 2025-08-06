@@ -17,7 +17,7 @@ using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
 
 namespace VirtoCommerce.PricingModule.Data.Search
 {
-    public class ProductPriceDocumentBuilder : IIndexSchemaBuilder, IIndexDocumentBuilder
+    public class ProductPriceDocumentBuilder : IIndexSchemaBuilder, IIndexDocumentBuilder, IIndexDocumentAggregator
     {
         private const int _batchSize = 50;
 
@@ -193,6 +193,22 @@ namespace VirtoCommerce.PricingModule.Data.Search
         {
             value ??= [new IndexedPrice { Currency = SchemaStringValue }];
             document.Add(new IndexDocumentField("__minVariationPrice", value, IndexDocumentFieldValueType.Complex) { IsRetrievable = true, IsFilterable = false, IsCollection = true });
+        }
+
+        public void Aggregate(IndexDocumentAggregationGroup aggregationGroup)
+        {
+            if (aggregationGroup.AggregationTarget == null || aggregationGroup.Documents.Count <= 1)
+                return;
+
+            var prices = aggregationGroup.Documents
+                .Where(x => x.Fields.FirstOrDefault(field => field.Name.EqualsIgnoreCase("availability"))?.Value as string == "InStock")
+                .Select(x => x.Fields.FirstOrDefault(x => x.Name.EqualsIgnoreCase("price"))?.Value as decimal?).Where(x => x.HasValue);
+
+            if (prices.Any())
+            {
+                aggregationGroup.AggregationTarget.AddFilterableDecimal("minVariationPrice", prices.Min().Value);
+                aggregationGroup.AggregationTarget.AddFilterableDecimal("maxVariationPrice", prices.Max().Value);
+            }
         }
     }
 }
