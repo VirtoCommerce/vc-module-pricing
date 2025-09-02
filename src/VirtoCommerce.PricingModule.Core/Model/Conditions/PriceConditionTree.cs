@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using VirtoCommerce.CoreModule.Core.Conditions;
 
 namespace VirtoCommerce.PricingModule.Core.Model.Conditions
@@ -9,6 +10,7 @@ namespace VirtoCommerce.PricingModule.Core.Model.Conditions
             All = true;
         }
 
+        [JsonIgnore]
         public bool IsEmpty
         {
             get
