@@ -50,6 +50,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 // do NOT use ToListAsync as "query" is not EF IAsyncQueryable
                 var assignments = query.ToList();
                 assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null || x.DynamicExpression.IsEmpty).ToList();
+
+                if (assignmentsToReturn.Count == 0)
+                {
+                    assignmentsToReturn = assignments;
+                }
             }
             else
             {
