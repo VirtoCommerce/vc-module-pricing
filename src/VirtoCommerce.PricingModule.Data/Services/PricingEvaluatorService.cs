@@ -51,7 +51,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var assignments = query.ToList();
                 assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null || x.DynamicExpression.IsEmpty).ToList();
 
-                if (assignmentsToReturn.Count == 0 || (!evalContext.ExpectedPriceListIds.IsNullOrEmpty() && !assignmentsToReturn.Any(x => evalContext.ExpectedPriceListIds.Contains(x.PricelistId))))
+                var expectedPriceListsFound = evalContext.ExpectedPriceListIds.IsNullOrEmpty() || assignmentsToReturn.Any(x => evalContext.ExpectedPriceListIds.Contains(x.PricelistId));
+                if (!expectedPriceListsFound)
                 {
                     assignmentsToReturn = assignments;
                 }
