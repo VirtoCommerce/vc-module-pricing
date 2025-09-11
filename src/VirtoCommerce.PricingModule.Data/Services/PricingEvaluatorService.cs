@@ -51,7 +51,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 var assignments = query.ToList();
                 assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null || x.DynamicExpression.IsEmpty).ToList();
 
-                if (assignmentsToReturn.Count == 0)
+                if (assignmentsToReturn.Count == 0 || (!evalContext.ExpectedPriceListIds.IsNullOrEmpty() && !assignmentsToReturn.Any(x => evalContext.ExpectedPriceListIds.Contains(x.PricelistId))))
                 {
                     assignmentsToReturn = assignments;
                 }
@@ -173,13 +173,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
+                    evalContext.ExpectedPriceListIds = await query.Select(x => x.PricelistId).Distinct().ToListAsync();
+
                     evalContext.Pricelists = evalContext.Pricelists.IsNullOrEmpty()
                         ? (await EvaluatePriceListsAsync(evalContext)).ToArray()
                         : evalContext.Pricelists;
 
                     evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
                 }
-
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
 
                 // Filter by date expiration
