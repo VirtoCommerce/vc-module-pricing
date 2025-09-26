@@ -60,7 +60,7 @@ namespace VirtoCommerce.PricingModule.Core
                     Name = "Pricing.Search.EventBasedIndexation.Enable",
                     GroupName = "Pricing|General",
                     ValueType = SettingValueType.Boolean,
-                    DefaultValue = false
+                    DefaultValue = true
                 };
 
 
