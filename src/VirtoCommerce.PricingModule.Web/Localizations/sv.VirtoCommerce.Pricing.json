@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "Prissättning",
+    "blades": {
+      "pricing-main": {
+        "title": "Prissättning",
+        "subtitle": "Hantera prissättningen för dina varor",
+        "menu": {
+          "pricelist-list": {
+            "title": "Prislistor"
+          },
+          "pricelist-assignment-list": {
+            "title": "Prislistetilldelningar"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "Hantera dina prislistor",
+        "labels": {
+          "name": "Namn",
+          "currency": "Valuta",
+          "last-modified": "Ändrad"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "Ny prislista",
+        "labels": {
+          "name": "Namn",
+          "currency": "Valuta",
+          "description": "Beskrivning"
+        },
+        "placeholders": {
+          "name": "Ange namn",
+          "currency": "Välj",
+          "description": "Ange beskrivning..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Välj en produkt för att hantera priserna",
+        "labels": {
+          "picture": "Bild",
+          "item-name": "Produktnamn",
+          "item-code": "Produktkod",
+          "price-range": "Prisintervall",
+          "price-count": "Antal priser",
+          "prices-count": "Antal priser i denna prislista",
+          "no-product-row-name": "Det finns ingen produkt med detta ID"
+        },
+        "placeholders": {
+          "search-item": "Sök produkt efter namn"
+        }
+      },
+      "prices-list": {
+        "title": "Priser för {{name}}",
+        "subtitle": "Redigera priser",
+        "labels": {
+          "currency": "Valuta",
+          "list-price": "Listpris",
+          "sale-price": "Reapris",
+          "min-quantity": "Minsta kvantitet",
+          "startDate": "Giltig från",
+          "endDate": "Giltig till",
+          "last-modified": "Ändrad"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Hantera tilldelade kataloger",
+        "labels": {
+          "assignment-name": "Tilldelningsnamn",
+          "catalog": "Katalog",
+          "priority": "Prioritet"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Hantera prissättningen för dina varor",
+        "labels": {
+          "name": "Namn",
+          "catalog": "Katalog",
+          "pricelist": "Prislista",
+          "pricelist-currency": "Valuta",
+          "priority": "Prioritet",
+          "activation": "Aktivering",
+          "expiration": "Utgång",
+          "last-modified": "Ändrad",
+          "modified-by": "Ändrad av"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Ny prislistetilldelning",
+        "subtitle": "Redigera katalogtilldelning",
+        "labels": {
+          "assignment-name": "Tilldelningsnamn",
+          "price-list": "Prislista",
+          "catalog": "Katalog",
+          "store": "Butik",
+          "priority": "Prioritet",
+          "priority-description": "Objekt med högre prioritet används först",
+          "description": "Beskrivning",
+          "enable-date": "Aktiveringsdatum",
+          "enable-date-description": "Lämna tomt om alltid tillgängligt",
+          "expiration-date": "Utgångsdatum",
+          "expiration-date-description": "Lämna tomt om alltid tillgängligt",
+          "eligible-shoppers": "Kvalificerade kunder"
+        },
+        "placeholders": {
+          "assignment-name": "Ange namn...",
+          "price-list": "Välj...",
+          "catalog": "Välj...",
+          "store": "Välj...",
+          "description": "Ange beskrivning..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Välj en prislista för att hantera priser",
+        "labels": {
+          "name": "Prislista",
+          "currency": "Valuta",
+          "priority": "Prioritet",
+          "prices-count": "Antal priser"
+        },
+        "no-assignments": "Denna katalog har inga tilldelade prislistor. Tilldela en prislista genom att följa denna länk ",
+        "manage-pricelists": "Hantera prissättning"
+      },
+      "item-prices": {
+        "title": "Priser för {{name}}",
+        "subtitle": "Redigera priser",
+        "head-label": "Prislista för det nya priset",
+        "pricelist-select-placeholder": "Välj en prislista för att lägga till det nya priset...",
+        "labels": {
+          "name": "Prislista",
+          "currency": "Valuta",
+          "catalog": "Katalog",
+          "store": "Butik",
+          "list-price": "Listpris",
+          "sale-price": "Reapris",
+          "min-quantity": "Minsta kvantitet",
+          "startDate": "Giltig från",
+          "endDate": "Giltig till"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Exportera priser",
+        "priceSubtitle": "Exportera priser till en JSON- eller CSV-fil",
+        "priceListTitle": "Exportera prislistor",
+        "pricelistSubtitle": "Exportera din prislista till en JSON- eller CSV-fil",
+        "priceAssignmentTitle": "Exportera prislistetilldelningar",
+        "priceAssignmentSubtitle": "Exportera din prislistetilldelning till en JSON- eller CSV-fil"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Tilldelningar"
+      },
+      "itemPricesWidget": {
+        "title": "Pris",
+        "assign-pricelist": "Tilldela prislista"
+      },
+      "prices": {
+        "title": "Priser"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill ta bort de valda prislistetilldelningarna?"
+      },
+      "assignments-delete-all": {
+        "title": "Bekräfta radering",
+        "warning": "VARNING: Denna ändring är slutgiltig och kan inte ångras. Att tillämpa denna ändring kan leda till dataförlust",
+        "message": "Alla filtrerade objekt kommer att raderas",
+        "instruction": "Skriv 'ja' för att radera:"
+      },
+      "pricelists-delete": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill ta bort de valda prislistorna?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill ta bort alla priser för de valda produkterna i denna prislista?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Bekräfta radering",
+        "message": "Är du säker på att du vill ta bort de valda priserna?"
+      },
+      "item-prices-delete-error": {
+        "title": "Fel",
+        "message": "Du måste ha minst ett pris per enhet (med minsta kvantitet på 1)."
+      },
+      "prices-save": {
+        "title": "Spara ändringar",
+        "message": "Priserna har ändrats. Vill du spara ändringarna?"
+      },
+      "pricelist-save": {
+        "title": "Spara ändringar",
+        "message": "Prislistan har ändrats. Vill du spara ändringarna?"
+      },
+      "assignment-save": {
+        "title": "Spara ändringar",
+        "message": "Katalogtilldelningen har ändrats. Vill du spara ändringarna?"
+      },
+      "assignment-save-validation": {
+        "title": "Spara ändringar",
+        "message": "För en prislistetilldelning måste du ange antingen en katalog eller en butik. Du kan inte lämna båda fälten tomma"
+      }
+    },
+    "commands": {
+      "add-selected": "Lägg till valda",
+      "delete-all": "Ta bort alla",
+      "delete-filtered": "Ta bort filtrerade"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Prislistor",
+        "modified-since": "Ändrad sedan",
+        "products": "Produkter",
+        "currencies": "Valutor"
+      },
+      "labels": {
+        "select": "Välj",
+        "selected": "Valda: "
+      },
+      "placeholders": {
+        "price-lists": "Välj prislistor…",
+        "catalog-lists": "Välj katalog…"
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Välj katalogprodukter…"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "Öppna prissättningsmenyn",
+    "pricing:create": "Skapa prissättningsdata",
+    "pricing:read": "Visa prissättningsdata",
+    "pricing:update": "Uppdatera prissättningsdata",
+    "pricing:delete": "Ta bort prissättningsdata"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Datum och tid för prissättningsindexering",
+                "description": "Datum och tid då prissättningsindexeringsuppgiften startar"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Poster per batch för export/import",
+          "description": "Ange antalet poster som bearbetas per batch under export/import. Att ange höga värden kan leda till långsammare prestanda"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Logga prissättningsändringar",
+        "description": "Aktivera/inaktivera detta alternativ för att logga ändringar i plattformens driftlogg. Detta kan påverka databasstorleken om priser ändras ofta"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Produktprisindexering",
+          "description": "Aktivera/inaktivera detta alternativ för att inkludera produktpriset i produktindexet. Detta kommer också att orsaka omindexering av produkten om priset ändras"
+        },
+        "StorePricesInIndex": {
+          "title": "Lagra alla produktpriser som ett indexobjekt",
+          "description": "Aktivera/inaktivera detta alternativ för att lagra alla produktpriser i indexet inom ett nästlat fält som <Produktnamn_pris>"
+        },
+        "PriceIndexingValue": {
+          "title": "Värde för prisindexering",
+          "description": "Välj produktprisvärde som ska lagras i produktindexet"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Händelsebaserad indexering för prissättningsenheter",
+            "description": "Aktivera/inaktivera händelsebaserad indexering för prissättningsenheter. När detta är aktiverat kommer ändringar i en katalogenhet automatiskt att utlösa en bakgrundsuppgift för att uppdatera sökindexet"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Exportera eller importera prislistor, tilldelningar och priser"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Fullständiga prislistdata",
+        "description": "Prislistdata med relaterade objekt. Stöder endast JSON-exportleverantör"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Pris",
+        "description": "Priser utan relaterade objekt"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Prislista",
+        "description": "Endast prislistor"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Prislistetilldelning",
+        "description": "Exportera prislistetilldelningar"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Prissättning",
+        "description": "Priser, prislistor och tilldelningar"
+      }
+    }
+  }
+}

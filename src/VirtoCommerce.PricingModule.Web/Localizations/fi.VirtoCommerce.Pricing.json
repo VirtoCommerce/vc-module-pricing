@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "Hinnoittelu",
+    "blades": {
+      "pricing-main": {
+        "title": "Hinnoittelu",
+        "subtitle": "Hallitse tavaroidesi hinnoittelua",
+        "menu": {
+          "pricelist-list": {
+            "title": "Hintalistat"
+          },
+          "pricelist-assignment-list": {
+            "title": "Hintalistan osoitukset"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "Hintalistojen hallinta",
+        "labels": {
+          "name": "Nimi",
+          "currency": "Valuutta",
+          "last-modified": "Muokattu"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "Uusi hintalista",
+        "labels": {
+          "name": "Nimi",
+          "currency": "Valuutta",
+          "description": "Kuvaus"
+        },
+        "placeholders": {
+          "name": "Syötä nimi",
+          "currency": "Valitse",
+          "description": "Anna kuvaus..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Valitse tuote hallitaksesi hintoja",
+        "labels": {
+          "picture": "Kuva",
+          "item-name": "Tuotteen nimi",
+          "item-code": "Tuotekoodi",
+          "price-range": "Hintaväli",
+          "price-count": "Hintojen määrä",
+          "prices-count": "Hintojen määrä tässä hintalistassa",
+          "no-product-row-name": "Tällä tunnuksella ei ole tuotetta"
+        },
+        "placeholders": {
+          "search-item": "Hae tuotetta nimellä"
+        }
+      },
+      "prices-list": {
+        "title": "Hinnat kohteelle {{name}}",
+        "subtitle": "Muokkaa hintoja",
+        "labels": {
+          "currency": "Valuutta",
+          "list-price": "Listahinta",
+          "sale-price": "Alennushinta",
+          "min-quantity": "Vähimmäismäärä",
+          "startDate": "Voimassa alkaen",
+          "endDate": "Voimassa asti",
+          "last-modified": "Muokattu"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Osoitettujen katalogien hallinta",
+        "labels": {
+          "assignment-name": "Osoituksen nimi",
+          "catalog": "Katalogi",
+          "priority": "Prioriteetti"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Hallitse tavaroidesi hinnoittelua",
+        "labels": {
+          "name": "Nimi",
+          "catalog": "Katalogi",
+          "pricelist": "Hintalista",
+          "pricelist-currency": "Valuutta",
+          "priority": "Prioriteetti",
+          "activation": "Aktivointi",
+          "expiration": "Vanheneminen",
+          "last-modified": "Muokattu",
+          "modified-by": "Muokkaaja"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Uusi hintalistan osoitus",
+        "subtitle": "Katalogiosoituksen muokkaus",
+        "labels": {
+          "assignment-name": "Osoituksen nimi",
+          "price-list": "Hintalista",
+          "catalog": "Katalogi",
+          "store": "Kauppa",
+          "priority": "Prioriteetti",
+          "priority-description": "Korkeamman prioriteetin kohde käytetään ensin",
+          "description": "Kuvaus",
+          "enable-date": "Käynnistyspäivä",
+          "enable-date-description": "Jätä tyhjäksi, jos aina saatavilla",
+          "expiration-date": "Vanhentumispäivä",
+          "expiration-date-description": "Jätä tyhjäksi, jos aina saatavilla",
+          "eligible-shoppers": "Kelvolliset ostajat"
+        },
+        "placeholders": {
+          "assignment-name": "Syötä nimi...",
+          "price-list": "Valitse...",
+          "catalog": "Valitse...",
+          "store": "Valitse...",
+          "description": "Anna kuvaus..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Valitse hintalista hallitaksesi hintoja",
+        "labels": {
+          "name": "Hintalista",
+          "currency": "Valuutta",
+          "priority": "Prioriteetti",
+          "prices-count": "Hintojen määrä"
+        },
+        "no-assignments": "Tällä katalogilla ei ole osoitettuja hintalistoja. Osoita hintalista seuraamalla tätä linkkiä ",
+        "manage-pricelists": "Hallitse hinnoittelua"
+      },
+      "item-prices": {
+        "title": "Hinnat kohteelle {{name}}",
+        "subtitle": "Muokkaa hintoja",
+        "head-label": "Hintalista uudelle hinnalle",
+        "pricelist-select-placeholder": "Valitse hintalista lisätäksesi uuden hinnan...",
+        "labels": {
+          "name": "Hintalista",
+          "currency": "Valuutta",
+          "catalog": "Katalogi",
+          "store": "Kauppa",
+          "list-price": "Listahinta",
+          "sale-price": "Alennushinta",
+          "min-quantity": "Vähimmäismäärä",
+          "startDate": "Voimassa alkaen",
+          "endDate": "Voimassa asti"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Vie hinnat",
+        "priceSubtitle": "Vie hinnat JSON- tai CSV-tiedostoon",
+        "priceListTitle": "Vie hintalistat",
+        "pricelistSubtitle": "Vie hintalistasi JSON- tai CSV-tiedostoon",
+        "priceAssignmentTitle": "Vie hintalistan osoitukset",
+        "priceAssignmentSubtitle": "Vie hintalistan osoituksesi JSON- tai CSV-tiedostoon"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Osoitukset"
+      },
+      "itemPricesWidget": {
+        "title": "Hinta",
+        "assign-pricelist": "Osoita hintalista"
+      },
+      "prices": {
+        "title": "Hinnat"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Vahvista poisto",
+        "message": "Oletko varma, että haluat poistaa valitut hintalistan osoitukset?"
+      },
+      "assignments-delete-all": {
+        "title": "Vahvista poisto",
+        "warning": "VAROITUS: Tämä muutos on lopullinen eikä sitä voi peruuttaa. Tämän muutoksen soveltaminen voi johtaa tietojen menetykseen",
+        "message": "Kaikki suodatetut kohteet poistetaan",
+        "instruction": "Kirjoita 'kyllä' poistaaksesi:"
+      },
+      "pricelists-delete": {
+        "title": "Vahvista poisto",
+        "message": "Oletko varma, että haluat poistaa valitut hintalistat?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Vahvista poisto",
+        "message": "Oletko varma, että haluat poistaa kaikki hinnat valituille tuotteille tässä hintalistassa?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Vahvista poisto",
+        "message": "Oletko varma, että haluat poistaa valitut hinnat?"
+      },
+      "item-prices-delete-error": {
+        "title": "Virhe",
+        "message": "Sinulla täytyy olla vähintään yksi hinta per yksikkö (vähimmäismäärällä 1)."
+      },
+      "prices-save": {
+        "title": "Tallenna muutokset",
+        "message": "Hintoja on muokattu. Haluatko tallentaa muutokset?"
+      },
+      "pricelist-save": {
+        "title": "Tallenna muutokset",
+        "message": "Hintalistaa on muokattu. Haluatko tallentaa muutokset?"
+      },
+      "assignment-save": {
+        "title": "Tallenna muutokset",
+        "message": "Katalogiosoitusta on muokattu. Haluatko tallentaa muutokset?"
+      },
+      "assignment-save-validation": {
+        "title": "Tallenna muutokset",
+        "message": "Hintalistan osoituksessa sinun täytyy määrittää joko katalogi tai kauppa. Et voi jättää molempia kenttiä tyhjiksi"
+      }
+    },
+    "commands": {
+      "add-selected": "Lisää valitut",
+      "delete-all": "Poista kaikki",
+      "delete-filtered": "Poista suodatetut"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Hintalistat",
+        "modified-since": "Muokattu jälkeen",
+        "products": "Tuotteet",
+        "currencies": "Valuutat"
+      },
+      "labels": {
+        "select": "Valitse",
+        "selected": "Valittu: "
+      },
+      "placeholders": {
+        "price-lists": "Valitse hintalistat…",
+        "catalog-lists": "Valitse katalogi…"
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Valitse katalogituotteet…"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "Avaa hinnoittelumenu",
+    "pricing:create": "Luo hinnoittelutietoja",
+    "pricing:read": "Näytä hinnoittelutietoja",
+    "pricing:update": "Päivitä hinnoittelutietoja",
+    "pricing:delete": "Poista hinnoittelutietoja"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Hinnoitteluindeksoinnin päivämäärä ja aika",
+                "description": "Päivämäärä ja aika, jolloin hinnoitteluindeksointitehtävä aloitetaan"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Tietueiden määrä erää kohti vientiin/tuontiin",
+          "description": "Määritä tietueiden määrä, joka käsitellään erää kohti viennin/tuonnin aikana. Korkeat arvot voivat johtaa hitaampaan suorituskykyyn"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Kirjaa hinnoittelumuutokset",
+        "description": "Ota käyttöön/poista käytöstä tämä vaihtoehto tallentaaksesi muutokset alustan toimintalokiin. Tämä voi vaikuttaa tietokannan kokoon, jos hinnat muuttuvat usein"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Tuotteen hinta-indeksointi",
+          "description": "Ota käyttöön/poista käytöstä tämä vaihtoehto sisällyttääksesi tuotteen hinta tuoteindeksiin. Tämä aiheuttaa myös tuotteen uudelleenindeksoinnin, jos hinta muuttuu"
+        },
+        "StorePricesInIndex": {
+          "title": "Tallenna kaikki tuotteen hinnat indeksissä objektina",
+          "description": "Ota käyttöön/poista käytöstä tämä vaihtoehto tallentaaksesi kaikki tuotteen hinnat indeksiin sisäkkäisenä kenttänä muodossa <Tuotenimi_hinta>"
+        },
+        "PriceIndexingValue": {
+          "title": "Hinta-indeksoinnin arvo",
+          "description": "Valitse tuotehinnan arvo, joka tallennetaan tuoteindeksiin"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Tapahtumapohjainen indeksointi hinnoitteluolioille",
+            "description": "Ota käyttöön/poista käytöstä tapahtumapohjainen indeksointi hinnoitteluolioille. Kun tämä on käytössä, katalogiolion muutokset käynnistävät automaattisesti taustatehtävän hakemiston päivittämiseksi"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Vie tai tuo hintalistoja, osoituksia ja hintoja"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Täydelliset hintalistan tiedot",
+        "description": "Hintalistan tiedot liittyvine objekteineen. Tukee vain JSON-vientitoimittajaa"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Hinta",
+        "description": "Hinnat ilman liittyviä objekteja"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Hintalista",
+        "description": "Vain hintalistat"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Hintalistan osoitus",
+        "description": "Vie hintalistan osoitukset"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Hinnoittelu",
+        "description": "Hinnat, hintalistat ja osoitukset"
+      }
+    }
+  }
+}
