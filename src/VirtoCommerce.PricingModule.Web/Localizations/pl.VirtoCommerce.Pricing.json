@@ -57,6 +57,7 @@
           "currency": "Waluta",
           "list-price": "Cena katalogowa",
           "sale-price": "Cena sprzedaży",
+          "recommended-price": "Cena rekomendowana",
           "min-quantity": "Minimalna ilość",
           "startDate": "Obowiązuje od",
           "endDate": "Obowiązuje do",
@@ -133,6 +134,7 @@
           "store": "Sklep",
           "list-price": "Cena katalogowa",
           "sale-price": "Cena sprzedaży",
+          "recommended-price": "Cena rekomendowana",
           "min-quantity": "Minimalna ilość",
           "startDate": "Obowiązuje od",
           "endDate": "Obowiązuje do"
@@ -253,6 +255,10 @@
       }
     },
     "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "Procent obliczania ceny rekomendowanej",
+        "description": "Współczynnik do obliczania ceny rekomendowanej. Cena rekomendowana = Cena sprzedaży (lub Cena katalogowa) * Procent ceny rekomendowanej."
+      },
       "ExportImport": {
         "PageSize": {
           "title": "Rozmiar partii dla eksportu/importu",

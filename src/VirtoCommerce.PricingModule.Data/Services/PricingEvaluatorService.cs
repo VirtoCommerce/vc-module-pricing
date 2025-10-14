@@ -11,7 +11,9 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
@@ -25,20 +27,22 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly ILogger<PricingEvaluatorService> _logger;
         private readonly IPricingPriorityFilterPolicy _pricingPriorityFilterPolicy;
         private readonly IItemService _productService;
+        private readonly ISettingsManager _settingsManager;
 
         public PricingEvaluatorService(
                 Func<IPricingRepository> repositoryFactory,
                 IItemService productService,
                 ILogger<PricingEvaluatorService> logger,
                 IPlatformMemoryCache platformMemoryCache,
-                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy
-            )
+                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy,
+                ISettingsManager settingsManager)
         {
             _platformMemoryCache = platformMemoryCache;
             _repositoryFactory = repositoryFactory;
             _logger = logger;
             _pricingPriorityFilterPolicy = pricingPriorityFilterPolicy;
             _productService = productService;
+            _settingsManager = settingsManager;
         }
 
         public virtual async Task<IList<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
@@ -184,6 +188,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 var queryResult = await query.AsNoTracking().ToListAsync();
                 prices = queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance()));
+
+                prices = prices.Where(price => price.RecommendedPrice == null).Select(FillRecommendedPrice);
             }
 
             result.AddRange(await PostProcessPrices(evalContext, prices));
@@ -226,7 +232,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
                 {
                     var variationPrice = inheritedPrice.CloneTyped();
-                    //Reset id for correct override price in possible update 
+                    //Reset id for correct override price in possible update
                     variationPrice.Id = null;
                     variationPrice.ProductId = variation.Id;
                     result.Add(variationPrice);
@@ -234,6 +240,27 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             return result;
+        }
+
+        private Price FillRecommendedPrice(Price price)
+        {
+            if (price == null)
+            {
+                return null;
+            }
+
+            var recommendedPricePercent = _settingsManager.GetValue<decimal>(ModuleConstants.Settings.General.RecommendedPricePercent);
+
+            if (price.Sale != null)
+            {
+                price.RecommendedPrice = price.Sale.Value * recommendedPricePercent;
+            }
+            else
+            {
+                price.RecommendedPrice = price.List * recommendedPricePercent;
+            }
+
+            return price;
         }
     }
 }

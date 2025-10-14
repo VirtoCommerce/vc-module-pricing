@@ -57,6 +57,7 @@
           "currency": "Valuta",
           "list-price": "Prezzo di listino",
           "sale-price": "Prezzo di vendita",
+          "recommended-price": "Prezzo consigliato",
           "min-quantity": "Quantità minima",
           "startDate": "Valido da",
           "endDate": "Valido fino a",
@@ -133,6 +134,7 @@
           "store": "Negozio",
           "list-price": "Prezzo di listino",
           "sale-price": "Prezzo di vendita",
+          "recommended-price": "Prezzo consigliato",
           "min-quantity": "Quantità minima",
           "startDate": "Valido da",
           "endDate": "Valido fino a"
@@ -253,6 +255,10 @@
       }
     },
     "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "Percentuale di calcolo del prezzo consigliato",
+        "description": "Un coefficiente per calcolare il prezzo consigliato. Prezzo consigliato = Prezzo di vendita (o Prezzo di listino) * Percentuale del prezzo consigliato."
+      },
       "ExportImport": {
         "PageSize": {
           "title": "Dimensione del batch per esportazione/importazione",

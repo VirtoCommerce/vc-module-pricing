@@ -57,6 +57,7 @@
           "currency": "货币",
           "list-price": "标价",
           "sale-price": "促销价",
+          "recommended-price": "推荐价格",
           "min-quantity": "最小数量",
           "startDate": "生效日期",
           "endDate": "截止日期",
@@ -133,6 +134,7 @@
           "store": "商店",
           "list-price": "标价",
           "sale-price": "促销价",
+          "recommended-price": "推荐价格",
           "min-quantity": "最小数量",
           "startDate": "生效日期",
           "endDate": "截止日期"
@@ -253,6 +255,10 @@
       }
     },
     "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "推荐价格计算百分比",
+        "description": "计算推荐价格的系数。推荐价格 = 促销价 (或 标价) * 推荐价格百分比。"
+      },
       "ExportImport": {
         "PageSize": {
           "title": "导出/导入使用的批量大小",
