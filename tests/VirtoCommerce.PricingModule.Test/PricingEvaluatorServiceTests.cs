@@ -12,7 +12,6 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.Events;
-using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
@@ -190,17 +189,12 @@ namespace VirtoCommerce.PricingModule.Test
             _repositoryMock.Setup(foo => foo.PricelistAssignments).Returns(new MockAsyncEnumerable<PricelistAssignmentEntity>(assignments));
             var pricingRepository = _repositoryMock.Object;
 
-            var mockSettingManager = new Mock<ISettingsManager>();
-            mockSettingManager.Setup(s => s.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new ObjectSettingEntry() { Value = 1.2m });
-
             var service = new PricingEvaluatorService(
                 () => pricingRepository,
                 _productServiceMock.Object,
                 _loggerMock.Object,
                 platformMemoryCache,
-                _pricingPriorityFilterPolicyMock.Object,
-                mockSettingManager.Object);
+                _pricingPriorityFilterPolicyMock.Object);
 
             return service;
         }

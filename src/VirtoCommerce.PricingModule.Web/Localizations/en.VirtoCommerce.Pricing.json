@@ -57,7 +57,6 @@
           "currency": "Currency",
           "list-price": "List price",
           "sale-price": "Sale price",
-          "recommended-price": "Recommended price",
           "min-quantity": "Min quantity",
           "startDate": "Valid from",
           "endDate": "Valid till",
@@ -134,7 +133,6 @@
           "store": "Store",
           "list-price": "List price",
           "sale-price": "Sale price",
-          "recommended-price": "Recommended price",
           "min-quantity": "Min quantity",
           "startDate": "Valid from",
           "endDate": "Valid till"
@@ -255,10 +253,6 @@
       }
     },
     "Pricing": {
-      "RecommendedPricePercent": {
-        "title": "Recommended price calculation percent",
-        "description": "A coefficient to calculate the recommended price. Recommended Price = SalePrice (or ListPrice) * RecommendedPricePercent."
-      },
       "ExportImport": {
         "PageSize": {
           "title": "Records per batch for export/ import",

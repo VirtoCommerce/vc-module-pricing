@@ -30,14 +30,6 @@ namespace VirtoCommerce.PricingModule.Core
                 public const string PriceIndexingValueMax = "Max";
                 public const string PriceIndexingValueMin = "Min";
 
-                public static SettingDescriptor RecommendedPricePercent { get; } = new()
-                {
-                    Name = "Pricing.RecommendedPricePercent",
-                    GroupName = "Pricing|General",
-                    ValueType = SettingValueType.Decimal,
-                    DefaultValue = 1.2m
-                };
-
                 public static SettingDescriptor ExportImportPageSize { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.ExportImport.PageSize",
@@ -95,7 +87,6 @@ namespace VirtoCommerce.PricingModule.Core
                     {
                         return new List<SettingDescriptor>
                                {
-                                   RecommendedPricePercent,
                                    ExportImportPageSize,
                                    LogPricingChanges,
                                    IndexationDatePricingCalendar,

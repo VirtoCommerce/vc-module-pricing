@@ -27,22 +27,19 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly ILogger<PricingEvaluatorService> _logger;
         private readonly IPricingPriorityFilterPolicy _pricingPriorityFilterPolicy;
         private readonly IItemService _productService;
-        private readonly ISettingsManager _settingsManager;
 
         public PricingEvaluatorService(
                 Func<IPricingRepository> repositoryFactory,
                 IItemService productService,
                 ILogger<PricingEvaluatorService> logger,
                 IPlatformMemoryCache platformMemoryCache,
-                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy,
-                ISettingsManager settingsManager)
+                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy)
         {
             _platformMemoryCache = platformMemoryCache;
             _repositoryFactory = repositoryFactory;
             _logger = logger;
             _pricingPriorityFilterPolicy = pricingPriorityFilterPolicy;
             _productService = productService;
-            _settingsManager = settingsManager;
         }
 
         public virtual async Task<IList<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)

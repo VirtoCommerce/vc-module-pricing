@@ -57,7 +57,6 @@
           "currency": "Währung",
           "list-price": "Listenpreis",
           "sale-price": "Verkaufspreis",
-          "recommended-price": "Empfohlener Preis",
           "min-quantity": "Mindestmenge",
           "startDate": "Gültig ab",
           "endDate": "Gültig bis",
@@ -134,7 +133,6 @@
           "store": "Shop",
           "list-price": "Listenpreis",
           "sale-price": "Verkaufspreis",
-          "recommended-price": "Empfohlener Preis",
           "min-quantity": "Mindestmenge",
           "startDate": "Gültig ab",
           "endDate": "Gültig bis"
@@ -255,10 +253,6 @@
       }
     },
     "Pricing": {
-      "RecommendedPricePercent": {
-        "title": "Prozentsatz für empfohlene Preiskalkulation",
-        "description": "Ein Koeffizient zur Berechnung des empfohlenen Preises. Empfohlener Preis = Verkaufspreis (oder Listenpreis) * EmpfohlenerPreisProzent."
-      },
       "ExportImport": {
         "PageSize": {
           "title": "Batchgröße für Export/Import",

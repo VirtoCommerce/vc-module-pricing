@@ -57,7 +57,6 @@
           "currency": "通貨",
           "list-price": "定価",
           "sale-price": "販売価格",
-          "recommended-price": "推奨価格",
           "min-quantity": "最小数量",
           "startDate": "有効開始日",
           "endDate": "有効終了日",
@@ -134,7 +133,6 @@
           "store": "店舗",
           "list-price": "定価",
           "sale-price": "販売価格",
-          "recommended-price": "推奨価格",
           "min-quantity": "最小数量",
           "startDate": "有効開始日",
           "endDate": "有効終了日"
@@ -255,10 +253,6 @@
       }
     },
     "Pricing": {
-      "RecommendedPricePercent": {
-        "title": "推奨価格計算率",
-        "description": "推奨価格を計算するための係数。推奨価格 = 販売価格（または定価）* 推奨価格率。"
-      },
       "ExportImport": {
         "PageSize": {
           "title": "エクスポート/インポートのバッチサイズ",

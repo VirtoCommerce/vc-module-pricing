@@ -28,7 +28,6 @@ public class PricingEvaluatorService2 : PricingEvaluatorService
         IPlatformMemoryCache platformMemoryCache,
         IPricingPriorityFilterPolicy pricingPriorityFilterPolicy)
         : base(
-            settingsManager: settingsManager,
             repositoryFactory: repositoryFactory,
             productService: productService,
             logger: logger,
