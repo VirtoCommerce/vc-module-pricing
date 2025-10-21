@@ -188,8 +188,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 var queryResult = await query.AsNoTracking().ToListAsync();
                 prices = queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance()));
-
-                prices = prices.Where(price => price.RecommendedPrice == null).Select(FillRecommendedPrice);
             }
 
             result.AddRange(await PostProcessPrices(evalContext, prices));
@@ -197,7 +195,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        private async Task<List<Price>> PostProcessPrices(PriceEvaluationContext evalContext, IEnumerable<Price> prices)
+        protected async Task<List<Price>> PostProcessPrices(PriceEvaluationContext evalContext, IEnumerable<Price> prices)
         {
             var result = new List<Price>();
 
@@ -240,27 +238,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             return result;
-        }
-
-        private Price FillRecommendedPrice(Price price)
-        {
-            if (price == null)
-            {
-                return null;
-            }
-
-            var recommendedPricePercent = _settingsManager.GetValue<decimal>(ModuleConstants.Settings.General.RecommendedPricePercent);
-
-            if (price.Sale != null)
-            {
-                price.RecommendedPrice = price.Sale.Value * recommendedPricePercent;
-            }
-            else
-            {
-                price.RecommendedPrice = price.List * recommendedPricePercent;
-            }
-
-            return price;
         }
     }
 }

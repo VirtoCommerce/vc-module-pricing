@@ -1,0 +1,327 @@
+{
+  "pricing": {
+    "main-menu-title": "Ценообразование",
+    "blades": {
+      "pricing-main": {
+        "title": "Ценообразование",
+        "subtitle": "Управление ценами на товары",
+        "menu": {
+          "pricelist-list": {
+            "title": "Прайс-листы"
+          },
+          "pricelist-assignment-list": {
+            "title": "Назначения прайс-листов"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "Управление прайс-листами",
+        "labels": {
+          "name": "Название",
+          "currency": "Валюта",
+          "last-modified": "Изменено"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "Новый прайс-лист",
+        "labels": {
+          "name": "Название",
+          "currency": "Валюта",
+          "description": "Описание"
+        },
+        "placeholders": {
+          "name": "Введите название",
+          "currency": "Выберите",
+          "description": "Добавьте описание..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Выберите товар для управления ценами",
+        "labels": {
+          "picture": "Изображение",
+          "item-name": "Название товара",
+          "item-code": "Код товара",
+          "price-range": "Диапазон цен",
+          "price-count": "Количество цен",
+          "prices-count": "Количество цен в этом прайс-листе",
+          "no-product-row-name": "Товар с таким ID не существует"
+        },
+        "placeholders": {
+          "search-item": "Поиск товара по названию"
+        }
+      },
+      "prices-list": {
+        "title": "Цены для {{name}}",
+        "subtitle": "Редактирование цен",
+        "labels": {
+          "currency": "Валюта",
+          "list-price": "Базовая цена",
+          "sale-price": "Цена со скидкой",
+          "recommended-price": "Рекомендованная цена",
+          "min-quantity": "Мин. количество",
+          "startDate": "Действует с",
+          "endDate": "Действует до",
+          "last-modified": "Изменено"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Управление назначенными каталогами",
+        "labels": {
+          "assignment-name": "Название назначения",
+          "catalog": "Каталог",
+          "priority": "Приоритет"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Управление ценообразованием товаров",
+        "labels": {
+          "name": "Название",
+          "catalog": "Каталог",
+          "pricelist": "Прайс-лист",
+          "pricelist-currency": "Валюта",
+          "priority": "Приоритет",
+          "activation": "Активация",
+          "expiration": "Срок действия",
+          "last-modified": "Изменено",
+          "modified-by": "Кем изменено"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Новое назначение прайс-листа",
+        "subtitle": "Редактирование назначения каталога",
+        "labels": {
+          "assignment-name": "Название назначения",
+          "price-list": "Прайс-лист",
+          "catalog": "Каталог",
+          "store": "Магазин",
+          "priority": "Приоритет",
+          "priority-description": "Элемент с более высоким приоритетом будет использован первым",
+          "description": "Описание",
+          "enable-date": "Дата включения",
+          "enable-date-description": "Оставьте поле пустым, если эти цены доступны всегда",
+          "expiration-date": "Дата окончания",
+          "expiration-date-description": "Оставьте пустым, если эти цены доступны всегда",
+          "eligible-shoppers": "Подходящие покупатели"
+        },
+        "placeholders": {
+          "assignment-name": "Введите название...",
+          "price-list": "Выберите...",
+          "catalog": "Выберите...",
+          "store": "Выберите...",
+          "description": "Добавьте описание..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Выберите прайс-лист для управления ценами",
+        "labels": {
+          "name": "Прайс-лист",
+          "currency": "Валюта",
+          "priority": "Приоритет",
+          "prices-count": "Количество цен"
+        },
+        "no-assignments": "У этого каталога нет назначенных прайс-листов. Назначьте прайс-лист, перейдя по этой ссылке ",
+        "manage-pricelists": "Управление ценами"
+      },
+      "item-prices": {
+        "title": "Цены для {{name}}",
+        "subtitle": "Редактирование цен",
+        "head-label": "Прайс-лист для новой цены",
+        "pricelist-select-placeholder": "Выберите прайс-лист для добавления новой цены...",
+        "labels": {
+          "name": "Прайс-лист",
+          "currency": "Валюта",
+          "catalog": "Каталог",
+          "store": "Магазин",
+          "list-price": "Базовая цена",
+          "sale-price": "Цена со скидкой",
+          "recommended-price": "Рекомендованная цена",
+          "min-quantity": "Мин. количество",
+          "startDate": "Действует с",
+          "endDate": "Действует до"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Экспорт цен",
+        "priceSubtitle": "Экспорт цен в файл JSON или CSV",
+        "priceListTitle": "Экспорт прайс-листов",
+        "pricelistSubtitle": "Экспорт прайс-листа в файл JSON или CSV",
+        "priceAssignmentTitle": "Экспорт назначений цен",
+        "priceAssignmentSubtitle": "Экспорт назначений прайс-листа в файл JSON или CSV"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Назначения"
+      },
+      "itemPricesWidget": {
+        "title": "Цена",
+        "assign-pricelist": "Назначить прайс-лист"
+      },
+      "prices": {
+        "title": "Цены"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Подтвердите удаление",
+        "message": "Вы уверены, что хотите удалить выбранные назначения прайс-листов?"
+      },
+      "assignments-delete-all": {
+        "title": "Подтвердите удаление",
+        "warning": "ВНИМАНИЕ: Это изменение окончательное и не может быть отменено. Применение этого изменения может привести к потере данных",
+        "message": "Все отфильтрованные элементы будут удалены",
+        "instruction": "Введите 'yes' для удаления:"
+      },
+      "pricelists-delete": {
+        "title": "Подтвердите удаление",
+        "message": "Вы уверены, что хотите удалить выбранные прайс-листы?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Подтвердите удаление",
+        "message": "Вы уверены, что хотите удалить все цены для выбранных товаров в этом прайс-листе?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Подтвердите удаление",
+        "message": "Вы уверены, что хотите удалить выбранные цены?"
+      },
+      "item-prices-delete-error": {
+        "title": "Ошибка",
+        "message": "Укажите минимум одну цену за единицу (с минимальным количеством 1)."
+      },
+      "prices-save": {
+        "title": "Сохранить изменения",
+        "message": "Цены были изменены. Хотите сохранить изменения?"
+      },
+      "pricelist-save": {
+        "title": "Сохранить изменения",
+        "message": "Прайс-лист был изменен. Хотите сохранить изменения?"
+      },
+      "assignment-save": {
+        "title": "Сохранить изменения",
+        "message": "Назначение каталога было изменено. Хотите сохранить изменения?"
+      },
+      "assignment-save-validation": {
+        "title": "Сохранить изменения",
+        "message": "Для назначения прайс-листа необходимо указать либо каталог, либо магазин. Нельзя оставлять оба поля пустыми"
+      }
+    },
+    "commands": {
+      "add-selected": "Добавить выбранное",
+      "delete-all": "Удалить все",
+      "delete-filtered": "Удалить отфильтрованные"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Прайс-листы",
+        "modified-since": "Изменено с",
+        "products": "Товары",
+        "currencies": "Валюты"
+      },
+      "labels": {
+        "select": "Выбрать",
+        "selected": "Выбрано: "
+      },
+      "placeholders": {
+        "price-lists": "Выберите прайс-листы...",
+        "catalog-lists": "Выберите каталог..."
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Выберите товары каталога..."
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "Открывать меню ценообразования",
+    "pricing:create": "Создавать данные о ценах",
+    "pricing:read": "Просматривать данные о ценах",
+    "pricing:update": "Обновлять данные о ценах",
+    "pricing:delete": "Удалять данные о ценах"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Дата и время индексации цен",
+                "description": "Дата и время начала задачи индексации цен"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "Процент расчета рекомендованной цены",
+        "description": "Коэффициент для расчета рекомендованной цены. Рекомендованная цена = Цена продажи (или Базовая цена) * Процент рекомендованной цены."
+      },
+      "ExportImport": {
+        "PageSize": {
+          "title": "Количество записей для экспорта/импорта",
+          "description": "Укажите количество записей, обрабатываемых за один пакет во время экспорта/импорта. Высокие значения могут привести к снижению производительности"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Журнал изменений цен",
+        "description": "Включить/выключить эту опцию для записи изменений в журнал операций платформы. Это может повлиять на размер базы данных, если цены часто меняются"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Индексация цен товаров",
+          "description": "Включить/выключить эту опцию для включения цены товара в индекс товара. Это также вызовет переиндексацию товара при изменении цены"
+        },
+        "StorePricesInIndex": {
+          "title": "Хранить все цены товаров как объект индекса",
+          "description": "Включить/выключить эту опцию для хранения всех цен товаров в индексе в виде вложенного поля как <ProductName_price>"
+        },
+        "PriceIndexingValue": {
+          "title": "Значение индексации цены",
+          "description": "Выберите значение цены товара, которое будет храниться в индексе товара"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Индексация на основе событий для объектов ценообразования",
+            "description": "Включить/выключить индексацию на основе событий для объектов ценообразования. При включении любые изменения в объекте каталога автоматически запустят фоновую задачу для обновления индекса поиска"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Экспорт или импорт прайс-листов, назначений и цен"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Полные данные прайс-листа",
+        "description": "Данные прайс-листа со связанными объектами. Поддерживает только JSON"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Цена",
+        "description": "Цены без связанных объектов"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Прайс-лист",
+        "description": "Только прайс-листы"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Назначение прайс-листа",
+        "description": "Экспорт назначений прайс-листа"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Ценообразование",
+        "description": "Цены, прайс-листы и назначения"
+      }
+    }
+  }
+}

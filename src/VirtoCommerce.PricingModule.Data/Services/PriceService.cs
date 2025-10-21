@@ -40,9 +40,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
             var changedEntries = new List<GenericChangedEntry<Price>>();
             using (var repository = _repositoryFactory())
             {
-                var alreadyExistPricesEntities = await LoadEntities(repository, models.Select(x => x.Id).Where(x => x != null).Distinct().ToList());
+                var alreadyExistPricesEntities = await LoadEntities(repository,models.Select(x => x.Id).Where(x => x != null).Distinct().ToList());
 
-                //Create default priceLists for prices without pricelist 
+                //Create default priceLists for prices without pricelist
                 foreach (var priceWithoutPricelistGroup in models.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
                 {
                     var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
@@ -61,6 +61,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     var sourceEntity = AbstractTypeFactory<PriceEntity>.TryCreateInstance().FromModel(price, pkMap);
                     var targetEntity = alreadyExistPricesEntities.FirstOrDefault(x => x.Id == price.Id);
+
                     if (targetEntity != null)
                     {
                         changedEntries.Add(new GenericChangedEntry<Price>(price, targetEntity.ToModel(AbstractTypeFactory<Price>.TryCreateInstance()), EntryState.Modified));

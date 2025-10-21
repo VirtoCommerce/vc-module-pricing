@@ -1,0 +1,13 @@
+﻿<script type="text/ng-template" id="recommended-price-cellTextEditor">
+  <div class="form-editor form-input">
+    <input class="form-input" money ng-model="MODEL_COL_FIELD" ui-grid-editor placeholder="{{'platform.placeholders.n-a' | translate}}">
+  </div>
+</script>
+
+<script type="text/ng-template" id="recommended-price-cell-validator">
+  <div class="ui-grid-cell-contents" title="{{grid.validate.getTitleFormattedErrors(row.entity,col.colDef)}}">
+    <div class="form-editor form-input">
+      <input class="ng-valid form-input" money ng-model="MODEL_COL_FIELD" ng-class="{'ng-invalid' : grid.validate.isInvalid(row.entity,col.colDef)}" placeholder="{{'platform.placeholders.n-a' | translate}}" readonly="readonly" />
+    </div>
+  </div>
+</script>
