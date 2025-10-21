@@ -1,6 +1,6 @@
 var moduleName = "virtoCommerce.pricingModule2";
 
-if (AppDependencies != undefined) {
+if (AppDependencies !== undefined) {
     AppDependencies.push(moduleName);
 }
 

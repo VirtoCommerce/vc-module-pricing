@@ -10,7 +10,7 @@ public class Pricing2DbContextFactory : IDesignTimeDbContextFactory<Pricing2DbCo
     {
         var optionsBuilder = new DbContextOptionsBuilder<Pricing2DbContext>();
 
-        var connectionString = "Host=localhost;Port=5432;Database=VirtoCommerce3;Persist Security Info=True;User ID=postgres;Password=G%lrckkk6Mnb;Timeout=30;TrustServerCertificate=True;";
+        var connectionString = "Host=localhost;Port=5432;Database=VirtoCommerce3;Persist Security Info=True;User ID=virto;Password=virto;Timeout=30;TrustServerCertificate=True;";
 
         optionsBuilder.UsePostgreSqlDatabase(connectionString, typeof(Pricing2DbContextFactory), Module.Configuration);
 
