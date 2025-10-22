@@ -29,11 +29,11 @@ namespace VirtoCommerce.PricingModule2.Web.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "RecommendedPrice",
+                name: "Discriminator",
                 table: "Price");
 
             migrationBuilder.DropColumn(
-                name: "Discriminator",
+                name: "RecommendedPrice",
                 table: "Price");
         }
     }

@@ -10,7 +10,6 @@ using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule2.Web.Extensions;
-using VirtoCommerce.PricingModule2.Web.Models;
 
 namespace VirtoCommerce.PricingModule2.Web.Services
 {
@@ -25,6 +24,8 @@ namespace VirtoCommerce.PricingModule2.Web.Services
         : PriceSearchService(repositoryFactory, platformMemoryCache, crudService, crudOptions,
             productIndexedSearchService)
     {
+        private readonly decimal _recommendedPricePercent = settingsManager.GetValue<decimal>(ModuleConstants.Settings.General.RecommendedPricePercent);
+
         public override async Task<PriceSearchResult> SearchAsync(PricesSearchCriteria criteria, bool clone = true)
         {
             var searchResult = await base.SearchAsync(criteria, clone);
@@ -34,15 +35,7 @@ namespace VirtoCommerce.PricingModule2.Web.Services
                 return searchResult;
             }
 
-            var recommendedPricePercent = settingsManager.GetValue<decimal>(ModuleConstants.Settings.General.RecommendedPricePercent);
-
-            foreach (var price in searchResult.Results)
-            {
-                if (price is Price2 { RecommendedPrice: null } price2)
-                {
-                    price2.FillRecommendedPrice( recommendedPricePercent);
-                }
-            }
+            searchResult.Results = searchResult.Results.FillRecommendedPrice(_recommendedPricePercent);
 
             return searchResult;
         }

@@ -10,7 +10,6 @@ using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
-using VirtoCommerce.PricingModule.Data.Services;
 using VirtoCommerce.PricingModule2.Web.Entities;
 using VirtoCommerce.PricingModule2.Web.Models;
 using VirtoCommerce.PricingModule2.Web.Repositories;
