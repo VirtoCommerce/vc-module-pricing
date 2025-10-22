@@ -1,0 +1,321 @@
+{
+  "pricing": {
+    "main-menu-title": "Prising",
+    "blades": {
+      "pricing-main": {
+        "title": "Prising",
+        "subtitle": "Administrer prisene på varene dine",
+        "menu": {
+          "pricelist-list": {
+            "title": "Prislister"
+          },
+          "pricelist-assignment-list": {
+            "title": "Prislistetildelinger"
+          }
+        }
+      },
+      "pricelist-list": {
+        "subtitle": "Administrer prislistene dine",
+        "labels": {
+          "name": "Navn",
+          "currency": "Valuta",
+          "last-modified": "Endret"
+        }
+      },
+      "pricelist-detail": {
+        "title-new": "Ny prisliste",
+        "labels": {
+          "name": "Navn",
+          "currency": "Valuta",
+          "description": "Beskrivelse"
+        },
+        "placeholders": {
+          "name": "Skriv inn navn",
+          "currency": "Velg",
+          "description": "Angi beskrivelse..."
+        }
+      },
+      "pricelist-item-list": {
+        "subtitle": "Velg et produkt for å administrere prisene",
+        "labels": {
+          "picture": "Bilde",
+          "item-name": "Produktnavn",
+          "item-code": "Produktkode",
+          "price-range": "Prisområde",
+          "price-count": "Antall priser",
+          "prices-count": "Antall priser i denne prislisten",
+          "no-product-row-name": "Det finnes ingen produkter med denne ID-en"
+        },
+        "placeholders": {
+          "search-item": "Søk etter produkt ved navn"
+        }
+      },
+      "prices-list": {
+        "title": "Priser for {{name}}",
+        "subtitle": "Rediger priser",
+        "labels": {
+          "currency": "Valuta",
+          "list-price": "Listepris",
+          "sale-price": "Salgspris",
+          "min-quantity": "Minimumsantall",
+          "startDate": "Gyldig fra",
+          "endDate": "Gyldig til",
+          "last-modified": "Endret"
+        }
+      },
+      "pricelist-assignment-list": {
+        "subtitle": "Administrer tildelte kataloger",
+        "labels": {
+          "assignment-name": "Tildelingsnavn",
+          "catalog": "Katalog",
+          "priority": "Prioritet"
+        }
+      },
+      "assignment-list": {
+        "subtitle": "Administrer prisene på varene dine",
+        "labels": {
+          "name": "Navn",
+          "catalog": "Katalog",
+          "pricelist": "Prisliste",
+          "pricelist-currency": "Valuta",
+          "priority": "Prioritet",
+          "activation": "Aktivering",
+          "expiration": "Utløp",
+          "last-modified": "Endret",
+          "modified-by": "Endret av"
+        }
+      },
+      "assignment-detail": {
+        "new-title": "Ny prislistetildeling",
+        "subtitle": "Rediger katalogtildeling",
+        "labels": {
+          "assignment-name": "Tildelingsnavn",
+          "price-list": "Prisliste",
+          "catalog": "Katalog",
+          "store": "Butikk",
+          "priority": "Prioritet",
+          "priority-description": "Elementet med høyere prioritet vil bli brukt først",
+          "description": "Beskrivelse",
+          "enable-date": "Aktiveringsdato",
+          "enable-date-description": "La stå tomt hvis alltid tilgjengelig",
+          "expiration-date": "Utløpsdato",
+          "expiration-date-description": "La stå tomt hvis alltid tilgjengelig",
+          "eligible-shoppers": "Kvalifiserte kunder"
+        },
+        "placeholders": {
+          "assignment-name": "Skriv inn navn...",
+          "price-list": "Velg...",
+          "catalog": "Velg...",
+          "store": "Velg...",
+          "description": "Angi beskrivelse..."
+        }
+      },
+      "item-pricelists-list": {
+        "subtitle": "Velg en prisliste for å administrere priser",
+        "labels": {
+          "name": "Prisliste",
+          "currency": "Valuta",
+          "priority": "Prioritet",
+          "prices-count": "Antall priser"
+        },
+        "no-assignments": "Denne katalogen har ingen tildelte prislister. Tildel en prisliste ved å følge denne lenken ",
+        "manage-pricelists": "Administrer prising"
+      },
+      "item-prices": {
+        "title": "Priser for {{name}}",
+        "subtitle": "Rediger priser",
+        "head-label": "Prisliste for den nye prisen",
+        "pricelist-select-placeholder": "Velg en prisliste for å legge til den nye prisen...",
+        "labels": {
+          "name": "Prisliste",
+          "currency": "Valuta",
+          "catalog": "Katalog",
+          "store": "Butikk",
+          "list-price": "Listepris",
+          "sale-price": "Salgspris",
+          "min-quantity": "Minimumsantall",
+          "startDate": "Gyldig fra",
+          "endDate": "Gyldig til"
+        }
+      },
+      "exporter": {
+        "priceTitle": "Eksporter priser",
+        "priceSubtitle": "Eksporter priser til en JSON- eller CSV-fil",
+        "priceListTitle": "Eksporter prislister",
+        "pricelistSubtitle": "Eksporter prislisten din til en JSON- eller CSV-fil",
+        "priceAssignmentTitle": "Eksporter prislistetildelinger",
+        "priceAssignmentSubtitle": "Eksporter prislistetildelingen din til en JSON- eller CSV-fil"
+      }
+    },
+    "widgets": {
+      "assignments": {
+        "title": "Tildelinger"
+      },
+      "itemPricesWidget": {
+        "title": "Pris",
+        "assign-pricelist": "Tildel prisliste"
+      },
+      "prices": {
+        "title": "Priser"
+      }
+    },
+    "dialogs": {
+      "assignments-delete": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette de valgte prislistetildelingene?"
+      },
+      "assignments-delete-all": {
+        "title": "Bekreft sletting",
+        "warning": "ADVARSEL: Denne endringen er endelig og kan ikke angres. Å bruke denne endringen kan føre til tap av data",
+        "message": "Alle filtrerte elementer vil bli slettet",
+        "instruction": "Skriv 'ja' for å slette:"
+      },
+      "pricelists-delete": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette de valgte prislistene?"
+      },
+      "pricelist-item-list-delete": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette alle priser for de valgte produktene i denne prislisten?"
+      },
+      "item-prices-delete-confirmation": {
+        "title": "Bekreft sletting",
+        "message": "Er du sikker på at du vil slette de valgte prisene?"
+      },
+      "item-prices-delete-error": {
+        "title": "Feil",
+        "message": "Du må ha minst én pris per enhet (med minimumsantall på 1)."
+      },
+      "prices-save": {
+        "title": "Lagre endringer",
+        "message": "Prisene har blitt endret. Vil du lagre endringene?"
+      },
+      "pricelist-save": {
+        "title": "Lagre endringer",
+        "message": "Prislisten har blitt endret. Vil du lagre endringene?"
+      },
+      "assignment-save": {
+        "title": "Lagre endringer",
+        "message": "Katalogtildelingen har blitt endret. Vil du lagre endringene?"
+      },
+      "assignment-save-validation": {
+        "title": "Lagre endringer",
+        "message": "For en prislistetildeling må du angi enten en katalog eller en butikk. Du kan ikke la begge feltene stå tomme"
+      }
+    },
+    "commands": {
+      "add-selected": "Legg til valgte",
+      "delete-all": "Slett alle",
+      "delete-filtered": "Slett filtrerte"
+    },
+    "selectors": {
+      "titles": {
+        "price-lists": "Prislister",
+        "modified-since": "Endret siden",
+        "products": "Produkter",
+        "currencies": "Valutaer"
+      },
+      "labels": {
+        "select": "Velg",
+        "selected": "Valgt: "
+      },
+      "placeholders": {
+        "price-lists": "Velg prislister…",
+        "catalog-lists": "Velg katalog…"
+      },
+      "blades": {
+        "titles": {
+          "select-products": "Velg katalogprodukter…"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "pricing:access": "Åpne prisingsmenyen",
+    "pricing:create": "Opprett prisingsdata",
+    "pricing:read": "Vis prisingsdata",
+    "pricing:update": "Oppdater prisingsdata",
+    "pricing:delete": "Slett prisingsdata"
+  },
+  "settings": {
+    "VirtoCommerce": {
+      "Search": {
+        "IndexingJobs": {
+          "IndexationDate": {
+            "Pricing": {
+              "Calendar": {
+                "title": "Prisingsindekseringsdato og -tid",
+                "description": "Dato og tid når prisingsindekseringsoppgaven starter"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pricing": {
+      "ExportImport": {
+        "PageSize": {
+          "title": "Poster per batch for eksport/import",
+          "description": "Angi antall poster som behandles per batch under eksport/import. Å angi høye verdier kan føre til tregere ytelse"
+        }
+      },
+      "LogPricingChanges": {
+        "title": "Logg prisendringer",
+        "description": "Aktiver/deaktiver dette alternativet for å logge endringer i plattformens operasjonslogg. Dette kan påvirke databasestørrelsen hvis priser endres ofte"
+      },
+      "Indexing": {
+        "Enable": {
+          "title": "Produktprisindeksering",
+          "description": "Aktiver/deaktiver dette alternativet for å inkludere produktprisen i produktindeksen. Dette vil også føre til reindeksering av produktet hvis prisen endres"
+        },
+        "StorePricesInIndex": {
+          "title": "Lagre alle produktpriser som et indeksobjekt",
+          "description": "Aktiver/deaktiver dette alternativet for å lagre alle produktpriser i indeksen innenfor et nestet felt som <Produktnavn_pris>"
+        },
+        "PriceIndexingValue": {
+          "title": "Verdi for prisindeksering",
+          "description": "Velg produktprisverdi som skal lagres i produktindeksen"
+        }
+      },
+      "Search": {
+        "EventBasedIndexation": {
+          "Enable": {
+            "title": "Hendelsesbasert indeksering for prisingsenheter",
+            "description": "Aktiver/deaktiver hendelsesbasert indeksering for prisingsenheter. Når dette er aktivert, vil endringer i en katalogenhet automatisk utløse en bakgrunnsoppgave for å oppdatere søkeindeksen"
+          }
+        }
+      }
+    }
+  },
+  "module": {
+    "VirtoCommerce.Pricing": {
+      "description": "Eksporter eller importer prislister, tildelinger og priser"
+    }
+  },
+  "export": {
+    "types": {
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistFullData": {
+        "name": "Fullstendige prislistedata",
+        "description": "Prislistedata med relaterte objekter. Støtter kun JSON-eksportleverandør"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePrice": {
+        "name": "Pris",
+        "description": "Priser uten relaterte objekter"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelist": {
+        "name": "Prisliste",
+        "description": "Kun prislister"
+      },
+      "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment": {
+        "name": "Prislistetildeling",
+        "description": "Eksporter prislistetildelinger"
+      }
+    },
+    "groups": {
+      "VirtoCommerce.PricingModule.Data.ExportImport": {
+        "name": "Prising",
+        "description": "Priser, prislister og tildelinger"
+      }
+    }
+  }
+}
