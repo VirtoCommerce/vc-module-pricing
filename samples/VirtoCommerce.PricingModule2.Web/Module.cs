@@ -36,13 +36,8 @@ namespace VirtoCommerce.PricingModule2.Web
 
                 options.UsePostgreSqlDatabase(connectionString, typeof(Pricing2DbContext), Configuration);
             });
-
-            serviceCollection.AddScoped<IPricingRepository, PricingRepository2>();
-            serviceCollection.AddScoped<PricingRepositoryImpl, PricingRepository2>();
             serviceCollection.AddTransient<IPricingEvaluatorService, PricingEvaluatorService2>();
-            serviceCollection.AddTransient<PricingEvaluatorService, PricingEvaluatorService2>();
             serviceCollection.AddTransient<IPriceSearchService, PriceSearchService2>();
-            serviceCollection.AddTransient<PriceSearchService, PriceSearchService2>();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)

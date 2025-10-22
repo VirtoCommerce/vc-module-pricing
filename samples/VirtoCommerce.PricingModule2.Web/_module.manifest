@@ -21,9 +21,4 @@
 
     <assemblyFile>VirtoCommerce.PricingModule2.Web.dll</assemblyFile>
     <moduleType>VirtoCommerce.PricingModule2.Web.Module, VirtoCommerce.PricingModule2.Web</moduleType>
-
-    <assets>
-        <asset src="dist/app.js" />
-        <asset src="dist/style.css" />
-    </assets>
 </module>

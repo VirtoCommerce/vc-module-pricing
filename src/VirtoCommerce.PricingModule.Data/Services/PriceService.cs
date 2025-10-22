@@ -61,7 +61,6 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 {
                     var sourceEntity = AbstractTypeFactory<PriceEntity>.TryCreateInstance().FromModel(price, pkMap);
                     var targetEntity = alreadyExistPricesEntities.FirstOrDefault(x => x.Id == price.Id);
-
                     if (targetEntity != null)
                     {
                         changedEntries.Add(new GenericChangedEntry<Price>(price, targetEntity.ToModel(AbstractTypeFactory<Price>.TryCreateInstance()), EntryState.Modified));

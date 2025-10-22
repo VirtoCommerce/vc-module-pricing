@@ -11,9 +11,7 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
-using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
@@ -33,7 +31,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 IItemService productService,
                 ILogger<PricingEvaluatorService> logger,
                 IPlatformMemoryCache platformMemoryCache,
-                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy)
+                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy
+            )
         {
             _platformMemoryCache = platformMemoryCache;
             _repositoryFactory = repositoryFactory;
@@ -192,7 +191,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        protected async Task<List<Price>> PostProcessPrices(PriceEvaluationContext evalContext, IEnumerable<Price> prices)
+        private async Task<List<Price>> PostProcessPrices(PriceEvaluationContext evalContext, IEnumerable<Price> prices)
         {
             var result = new List<Price>();
 

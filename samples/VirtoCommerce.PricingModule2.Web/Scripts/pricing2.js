@@ -17,8 +17,8 @@ angular.module(moduleName, [])
                         {
                             name: 'recommendedPrice',
                             displayName: 'pricing.blades.prices-list.labels.recommended-price',
-                            editableCellTemplate: 'recommended-price-cellTextEditor',
-                            cellTemplate: 'recommended-price-cell-validator',
+                            editableCellTemplate: 'recommended-price-cell-editor',
+                            cellTemplate: 'recommended-price-cell-template',
                             enableCellEdit: true
                         }
                     ];
