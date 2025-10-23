@@ -1,0 +1,24 @@
+{
+  "pricing": {
+    "blades": {
+      "prices-list": {
+        "labels": {
+          "recommended-price": "Cena rekomendowana"
+        }
+      },
+      "item-prices": {
+        "labels": {
+          "recommended-price": "Cena rekomendowana"
+        }
+      }
+    }
+  },
+  "settings": {
+    "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "Procent obliczania ceny rekomendowanej",
+        "description": "Współczynnik do obliczania ceny rekomendowanej. Cena rekomendowana = Cena sprzedaży (lub Cena katalogowa) * Procent ceny rekomendowanej."
+      }
+    }
+  }
+}

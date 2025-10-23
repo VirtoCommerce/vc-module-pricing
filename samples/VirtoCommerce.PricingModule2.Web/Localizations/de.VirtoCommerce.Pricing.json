@@ -1,0 +1,24 @@
+{
+  "pricing": {
+    "blades": {
+      "prices-list": {
+        "labels": {
+          "recommended-price": "Empfohlener Preis"
+        }
+      },
+      "item-prices": {
+        "labels": {
+          "recommended-price": "Empfohlener Preis"
+        }
+      }
+    }
+  },
+  "settings": {
+    "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "Prozentsatz für empfohlene Preiskalkulation",
+        "description": "Ein Koeffizient zur Berechnung des empfohlenen Preises. Empfohlener Preis = Verkaufspreis (oder Listenpreis) * EmpfohlenerPreisProzent."
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "pricing": {
+    "blades": {
+      "prices-list": {
+        "labels": {
+          "recommended-price": "Prezzo consigliato"
+        }
+      },
+      "item-prices": {
+        "labels": {
+          "recommended-price": "Prezzo consigliato"
+        }
+      }
+    }
+  },
+  "settings": {
+    "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "Percentuale di calcolo del prezzo consigliato",
+        "description": "Un coefficiente per calcolare il prezzo consigliato. Prezzo consigliato = Prezzo di vendita (o Prezzo di listino) * Percentuale del prezzo consigliato."
+      }
+    }
+  }
+}

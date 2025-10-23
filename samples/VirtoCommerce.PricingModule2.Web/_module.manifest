@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<module>
+    <id>VirtoCommerce.PricingModule2</id>
+    <version>4.0.0</version>
+    <version-tag>demo</version-tag>
+    <platformVersion>3.0.0</platformVersion>
+    <dependencies>
+        <!-- Correct dependency version -->
+        <dependency id="VirtoCommerce.Pricing" version="3.821.0" />
+    </dependencies>
+    <title>Pricing extension sample module</title>
+    <description>Demonstrates how to extend the Price model with a new property - RecommendedPrice.</description>
+    <authors>
+        <author>Sergey Sorokin</author>
+    </authors>
+    <projectUrl>http://virtocommerce.com/</projectUrl>
+    <iconUrl>Modules/$(VirtoCommerce.Pricing)/Content/logo.png</iconUrl>
+    <releaseNotes>First version.</releaseNotes>
+    <copyright>Copyright © 2011-2024 Virto Commerce. All rights reserved</copyright>
+    <tags>prices</tags>
+
+    <assemblyFile>VirtoCommerce.PricingModule2.Web.dll</assemblyFile>
+    <moduleType>VirtoCommerce.PricingModule2.Web.Module, VirtoCommerce.PricingModule2.Web</moduleType>
+</module>

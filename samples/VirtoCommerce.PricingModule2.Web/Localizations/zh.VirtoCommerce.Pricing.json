@@ -1,0 +1,24 @@
+{
+  "pricing": {
+    "blades": {
+      "prices-list": {
+        "labels": {
+          "recommended-price": "推荐价格"
+        }
+      },
+      "item-prices": {
+        "labels": {
+          "recommended-price": "推荐价格"
+        }
+      }
+    }
+  },
+  "settings": {
+    "Pricing": {
+      "RecommendedPricePercent": {
+        "title": "推荐价格计算百分比",
+        "description": "计算推荐价格的系数。推荐价格 = 促销价 (或 标价) * 推荐价格百分比。"
+      }
+    }
+  }
+}
