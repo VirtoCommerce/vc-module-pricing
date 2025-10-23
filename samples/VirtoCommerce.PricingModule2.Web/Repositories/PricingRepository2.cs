@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using VirtoCommerce.PricingModule.Data.Repositories;
-using VirtoCommerce.PricingModule2.Web.Entities;
+﻿using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule2.Web.Repositories
 {
@@ -10,7 +8,5 @@ namespace VirtoCommerce.PricingModule2.Web.Repositories
             : base(dbContext)
         {
         }
-
-        public IQueryable<Price2Entity> Prices2 => DbContext.Set<Price2Entity>();
     }
 }
