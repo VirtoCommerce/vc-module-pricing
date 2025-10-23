@@ -226,7 +226,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 foreach (var variation in variations.Where(x => x.MainProductId == inheritedPrice.ProductId))
                 {
                     var variationPrice = inheritedPrice.CloneTyped();
-                    //Reset id for correct override price in possible update
+                    //Reset id for correct override price in possible update 
                     variationPrice.Id = null;
                     variationPrice.ProductId = variation.Id;
                     result.Add(variationPrice);

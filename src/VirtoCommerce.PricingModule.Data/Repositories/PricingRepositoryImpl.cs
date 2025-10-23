@@ -94,10 +94,10 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
             JOIN ""Price"" AS B
             ON P.""ProductId"" = B.""ProductId"" and P.""MinQuantity"" = B.""MinQuantity""
         WHERE B.""PricelistId"" = {0} AND P.""PricelistId"" = {1}
-    UNION
+    UNION 
     SELECT ""Id"", ""ProductId"", ""List"", ""Sale"", ""MinQuantity"", ""PricelistId"", 0 as ""State""
         FROM ""Price"" C
-        WHERE C.""PricelistId"" = {0} and NOT EXISTS
+        WHERE C.""PricelistId"" = {0} and NOT EXISTS 
         (
             SELECT P.""ProductId"", P.""MinQuantity""
                 FROM ""Price"" AS P
@@ -108,7 +108,7 @@ namespace VirtoCommerce.PricingModule.Data.Repositories
     UNION
     SELECT  ""Id"", ""ProductId"", ""List"", ""Sale"", ""MinQuantity"", ""PricelistId"", 1 as ""State""
         FROM ""Price"" S
-        WHERE S.""PricelistId"" = {1} AND NOT EXISTS
+        WHERE S.""PricelistId"" = {1} AND NOT EXISTS 
         (
             SELECT P.""ProductId"", P.""MinQuantity""
                 FROM ""Price"" AS P

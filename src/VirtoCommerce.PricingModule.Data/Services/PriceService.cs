@@ -42,7 +42,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 var alreadyExistPricesEntities = await LoadEntities(repository, models.Select(x => x.Id).Where(x => x != null).Distinct().ToList());
 
-                //Create default priceLists for prices without pricelist
+                //Create default priceLists for prices without pricelist 
                 foreach (var priceWithoutPricelistGroup in models.Where(x => x.PricelistId == null).GroupBy(x => x.Currency))
                 {
                     var defaultPriceListId = GetDefaultPriceListName(priceWithoutPricelistGroup.Key);
