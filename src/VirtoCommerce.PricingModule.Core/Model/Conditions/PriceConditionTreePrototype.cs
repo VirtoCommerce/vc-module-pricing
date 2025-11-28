@@ -9,8 +9,8 @@ namespace VirtoCommerce.PricingModule.Core.Model.Conditions
     {
         public PriceConditionTreePrototype()
         {
-            WithAvailConditions(new BlockPricingCondition()
-                .WithAvailConditions(
+            WithAvailableChildren(new BlockPricingCondition()
+                .WithAvailableChildren(
                     new ConditionGeoTimeZone(),
                     new ConditionGeoZipCode(),
                     new ConditionStoreSearchedPhrase(),
@@ -24,6 +24,6 @@ namespace VirtoCommerce.PricingModule.Core.Model.Conditions
                 )
             );
             Children = AvailableChildren.ToList();
-        }       
+        }
     }
 }
