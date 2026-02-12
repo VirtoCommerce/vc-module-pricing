@@ -38,7 +38,7 @@ namespace VirtoCommerce.PricingModule.Test
                 new PriceEntity { Id = "3", ProductId = "3", StartDate = new DateTime(2018, 06, 01, 0, 0, 0, 0, DateTimeKind.Utc) },
                 //with from/till dates (bounded)
                 new PriceEntity { Id = "4", ProductId = "4", StartDate = new DateTime(2018, 06, 01, 0, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2018, 12, 01, 0, 0, 0, 0, DateTimeKind.Utc) }
-            }.AsQueryable().BuildMock();
+            }.BuildMock().AsQueryable();
 
             var mockPricingRepository = new Mock<IPricingRepository>();
             mockPricingRepository.SetupGet(x => x.Prices).Returns(mockPrices);
@@ -196,7 +196,7 @@ namespace VirtoCommerce.PricingModule.Test
 
                 // Default unfiltered price.
                 new PriceEntity { Id = "10", List = 10, PricelistId = "List1" , ProductId = "ProductId" },
-            }.AsQueryable().BuildMock();
+            }.BuildMock().AsQueryable();
 
             var mockRepository = new Mock<IPricingRepository>();
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices);
