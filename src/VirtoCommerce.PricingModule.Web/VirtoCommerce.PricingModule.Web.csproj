@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <noWarn>1591</noWarn>
+    <noWarn>1591;NU1608</noWarn>
     <IsPackable>False</IsPackable>
     <OutputType>Library</OutputType>
   </PropertyGroup>
@@ -24,7 +24,7 @@
     <None Remove="node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.AssetsModule.Core" Version="3.814.0" />
+    <PackageReference Include="VirtoCommerce.AssetsModule.Core" Version="3.1000.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.PricingModule.Core\VirtoCommerce.PricingModule.Core.csproj" />
