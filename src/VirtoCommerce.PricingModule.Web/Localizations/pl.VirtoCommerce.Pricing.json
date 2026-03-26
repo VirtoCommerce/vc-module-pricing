@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Potwierdź usunięcie",
-        "message": "Czy na pewno chcesz usunąć wybrane przypisania list cen?"
-      },
-      "assignments-delete-all": {
-        "title": "Potwierdź usunięcie",
-        "warning": "OSTRZEŻENIE: Ta zmiana jest ostateczna i nie można jej cofnąć. Zastosowanie tej zmiany może spowodować utratę danych",
-        "message": "Wszystkie filtrowane elementy zostaną usunięte",
-        "instruction": "Wpisz 'yes', aby usunąć:"
+        "message": "Czy na pewno chcesz usunąć wybrane przypisania list cen?",
+        "assignment": "{{count}} przypisanie(ń)"
       },
       "pricelists-delete": {
         "title": "Potwierdź usunięcie",
-        "message": "Czy na pewno chcesz usunąć wybrane listy cen?"
+        "message": "Czy na pewno chcesz usunąć wybrane listy cen?",
+        "pricelist": "{{count}} cennik(ów)"
       },
       "pricelist-item-list-delete": {
         "title": "Potwierdź usunięcie",
-        "message": "Czy na pewno chcesz usunąć wszystkie ceny dla wybranych produktów na tej liście cen?"
+        "message": "Czy na pewno chcesz usunąć wszystkie ceny dla wybranych produktów na tej liście cen?",
+        "price": "{{count}} cena(y)"
       },
       "item-prices-delete-confirmation": {
         "title": "Potwierdź usunięcie",
-        "message": "Czy na pewno chcesz usunąć wybrane ceny?"
+        "message": "Czy na pewno chcesz usunąć wybrane ceny?",
+        "price": "{{count}} cena(y)"
       },
       "item-prices-delete-error": {
         "title": "Błąd",

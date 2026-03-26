@@ -75,7 +75,7 @@ angular.module('virtoCommerce.pricingModule')
                 var dialog = {
                     id: "confirmDeleteItem",
                     title: "pricing.dialogs.assignments-delete.title",
-                    message: "pricing.dialogs.assignments-delete.message",
+                    data: [{ key: 'pricing.dialogs.assignments-delete.assignment', count: list.length }],
                     callback: function (remove) {
                         if (remove) {
                             closeChildrenBlades();
@@ -89,17 +89,19 @@ angular.module('virtoCommerce.pricingModule')
                         }
                     }
                 };
-                dialogService.showConfirmationDialog(dialog);
+                dialogService.showDeleteConfirmationDialog(dialog);
             };
 
             $scope.deleteAllFiltered = function () {
                 var dialog = {
                     id: "confirmDeleteItems",
+                    title: "pricing.dialogs.assignments-delete.title",
+                    data: [{ key: 'pricing.dialogs.assignments-delete.assignment', count: blade.currentEntities ? blade.currentEntities.length : 0 }],
                     callback: function (confirm) {
                         if (!confirm)
                             return;
                         closeChildrenBlades();
-                        blade.isLoading = true;               
+                        blade.isLoading = true;
                         var pricelistIds;
                         if (filter.current) {
                             pricelistIds = filter.current.pricelistIds;
@@ -114,7 +116,7 @@ angular.module('virtoCommerce.pricingModule')
                         });
                     }
                 };
-                dialogService.showDialog(dialog, 'Modules/$(VirtoCommerce.Pricing)/Scripts/dialogs/deleteAll-dialog.tpl.html', 'platformWebApp.confirmDialogController');
+                dialogService.showDeleteConfirmationDialog(dialog);
             };
 
             function closeChildrenBlades() {

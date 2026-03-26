@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "削除を確認",
-        "message": "選択された価格リストの割り当てを削除してもよろしいですか？"
-      },
-      "assignments-delete-all": {
-        "title": "削除を確認",
-        "warning": "警告：この変更は最終的であり、元に戻すことはできません。この変更を適用するとデータが失われる可能性があります",
-        "message": "フィルターされたすべての項目が削除されます",
-        "instruction": "削除するには 'yes' と入力してください："
+        "message": "選択された価格リストの割り当てを削除してもよろしいですか？",
+        "assignment": "{{count}} 件の割り当て"
       },
       "pricelists-delete": {
         "title": "削除を確認",
-        "message": "選択された価格リストを削除してもよろしいですか？"
+        "message": "選択された価格リストを削除してもよろしいですか？",
+        "pricelist": "{{count}} 件の価格表"
       },
       "pricelist-item-list-delete": {
         "title": "削除を確認",
-        "message": "この価格リストの選択された製品のすべての価格を削除してもよろしいですか？"
+        "message": "この価格リストの選択された製品のすべての価格を削除してもよろしいですか？",
+        "price": "{{count}} 件の価格"
       },
       "item-prices-delete-confirmation": {
         "title": "削除を確認",
-        "message": "選択された価格を削除してもよろしいですか？"
+        "message": "選択された価格を削除してもよろしいですか？",
+        "price": "{{count}} 件の価格"
       },
       "item-prices-delete-error": {
         "title": "エラー",

@@ -194,7 +194,7 @@ angular.module('virtoCommerce.pricingModule')
                         var dialog = {
                             id: "confirmDeleteItem",
                             title: "pricing.dialogs.item-prices-delete-confirmation.title",
-                            message: "pricing.dialogs.item-prices-delete-confirmation.message",
+                            data: [{ key: 'pricing.dialogs.item-prices-delete-confirmation.price', count: selection.length }],
                             callback: function (remove) {
                                 if (remove) {
                                     prices.removePrice({ priceIds: ids }, function () {
@@ -208,7 +208,7 @@ angular.module('virtoCommerce.pricingModule')
                                 }
                             }
                         };
-                        dialogService.showConfirmationDialog(dialog);
+                        dialogService.showDeleteConfirmationDialog(dialog);
                     },
                     canExecuteMethod: function () {
                         return $scope.gridApi && _.any($scope.gridApi.selection.getSelectedRows());

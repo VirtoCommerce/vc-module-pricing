@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "确认删除",
-        "message": "您确定要删除所选的价格表分配吗？"
-      },
-      "assignments-delete-all": {
-        "title": "确认删除",
-        "warning": "警告：此更改是最终的，无法撤消。应用此更改可能会导致数据丢失",
-        "message": "所有筛选的项目都将被删除",
-        "instruction": "输入'yes'以删除："
+        "message": "您确定要删除所选的价格表分配吗？",
+        "assignment": "{{count}} 个分配"
       },
       "pricelists-delete": {
         "title": "确认删除",
-        "message": "您确定要删除所选的价格表吗？"
+        "message": "您确定要删除所选的价格表吗？",
+        "pricelist": "{{count}} 个价格表"
       },
       "pricelist-item-list-delete": {
         "title": "确认删除",
-        "message": "您确定要删除此价格表中所选产品的所有价格吗？"
+        "message": "您确定要删除此价格表中所选产品的所有价格吗？",
+        "price": "{{count}} 个价格"
       },
       "item-prices-delete-confirmation": {
         "title": "确认删除",
-        "message": "您确定要删除所选的价格吗？"
+        "message": "您确定要删除所选的价格吗？",
+        "price": "{{count}} 个价格"
       },
       "item-prices-delete-error": {
         "title": "错误",

@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Bekreft sletting",
-        "message": "Er du sikker på at du vil slette de valgte prislistetildelingene?"
-      },
-      "assignments-delete-all": {
-        "title": "Bekreft sletting",
-        "warning": "ADVARSEL: Denne endringen er endelig og kan ikke angres. Å bruke denne endringen kan føre til tap av data",
-        "message": "Alle filtrerte elementer vil bli slettet",
-        "instruction": "Skriv 'ja' for å slette:"
+        "message": "Er du sikker på at du vil slette de valgte prislistetildelingene?",
+        "assignment": "{{count}} tilordning(er)"
       },
       "pricelists-delete": {
         "title": "Bekreft sletting",
-        "message": "Er du sikker på at du vil slette de valgte prislistene?"
+        "message": "Er du sikker på at du vil slette de valgte prislistene?",
+        "pricelist": "{{count}} prisliste(r)"
       },
       "pricelist-item-list-delete": {
         "title": "Bekreft sletting",
-        "message": "Er du sikker på at du vil slette alle priser for de valgte produktene i denne prislisten?"
+        "message": "Er du sikker på at du vil slette alle priser for de valgte produktene i denne prislisten?",
+        "price": "{{count}} pris(er)"
       },
       "item-prices-delete-confirmation": {
         "title": "Bekreft sletting",
-        "message": "Er du sikker på at du vil slette de valgte prisene?"
+        "message": "Er du sikker på at du vil slette de valgte prisene?",
+        "price": "{{count}} pris(er)"
       },
       "item-prices-delete-error": {
         "title": "Feil",

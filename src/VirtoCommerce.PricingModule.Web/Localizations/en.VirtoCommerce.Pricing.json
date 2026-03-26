@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Confirm delete",
-        "message": "Are you sure you want to delete the selected price list assignment(s)?"
-      },
-      "assignments-delete-all": {
-        "title": "Confirm delete",
-        "warning": "WARNING: This change is final and cannot be undone. Applying this change may result in a data loss",
-        "message": "All filtered items will be deleted",
-        "instruction": "Type 'yes' to delete:"
+        "message": "Are you sure you want to delete the selected price list assignment(s)?",
+        "assignment": "{{count}} assignment(s)"
       },
       "pricelists-delete": {
         "title": "Confirm delete",
-        "message": "Are you sure you want to delete the selected price list(s)?"
+        "message": "Are you sure you want to delete the selected price list(s)?",
+        "pricelist": "{{count}} price list(s)"
       },
       "pricelist-item-list-delete": {
         "title": "Confirm delete",
-        "message": "Are you sure you want to delete all prices for the selected product(s) in this price list?"
+        "message": "Are you sure you want to delete all prices for the selected product(s) in this price list?",
+        "price": "{{count}} price(s)"
       },
       "item-prices-delete-confirmation": {
         "title": "Confirm delete",
-        "message": "Are you sure you want to delete the selected price(s)?"
+        "message": "Are you sure you want to delete the selected price(s)?",
+        "price": "{{count}} price(s)"
       },
       "item-prices-delete-error": {
         "title": "Error",
