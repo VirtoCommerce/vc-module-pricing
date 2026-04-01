@@ -194,7 +194,7 @@ angular.module('virtoCommerce.pricingModule')
                         var dialog = {
                             id: "confirmDeleteItem",
                             title: "pricing.dialogs.item-prices-delete-confirmation.title",
-                            data: [{ key: 'pricing.dialogs.item-prices-delete-confirmation.price', count: selection.length }],
+                            items: [{ key: 'pricing.dialogs.item-prices-delete-confirmation.price', count: selection.length }],
                             callback: function (remove) {
                                 if (remove) {
                                     prices.removePrice({ priceIds: ids }, function () {

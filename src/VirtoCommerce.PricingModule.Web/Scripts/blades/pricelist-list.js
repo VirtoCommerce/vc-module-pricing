@@ -70,7 +70,7 @@ angular.module('virtoCommerce.pricingModule')
                 var dialog = {
                     id: "confirmDeleteItem",
                     title: "pricing.dialogs.pricelists-delete.title",
-                    data: [{ key: 'pricing.dialogs.pricelists-delete.pricelist', count: list.length }],
+                    items: [{ key: 'pricing.dialogs.pricelists-delete.pricelist', count: list.length }],
                     callback: function (remove) {
                         if (remove) {
                             bladeNavigationService.closeChildrenBlades(blade, function () {

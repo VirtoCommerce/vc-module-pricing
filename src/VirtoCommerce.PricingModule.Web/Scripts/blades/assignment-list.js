@@ -75,7 +75,7 @@ angular.module('virtoCommerce.pricingModule')
                 var dialog = {
                     id: "confirmDeleteItem",
                     title: "pricing.dialogs.assignments-delete.title",
-                    data: [{ key: 'pricing.dialogs.assignments-delete.assignment', count: list.length }],
+                    items: [{ key: 'pricing.dialogs.assignments-delete.assignment', count: list.length }],
                     callback: function (remove) {
                         if (remove) {
                             closeChildrenBlades();
@@ -96,7 +96,7 @@ angular.module('virtoCommerce.pricingModule')
                 var dialog = {
                     id: "confirmDeleteItems",
                     title: "pricing.dialogs.assignments-delete.title",
-                    data: [{ key: 'pricing.dialogs.assignments-delete.assignment', count: blade.currentEntities ? blade.currentEntities.length : 0 }],
+                    items: [{ key: 'pricing.dialogs.assignments-delete.assignment', count: blade.currentEntities ? blade.currentEntities.length : 0 }],
                     callback: function (confirm) {
                         if (!confirm)
                             return;
