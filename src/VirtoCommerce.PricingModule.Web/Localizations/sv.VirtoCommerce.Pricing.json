@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Bekräfta radering",
-        "message": "Är du säker på att du vill ta bort de valda prislistetilldelningarna?"
-      },
-      "assignments-delete-all": {
-        "title": "Bekräfta radering",
-        "warning": "VARNING: Denna ändring är slutgiltig och kan inte ångras. Att tillämpa denna ändring kan leda till dataförlust",
-        "message": "Alla filtrerade objekt kommer att raderas",
-        "instruction": "Skriv 'ja' för att radera:"
+        "message": "Är du säker på att du vill ta bort de valda prislistetilldelningarna?",
+        "assignment": "{{count}} tilldelning(ar)"
       },
       "pricelists-delete": {
         "title": "Bekräfta radering",
-        "message": "Är du säker på att du vill ta bort de valda prislistorna?"
+        "message": "Är du säker på att du vill ta bort de valda prislistorna?",
+        "pricelist": "{{count}} prislista(or)"
       },
       "pricelist-item-list-delete": {
         "title": "Bekräfta radering",
-        "message": "Är du säker på att du vill ta bort alla priser för de valda produkterna i denna prislista?"
+        "message": "Är du säker på att du vill ta bort alla priser för de valda produkterna i denna prislista?",
+        "price": "{{count}} pris(er)"
       },
       "item-prices-delete-confirmation": {
         "title": "Bekräfta radering",
-        "message": "Är du säker på att du vill ta bort de valda priserna?"
+        "message": "Är du säker på att du vill ta bort de valda priserna?",
+        "price": "{{count}} pris(er)"
       },
       "item-prices-delete-error": {
         "title": "Fel",

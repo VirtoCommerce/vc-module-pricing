@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Vahvista poisto",
-        "message": "Oletko varma, että haluat poistaa valitut hintalistan osoitukset?"
-      },
-      "assignments-delete-all": {
-        "title": "Vahvista poisto",
-        "warning": "VAROITUS: Tämä muutos on lopullinen eikä sitä voi peruuttaa. Tämän muutoksen soveltaminen voi johtaa tietojen menetykseen",
-        "message": "Kaikki suodatetut kohteet poistetaan",
-        "instruction": "Kirjoita 'kyllä' poistaaksesi:"
+        "message": "Oletko varma, että haluat poistaa valitut hintalistan osoitukset?",
+        "assignment": "{{count}} määritys(tä)"
       },
       "pricelists-delete": {
         "title": "Vahvista poisto",
-        "message": "Oletko varma, että haluat poistaa valitut hintalistat?"
+        "message": "Oletko varma, että haluat poistaa valitut hintalistat?",
+        "pricelist": "{{count}} hinnasto(a)"
       },
       "pricelist-item-list-delete": {
         "title": "Vahvista poisto",
-        "message": "Oletko varma, että haluat poistaa kaikki hinnat valituille tuotteille tässä hintalistassa?"
+        "message": "Oletko varma, että haluat poistaa kaikki hinnat valituille tuotteille tässä hintalistassa?",
+        "price": "{{count}} hinta(a)"
       },
       "item-prices-delete-confirmation": {
         "title": "Vahvista poisto",
-        "message": "Oletko varma, että haluat poistaa valitut hinnat?"
+        "message": "Oletko varma, että haluat poistaa valitut hinnat?",
+        "price": "{{count}} hinta(a)"
       },
       "item-prices-delete-error": {
         "title": "Virhe",

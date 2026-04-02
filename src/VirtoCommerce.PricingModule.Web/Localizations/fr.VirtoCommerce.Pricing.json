@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Confirmer la suppression",
-        "message": "Êtes-vous sûr de vouloir supprimer les attributions de listes de prix sélectionnées ?"
-      },
-      "assignments-delete-all": {
-        "title": "Confirmer la suppression",
-        "warning": "ATTENTION : Ce changement est définitif et ne peut pas être annulé. Appliquer ce changement peut entraîner une perte de données",
-        "message": "Tous les éléments filtrés seront supprimés",
-        "instruction": "Tapez 'yes' pour supprimer :"
+        "message": "Êtes-vous sûr de vouloir supprimer les attributions de listes de prix sélectionnées ?",
+        "assignment": "{{count}} attribution(s)"
       },
       "pricelists-delete": {
         "title": "Confirmer la suppression",
-        "message": "Êtes-vous sûr de vouloir supprimer les listes de prix sélectionnées ?"
+        "message": "Êtes-vous sûr de vouloir supprimer les listes de prix sélectionnées ?",
+        "pricelist": "{{count}} liste(s) de prix"
       },
       "pricelist-item-list-delete": {
         "title": "Confirmer la suppression",
-        "message": "Êtes-vous sûr de vouloir supprimer tous les prix des produits sélectionnés dans cette liste de prix ?"
+        "message": "Êtes-vous sûr de vouloir supprimer tous les prix des produits sélectionnés dans cette liste de prix ?",
+        "price": "{{count}} prix"
       },
       "item-prices-delete-confirmation": {
         "title": "Confirmer la suppression",
-        "message": "Êtes-vous sûr de vouloir supprimer les prix sélectionnés ?"
+        "message": "Êtes-vous sûr de vouloir supprimer les prix sélectionnés ?",
+        "price": "{{count}} prix"
       },
       "item-prices-delete-error": {
         "title": "Erreur",

@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Löschen bestätigen",
-        "message": "Sind Sie sicher, dass Sie die ausgewählten Preislistezuweisungen löschen möchten?"
-      },
-      "assignments-delete-all": {
-        "title": "Löschen bestätigen",
-        "warning": "WARNUNG: Diese Änderung ist endgültig und kann nicht rückgängig gemacht werden. Durch Anwenden dieser Änderung kann es zu Datenverlust kommen",
-        "message": "Alle gefilterten Elemente werden gelöscht",
-        "instruction": "Geben Sie 'yes' ein, um zu löschen:"
+        "message": "Sind Sie sicher, dass Sie die ausgewählten Preislistezuweisungen löschen möchten?",
+        "assignment": "{{count}} Zuordnung(en)"
       },
       "pricelists-delete": {
         "title": "Löschen bestätigen",
-        "message": "Sind Sie sicher, dass Sie die ausgewählten Preislisten löschen möchten?"
+        "message": "Sind Sie sicher, dass Sie die ausgewählten Preislisten löschen möchten?",
+        "pricelist": "{{count}} Preisliste(n)"
       },
       "pricelist-item-list-delete": {
         "title": "Löschen bestätigen",
-        "message": "Sind Sie sicher, dass Sie alle Preise für die ausgewählten Produkte in dieser Preisliste löschen möchten?"
+        "message": "Sind Sie sicher, dass Sie alle Preise für die ausgewählten Produkte in dieser Preisliste löschen möchten?",
+        "price": "{{count}} Preis(e)"
       },
       "item-prices-delete-confirmation": {
         "title": "Löschen bestätigen",
-        "message": "Sind Sie sicher, dass Sie die ausgewählten Preise löschen möchten?"
+        "message": "Sind Sie sicher, dass Sie die ausgewählten Preise löschen möchten?",
+        "price": "{{count}} Preis(e)"
       },
       "item-prices-delete-error": {
         "title": "Fehler",

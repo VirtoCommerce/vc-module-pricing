@@ -16,8 +16,8 @@
   <ItemGroup>
     
     <PackageReference Include="VirtoCommerce.ExportModule.Data" Version="3.1000.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.1002.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.1002.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.1013.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Security" Version="3.1013.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.PricingModule.Core\VirtoCommerce.PricingModule.Core.csproj" />
