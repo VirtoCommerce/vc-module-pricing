@@ -162,25 +162,23 @@
     "dialogs": {
       "assignments-delete": {
         "title": "Conferma eliminazione",
-        "message": "Sei sicuro di voler eliminare le assegnazioni delle liste dei prezzi selezionate?"
-      },
-      "assignments-delete-all": {
-        "title": "Conferma eliminazione",
-        "warning": "AVVISO: Questa modifica è definitiva e non può essere annullata. Applicare questa modifica potrebbe comportare una perdita di dati",
-        "message": "Tutti gli elementi filtrati saranno eliminati",
-        "instruction": "Digita 'yes' per eliminare:"
+        "message": "Sei sicuro di voler eliminare le assegnazioni delle liste dei prezzi selezionate?",
+        "assignment": "{{count}} assegnazione(i)"
       },
       "pricelists-delete": {
         "title": "Conferma eliminazione",
-        "message": "Sei sicuro di voler eliminare le liste dei prezzi selezionate?"
+        "message": "Sei sicuro di voler eliminare le liste dei prezzi selezionate?",
+        "pricelist": "{{count}} listino(i) prezzi"
       },
       "pricelist-item-list-delete": {
         "title": "Conferma eliminazione",
-        "message": "Sei sicuro di voler eliminare tutti i prezzi dei prodotti selezionati in questa lista dei prezzi?"
+        "message": "Sei sicuro di voler eliminare tutti i prezzi dei prodotti selezionati in questa lista dei prezzi?",
+        "price": "{{count}} prezzo(i)"
       },
       "item-prices-delete-confirmation": {
         "title": "Conferma eliminazione",
-        "message": "Sei sicuro di voler eliminare i prezzi selezionati?"
+        "message": "Sei sicuro di voler eliminare i prezzi selezionati?",
+        "price": "{{count}} prezzo(i)"
       },
       "item-prices-delete-error": {
         "title": "Errore",
