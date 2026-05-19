@@ -48,7 +48,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
             if (evalContext.SkipAssignmentValidation)
             {
                 // do NOT use ToListAsync as "query" is not EF IAsyncQueryable
-                assignmentsToReturn = query.ToList();
+                var assignments = query.ToList();
+                assignmentsToReturn = assignments.Where(x => x.DynamicExpression == null || x.DynamicExpression.IsEmpty).ToList();
+
+                var expectedPriceListsFound = evalContext.ExpectedPriceListIds.IsNullOrEmpty() || assignmentsToReturn.Any(x => evalContext.ExpectedPriceListIds.Contains(x.PricelistId));
+                if (!expectedPriceListsFound)
+                {
+                    assignmentsToReturn = assignments;
+                }
             }
             else
             {
@@ -167,13 +174,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 if (evalContext.PricelistIds.IsNullOrEmpty())
                 {
+                    evalContext.ExpectedPriceListIds = await query.Select(x => x.PricelistId).Distinct().ToListAsync();
+
                     evalContext.Pricelists = evalContext.Pricelists.IsNullOrEmpty()
                         ? (await EvaluatePriceListsAsync(evalContext)).ToArray()
                         : evalContext.Pricelists;
 
                     evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
                 }
-
                 query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
 
                 // Filter by date expiration
