@@ -16,7 +16,6 @@ using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
-using VirtoCommerce.Platform.Core.Extensions;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -25,6 +24,7 @@ using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.MySql.Extensions;
 using VirtoCommerce.Platform.Data.PostgreSql.Extensions;
 using VirtoCommerce.Platform.Data.SqlServer.Extensions;
+using VirtoCommerce.Platform.Modules;
 using VirtoCommerce.Platform.Security.Authorization;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Events;
@@ -44,13 +44,12 @@ using VirtoCommerce.PricingModule.Data.Validators;
 
 namespace VirtoCommerce.PricingModule.Web
 {
-    public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration, IHasModuleCatalog
+    public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration
     {
         private IApplicationBuilder _applicationBuilder;
 
         public ManifestModuleInfo ModuleInfo { get; set; }
         public IConfiguration Configuration { get; set; }
-        public IModuleCatalog ModuleCatalog { get; set; }
 
         private const string GenericExportModuleId = "VirtoCommerce.Export";
 
@@ -153,7 +152,7 @@ namespace VirtoCommerce.PricingModule.Web
                 AbstractTypeFactory<IConditionTree>.RegisterType(conditionTree.GetType());
             }
 
-            if (ModuleCatalog.IsModuleInstalled(GenericExportModuleId))
+            if (ModuleBootstrapper.Instance.IsInstalled(GenericExportModuleId))
             {
                 var exportTypesRegistrar = appBuilder.ApplicationServices.GetService<IKnownExportTypesRegistrar>();
 

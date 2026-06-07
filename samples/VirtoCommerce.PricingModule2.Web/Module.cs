@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.Platform.Core.Common;
@@ -33,6 +34,7 @@ namespace VirtoCommerce.PricingModule2.Web
                                        Configuration.GetConnectionString("VirtoCommerce.Pricing") ??
                                        Configuration.GetConnectionString("VirtoCommerce");
 
+                options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
                 options.UsePostgreSqlDatabase(connectionString, typeof(Pricing2DbContext), Configuration);
             });
 
