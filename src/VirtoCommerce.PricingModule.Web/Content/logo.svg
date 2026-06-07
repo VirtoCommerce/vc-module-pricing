@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Pricing">
+  <title>Pricing</title>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#3FD8B4"/>
+      <stop offset="100%" stop-color="#0E9E80"/>
+    </linearGradient>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#064F40" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <g transform="translate(66,64) rotate(-8)" filter="url(#lift)">
+    <!-- Price tag -->
+    <path d="M-42,0 L-18,-28 H30 a8,8 0 0 1 8,8 V20 a8,8 0 0 1 -8,8 H-18 Z" fill="#FFC24D"/>
+    <!-- Tag hole -->
+    <circle cx="-20" cy="0" r="6" fill="#0E9E80"/>
+    <!-- Percent -->
+    <circle cx="-2" cy="-9" r="5.5" fill="none" stroke="#ffffff" stroke-width="4"/>
+    <circle cx="18" cy="11" r="5.5" fill="none" stroke="#ffffff" stroke-width="4"/>
+    <line x1="20" y1="-14" x2="-4" y2="16" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+</svg>

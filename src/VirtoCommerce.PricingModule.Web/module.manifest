@@ -22,7 +22,7 @@
     <owner>Virto Commerce</owner>
   </owners>
   <projectUrl>https://github.com/VirtoCommerce/vc-module-pricing</projectUrl>
-  <iconUrl>Modules/$(VirtoCommerce.Pricing)/Content/logo.png</iconUrl>
+  <iconUrl>Modules/$(VirtoCommerce.Pricing)/Content/logo.svg</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <copyright>Copyright © 2011-2025 Virto Commerce. All rights reserved</copyright>
   <tags>price pricelist merchandise</tags>
