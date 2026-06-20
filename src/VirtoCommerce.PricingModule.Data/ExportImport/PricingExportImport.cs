@@ -1,4 +1,6 @@
 using System;
+
+using System.Threading;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +58,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             }
         }
 
-        public async Task DoExportAsync(Stream backupStream, Action<ExportImportProgressInfo> progressCallback, ICancellationToken cancellationToken)
+        public async Task DoExportAsync(Stream backupStream, Action<ExportImportProgressInfo> progressCallback, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -66,14 +68,14 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             using (var sw = new StreamWriter(backupStream, Encoding.UTF8))
             using (var writer = new JsonTextWriter(sw))
             {
-                await writer.WriteStartObjectAsync();
+                await writer.WriteStartObjectAsync(cancellationToken);
 
                 progressInfo.Description = "Price lists exporting...";
                 progressCallback(progressInfo);
 
                 #region Export price lists
 
-                await writer.WritePropertyNameAsync("Pricelists");
+                await writer.WritePropertyNameAsync("Pricelists", cancellationToken);
 
                 await writer.SerializeArrayWithPagingAsync(_jsonSerializer, BatchSize, async (skip, take) =>
                     (GenericSearchResult<Pricelist>)await _pricelistSearchService.SearchNoCloneAsync(new PricelistSearchCriteria { Skip = skip, Take = take })
@@ -87,7 +89,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
                 #region Export price list assignments
 
-                await writer.WritePropertyNameAsync("Assignments");
+                await writer.WritePropertyNameAsync("Assignments", cancellationToken);
 
                 await writer.SerializeArrayWithPagingAsync(_jsonSerializer, BatchSize, async (skip, take) =>
                     (GenericSearchResult<PricelistAssignment>)await _pricelistAssignmentSearchService.SearchNoCloneAsync(new PricelistAssignmentsSearchCriteria { Skip = skip, Take = take })
@@ -101,7 +103,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
                 #region Export prices
 
-                await writer.WritePropertyNameAsync("Prices");
+                await writer.WritePropertyNameAsync("Prices", cancellationToken);
 
                 await writer.SerializeArrayWithPagingAsync(_jsonSerializer, BatchSize, async (skip, take) =>
                     (GenericSearchResult<Price>)await _priceSearchService.SearchNoCloneAsync(new PricesSearchCriteria { Skip = skip, Take = take })
@@ -113,12 +115,12 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
                 #endregion
 
-                await writer.WriteEndObjectAsync();
-                await writer.FlushAsync();
+                await writer.WriteEndObjectAsync(cancellationToken);
+                await writer.FlushAsync(cancellationToken);
             }
         }
 
-        public async Task DoImportAsync(Stream stream, Action<ExportImportProgressInfo> progressCallback, ICancellationToken cancellationToken)
+        public async Task DoImportAsync(Stream stream, Action<ExportImportProgressInfo> progressCallback, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -127,7 +129,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
             using (var streamReader = new StreamReader(stream))
             using (var reader = new JsonTextReader(streamReader))
             {
-                while (await reader.ReadAsync())
+                while (await reader.ReadAsync(cancellationToken))
                 {
                     if (reader.TokenType == JsonToken.PropertyName)
                     {
