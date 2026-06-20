@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -24,7 +25,6 @@ using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.Platform.Data.MySql.Extensions;
 using VirtoCommerce.Platform.Data.PostgreSql.Extensions;
 using VirtoCommerce.Platform.Data.SqlServer.Extensions;
-using VirtoCommerce.Platform.Modules;
 using VirtoCommerce.Platform.Security.Authorization;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Events;
@@ -44,12 +44,13 @@ using VirtoCommerce.PricingModule.Data.Validators;
 
 namespace VirtoCommerce.PricingModule.Web
 {
-    public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration
+    public class Module : IModule, IExportSupport, IImportSupport, IHasConfiguration, IHasModuleService
     {
         private IApplicationBuilder _applicationBuilder;
 
         public ManifestModuleInfo ModuleInfo { get; set; }
         public IConfiguration Configuration { get; set; }
+        public IModuleService ModuleService { get; set; }
 
         private const string GenericExportModuleId = "VirtoCommerce.Export";
 
@@ -152,7 +153,7 @@ namespace VirtoCommerce.PricingModule.Web
                 AbstractTypeFactory<IConditionTree>.RegisterType(conditionTree.GetType());
             }
 
-            if (ModuleBootstrapper.Instance.IsInstalled(GenericExportModuleId))
+            if (ModuleService.IsInstalled(GenericExportModuleId))
             {
                 var exportTypesRegistrar = appBuilder.ApplicationServices.GetService<IKnownExportTypesRegistrar>();
 
@@ -182,14 +183,14 @@ namespace VirtoCommerce.PricingModule.Web
         }
 
         public Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
-            ICancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
             var exportJob = _applicationBuilder.ApplicationServices.GetRequiredService<PricingExportImport>();
             return exportJob.DoExportAsync(outStream, progressCallback, cancellationToken);
         }
 
         public Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
-            ICancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
             var importJob = _applicationBuilder.ApplicationServices.GetRequiredService<PricingExportImport>();
             return importJob.DoImportAsync(inputStream, progressCallback, cancellationToken);

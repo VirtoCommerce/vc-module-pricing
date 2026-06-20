@@ -83,7 +83,7 @@ namespace VirtoCommerce.PricingModule.Test
                         ProviderName = nameof(JsonExportProvider)
                     },
                     new Action<ExportProgressInfo>(x => Console.WriteLine(x.Description)),
-                    new CancellationTokenWrapper(CancellationToken.None));
+                    CancellationToken.None);
 
                 stream.Seek(0, SeekOrigin.Begin);
 
@@ -160,7 +160,7 @@ namespace VirtoCommerce.PricingModule.Test
                         ProviderName = nameof(JsonExportProvider)
                     },
                     new Action<ExportProgressInfo>(x => Console.WriteLine(x.Description)),
-                    new CancellationTokenWrapper(CancellationToken.None));
+                    CancellationToken.None);
 
                 stream.Seek(0, SeekOrigin.Begin);
 
@@ -235,7 +235,7 @@ namespace VirtoCommerce.PricingModule.Test
                         ProviderName = nameof(JsonExportProvider)
                     },
                     new Action<ExportProgressInfo>(x => Console.WriteLine(x.Description)),
-                    new CancellationTokenWrapper(CancellationToken.None));
+                    CancellationToken.None);
 
                 stream.Seek(0, SeekOrigin.Begin);
 
@@ -317,7 +317,7 @@ namespace VirtoCommerce.PricingModule.Test
                         ProviderName = nameof(CsvExportProvider)
                     },
                     new Action<ExportProgressInfo>(x => Console.WriteLine(x.Description)),
-                    new CancellationTokenWrapper(CancellationToken.None));
+                    CancellationToken.None);
 
                 stream.Seek(0, SeekOrigin.Begin);
 
