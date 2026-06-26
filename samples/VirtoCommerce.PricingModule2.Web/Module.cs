@@ -38,6 +38,9 @@ namespace VirtoCommerce.PricingModule2.Web
                 options.UsePostgreSqlDatabase(connectionString, typeof(Pricing2DbContext), Configuration);
             });
 
+            AbstractTypeFactory<Price>.OverrideType<Price, Price2>();
+            AbstractTypeFactory<PriceEntity>.OverrideType<PriceEntity, Price2Entity>();
+
             serviceCollection.AddScoped<IPricingRepository, PricingRepository2>();
             serviceCollection.AddTransient<IPricingEvaluatorService, PricingEvaluatorService2>();
             serviceCollection.AddTransient<IPriceSearchService, PriceSearchService2>();
@@ -47,9 +50,6 @@ namespace VirtoCommerce.PricingModule2.Web
         {
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.General.AllSettings, ModuleInfo.Id);
-
-            AbstractTypeFactory<Price>.OverrideType<Price, Price2>();
-            AbstractTypeFactory<PriceEntity>.OverrideType<PriceEntity, Price2Entity>();
 
             using var serviceScope = appBuilder.ApplicationServices.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<Pricing2DbContext>();
