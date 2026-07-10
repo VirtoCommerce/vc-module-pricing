@@ -91,18 +91,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 return await GetAllPricelistAssignments();
             });
 
-            // Filter with LINQ-to-objects and wrap the materialized result. Composing operators
-            // on an in-memory IQueryable (EnumerableQuery) rebuilds and compiles an expression
-            // tree on every enumeration; this method runs on every product load, and the
-            // per-call compilation convoys on runtime-wide locks under concurrent requests.
-            // A bare AsQueryable over a materialized list enumerates directly, no compilation.
+            // Filter as IEnumerable, not by composing Where on an in-memory IQueryable:
+            // EnumerableQuery compiles the composed expression tree on every enumeration, and
+            // that compile path convoys on runtime-wide locks under concurrent product loads.
             IEnumerable<PricelistAssignment> assignments = priceListAssignments;
 
             if (evalContext.StoreId != null || evalContext.CatalogId != null)
             {
-                assignments = assignments.Where(x =>
-                    (evalContext.StoreId != null && x.StoreId == evalContext.StoreId) ||
-                    (evalContext.CatalogId != null && x.CatalogId == evalContext.CatalogId));
+                assignments = assignments.Where(x => MatchesScope(x, evalContext));
             }
 
             if (evalContext.Currency != null)
@@ -112,10 +108,22 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             if (evalContext.CertainDate != null)
             {
-                assignments = assignments.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
+                assignments = assignments.Where(x => MatchesDate(x, evalContext.CertainDate.Value));
             }
 
-            return assignments.ToList().AsQueryable();
+            return assignments.AsQueryable();
+        }
+
+        private static bool MatchesScope(PricelistAssignment assignment, PriceEvaluationContext evalContext)
+        {
+            return (evalContext.StoreId != null && assignment.StoreId == evalContext.StoreId)
+                || (evalContext.CatalogId != null && assignment.CatalogId == evalContext.CatalogId);
+        }
+
+        private static bool MatchesDate(PricelistAssignment assignment, DateTime certainDate)
+        {
+            return (assignment.StartDate == null || certainDate >= assignment.StartDate)
+                && (assignment.EndDate == null || assignment.EndDate >= certainDate);
         }
 
         public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()
