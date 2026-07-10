@@ -91,9 +91,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 return await GetAllPricelistAssignments();
             });
 
-            // Filter as IEnumerable, not by composing Where on an in-memory IQueryable:
-            // EnumerableQuery compiles the composed expression tree on every enumeration, and
-            // that compile path convoys on runtime-wide locks under concurrent product loads.
+            // Not .AsQueryable().Where(...): that recompiles the expression tree per enumeration, a lock convoy under load.
             IEnumerable<PricelistAssignment> assignments = priceListAssignments;
 
             if (evalContext.StoreId != null || evalContext.CatalogId != null)
