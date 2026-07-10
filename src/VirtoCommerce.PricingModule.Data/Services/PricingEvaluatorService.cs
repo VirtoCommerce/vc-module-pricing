@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -92,44 +91,31 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 return await GetAllPricelistAssignments();
             });
 
-            var query = priceListAssignments.AsQueryable();
+            // Filter with LINQ-to-objects and wrap the materialized result. Composing operators
+            // on an in-memory IQueryable (EnumerableQuery) rebuilds and compiles an expression
+            // tree on every enumeration; this method runs on every product load, and the
+            // per-call compilation convoys on runtime-wide locks under concurrent requests.
+            // A bare AsQueryable over a materialized list enumerates directly, no compilation.
+            IEnumerable<PricelistAssignment> assignments = priceListAssignments;
 
-            var predicate = GetEvaluationPredicate(evalContext);
-            query = query.Where(predicate);
+            if (evalContext.StoreId != null || evalContext.CatalogId != null)
+            {
+                assignments = assignments.Where(x =>
+                    (evalContext.StoreId != null && x.StoreId == evalContext.StoreId) ||
+                    (evalContext.CatalogId != null && x.CatalogId == evalContext.CatalogId));
+            }
 
             if (evalContext.Currency != null)
             {
-                query = query.Where(x => x.Pricelist.Currency == evalContext.Currency);
+                assignments = assignments.Where(x => x.Pricelist.Currency == evalContext.Currency);
             }
 
             if (evalContext.CertainDate != null)
             {
-                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
+                assignments = assignments.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
             }
 
-            return query;
-        }
-
-        private Expression<Func<PricelistAssignment, bool>> GetEvaluationPredicate(PriceEvaluationContext evalContext)
-        {
-            if (evalContext.StoreId == null && evalContext.CatalogId == null)
-            {
-                return PredicateBuilder.True<PricelistAssignment>();
-            }
-
-            var predicate = PredicateBuilder.False<PricelistAssignment>();
-
-            if (evalContext.StoreId != null)
-            {
-                predicate = predicate.Or(x => x.StoreId == evalContext.StoreId);
-            }
-
-            if (evalContext.CatalogId != null)
-            {
-                predicate = predicate.Or(x => x.CatalogId == evalContext.CatalogId);
-            }
-
-            return predicate;
+            return assignments.ToList().AsQueryable();
         }
 
         public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()
