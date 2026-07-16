@@ -81,6 +81,21 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 ClearCache(models);
 
+                // AC-12 completeness: an edit that moves a price to a different (PricelistId, ProductId)
+                // leaves the OLD key's evaluator-cache entry unexpired if we only look at ClearCache's
+                // post-edit models. changedEntries still holds the pre-edit OldEntry here, so expire the
+                // old key too. No-op when the key is unchanged.
+                foreach (var changedEntry in changedEntries.Where(x => x.EntryState == EntryState.Modified))
+                {
+                    var oldPricelistId = changedEntry.OldEntry.PricelistId;
+                    var oldProductId = changedEntry.OldEntry.ProductId;
+                    if (oldPricelistId != null && oldProductId != null
+                        && (oldPricelistId != changedEntry.NewEntry.PricelistId || oldProductId != changedEntry.NewEntry.ProductId))
+                    {
+                        GenericCachingRegion<Price>.ExpireTokenForKey(PriceEvaluationCacheKey.TokenKey(oldPricelistId, oldProductId));
+                    }
+                }
+
                 await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
             }
         }

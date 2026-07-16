@@ -6,6 +6,7 @@ using MockQueryable;
 using Moq;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
+using VirtoCommerce.Platform.Core.Domain;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.PricingModule.Core.Model;
@@ -133,6 +134,46 @@ namespace VirtoCommerce.PricingModule.Test
             var second = await evaluator.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("prod1"));
 
             Assert.Empty(second);
+        }
+
+        // AC-12 completeness (Task 5b): a price edit that moves a row to a different ProductId must
+        // invalidate BOTH the old and the new (pricelistId, productId) evaluator-cache entries. The
+        // old key is only observable from SaveChangesAsync (it sees the pre-edit ProductId via
+        // changedEntries[i].OldEntry); ClearCache alone only ever sees the post-edit models.
+        [Fact]
+        public async Task ClearCache_MovesProduct_InvalidatesOldAndNewKey()
+        {
+            var cache = PriceEvaluationCacheTests.CreateCache();
+            const string priceId = "price1";
+            var dbPrices = new List<PriceEntity>
+            {
+                new() { Id = priceId, List = 10, PricelistId = "List1", ProductId = "X" },
+            };
+
+            var repositoryMock = new Mock<IPricingRepository>();
+            repositoryMock.Setup(x => x.UnitOfWork).Returns(new Mock<IUnitOfWork>().Object);
+            repositoryMock.Setup(x => x.GetPricesByIdsAsync(new[] { priceId }))
+                .ReturnsAsync(() => new List<PriceEntity>(dbPrices));
+            repositoryMock.SetupGet(x => x.Prices).Returns(() => dbPrices.BuildMock());
+
+            var settings = new Mock<ISettingsManager>();
+            settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = true });
+
+            var evaluator = new PricingEvaluatorService(() => repositoryMock.Object, null, null, cache, new DefaultPricingPriorityFilterPolicy(), settings.Object);
+            var priceService = new PriceService(() => repositoryMock.Object, cache, new Mock<IEventPublisher>().Object, new Mock<IPricelistService>().Object);
+
+            var firstX = await evaluator.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("X"));
+            Assert.Equal(10, firstX.Single().List); // warm (List1, X)
+
+            var movedPrice = new Price { Id = priceId, List = 15, PricelistId = "List1", ProductId = "Z" };
+            await priceService.SaveChangesAsync(new[] { movedPrice }); // moves the row X -> Z
+
+            var secondX = await evaluator.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("X"));
+            var firstZ = await evaluator.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("Z"));
+
+            Assert.Empty(secondX); // old key expired: reloaded and the row is gone from X
+            Assert.Equal(15, firstZ.Single().List); // new key reflects the moved price
         }
     }
 }
