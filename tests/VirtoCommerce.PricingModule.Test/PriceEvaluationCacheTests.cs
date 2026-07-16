@@ -328,7 +328,7 @@ namespace VirtoCommerce.PricingModule.Test
         [Fact]
         public async Task EvaluateProductPricesAsync_ReturnedPrice_HasCurrencyHydratedAndCachePreservesIt()
         {
-            var (service, _, _, _) = BuildService(new[]
+            var (service, _, batchCount, _) = BuildService(new[]
             {
                 new PriceEntity
                 {
@@ -345,6 +345,7 @@ namespace VirtoCommerce.PricingModule.Test
 
             var warm = await service.EvaluateProductPricesAsync(Context("prod1"));
             Assert.Equal("USD", warm.Single().Currency);
+            Assert.Equal(1, batchCount());
         }
 
         // AC-7b (Codex F6): proves the flag is actually set at the production call site inside
