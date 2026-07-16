@@ -79,5 +79,79 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(1, distinctLoaded());
             Assert.Contains("prod1", testable.LoadBatches.SelectMany(x => x));
         }
+
+        // Deferred from Task 3a — now that the cache routes through GetCachedProductPricesAsync,
+        // a second identical eval must be served from cache: no new LoadBatches entry (AC-6 base case).
+        [Fact]
+        public async Task EvaluateProductPricesAsync_WarmCache_LoadsEachProductOnce()
+        {
+            var (service, distinctLoaded, batchCount, _) = BuildService(SinglePrice("prod1"));
+
+            await service.EvaluateProductPricesAsync(Context("prod1"));
+            await service.EvaluateProductPricesAsync(Context("prod1"));
+
+            Assert.Equal(1, distinctLoaded());
+            Assert.Equal(1, batchCount());
+        }
+
+        [Fact]
+        public async Task EvaluateProductPricesAsync_OverlappingProductSets_LoadEachOnce()
+        {
+            var (service, distinctLoaded, _, _) = BuildService(new[]
+            {
+                SinglePrice("prod1").Single(),
+                SinglePrice("prod2").Single(),
+            });
+
+            await service.EvaluateProductPricesAsync(Context("prod1"));
+            await service.EvaluateProductPricesAsync(Context("prod1", "prod2"));
+
+            Assert.Equal(2, distinctLoaded());
+        }
+
+        [Fact]
+        public async Task EvaluateProductPricesAsync_ConcurrentColdMiss_LoadsOnce()
+        {
+            var (service, distinctLoaded, batchCount, _) = BuildService(SinglePrice("prod1"));
+
+            var tasks = Enumerable.Range(0, 20)
+                .Select(_ => service.EvaluateProductPricesAsync(Context("prod1")))
+                .ToArray();
+            await Task.WhenAll(tasks);
+
+            Assert.Equal(1, distinctLoaded());
+            Assert.Equal(1, batchCount());
+        }
+
+        [Fact]
+        public async Task EvaluateProductPricesAsync_ProductWithoutPrices_NegativeCached()
+        {
+            var (service, _, batchCount, _) = BuildService(SinglePrice("prod1"));
+
+            var first = await service.EvaluateProductPricesAsync(Context("prod2"));
+            var second = await service.EvaluateProductPricesAsync(Context("prod2"));
+
+            Assert.Empty(first);
+            Assert.Empty(second);
+            Assert.Equal(1, batchCount());
+        }
+
+        [Fact]
+        public async Task EvaluateProductPricesAsync_WarmResult_IsNotSharedInstance()
+        {
+            var (service, _, _, _) = BuildService(SinglePrice("prod1"));
+
+            var first = await service.EvaluateProductPricesAsync(Context("prod1"));
+            var second = await service.EvaluateProductPricesAsync(Context("prod1"));
+
+            var firstPrice = first.Single();
+            var secondPrice = second.Single();
+
+            Assert.False(ReferenceEquals(firstPrice, secondPrice));
+
+            firstPrice.List = 999;
+
+            Assert.NotEqual(999, secondPrice.List);
+        }
     }
 }

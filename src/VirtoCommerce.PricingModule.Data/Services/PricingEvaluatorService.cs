@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using VirtoCommerce.Platform.Data.Infrastructure;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Caching;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
 namespace VirtoCommerce.PricingModule.Data.Services
@@ -22,6 +24,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
     public class PricingEvaluatorService : IPricingEvaluatorService
     {
         private const int _priceQueryChunkSize = 500;
+        private static readonly string _priceEvalLoadLockKey = $"{nameof(PricingEvaluatorService)}:LoadPrices";
+
+        private static readonly Meter _meter = new("VirtoCommerce.PricingModule");
+        private static readonly Counter<long> _cacheHits = _meter.CreateCounter<long>("pricing.evaluator.cache.hits");
+        private static readonly Counter<long> _cacheMisses = _meter.CreateCounter<long>("pricing.evaluator.cache.misses");
 
         private readonly IPlatformMemoryCache _platformMemoryCache;
         private readonly Func<IPricingRepository> _repositoryFactory;
@@ -170,7 +177,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
             }
 
-            var rawPrices = await LoadPricesFromDatabaseAsync(evalContext.ProductIds, evalContext.PricelistIds);
+            var rawPrices = evalContext.BypassEvaluatorCache || _platformMemoryCache == null || !await IsEvaluatorCacheEnabledAsync()
+                ? await LoadPricesFromDatabaseAsync(evalContext.ProductIds, evalContext.PricelistIds)
+                : await GetCachedProductPricesAsync(evalContext.ProductIds, evalContext.PricelistIds);
             var prices = ApplyQuantityAndDateFilter(rawPrices, evalContext);
 
             var result = new List<Price>();
@@ -198,6 +207,96 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             return result;
         }
+
+        protected virtual async Task<IList<Price>> GetCachedProductPricesAsync(IList<string> productIds, IList<string> pricelistIds)
+        {
+            var result = new List<Price>();
+            var missing = new List<(string PricelistId, string ProductId, string MemKey)>();
+
+            foreach (var pricelistId in pricelistIds)
+            {
+                foreach (var productId in productIds)
+                {
+                    var memKey = CacheKey.Normalize(
+                        CacheKey.With(GetType(), nameof(EvaluateProductPricesAsync), pricelistId, productId));
+
+                    if (_platformMemoryCache.TryGetValue(memKey, out Price[] cached))
+                    {
+                        RecordHit();                                   // M3 (decision 2a)
+                        AddClones(result, cached);                     // clone-on-read (decision 1a)
+                    }
+                    else
+                    {
+                        RecordMiss();
+                        missing.Add((pricelistId, productId, memKey));
+                    }
+                }
+            }
+
+            if (missing.Count == 0)
+            {
+                return result;
+            }
+
+            using (await AsyncLock.GetLockByKey(_priceEvalLoadLockKey).LockAsync())
+            {
+                // Double-check under the single-flight lock (AC-9).
+                var stillMissing = missing.Where(x => !_platformMemoryCache.TryGetValue(x.MemKey, out Price[] _)).ToList();
+                foreach (var pair in missing.Except(stillMissing))
+                {
+                    _platformMemoryCache.TryGetValue(pair.MemKey, out Price[] justFilled);
+                    AddClones(result, justFilled);
+                }
+
+                if (stillMissing.Count == 0)
+                {
+                    return result;
+                }
+
+                // AC-8: capture change tokens BEFORE the DB read.
+                var tokens = stillMissing
+                    .Select(x => PriceEvaluationCacheKey.TokenKey(x.PricelistId, x.ProductId))
+                    .Distinct()
+                    .ToDictionary(k => k, k => GenericCachingRegion<Price>.CreateChangeTokenForKey(k));
+
+                var loaded = await LoadPricesFromDatabaseAsync(
+                    stillMissing.Select(x => x.ProductId).Distinct().ToArray(),
+                    stillMissing.Select(x => x.PricelistId).Distinct().ToArray());
+
+                var byPair = loaded
+                    .GroupBy(x => (x.PricelistId, x.ProductId))
+                    .ToDictionary(g => g.Key, g => g.ToArray());
+
+                foreach (var (pricelistId, productId, memKey) in stillMissing)
+                {
+                    var rows = byPair.TryGetValue((pricelistId, productId), out var found) ? found : Array.Empty<Price>();
+                    var tokenKey = PriceEvaluationCacheKey.TokenKey(pricelistId, productId);
+
+                    var stored = _platformMemoryCache.GetOrCreateExclusive(memKey, options =>
+                    {
+                        options.AddExpirationToken(tokens[tokenKey]); // AC-7 change-token; AC-10 caches empty arrays
+                        return rows;
+                    });
+
+                    AddClones(result, stored);                        // clone-on-read even for just-stored rows
+                }
+            }
+
+            return result;
+        }
+
+        // decision 1a: never hand callers the shared singleton-cached instances.
+        private static void AddClones(List<Price> target, Price[] cached)
+        {
+            foreach (var price in cached)
+            {
+                target.Add(price.CloneTyped());
+            }
+        }
+
+        private static void RecordHit() => _cacheHits.Add(1);
+
+        private static void RecordMiss() => _cacheMisses.Add(1);
 
         private static IEnumerable<Price> ApplyQuantityAndDateFilter(IEnumerable<Price> prices, PriceEvaluationContext evalContext)
         {
