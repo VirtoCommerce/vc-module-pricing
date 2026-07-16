@@ -64,6 +64,14 @@ namespace VirtoCommerce.PricingModule.Core
                 };
 
 
+                public static SettingDescriptor PriceEvaluationCacheEnabled { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.Enable",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = true,
+                };
+
                 public static SettingDescriptor LogPricingChanges { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.LogPricingChanges",
@@ -88,6 +96,7 @@ namespace VirtoCommerce.PricingModule.Core
                         return new List<SettingDescriptor>
                                {
                                    ExportImportPageSize,
+                                   PriceEvaluationCacheEnabled,
                                    LogPricingChanges,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,
