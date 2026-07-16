@@ -153,6 +153,30 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(2, distinctLoaded());
         }
 
+        // AC-3: headline O(N) proof. Simulates a cart build-up (N sequential evals over cumulative
+        // product sets), sharing one cache. A broken/uncached impl would load N(N+1)/2 product ids
+        // total; this asserts the O(N) shape directly on testable.LoadBatches — the assertion v1's
+        // factory-invocation counter (== N both ways) could not make.
+        [Fact]
+        public async Task EvaluateProductPricesAsync_BuildUp_LoadsEachProductExactlyOnce()
+        {
+            const int n = 8;
+            var prices = Enumerable.Range(1, n)
+                .Select(i => new PriceEntity { Id = $"p{i}-p", List = 10, PricelistId = "List1", ProductId = $"p{i}" })
+                .ToArray();
+            var (service, distinctLoaded, _, testable) = BuildService(prices);
+
+            for (var i = 1; i <= n; i++)
+            {
+                await service.EvaluateProductPricesAsync(Context(Enumerable.Range(1, i).Select(k => $"p{k}").ToArray()));
+            }
+
+            // O(N): each product loaded once total, not re-loaded on every subsequent add.
+            Assert.Equal(n, distinctLoaded());
+            // Stronger: total product ids ever sent to DB == n (would be n(n+1)/2 without the cache).
+            Assert.Equal(n, testable.LoadBatches.SelectMany(x => x).Count());
+        }
+
         // AC-2: a partially-warm request must not re-load the already-cached product.
         // OverlappingProductSets_LoadEachOnce (above) only proves cumulative distinct-loaded count;
         // this asserts the SECOND eval's own DB batch directly — the shape a factory-invocation
