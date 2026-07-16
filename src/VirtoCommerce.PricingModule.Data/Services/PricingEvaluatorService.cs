@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VirtoCommerce.CatalogModule.Core.Model;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
@@ -36,6 +37,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly IPricingPriorityFilterPolicy _pricingPriorityFilterPolicy;
         private readonly IItemService _productService;
         private readonly ISettingsManager _settingsManager;
+        private readonly PriceEvaluationCache _priceEvaluationCache;
+        private readonly IOptions<CachingOptions> _cachingOptions;
 
         public PricingEvaluatorService(
                 Func<IPricingRepository> repositoryFactory,
@@ -43,7 +46,9 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 ILogger<PricingEvaluatorService> logger,
                 IPlatformMemoryCache platformMemoryCache,
                 IPricingPriorityFilterPolicy pricingPriorityFilterPolicy,
-                ISettingsManager settingsManager = null
+                ISettingsManager settingsManager = null,
+                PriceEvaluationCache priceEvaluationCache = null,
+                IOptions<CachingOptions> cachingOptions = null
             )
         {
             _platformMemoryCache = platformMemoryCache;
@@ -52,10 +57,20 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _pricingPriorityFilterPolicy = pricingPriorityFilterPolicy;
             _productService = productService;
             _settingsManager = settingsManager;
+            _priceEvaluationCache = priceEvaluationCache;
+            _cachingOptions = cachingOptions;
         }
 
         protected virtual Task<bool> IsEvaluatorCacheEnabledAsync()
         {
+            // [platform-gate] The platform-wide master switch does not reach a private MemoryCache on
+            // its own (that only happens through PlatformMemoryCache.GetDefaultCacheEntryOptions), so
+            // it must be checked explicitly here in addition to the module-level Enabled setting.
+            if (_cachingOptions?.Value.CacheEnabled == false)
+            {
+                return Task.FromResult(false);
+            }
+
             return _settingsManager == null
                 ? Task.FromResult(true)
                 : _settingsManager.GetValueAsync<bool>(ModuleConstants.Settings.General.PriceEvaluationCacheEnabled);
@@ -177,7 +192,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
             }
 
-            var rawPrices = evalContext.BypassEvaluatorCache || _platformMemoryCache == null || !await IsEvaluatorCacheEnabledAsync()
+            // [I2] Guard on the private eval-row cache, NOT _platformMemoryCache: the latter stays
+            // non-null after the Task 8 storage move (it still backs EvaluatePriceListsAsync), so
+            // keying the guard on it would route a null private cache into GetCachedProductPricesAsync
+            // and NPE on _priceEvaluationCache.Cache.
+            var rawPrices = evalContext.BypassEvaluatorCache || _priceEvaluationCache == null || !await IsEvaluatorCacheEnabledAsync()
                 ? await LoadPricesFromDatabaseAsync(evalContext.ProductIds, evalContext.PricelistIds)
                 : await GetCachedProductPricesAsync(evalContext.ProductIds, evalContext.PricelistIds);
             var prices = ApplyQuantityAndDateFilter(rawPrices, evalContext);
@@ -223,7 +242,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var memKey = CacheKey.Normalize(
                         CacheKey.With(GetType(), nameof(EvaluateProductPricesAsync), PriceEvaluationCacheKey.TokenKey(pricelistId, productId)));
 
-                    if (_platformMemoryCache.TryGetValue(memKey, out Price[] cached))
+                    if (_priceEvaluationCache.Cache.TryGetValue(memKey, out Price[] cached))
                     {
                         RecordHit();
                         AddClones(result, cached);                     // clone-on-read
@@ -244,10 +263,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (await AsyncLock.GetLockByKey(_priceEvalLoadLockKey).LockAsync())
             {
                 // Double-check under the single-flight lock.
-                var stillMissing = missing.Where(x => !_platformMemoryCache.TryGetValue(x.MemKey, out Price[] _)).ToList();
+                var stillMissing = missing.Where(x => !_priceEvaluationCache.Cache.TryGetValue(x.MemKey, out Price[] _)).ToList();
                 foreach (var pair in missing.Except(stillMissing))
                 {
-                    _platformMemoryCache.TryGetValue(pair.MemKey, out Price[] justFilled);
+                    _priceEvaluationCache.Cache.TryGetValue(pair.MemKey, out Price[] justFilled);
                     AddClones(result, justFilled);
                 }
 
@@ -275,9 +294,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var rows = byPair.TryGetValue((pricelistId, productId), out var found) ? found : Array.Empty<Price>();
                     var tokenKey = PriceEvaluationCacheKey.TokenKey(pricelistId, productId);
 
-                    var stored = _platformMemoryCache.GetOrCreateExclusive(memKey, options =>
+                    var stored = _priceEvaluationCache.Cache.GetOrCreateExclusive(memKey, options =>
                     {
                         options.AddExpirationToken(tokens[tokenKey]); // change-token freshness; empty arrays are stored as negative entries
+                        options.Size = Math.Max(1, rows.Length); // SizeLimit requires every entry to declare Size
                         return rows;
                     });
 

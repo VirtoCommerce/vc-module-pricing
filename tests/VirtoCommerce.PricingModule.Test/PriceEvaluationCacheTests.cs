@@ -14,8 +14,10 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Caching;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 using VirtoCommerce.PricingModule.Data.Search;
@@ -36,14 +38,34 @@ namespace VirtoCommerce.PricingModule.Test
                 Options.Create(new CachingOptions()),
                 new Mock<Microsoft.Extensions.Logging.ILogger<PlatformMemoryCache>>().Object);
 
+        // [M1] Per-setting-name responses — NOT a blanket ObjectSettingEntry{Value=true}. The same
+        // mock backs both the evaluator's bool Enabled check (GetValueAsync<bool>) and
+        // PriceEvaluationCache's int RowLimit read (GetValue<int>); a blanket bool value throws
+        // InvalidCastException the moment RowLimit is read as int.
+        internal static Mock<ISettingsManager> CreateSettingsMock(bool cacheEnabled = true, int rowLimit = 1_000_000)
+        {
+            var settings = new Mock<ISettingsManager>();
+            settings.Setup(x => x.GetObjectSettingAsync(
+                    ModuleConstants.Settings.General.PriceEvaluationCacheEnabled.Name,
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = cacheEnabled });
+            settings.Setup(x => x.GetObjectSettingAsync(
+                    ModuleConstants.Settings.General.PriceEvaluationCacheRowLimit.Name,
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = rowLimit });
+            return settings;
+        }
+
         // Records EXACTLY which product ids reach the DB — the only sound "read volume" metric.
         // internal (not private): PriceEvaluationInvalidationTests shares BuildService, which returns
         // this type — a private nested type would make that method's signature inaccessible cross-class.
         internal sealed class TestablePricingEvaluatorService : PricingEvaluatorService
         {
             public readonly List<string[]> LoadBatches = new();
-            public TestablePricingEvaluatorService(Func<IPricingRepository> f, IPlatformMemoryCache c, ISettingsManager s, IItemService p = null)
-                : base(f, p, null, c, new DefaultPricingPriorityFilterPolicy(), s) { }
+            public TestablePricingEvaluatorService(Func<IPricingRepository> f, IPlatformMemoryCache c, ISettingsManager s, PriceEvaluationCache priceEvaluationCache, IItemService p = null)
+                : base(f, p, null, c, new DefaultPricingPriorityFilterPolicy(), s, priceEvaluationCache) { }
 
             protected override Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds)
             {
@@ -82,10 +104,9 @@ namespace VirtoCommerce.PricingModule.Test
             var mockPrices = prices.BuildMock();
             var mock = new Mock<IPricingRepository>();
             mock.SetupGet(x => x.Prices).Returns(mockPrices);
-            var settings = new Mock<ISettingsManager>();
-            settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new ObjectSettingEntry { Value = true });
-            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object);
+            var settings = CreateSettingsMock();
+            var cache = new PriceEvaluationCache(settings.Object);
+            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object, cache);
             return (svc,
                 () => svc.LoadBatches.SelectMany(x => x).Distinct().Count(),
                 () => svc.LoadBatches.Count,
@@ -99,10 +120,9 @@ namespace VirtoCommerce.PricingModule.Test
             var mockPrices = prices.BuildMock();
             var mock = new Mock<IPricingRepository>();
             mock.SetupGet(x => x.Prices).Returns(mockPrices);
-            var settings = new Mock<ISettingsManager>();
-            settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new ObjectSettingEntry { Value = true });
-            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object, productService);
+            var settings = CreateSettingsMock();
+            var cache = new PriceEvaluationCache(settings.Object);
+            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object, cache, productService);
             return (svc,
                 () => svc.LoadBatches.SelectMany(x => x).Distinct().Count(),
                 () => svc.LoadBatches.Count,
@@ -116,10 +136,9 @@ namespace VirtoCommerce.PricingModule.Test
             var mockPrices = prices.BuildMock();
             var mock = new Mock<IPricingRepository>();
             mock.SetupGet(x => x.Prices).Returns(mockPrices);
-            var settings = new Mock<ISettingsManager>();
-            settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(new ObjectSettingEntry { Value = false });
-            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object);
+            var settings = CreateSettingsMock(cacheEnabled: false);
+            var cache = new PriceEvaluationCache(settings.Object);
+            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object, cache);
             return (svc,
                 () => svc.LoadBatches.Count,
                 svc);

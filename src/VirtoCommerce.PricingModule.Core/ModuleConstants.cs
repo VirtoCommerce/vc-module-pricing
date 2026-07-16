@@ -72,6 +72,14 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = true,
                 };
 
+                public static SettingDescriptor PriceEvaluationCacheRowLimit { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.RowLimit",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.PositiveInteger,
+                    DefaultValue = 100000,
+                };
+
                 public static SettingDescriptor LogPricingChanges { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.LogPricingChanges",
@@ -97,6 +105,7 @@ namespace VirtoCommerce.PricingModule.Core
                                {
                                    ExportImportPageSize,
                                    PriceEvaluationCacheEnabled,
+                                   PriceEvaluationCacheRowLimit,
                                    LogPricingChanges,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,

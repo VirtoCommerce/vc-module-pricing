@@ -31,6 +31,7 @@ using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Conditions;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Caching;
 using VirtoCommerce.PricingModule.Data.Common;
 using VirtoCommerce.PricingModule.Data.ExportImport;
 using VirtoCommerce.PricingModule.Data.Handlers;
@@ -78,6 +79,7 @@ namespace VirtoCommerce.PricingModule.Web
             serviceCollection.AddTransient<IPricingRepository, PricingRepositoryImpl>();
             serviceCollection.AddTransient<Func<IPricingRepository>>(provider => () => provider.CreateScope().ServiceProvider.GetRequiredService<IPricingRepository>());
             serviceCollection.AddTransient<IPricingEvaluatorService, PricingEvaluatorService>();
+            serviceCollection.AddSingleton<PriceEvaluationCache>();
             serviceCollection.AddTransient<IPricelistAssignmentSearchService, PricelistAssignmentSearchService>();
             serviceCollection.AddTransient<IPricelistSearchService, PricelistSearchService>();
             serviceCollection.AddTransient<IPriceSearchService, PriceSearchService>();
