@@ -319,6 +319,34 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(new[] { "prod1" }, testable.LoadBatches[1]);
         }
 
+        // AC-11: output-shape parity for Pricelist hydration. PriceEntity.ToModel() does NOT populate
+        // Price.Pricelist (no such navigation on the model) — it only derives price.Currency from the
+        // Included PricelistEntity. The uncached original behaves the same, so the correct parity
+        // assertion is Currency hydration, not Price.Pricelist != null. Proves LoadPricesFromDatabaseAsync's
+        // Include(x => x.Pricelist) survives both the cold DB read and the warm cache store/clone-on-read
+        // (CloneTyped()) round trip.
+        [Fact]
+        public async Task EvaluateProductPricesAsync_ReturnedPrice_HasCurrencyHydratedAndCachePreservesIt()
+        {
+            var (service, _, _, _) = BuildService(new[]
+            {
+                new PriceEntity
+                {
+                    Id = "p",
+                    List = 10,
+                    PricelistId = "List1",
+                    ProductId = "prod1",
+                    Pricelist = new PricelistEntity { Id = "List1", Currency = "USD" },
+                },
+            });
+
+            var cold = await service.EvaluateProductPricesAsync(Context("prod1"));
+            Assert.Equal("USD", cold.Single().Currency);
+
+            var warm = await service.EvaluateProductPricesAsync(Context("prod1"));
+            Assert.Equal("USD", warm.Single().Currency);
+        }
+
         // AC-7b (Codex F6): proves the flag is actually set at the production call site inside
         // ProductPriceDocumentBuilder.GetProductPrices — a spy IPricingEvaluatorService captures the
         // PriceEvaluationContext the REAL builder builds and passes down, so this fails if the builder
