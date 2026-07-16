@@ -109,6 +109,22 @@ namespace VirtoCommerce.PricingModule.Test
                 svc);
         }
 
+        // Kill-switch variant of BuildService: the settings mock resolves the setting to false, so
+        // IsEvaluatorCacheEnabledAsync() returns false and every eval bypasses the cache entirely.
+        private static (PricingEvaluatorService service, Func<int> batchCount, TestablePricingEvaluatorService testable) BuildServiceWithCacheDisabled(PriceEntity[] prices)
+        {
+            var mockPrices = prices.BuildMock();
+            var mock = new Mock<IPricingRepository>();
+            mock.SetupGet(x => x.Prices).Returns(mockPrices);
+            var settings = new Mock<ISettingsManager>();
+            settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = false });
+            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object);
+            return (svc,
+                () => svc.LoadBatches.Count,
+                svc);
+        }
+
         // Load-recorder infra proof: captures the requested product on a single (cold) eval.
         [Fact]
         public async Task EvaluateProductPricesAsync_LoadRecorder_CapturesRequestedProduct()
@@ -332,6 +348,22 @@ namespace VirtoCommerce.PricingModule.Test
             var secondContext = Context("prod1");
             secondContext.BypassEvaluatorCache = true;
             await service.EvaluateProductPricesAsync(secondContext);
+
+            Assert.Equal(2, batchCount());
+            Assert.Equal(new[] { "prod1" }, testable.LoadBatches[0]);
+            Assert.Equal(new[] { "prod1" }, testable.LoadBatches[1]);
+        }
+
+        // Rollback kill-switch: when the setting resolves to false, caching is bypassed entirely —
+        // both evals of the same product hit the DB, mirroring the explicit-opt-out Bypass test above
+        // but driven by the setting instead of the per-call flag.
+        [Fact]
+        public async Task EvaluateProductPricesAsync_CacheDisabledBySetting_AlwaysLoadsFresh()
+        {
+            var (service, batchCount, testable) = BuildServiceWithCacheDisabled(SinglePrice("prod1"));
+
+            await service.EvaluateProductPricesAsync(Context("prod1"));
+            await service.EvaluateProductPricesAsync(Context("prod1"));
 
             Assert.Equal(2, batchCount());
             Assert.Equal(new[] { "prod1" }, testable.LoadBatches[0]);
