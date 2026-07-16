@@ -201,7 +201,14 @@ namespace VirtoCommerce.PricingModule.Test
             var mockRepository = new Mock<IPricingRepository>();
             mockRepository.SetupGet(x => x.Prices).Returns(mockPrices);
 
-            var service = new PricingEvaluatorService(() => mockRepository.Object, null, null, null, new DefaultPricingPriorityFilterPolicy());
+            var settings = new Mock<ISettingsManager>();
+            settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = true });
+
+            // Real cache shared across all 7 evaluations below (AC-5b): the cache stores the
+            // UNFILTERED rows once, and the date filter re-applies in-memory on every eval — so the
+            // warm path must reproduce the exact same per-date results as a cold load.
+            var service = new PricingEvaluatorService(() => mockRepository.Object, null, null, PriceEvaluationCacheTests.CreateCache(), new DefaultPricingPriorityFilterPolicy(), settings.Object);
 
             // Eval with date and no matches, this should result in default price.
             evalContext.CertainDate = new DateTime(2018, 09, 20, 0, 0, 0, 0, DateTimeKind.Utc);

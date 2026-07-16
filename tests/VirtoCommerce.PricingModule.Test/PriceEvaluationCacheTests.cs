@@ -8,6 +8,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using MockQueryable;
 using Moq;
+using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Settings;
@@ -37,8 +39,8 @@ namespace VirtoCommerce.PricingModule.Test
         internal sealed class TestablePricingEvaluatorService : PricingEvaluatorService
         {
             public readonly List<string[]> LoadBatches = new();
-            public TestablePricingEvaluatorService(Func<IPricingRepository> f, IPlatformMemoryCache c, ISettingsManager s)
-                : base(f, null, null, c, new DefaultPricingPriorityFilterPolicy(), s) { }
+            public TestablePricingEvaluatorService(Func<IPricingRepository> f, IPlatformMemoryCache c, ISettingsManager s, IItemService p = null)
+                : base(f, p, null, c, new DefaultPricingPriorityFilterPolicy(), s) { }
 
             protected override Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds)
             {
@@ -68,6 +70,23 @@ namespace VirtoCommerce.PricingModule.Test
             settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new ObjectSettingEntry { Value = true });
             var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object);
+            return (svc,
+                () => svc.LoadBatches.SelectMany(x => x).Distinct().Count(),
+                () => svc.LoadBatches.Count,
+                svc);
+        }
+
+        // Overload for the variation-inheritance test: PostProcessPrices only recurses into
+        // main-product inheritance when _productService is non-null (see PricingEvaluatorService:329).
+        internal static (PricingEvaluatorService service, Func<int> distinctLoaded, Func<int> batchCount, TestablePricingEvaluatorService testable) BuildService(PriceEntity[] prices, IItemService productService)
+        {
+            var mockPrices = prices.BuildMock();
+            var mock = new Mock<IPricingRepository>();
+            mock.SetupGet(x => x.Prices).Returns(mockPrices);
+            var settings = new Mock<ISettingsManager>();
+            settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = true });
+            var svc = new TestablePricingEvaluatorService(() => mock.Object, CreateCache(), settings.Object, productService);
             return (svc,
                 () => svc.LoadBatches.SelectMany(x => x).Distinct().Count(),
                 () => svc.LoadBatches.Count,
@@ -116,6 +135,49 @@ namespace VirtoCommerce.PricingModule.Test
             await service.EvaluateProductPricesAsync(Context("prod1", "prod2"));
 
             Assert.Equal(2, distinctLoaded());
+        }
+
+        // AC-2: a partially-warm request must not re-load the already-cached product.
+        // OverlappingProductSets_LoadEachOnce (above) only proves cumulative distinct-loaded count;
+        // this asserts the SECOND eval's own DB batch directly — the shape a factory-invocation
+        // counter could never express (Task 3a's v1 attempt).
+        [Fact]
+        public async Task EvaluateProductPricesAsync_PartialMiss_LoadsOnlyUncached()
+        {
+            var (service, _, _, testable) = BuildService(new[]
+            {
+                SinglePrice("prod1").Single(),
+                SinglePrice("prod2").Single(),
+            });
+
+            await service.EvaluateProductPricesAsync(Context("prod1")); // warms prod1
+
+            await service.EvaluateProductPricesAsync(Context("prod1", "prod2"));
+
+            Assert.Equal(new[] { "prod2" }, testable.LoadBatches.Last());
+        }
+
+        // AC-2: PostProcessPrices' variation-inheritance recursion (:352) re-enters
+        // EvaluateProductPricesAsync for the main product id — that recursive call must be served
+        // from cache too, not treated as a fresh, uncached load.
+        [Fact]
+        public async Task EvaluateProductPricesAsync_VariationInheritsCachedMainProduct_NoExtraLoad()
+        {
+            var productService = new Mock<IItemService>();
+            productService
+                .Setup(x => x.GetAsync(It.Is<IList<string>>(ids => ids.Contains("variation1")), It.IsAny<string>(), It.IsAny<bool>()))
+                .ReturnsAsync(new List<CatalogProduct> { new() { Id = "variation1", MainProductId = "mainProd" } });
+
+            var (service, _, _, testable) = BuildService(SinglePrice("mainProd"), productService.Object);
+
+            await service.EvaluateProductPricesAsync(Context("mainProd")); // warms the main product
+            var batchesBeforeVariationEval = testable.LoadBatches.Count;
+
+            await service.EvaluateProductPricesAsync(Context("variation1"));
+
+            var newBatches = testable.LoadBatches.Skip(batchesBeforeVariationEval).ToList();
+            Assert.Single(newBatches);
+            Assert.Equal(new[] { "variation1" }, newBatches[0]);
         }
 
         [Fact]
