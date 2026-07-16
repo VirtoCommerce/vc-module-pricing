@@ -18,6 +18,10 @@ using Xunit;
 
 namespace VirtoCommerce.PricingModule.Test
 {
+    // Shares a collection with PriceEvaluationInvalidationTests: both exercise the static
+    // GenericCachingRegion<Price> region, so xUnit must not run them concurrently with each other
+    // (a region-wide ExpireRegion() in one would evict the other's warm entries mid-assertion).
+    [Collection(nameof(PriceEvaluationCacheCollection))]
     public class PriceEvaluationCacheTests
     {
         // 3-arg ctor confirmed against PricingEvaluatorServiceTests.cs:185.
@@ -27,7 +31,9 @@ namespace VirtoCommerce.PricingModule.Test
                 new Mock<Microsoft.Extensions.Logging.ILogger<PlatformMemoryCache>>().Object);
 
         // Records EXACTLY which product ids reach the DB — the only sound "read volume" metric.
-        private sealed class TestablePricingEvaluatorService : PricingEvaluatorService
+        // internal (not private): PriceEvaluationInvalidationTests shares BuildService, which returns
+        // this type — a private nested type would make that method's signature inaccessible cross-class.
+        internal sealed class TestablePricingEvaluatorService : PricingEvaluatorService
         {
             public readonly List<string[]> LoadBatches = new();
             public TestablePricingEvaluatorService(Func<IPricingRepository> f, IPlatformMemoryCache c, ISettingsManager s)
@@ -50,7 +56,9 @@ namespace VirtoCommerce.PricingModule.Test
         };
 
         // dbCalls = cumulative DISTINCT products actually loaded from DB (NOT factory invocations).
-        private static (PricingEvaluatorService service, Func<int> distinctLoaded, Func<int> batchCount, TestablePricingEvaluatorService testable) BuildService(PriceEntity[] prices)
+        // internal (not private): shared with PriceEvaluationInvalidationTests so the AC-12 precision
+        // test can inspect testable.LoadBatches without duplicating this setup.
+        internal static (PricingEvaluatorService service, Func<int> distinctLoaded, Func<int> batchCount, TestablePricingEvaluatorService testable) BuildService(PriceEntity[] prices)
         {
             var mockPrices = prices.BuildMock();
             var mock = new Mock<IPricingRepository>();
@@ -172,5 +180,11 @@ namespace VirtoCommerce.PricingModule.Test
 
             Assert.Equal(10, third.Single().List); // cache-stored value untouched by the caller's mutation
         }
+    }
+
+    // Definition only — see the usage note on PriceEvaluationCacheTests above.
+    [CollectionDefinition(nameof(PriceEvaluationCacheCollection))]
+    public class PriceEvaluationCacheCollection
+    {
     }
 }

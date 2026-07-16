@@ -10,6 +10,7 @@ using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Caching;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
@@ -96,7 +97,16 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         protected override void ClearCache(IList<Price> models)
         {
-            GenericCachingRegion<Price>.ExpireRegion();
+            // AC-12: invalidate ONLY the changed (pricelistId, productId) evaluator entries.
+            // ExpireRegion() must NOT be fired here: CreateChangeTokenForKey composites include the
+            // region token (CancellableCacheRegion.cs:105), so a region flush would drop every product's
+            // entry and defeat per-key precision. Search caches stay invalidated via base.ClearCache
+            // (GenericSearchCachingRegion<Price>), which this override still calls.
+            foreach (var price in models.Where(x => x.PricelistId != null && x.ProductId != null))
+            {
+                GenericCachingRegion<Price>.ExpireTokenForKey(PriceEvaluationCacheKey.TokenKey(price.PricelistId, price.ProductId));
+            }
+
             base.ClearCache(models);
         }
 
