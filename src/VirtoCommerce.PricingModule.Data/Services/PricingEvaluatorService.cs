@@ -10,7 +10,9 @@ using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Platform.Data.Infrastructure;
+using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Repositories;
@@ -26,13 +28,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private readonly ILogger<PricingEvaluatorService> _logger;
         private readonly IPricingPriorityFilterPolicy _pricingPriorityFilterPolicy;
         private readonly IItemService _productService;
+        private readonly ISettingsManager _settingsManager;
 
         public PricingEvaluatorService(
                 Func<IPricingRepository> repositoryFactory,
                 IItemService productService,
                 ILogger<PricingEvaluatorService> logger,
                 IPlatformMemoryCache platformMemoryCache,
-                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy
+                IPricingPriorityFilterPolicy pricingPriorityFilterPolicy,
+                ISettingsManager settingsManager = null
             )
         {
             _platformMemoryCache = platformMemoryCache;
@@ -40,6 +44,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
             _logger = logger;
             _pricingPriorityFilterPolicy = pricingPriorityFilterPolicy;
             _productService = productService;
+            _settingsManager = settingsManager;
+        }
+
+        protected virtual Task<bool> IsEvaluatorCacheEnabledAsync()
+        {
+            return _settingsManager == null
+                ? Task.FromResult(true)
+                : _settingsManager.GetValueAsync<bool>(ModuleConstants.Settings.General.PriceEvaluationCacheEnabled);
         }
 
         public virtual async Task<IList<Pricelist>> EvaluatePriceListsAsync(PriceEvaluationContext evalContext)
