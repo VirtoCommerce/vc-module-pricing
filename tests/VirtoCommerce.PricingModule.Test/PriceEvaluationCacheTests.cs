@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -179,6 +180,45 @@ namespace VirtoCommerce.PricingModule.Test
             var third = await service.EvaluateProductPricesAsync(Context("prod1")); // warm clone, again
 
             Assert.Equal(10, third.Single().List); // cache-stored value untouched by the caller's mutation
+        }
+
+        // M3 (decision 2a): proves the hit/miss counters on PricingEvaluatorService's static
+        // "VirtoCommerce.PricingModule" Meter actually move. Asserts only THIS test's own
+        // MeterListener accumulation (not global totals) — the counters are process-static and
+        // shared across the assembly; [Collection] on this class serializes it against its sibling
+        // PriceEvaluationInvalidationTests, but other test classes could still run concurrently.
+        [Fact]
+        public async Task EvaluateProductPricesAsync_EmitsHitAndMissCounters()
+        {
+            var counts = new Dictionary<string, long>();
+
+            using var listener = new MeterListener();
+            listener.InstrumentPublished = (instrument, meterListener) =>
+            {
+                if (instrument.Meter.Name == "VirtoCommerce.PricingModule"
+                    && (instrument.Name == "pricing.evaluator.cache.hits" || instrument.Name == "pricing.evaluator.cache.misses"))
+                {
+                    meterListener.EnableMeasurementEvents(instrument);
+                }
+            };
+            listener.SetMeasurementEventCallback<long>((instrument, measurement, tags, state) =>
+            {
+                lock (counts)
+                {
+                    counts[instrument.Name] = counts.GetValueOrDefault(instrument.Name) + measurement;
+                }
+            });
+            listener.Start();
+
+            var (service, _, _, _) = BuildService(SinglePrice("prod1"));
+
+            await service.EvaluateProductPricesAsync(Context("prod1")); // cold eval -> miss
+
+            Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.misses") >= 1);
+
+            await service.EvaluateProductPricesAsync(Context("prod1")); // warm eval -> hit
+
+            Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.hits") >= 1);
         }
     }
 
