@@ -9,13 +9,16 @@ using Microsoft.Extensions.Options;
 using MockQueryable;
 using Moq;
 using VirtoCommerce.CatalogModule.Core.Model;
+using VirtoCommerce.CatalogModule.Core.Search;
 using VirtoCommerce.CatalogModule.Core.Services;
 using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.PricingModule.Core.Model;
+using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
+using VirtoCommerce.PricingModule.Data.Search;
 using VirtoCommerce.PricingModule.Data.Services;
 using Xunit;
 
@@ -51,6 +54,19 @@ namespace VirtoCommerce.PricingModule.Test
 
         internal static PriceEntity[] SinglePrice(string productId) =>
             new[] { new PriceEntity { Id = productId + "-p", List = 10, PricelistId = "List1", ProductId = productId } };
+
+        // Exposes the protected GetProductPrices(productIds) call site so the AC-7b real-builder
+        // test can assert on the PriceEvaluationContext actually built and passed to the evaluator,
+        // rather than on a hand-set flag on a context the test constructs itself.
+        private sealed class TestableProductPriceDocumentBuilder : ProductPriceDocumentBuilder
+        {
+            public TestableProductPriceDocumentBuilder(IPricingEvaluatorService pricingEvaluatorService, ISettingsManager settingsManager, IProductSearchService productsSearchService)
+                : base(pricingEvaluatorService, settingsManager, productsSearchService)
+            {
+            }
+
+            public Task<IList<Price>> GetProductPricesPublic(IList<string> productIds) => GetProductPrices(productIds);
+        }
 
         internal static PriceEvaluationContext Context(params string[] productIds) => new()
         {
@@ -281,6 +297,51 @@ namespace VirtoCommerce.PricingModule.Test
             await service.EvaluateProductPricesAsync(Context("prod1")); // warm eval -> hit
 
             Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.hits") >= 1);
+        }
+
+        // AC-7b: a caller that opts out of the evaluator cache must never be served a cached read —
+        // both evals of the same product hit the DB, unlike the warm-cache base case above.
+        [Fact]
+        public async Task EvaluateProductPricesAsync_Bypass_AlwaysLoadsFresh()
+        {
+            var (service, _, batchCount, testable) = BuildService(SinglePrice("prod1"));
+
+            var firstContext = Context("prod1");
+            firstContext.BypassEvaluatorCache = true;
+            await service.EvaluateProductPricesAsync(firstContext);
+
+            var secondContext = Context("prod1");
+            secondContext.BypassEvaluatorCache = true;
+            await service.EvaluateProductPricesAsync(secondContext);
+
+            Assert.Equal(2, batchCount());
+            Assert.Equal(new[] { "prod1" }, testable.LoadBatches[0]);
+            Assert.Equal(new[] { "prod1" }, testable.LoadBatches[1]);
+        }
+
+        // AC-7b (Codex F6): proves the flag is actually set at the production call site inside
+        // ProductPriceDocumentBuilder.GetProductPrices — a spy IPricingEvaluatorService captures the
+        // PriceEvaluationContext the REAL builder builds and passes down, so this fails if the builder
+        // ever stops setting BypassEvaluatorCache, unlike a unit test that sets the flag by hand.
+        [Fact]
+        public async Task ProductPriceDocumentBuilder_GetProductPrices_BypassesCache()
+        {
+            PriceEvaluationContext captured = null;
+            var evaluatorMock = new Mock<IPricingEvaluatorService>();
+            evaluatorMock
+                .Setup(x => x.EvaluateProductPricesAsync(It.IsAny<PriceEvaluationContext>()))
+                .Callback<PriceEvaluationContext>(ctx => captured = ctx)
+                .ReturnsAsync(new List<Price>());
+
+            var builder = new TestableProductPriceDocumentBuilder(
+                evaluatorMock.Object,
+                new Mock<ISettingsManager>().Object,
+                new Mock<IProductSearchService>().Object);
+
+            await builder.GetProductPricesPublic(new[] { "prod1" });
+
+            Assert.NotNull(captured);
+            Assert.True(captured.BypassEvaluatorCache);
         }
     }
 
