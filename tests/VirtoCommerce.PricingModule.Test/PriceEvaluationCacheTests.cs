@@ -153,5 +153,24 @@ namespace VirtoCommerce.PricingModule.Test
 
             Assert.NotEqual(999, secondPrice.List);
         }
+
+        // Sibling of WarmResult_IsNotSharedInstance: that test only proves two returned instances
+        // differ, which would still pass if a store/read branch skipped cloning as long as BOTH
+        // branches skipped it identically. This proves the CACHED instance itself survives caller
+        // mutation of a previously-returned Price — clone-on-read protects the cache, not just the caller.
+        [Fact]
+        public async Task EvaluateProductPricesAsync_MutatingReturnedPrice_DoesNotCorruptCache()
+        {
+            var (service, _, _, _) = BuildService(SinglePrice("prod1"));
+
+            await service.EvaluateProductPricesAsync(Context("prod1")); // cold load, populates cache
+            var second = await service.EvaluateProductPricesAsync(Context("prod1")); // warm clone
+
+            second.Single().List = 999; // caller mutates its own clone
+
+            var third = await service.EvaluateProductPricesAsync(Context("prod1")); // warm clone, again
+
+            Assert.Equal(10, third.Single().List); // cache-stored value untouched by the caller's mutation
+        }
     }
 }

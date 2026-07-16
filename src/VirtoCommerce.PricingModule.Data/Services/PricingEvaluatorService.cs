@@ -217,8 +217,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 foreach (var productId in productIds)
                 {
+                    // Single discriminating segment via the length-prefixed TokenKey — CacheKey.With joins
+                    // args with '-', so passing pricelistId/productId separately would let ids containing
+                    // '-' alias distinct pairs onto the same memKey.
                     var memKey = CacheKey.Normalize(
-                        CacheKey.With(GetType(), nameof(EvaluateProductPricesAsync), pricelistId, productId));
+                        CacheKey.With(GetType(), nameof(EvaluateProductPricesAsync), PriceEvaluationCacheKey.TokenKey(pricelistId, productId)));
 
                     if (_platformMemoryCache.TryGetValue(memKey, out Price[] cached))
                     {
