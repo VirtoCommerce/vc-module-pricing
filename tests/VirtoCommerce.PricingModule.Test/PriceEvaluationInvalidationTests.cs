@@ -41,7 +41,7 @@ namespace VirtoCommerce.PricingModule.Test
         private static TestablePriceService BuildPriceService(IPlatformMemoryCache cache) =>
             new(() => new Mock<IPricingRepository>().Object, cache, new Mock<IEventPublisher>().Object, new Mock<IPricelistService>().Object);
 
-        // AC-12: editing product X must not evict product Y's evaluator-cache entry.
+        // Editing product X must not evict product Y's evaluator-cache entry.
         [Fact]
         public async Task ClearCache_EditsProductX_InvalidatesOnlyX()
         {
@@ -63,8 +63,8 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.DoesNotContain("prodY", testable.LoadBatches[1]); // Y stayed warm
         }
 
-        // AC-7: a region-wide flush still drops the entry — proves the per-key token is actually
-        // composited into the entry's change token (CancellableCacheRegion.cs:105), not orphaned.
+        // A region-wide flush still drops the entry — proves the per-key token is actually
+        // composited into the entry's change token, not orphaned.
         [Fact]
         public async Task ExpireRegion_DropsEntry()
         {
@@ -80,7 +80,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(2, batchCount());
         }
 
-        // AC-4 (create/update): a real PriceService.ClearCache call, sharing the evaluator's cache,
+        // A real PriceService.ClearCache call, sharing the evaluator's cache,
         // must make the next evaluation observe the updated price.
         [Fact]
         public async Task ClearCache_RealPriceServiceUpdate_NextEvalReflectsChange()
@@ -108,7 +108,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(20, second.Single().List);
         }
 
-        // AC-4 (delete, M6): a real PriceService.ClearCache call after the price row is gone must make
+        // A real PriceService.ClearCache call after the price row is gone must make
         // the next evaluation stop returning it.
         [Fact]
         public async Task ClearCache_RealPriceServiceDelete_NextEvalNoLongerReturnsPrice()
@@ -136,7 +136,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Empty(second);
         }
 
-        // AC-12 completeness (Task 5b): a price edit that moves a row to a different ProductId must
+        // A price edit that moves a row to a different ProductId must
         // invalidate BOTH the old and the new (pricelistId, productId) evaluator-cache entries. The
         // old key is only observable from SaveChangesAsync (it sees the pre-edit ProductId via
         // changedEntries[i].OldEntry); ClearCache alone only ever sees the post-edit models.

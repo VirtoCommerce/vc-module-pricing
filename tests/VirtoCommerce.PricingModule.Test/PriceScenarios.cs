@@ -205,7 +205,7 @@ namespace VirtoCommerce.PricingModule.Test
             settings.Setup(x => x.GetObjectSettingAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new ObjectSettingEntry { Value = true });
 
-            // Real cache shared across all 7 evaluations below (AC-5b): the cache stores the
+            // Real cache shared across all 7 evaluations below: the cache stores the
             // UNFILTERED rows once, and the date filter re-applies in-memory on every eval — so the
             // warm path must reproduce the exact same per-date results as a cold load.
             var service = new PricingEvaluatorService(() => mockRepository.Object, null, null, PriceEvaluationCacheTests.CreateCache(), new DefaultPricingPriorityFilterPolicy(), settings.Object);

@@ -225,8 +225,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     if (_platformMemoryCache.TryGetValue(memKey, out Price[] cached))
                     {
-                        RecordHit();                                   // M3 (decision 2a)
-                        AddClones(result, cached);                     // clone-on-read (decision 1a)
+                        RecordHit();
+                        AddClones(result, cached);                     // clone-on-read
                     }
                     else
                     {
@@ -243,7 +243,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             using (await AsyncLock.GetLockByKey(_priceEvalLoadLockKey).LockAsync())
             {
-                // Double-check under the single-flight lock (AC-9).
+                // Double-check under the single-flight lock.
                 var stillMissing = missing.Where(x => !_platformMemoryCache.TryGetValue(x.MemKey, out Price[] _)).ToList();
                 foreach (var pair in missing.Except(stillMissing))
                 {
@@ -256,7 +256,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     return result;
                 }
 
-                // AC-8: capture change tokens BEFORE the DB read.
+                // Capture change tokens BEFORE the DB read, so a concurrent write during the read expires the just-stored entry.
                 var tokens = stillMissing
                     .Select(x => PriceEvaluationCacheKey.TokenKey(x.PricelistId, x.ProductId))
                     .Distinct()
@@ -277,7 +277,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     var stored = _platformMemoryCache.GetOrCreateExclusive(memKey, options =>
                     {
-                        options.AddExpirationToken(tokens[tokenKey]); // AC-7 change-token; AC-10 caches empty arrays
+                        options.AddExpirationToken(tokens[tokenKey]); // change-token freshness; empty arrays are stored as negative entries
                         return rows;
                     });
 
@@ -288,7 +288,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        // decision 1a: never hand callers the shared singleton-cached instances.
+        // never hand callers the shared singleton-cached instances.
         private static void AddClones(List<Price> target, Price[] cached)
         {
             foreach (var price in cached)
@@ -303,8 +303,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         private static IEnumerable<Price> ApplyQuantityAndDateFilter(IEnumerable<Price> prices, PriceEvaluationContext evalContext)
         {
-            // Reproduces the former SQL WHERE (PricingEvaluatorService.cs:166 and :181-183) in memory,
-            // so cached rows can stay unfiltered (AC-5b).
+            // Reproduces the former SQL WHERE (quantity + date window) in memory, so cached rows stay unfiltered.
             var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
 
             return prices.Where(x => (evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0)

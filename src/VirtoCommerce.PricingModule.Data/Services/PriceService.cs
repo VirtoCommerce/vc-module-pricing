@@ -81,7 +81,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 ClearCache(models);
 
-                // AC-12 completeness: an edit that moves a price to a different (PricelistId, ProductId)
+                // An edit that moves a price to a different (PricelistId, ProductId)
                 // leaves the OLD key's evaluator-cache entry unexpired if we only look at ClearCache's
                 // post-edit models. changedEntries still holds the pre-edit OldEntry here, so expire the
                 // old key too. No-op when the key is unchanged.
@@ -112,9 +112,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         protected override void ClearCache(IList<Price> models)
         {
-            // AC-12: invalidate ONLY the changed (pricelistId, productId) evaluator entries.
-            // ExpireRegion() must NOT be fired here: CreateChangeTokenForKey composites include the
-            // region token (CancellableCacheRegion.cs:105), so a region flush would drop every product's
+            // invalidate ONLY the changed (pricelistId, productId) entries. Do NOT ExpireRegion() here: the
+            // per-key change token composites the region token, so a region flush would drop every product's
             // entry and defeat per-key precision. Search caches stay invalidated via base.ClearCache
             // (GenericSearchCachingRegion<Price>), which this override still calls.
             foreach (var price in models.Where(x => x.PricelistId != null && x.ProductId != null))

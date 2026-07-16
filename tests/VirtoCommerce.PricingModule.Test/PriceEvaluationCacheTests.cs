@@ -30,7 +30,7 @@ namespace VirtoCommerce.PricingModule.Test
     [Collection(nameof(PriceEvaluationCacheCollection))]
     public class PriceEvaluationCacheTests
     {
-        // 3-arg ctor confirmed against PricingEvaluatorServiceTests.cs:185.
+        // PlatformMemoryCache's ctor requires cache, options, and logger — no shorter overload exists.
         internal static IPlatformMemoryCache CreateCache() =>
             new PlatformMemoryCache(new MemoryCache(new MemoryCacheOptions()),
                 Options.Create(new CachingOptions()),
@@ -55,7 +55,7 @@ namespace VirtoCommerce.PricingModule.Test
         internal static PriceEntity[] SinglePrice(string productId) =>
             new[] { new PriceEntity { Id = productId + "-p", List = 10, PricelistId = "List1", ProductId = productId } };
 
-        // Exposes the protected GetProductPrices(productIds) call site so the AC-7b real-builder
+        // Exposes the protected GetProductPrices(productIds) call site so the real-builder bypass
         // test can assert on the PriceEvaluationContext actually built and passed to the evaluator,
         // rather than on a hand-set flag on a context the test constructs itself.
         private sealed class TestableProductPriceDocumentBuilder : ProductPriceDocumentBuilder
@@ -75,8 +75,8 @@ namespace VirtoCommerce.PricingModule.Test
         };
 
         // dbCalls = cumulative DISTINCT products actually loaded from DB (NOT factory invocations).
-        // internal (not private): shared with PriceEvaluationInvalidationTests so the AC-12 precision
-        // test can inspect testable.LoadBatches without duplicating this setup.
+        // internal (not private): shared with PriceEvaluationInvalidationTests so its per-key
+        // invalidation-precision test can inspect testable.LoadBatches without duplicating this setup.
         internal static (PricingEvaluatorService service, Func<int> distinctLoaded, Func<int> batchCount, TestablePricingEvaluatorService testable) BuildService(PriceEntity[] prices)
         {
             var mockPrices = prices.BuildMock();
@@ -93,7 +93,7 @@ namespace VirtoCommerce.PricingModule.Test
         }
 
         // Overload for the variation-inheritance test: PostProcessPrices only recurses into
-        // main-product inheritance when _productService is non-null (see PricingEvaluatorService:329).
+        // main-product inheritance when _productService is non-null.
         internal static (PricingEvaluatorService service, Func<int> distinctLoaded, Func<int> batchCount, TestablePricingEvaluatorService testable) BuildService(PriceEntity[] prices, IItemService productService)
         {
             var mockPrices = prices.BuildMock();
@@ -109,9 +109,7 @@ namespace VirtoCommerce.PricingModule.Test
                 svc);
         }
 
-        // Load-recorder infra proof — the metric that Task 3b's warm-reuse assertions will build on.
-        // Cache routing lands in Task 3b; today a second eval still re-loads, so this test only
-        // proves the recorder itself captures the requested product on a single (non-cached) eval.
+        // Load-recorder infra proof: captures the requested product on a single (cold) eval.
         [Fact]
         public async Task EvaluateProductPricesAsync_LoadRecorder_CapturesRequestedProduct()
         {
@@ -124,8 +122,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Contains("prod1", testable.LoadBatches.SelectMany(x => x));
         }
 
-        // Deferred from Task 3a — now that the cache routes through GetCachedProductPricesAsync,
-        // a second identical eval must be served from cache: no new LoadBatches entry (AC-6 base case).
+        // A second identical eval must be served from cache: no new LoadBatches entry.
         [Fact]
         public async Task EvaluateProductPricesAsync_WarmCache_LoadsEachProductOnce()
         {
@@ -153,10 +150,9 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(2, distinctLoaded());
         }
 
-        // AC-3: headline O(N) proof. Simulates a cart build-up (N sequential evals over cumulative
-        // product sets), sharing one cache. A broken/uncached impl would load N(N+1)/2 product ids
-        // total; this asserts the O(N) shape directly on testable.LoadBatches — the assertion v1's
-        // factory-invocation counter (== N both ways) could not make.
+        // O(N) proof: simulates a cart build-up (N sequential evals over cumulative product sets),
+        // sharing one cache. A broken/uncached impl would load N(N+1)/2 product ids total; this
+        // asserts the O(N) shape directly on testable.LoadBatches.
         [Fact]
         public async Task EvaluateProductPricesAsync_BuildUp_LoadsEachProductExactlyOnce()
         {
@@ -177,10 +173,9 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(n, testable.LoadBatches.SelectMany(x => x).Count());
         }
 
-        // AC-2: a partially-warm request must not re-load the already-cached product.
+        // A partially-warm request must not re-load the already-cached product.
         // OverlappingProductSets_LoadEachOnce (above) only proves cumulative distinct-loaded count;
-        // this asserts the SECOND eval's own DB batch directly — the shape a factory-invocation
-        // counter could never express (Task 3a's v1 attempt).
+        // this asserts the SECOND eval's own DB batch directly.
         [Fact]
         public async Task EvaluateProductPricesAsync_PartialMiss_LoadsOnlyUncached()
         {
@@ -197,9 +192,9 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(new[] { "prod2" }, testable.LoadBatches.Last());
         }
 
-        // AC-2: PostProcessPrices' variation-inheritance recursion (:352) re-enters
-        // EvaluateProductPricesAsync for the main product id — that recursive call must be served
-        // from cache too, not treated as a fresh, uncached load.
+        // PostProcessPrices' variation-inheritance recursion re-enters EvaluateProductPricesAsync
+        // for the main product id — that recursive call must be served from cache too, not treated
+        // as a fresh, uncached load.
         [Fact]
         public async Task EvaluateProductPricesAsync_VariationInheritsCachedMainProduct_NoExtraLoad()
         {
@@ -284,7 +279,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(10, third.Single().List); // cache-stored value untouched by the caller's mutation
         }
 
-        // M3 (decision 2a): proves the hit/miss counters on PricingEvaluatorService's static
+        // Proves the hit/miss counters on PricingEvaluatorService's static
         // "VirtoCommerce.PricingModule" Meter actually move. Asserts only THIS test's own
         // MeterListener accumulation (not global totals) — the counters are process-static and
         // shared across the assembly; [Collection] on this class serializes it against its sibling
@@ -323,7 +318,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.hits") >= 1);
         }
 
-        // AC-7b: a caller that opts out of the evaluator cache must never be served a cached read —
+        // A caller that opts out of the evaluator cache must never be served a cached read —
         // both evals of the same product hit the DB, unlike the warm-cache base case above.
         [Fact]
         public async Task EvaluateProductPricesAsync_Bypass_AlwaysLoadsFresh()
@@ -343,7 +338,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(new[] { "prod1" }, testable.LoadBatches[1]);
         }
 
-        // AC-11: output-shape parity for Pricelist hydration. PriceEntity.ToModel() does NOT populate
+        // Output-shape parity for Pricelist hydration. PriceEntity.ToModel() does NOT populate
         // Price.Pricelist (no such navigation on the model) — it only derives price.Currency from the
         // Included PricelistEntity. The uncached original behaves the same, so the correct parity
         // assertion is Currency hydration, not Price.Pricelist != null. Proves LoadPricesFromDatabaseAsync's
@@ -372,7 +367,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(1, batchCount());
         }
 
-        // AC-7b (Codex F6): proves the flag is actually set at the production call site inside
+        // Proves the flag is actually set at the production call site inside
         // ProductPriceDocumentBuilder.GetProductPrices — a spy IPricingEvaluatorService captures the
         // PriceEvaluationContext the REAL builder builds and passes down, so this fails if the builder
         // ever stops setting BypassEvaluatorCache, unlike a unit test that sets the flag by hand.
