@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using MockQueryable;
 using Moq;
+using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.PricingModule.Core;
 using VirtoCommerce.PricingModule.Data.Caching;
@@ -89,6 +90,71 @@ namespace VirtoCommerce.PricingModule.Test
             using var cache = new PriceEvaluationCache(null);
 
             Assert.Equal(100000, cache.RowLimit);
+        }
+
+        // AC-14a: the default hook applies a 15-minute sliding expiration and sets no absolute bound.
+        private sealed class TestableExpirationEvaluatorService : PricingEvaluatorService
+        {
+            public TestableExpirationEvaluatorService(ISettingsManager settingsManager)
+                : base(() => null, null, null, null, new DefaultPricingPriorityFilterPolicy(), settingsManager)
+            {
+            }
+
+            public void ApplyCacheEntryExpirationPublic(MemoryCacheEntryOptions options) => ApplyCacheEntryExpiration(options);
+        }
+
+        [Fact]
+        public void Bounding_DefaultHook_SetsSlidingTtl()
+        {
+            var settings = PriceEvaluationCacheTests.CreateSettingsMock();
+            var service = new TestableExpirationEvaluatorService(settings.Object);
+            var options = new MemoryCacheEntryOptions();
+
+            service.ApplyCacheEntryExpirationPublic(options);
+
+            Assert.Equal(TimeSpan.FromMinutes(15), options.SlidingExpiration);
+            Assert.Null(options.AbsoluteExpirationRelativeToNow);
+        }
+
+        // AC-14b: a subclass overriding the hook is invoked, and its options are the ones applied —
+        // asserted via the hook seam (spy), since MemoryCache exposes no options read-back.
+        private sealed class SpyExpirationEvaluatorService : PricingEvaluatorService
+        {
+            private readonly TimeSpan _absoluteExpiration;
+
+            public MemoryCacheEntryOptions CapturedOptions { get; private set; }
+
+            public SpyExpirationEvaluatorService(Func<IPricingRepository> repositoryFactory, IPlatformMemoryCache platformMemoryCache,
+                ISettingsManager settingsManager, PriceEvaluationCache priceEvaluationCache, TimeSpan absoluteExpiration)
+                : base(repositoryFactory, null, null, platformMemoryCache, new DefaultPricingPriorityFilterPolicy(), settingsManager, priceEvaluationCache)
+            {
+                _absoluteExpiration = absoluteExpiration;
+            }
+
+            protected override void ApplyCacheEntryExpiration(MemoryCacheEntryOptions options)
+            {
+                options.AbsoluteExpirationRelativeToNow = _absoluteExpiration;
+                CapturedOptions = options;
+            }
+        }
+
+        [Fact]
+        public async Task Bounding_OverriddenHook_IsUsed()
+        {
+            var mockPrices = SingleRowEach("p1").BuildMock();
+            var mock = new Mock<IPricingRepository>();
+            mock.SetupGet(x => x.Prices).Returns(mockPrices);
+
+            var settings = PriceEvaluationCacheTests.CreateSettingsMock();
+            var cache = new PriceEvaluationCache(settings.Object);
+            var absoluteExpiration = TimeSpan.FromHours(2);
+            var service = new SpyExpirationEvaluatorService(() => mock.Object, PriceEvaluationCacheTests.CreateCache(), settings.Object, cache, absoluteExpiration);
+
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
+
+            Assert.NotNull(service.CapturedOptions);
+            Assert.Equal(absoluteExpiration, service.CapturedOptions.AbsoluteExpirationRelativeToNow);
+            Assert.Null(service.CapturedOptions.SlidingExpiration);
         }
     }
 }

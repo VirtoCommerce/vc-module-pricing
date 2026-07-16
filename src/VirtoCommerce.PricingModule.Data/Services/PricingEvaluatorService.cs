@@ -298,6 +298,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     {
                         options.AddExpirationToken(tokens[tokenKey]); // change-token freshness; empty arrays are stored as negative entries
                         options.Size = Math.Max(1, rows.Length); // SizeLimit requires every entry to declare Size
+                        ApplyCacheEntryExpiration(options);
                         return rows;
                     });
 
@@ -306,6 +307,22 @@ namespace VirtoCommerce.PricingModule.Data.Services
             }
 
             return result;
+        }
+
+        // Overridable so a consumer can substitute its own expiration policy (e.g. absolute) without
+        // reimplementing the evaluator (AC-14).
+        protected virtual void ApplyCacheEntryExpiration(MemoryCacheEntryOptions options)
+        {
+            options.SlidingExpiration = ParseTtl();
+        }
+
+        private TimeSpan ParseTtl()
+        {
+            // [I5] "00:00:00"/negative parse successfully but a non-positive SlidingExpiration throws
+            // ArgumentOutOfRangeException at Set — non-positive/invalid Ttl falls back to the default.
+            return TimeSpan.TryParse(_settingsManager?.GetValue<string>(ModuleConstants.Settings.General.PriceEvaluationCacheTtl), out var ttl) && ttl > TimeSpan.Zero
+                ? ttl
+                : TimeSpan.FromMinutes(15);
         }
 
         // never hand callers the shared singleton-cached instances.

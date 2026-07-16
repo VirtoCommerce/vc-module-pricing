@@ -80,6 +80,14 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = 100000,
                 };
 
+                public static SettingDescriptor PriceEvaluationCacheTtl { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.Ttl",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = "00:15:00",
+                };
+
                 public static SettingDescriptor LogPricingChanges { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.LogPricingChanges",
@@ -106,6 +114,7 @@ namespace VirtoCommerce.PricingModule.Core
                                    ExportImportPageSize,
                                    PriceEvaluationCacheEnabled,
                                    PriceEvaluationCacheRowLimit,
+                                   PriceEvaluationCacheTtl,
                                    LogPricingChanges,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,
