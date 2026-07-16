@@ -19,6 +19,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 {
     public class PricingEvaluatorService : IPricingEvaluatorService
     {
+        private const int _priceQueryChunkSize = 500;
+
         private readonly IPlatformMemoryCache _platformMemoryCache;
         private readonly Func<IPricingRepository> _repositoryFactory;
         private readonly ILogger<PricingEvaluatorService> _logger;
@@ -147,40 +149,53 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 throw new MissingFieldException("ProductIds");
             }
 
-            var result = new List<Price>();
-            IEnumerable<Price> prices;
-            using (var repository = _repositoryFactory())
+            if (evalContext.PricelistIds.IsNullOrEmpty())
             {
-                //Get a price range satisfying by passing context
-                var query = (repository).Prices
-                    .Include(x => x.Pricelist).AsSingleQuery()
-                    .Where(x => evalContext.ProductIds.Contains(x.ProductId))
-                    .Where(x => evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0);
+                evalContext.Pricelists = evalContext.Pricelists.IsNullOrEmpty()
+                    ? (await EvaluatePriceListsAsync(evalContext)).ToArray()
+                    : evalContext.Pricelists;
 
-                if (evalContext.PricelistIds.IsNullOrEmpty())
-                {
-                    evalContext.Pricelists = evalContext.Pricelists.IsNullOrEmpty()
-                        ? (await EvaluatePriceListsAsync(evalContext)).ToArray()
-                        : evalContext.Pricelists;
-
-                    evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
-                }
-
-                query = query.Where(x => evalContext.PricelistIds.Contains(x.PricelistId));
-
-                // Filter by date expiration
-                // Always filter on date, so that we limit the results to process.
-                var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
-                query = query.Where(x => (x.StartDate == null || x.StartDate <= certainDate)
-                    && (x.EndDate == null || x.EndDate > certainDate));
-
-                var queryResult = await query.AsNoTracking().ToListAsync();
-                prices = queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance()));
+                evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
             }
 
+            var rawPrices = await LoadPricesFromDatabaseAsync(evalContext.ProductIds, evalContext.PricelistIds);
+            var prices = ApplyQuantityAndDateFilter(rawPrices, evalContext);
+
+            var result = new List<Price>();
             result.AddRange(await PostProcessPrices(evalContext, prices));
 
             return result;
+        }
+
+        protected virtual async Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds)
+        {
+            var result = new List<Price>();
+            using (var repository = _repositoryFactory())
+            {
+                foreach (var productIdsChunk in productIds.Chunk(_priceQueryChunkSize))
+                {
+                    var queryResult = await repository.Prices
+                        .Include(x => x.Pricelist).AsSingleQuery()
+                        .Where(x => productIdsChunk.Contains(x.ProductId))
+                        .Where(x => pricelistIds.Contains(x.PricelistId))
+                        .AsNoTracking().ToListAsync();
+
+                    result.AddRange(queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance())));
+                }
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<Price> ApplyQuantityAndDateFilter(IEnumerable<Price> prices, PriceEvaluationContext evalContext)
+        {
+            // Reproduces the former SQL WHERE (PricingEvaluatorService.cs:166 and :181-183) in memory,
+            // so cached rows can stay unfiltered (AC-5b).
+            var certainDate = evalContext.CertainDate ?? DateTime.UtcNow;
+
+            return prices.Where(x => (evalContext.Quantity >= x.MinQuantity || evalContext.Quantity == 0)
+                && (x.StartDate == null || x.StartDate <= certainDate)
+                && (x.EndDate == null || x.EndDate > certainDate));
         }
 
         private async Task<List<Price>> PostProcessPrices(PriceEvaluationContext evalContext, IEnumerable<Price> prices)
