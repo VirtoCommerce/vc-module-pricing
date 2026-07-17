@@ -35,9 +35,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private static readonly Counter<long> _cacheOversizeRejected = _meter.CreateCounter<long>("pricing.evaluator.cache.oversize_rejected");
         private static readonly Counter<long> _cacheDateBypass = _meter.CreateCounter<long>("pricing.evaluator.cache.date_bypass");
 
-        // [I6] Cheap maintained counter backing the size gauge below: incremented on store, decremented
-        // in the eviction callback by the evicted entry's row count. Process-static like the other
-        // instruments above (the Meter itself is process-static).
+        // Cheap maintained counter backing the size gauge below: incremented on store (only when the
+        // entry is actually stored), decremented in the eviction callback by the evicted entry's row
+        // count. Process-static like the other instruments (the Meter itself is process-static). It
+        // counts cached ROWS: an empty/negative entry charges 1 to SizeLimit (Size = Max(1, Length))
+        // but adds 0 here, and eviction of such an entry also subtracts 0 — so the two stay consistent.
         private static long _cachedRowCount;
         private static readonly ObservableGauge<long> _cacheSize =
             _meter.CreateObservableGauge("pricing.evaluator.cache.size", () => Interlocked.Read(ref _cachedRowCount));
@@ -74,7 +76,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         protected virtual Task<bool> IsEvaluatorCacheEnabledAsync()
         {
-            // [platform-gate] The platform-wide master switch does not reach a private MemoryCache on
+            // The platform-wide master switch does not reach a private MemoryCache on
             // its own (that only happens through PlatformMemoryCache.GetDefaultCacheEntryOptions), so
             // it must be checked explicitly here in addition to the module-level Enabled setting.
             if (_cachingOptions?.Value.CacheEnabled == false)
@@ -203,8 +205,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 evalContext.PricelistIds = evalContext.Pricelists.Select(x => x.Id).ToArray();
             }
 
-            // [I2] Guard on the private eval-row cache, NOT _platformMemoryCache: the latter stays
-            // non-null after the Task 8 storage move (it still backs EvaluatePriceListsAsync), so
+            // Guard on the private eval-row cache, NOT _platformMemoryCache: the latter stays
+            // non-null after the storage move (it still backs EvaluatePriceListsAsync), so
             // keying the guard on it would route a null private cache into GetCachedProductPricesAsync
             // and NPE on _priceEvaluationCache.Cache.
             var rawPrices = evalContext.BypassEvaluatorCache || _priceEvaluationCache == null || !await IsEvaluatorCacheEnabledAsync()
@@ -233,7 +235,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     if (fromCurrentDateOnly)
                     {
-                        // [C2]/AC-15 collapse: drop rows already expired at load time SQL-side, so the
+                        // Historical collapse: drop rows already expired at load time SQL-side, so the
                         // cached entry never retains historical rows. The bypass path always calls this
                         // with fromCurrentDateOnly: false, so it stays unaffected.
                         query = query.Where(x => x.EndDate == null || x.EndDate > now);
@@ -273,7 +275,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     if (_priceEvaluationCache.Cache.TryGetValue(memKey, out CachedPriceRows cached))
                     {
-                        // [C2] A collapsed entry already dropped rows expired before its own LoadTime —
+                        // A collapsed entry already dropped rows expired before its own LoadTime —
                         // an effective date earlier than that load must not be served from it; fall
                         // through to the bypass bucket instead of serving stale-collapsed rows.
                         if (fromCurrentDateOnly && effective < cached.LoadTime)
@@ -288,7 +290,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     }
                     else if (fromCurrentDateOnly && effective < now)
                     {
-                        // [C2] Cold miss at a historical date: a collapse-populate here would filter out
+                        // Cold miss at a historical date: a collapse-populate here would filter out
                         // rows the historical date needs (same rows an entry loaded "now" would drop) —
                         // a cold miss at a historical date must NOT collapse-populate-and-serve.
                         bypass.Add((pricelistId, productId));
@@ -305,7 +307,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 _cacheDateBypass.Add(bypass.Count); // one increment per bypassed pair
 
-                // [C2] Bypass never touches the collapsed cache — a fresh, unfiltered, request-scoped
+                // Bypass never touches the collapsed cache — a fresh, unfiltered, request-scoped
                 // load only, never stored and never read from a collapsed entry.
                 var bypassLoaded = await LoadPricesFromDatabaseAsync(
                     bypass.Select(x => x.ProductId).Distinct().ToArray(),
@@ -334,7 +336,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 // Double-check under the single-flight lock.
                 var stillMissing = missing.Where(x => !_priceEvaluationCache.Cache.TryGetValue(x.MemKey, out CachedPriceRows _)).ToList();
-                // [C2] Intentionally does NOT re-apply the `effective < LoadTime` bypass guard here: a
+                // Intentionally does NOT re-apply the `effective < LoadTime` bypass guard here: a
                 // pair only reaches `missing` (never `bypass`) when the first-pass routing above already
                 // established `effective >= now` under FromCurrentDateOnly (or the mode is off); a
                 // concurrent fill under this lock can only push `LoadTime` later than that `now`, never
@@ -362,7 +364,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     stillMissing.Select(x => x.PricelistId).Distinct().ToArray(),
                     fromCurrentDateOnly);
 
-                // [C2] Captured AFTER the load completes so LoadTime never precedes the SQL filter's own
+                // Captured AFTER the load completes so LoadTime never precedes the SQL filter's own
                 // "now" (captured inside LoadPricesFromDatabaseAsync) — the read-side bypass check
                 // (effective < LoadTime) must never under-shoot the actual EndDate cutoff that was applied.
                 var loadTime = DateTime.UtcNow;
@@ -378,7 +380,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                     if (rows.Length > _priceEvaluationCache.RowLimit)
                     {
-                        // [I6] A single pair's own row count already exceeds the ceiling — MemoryCache
+                        // A single pair's own row count already exceeds the ceiling — MemoryCache
                         // would reject the Set anyway (immediate re-miss on the next eval), so skip the
                         // wasted Set and make the rejection observable. Still return the rows: graceful
                         // degradation, never OOM, never an error.
@@ -400,7 +402,14 @@ namespace VirtoCommerce.PricingModule.Data.Services
                             }
                         });
                         ApplyCacheEntryExpiration(options);
-                        Interlocked.Add(ref _cachedRowCount, rows.Length); // [I6] maintained size-gauge counter
+                        // Count toward the size gauge only when the entry will actually be stored: the
+                        // platform skips Set under an ambient CacheDisabler scope, and the eviction
+                        // callback (the sole decrement) never fires for an unstored entry, so an
+                        // unguarded increment would drift the gauge upward permanently.
+                        if (!CacheDisabler.CacheDisabled)
+                        {
+                            Interlocked.Add(ref _cachedRowCount, rows.Length);
+                        }
                         return new CachedPriceRows(rows, loadTime);
                     });
 
@@ -412,7 +421,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
         }
 
         // Overridable so a consumer can substitute its own expiration policy (e.g. absolute) without
-        // reimplementing the evaluator (AC-14).
+        // reimplementing the evaluator.
         protected virtual void ApplyCacheEntryExpiration(MemoryCacheEntryOptions options)
         {
             options.SlidingExpiration = ParseTtl();
@@ -420,7 +429,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         private TimeSpan ParseTtl()
         {
-            // [I5] "00:00:00"/negative parse successfully but a non-positive SlidingExpiration throws
+            // "00:00:00"/negative parse successfully but a non-positive SlidingExpiration throws
             // ArgumentOutOfRangeException at Set — non-positive/invalid Ttl falls back to the default.
             return TimeSpan.TryParse(_settingsManager?.GetValue<string>(ModuleConstants.Settings.General.PriceEvaluationCacheTtl), out var ttl) && ttl > TimeSpan.Zero
                 ? ttl

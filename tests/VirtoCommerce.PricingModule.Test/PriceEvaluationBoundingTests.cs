@@ -46,7 +46,7 @@ namespace VirtoCommerce.PricingModule.Test
             return (svc, svc, cache);
         }
 
-        // AC-13: driving the private cache past RowLimit must shed entries (graceful degradation),
+        // driving the private cache past RowLimit must shed entries (graceful degradation),
         // never throw or grow unbounded. Not asserting a specific victim or exact residents.
         [Fact]
         public async Task Bounding_ExceedsRowLimit_EvictsAndRefetches()
@@ -57,7 +57,7 @@ namespace VirtoCommerce.PricingModule.Test
             await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p2"));
             await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p3"));
 
-            // [I4] MemoryCache overcapacity compaction runs on a background ThreadPool thread, not
+            // MemoryCache overcapacity compaction runs on a background ThreadPool thread, not
             // synchronously with Set — force it deterministically so eviction has actually happened
             // before we assert on it.
             ((MemoryCache)cache.Cache).Compact(0.5);
@@ -70,7 +70,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.True(testable.LoadBatches.Count > before);
         }
 
-        // [C1] A non-positive/invalid/unset RowLimit setting must fall back to the documented default
+        // A non-positive/invalid/unset RowLimit setting must fall back to the documented default
         // (100000), never to Max(1, 0) == 1 — a degenerate ceiling would evict almost everything.
         [Theory]
         [InlineData(0)]
@@ -97,7 +97,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(100000, cache.RowLimit);
         }
 
-        // AC-14a: the default hook applies a 15-minute sliding expiration and sets no absolute bound.
+        // the default hook applies a 15-minute sliding expiration and sets no absolute bound.
         private sealed class TestableExpirationEvaluatorService : PricingEvaluatorService
         {
             public TestableExpirationEvaluatorService(ISettingsManager settingsManager)
@@ -121,7 +121,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Null(options.AbsoluteExpirationRelativeToNow);
         }
 
-        // AC-14b: a subclass overriding the hook is invoked, and its options are the ones applied —
+        // a subclass overriding the hook is invoked, and its options are the ones applied —
         // asserted via the hook seam (spy), since MemoryCache exposes no options read-back.
         private sealed class SpyExpirationEvaluatorService : PricingEvaluatorService
         {
@@ -162,7 +162,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Null(service.CapturedOptions.SlidingExpiration);
         }
 
-        // AC-15 (FromCurrentDateOnly): private helpers + tests below.
+        // (FromCurrentDateOnly): private helpers + tests below.
 
         private static (PricingEvaluatorService service, PriceEvaluationCacheTests.TestablePricingEvaluatorService testable, PriceEvaluationCache cache)
             BuildFromCurrentDateOnlyService(PriceEntity[] prices, bool fromCurrentDateOnly = true)
@@ -189,7 +189,7 @@ namespace VirtoCommerce.PricingModule.Test
             return cache.Cache.TryGetValue(memKey, out cached);
         }
 
-        // AC-15: historical rows are dropped SQL-side at population — the collapsed entry holds only
+        // historical rows are dropped SQL-side at population — the collapsed entry holds only
         // the current row, and a current-date eval returns the current price.
         [Fact]
         public async Task FromCurrentDateOnly_DropsHistoricalRows()
@@ -211,7 +211,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(10, result.Single().List);
         }
 
-        // AC-15: warm once, evaluate the same product at several Quantity values — each must be
+        // warm once, evaluate the same product at several Quantity values — each must be
         // correct from the SAME collapsed entry, with no reload triggered by the quantity change.
         [Fact]
         public async Task FromCurrentDateOnly_WarmAcrossQuantities()
@@ -242,7 +242,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(batchesAfterWarm, testable.LoadBatches.Count); // no reload across quantities
         }
 
-        // AC-15: a future-StartDate row is cached at population (not expired, so the SQL-side
+        // a future-StartDate row is cached at population (not expired, so the SQL-side
         // collapse keeps it); an eval at a CertainDate at/after that start activates it purely via
         // the existing in-memory date filter, with no reload.
         [Fact]
@@ -268,7 +268,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(batchesAfterWarm, testable.LoadBatches.Count); // served from the same collapsed entry
         }
 
-        // [C2] AC-15 WARM bypass: warm, then evaluate at a CertainDate earlier than the entry's
+        // WARM bypass: warm, then evaluate at a CertainDate earlier than the entry's
         // LoadTime — must bypass to a fresh unfiltered load and must NOT repopulate the collapsed entry.
         [Fact]
         public async Task FromCurrentDateOnly_HistoricalDate_Bypasses()
@@ -306,7 +306,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(warmEntry.LoadTime, entryAfterBypass.LoadTime); // unchanged — not repopulated
         }
 
-        // [C2] The blocker case: EMPTY cache, evaluate a product with an expired row at a historical
+        // The blocker case: EMPTY cache, evaluate a product with an expired row at a historical
         // CertainDate. A collapse-populate here would drop the historical row (wrong price); the
         // bypass must load unfiltered instead, and must not populate a collapsed entry for the pair.
         [Fact]
@@ -327,7 +327,7 @@ namespace VirtoCommerce.PricingModule.Test
             context.CertainDate = historicalDate;
             var result = await service.EvaluateProductPricesAsync(context);
 
-            Assert.Equal(7, result.Single().List); // [C2] the historical row survived — the load was unfiltered
+            Assert.Equal(7, result.Single().List); // the historical row survived — the load was unfiltered
             Assert.False(TryGetCachedRows(service, cache, "List1", "p1", out _)); // never collapse-populated
         }
 
@@ -371,7 +371,7 @@ namespace VirtoCommerce.PricingModule.Test
         }
 
         // M3-bounding: proves the four new instruments actually move — a forced compaction eviction,
-        // an AC-15 historical bypass, and a single-entry oversize pair (rows.Length alone > RowLimit)
+        // an historical bypass, and a single-entry oversize pair (rows.Length alone > RowLimit)
         // — and that the oversize pair still returns its rows (graceful degradation, not OOM).
         [Fact]
         public async Task Bounding_EmitsEvictionAndBypassCounters()
@@ -425,7 +425,7 @@ namespace VirtoCommerce.PricingModule.Test
             await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
             await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p2"));
             await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p3"));
-            ((MemoryCache)cache.Cache).Compact(0.5); // [I4] force async compaction synchronously
+            ((MemoryCache)cache.Cache).Compact(0.5); // force async compaction synchronously
 
             // (b) date_bypass: warm, then re-evaluate at a historical CertainDate earlier than LoadTime.
             await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("hist"));
@@ -443,8 +443,8 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.NotEmpty(oversizeResult);
         }
 
-        // AC-16 settings coverage (Task 12) — each setting's fallback / on-off behavior asserted in
-        // isolation, on top of the Task 8-11 mechanisms these settings already gate.
+        // settings coverage — each setting's fallback / on-off behavior asserted in
+        // isolation, on top of the bounded-cache mechanisms these settings already gate.
 
         private static Mock<ISettingsManager> CreateSettingsMockWithTtl(string ttl)
         {
@@ -458,7 +458,7 @@ namespace VirtoCommerce.PricingModule.Test
             return settings;
         }
 
-        // AC-16b / [I5]: an unparseable Ttl string and a non-positive-but-parseable one ("00:00:00")
+        // an unparseable Ttl string and a non-positive-but-parseable one ("00:00:00")
         // must both fall back to the 15-minute default, and must never let
         // ArgumentOutOfRangeException escape — a non-positive SlidingExpiration throws at
         // MemoryCache.Set time, so the fallback guard is load-bearing, not cosmetic.
@@ -477,8 +477,8 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(TimeSpan.FromMinutes(15), options.SlidingExpiration);
         }
 
-        // AC-16c: the FromCurrentDateOnly setting directly toggles whether the historical row is
-        // dropped from (true) or retained in (false) the cached entry — mirrors Task 10's
+        // the FromCurrentDateOnly setting directly toggles whether the historical row is
+        // dropped from (true) or retained in (false) the cached entry — mirrors the
         // FromCurrentDateOnly_DropsHistoricalRows, but asserts BOTH sides driven by the same setting
         // rather than inferring the false side from the unrelated 7-date anchor test.
         [Theory]
@@ -500,7 +500,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(expectedRowCount, cached.Rows.Length);
         }
 
-        // AC-16d: Enabled=false is the module-level kill switch — every eval must hit the DB, never
+        // Enabled=false is the module-level kill switch — every eval must hit the DB, never
         // the private cache, regardless of how many times the same product is re-evaluated.
         [Fact]
         public async Task Enabled_False_AlwaysLoadsFreshFromDb()
@@ -519,7 +519,7 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.Equal(2, service.LoadBatches.Count);
         }
 
-        // AC-16e / [platform-gate]: the platform-wide cache master switch (Caching:CacheEnabled=false)
+        // the platform-wide cache master switch (Caching:CacheEnabled=false)
         // must disable the evaluator cache even when the module's own Enabled setting is true — a
         // private MemoryCache does not observe the platform switch on its own (only
         // PlatformMemoryCache.GetDefaultCacheEntryOptions does), so IsEvaluatorCacheEnabledAsync

@@ -38,7 +38,7 @@ namespace VirtoCommerce.PricingModule.Test
                 Options.Create(new CachingOptions()),
                 new Mock<Microsoft.Extensions.Logging.ILogger<PlatformMemoryCache>>().Object);
 
-        // [M1] Per-setting-name responses — NOT a blanket ObjectSettingEntry{Value=true}. The same
+        // Per-setting-name responses — NOT a blanket ObjectSettingEntry{Value=true}. The same
         // mock backs both the evaluator's bool Enabled check (GetValueAsync<bool>) and
         // PriceEvaluationCache's int RowLimit read (GetValue<int>); a blanket bool value throws
         // InvalidCastException the moment RowLimit is read as int.
