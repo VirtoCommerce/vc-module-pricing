@@ -198,7 +198,7 @@ namespace VirtoCommerce.PricingModule.Data.Services
             // and NPE on _priceEvaluationCache.Cache.
             var rawPrices = evalContext.BypassEvaluatorCache || _priceEvaluationCache == null || !await IsEvaluatorCacheEnabledAsync()
                 ? await LoadPricesFromDatabaseAsync(evalContext.ProductIds, evalContext.PricelistIds)
-                : await GetCachedProductPricesAsync(evalContext.ProductIds, evalContext.PricelistIds);
+                : await GetCachedProductPricesAsync(evalContext.ProductIds, evalContext.PricelistIds, evalContext);
             var prices = ApplyQuantityAndDateFilter(rawPrices, evalContext);
 
             var result = new List<Price>();
@@ -207,18 +207,28 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        protected virtual async Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds)
+        protected virtual async Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds, bool fromCurrentDateOnly = false)
         {
             var result = new List<Price>();
+            var now = DateTime.UtcNow; // captured once for the whole (possibly chunked) load, not per chunk
             using (var repository = _repositoryFactory())
             {
                 foreach (var productIdsChunk in productIds.Chunk(_priceQueryChunkSize))
                 {
-                    var queryResult = await repository.Prices
+                    var query = repository.Prices
                         .Include(x => x.Pricelist).AsSingleQuery()
                         .Where(x => productIdsChunk.Contains(x.ProductId))
-                        .Where(x => pricelistIds.Contains(x.PricelistId))
-                        .AsNoTracking().ToListAsync();
+                        .Where(x => pricelistIds.Contains(x.PricelistId));
+
+                    if (fromCurrentDateOnly)
+                    {
+                        // [C2]/AC-15 collapse: drop rows already expired at load time SQL-side, so the
+                        // cached entry never retains historical rows. The bypass path always calls this
+                        // with fromCurrentDateOnly: false, so it stays unaffected.
+                        query = query.Where(x => x.EndDate == null || x.EndDate > now);
+                    }
+
+                    var queryResult = await query.AsNoTracking().ToListAsync();
 
                     result.AddRange(queryResult.Select(x => x.ToModel(AbstractTypeFactory<Price>.TryCreateInstance())));
                 }
@@ -227,10 +237,18 @@ namespace VirtoCommerce.PricingModule.Data.Services
             return result;
         }
 
-        protected virtual async Task<IList<Price>> GetCachedProductPricesAsync(IList<string> productIds, IList<string> pricelistIds)
+        protected virtual async Task<IList<Price>> GetCachedProductPricesAsync(IList<string> productIds, IList<string> pricelistIds, PriceEvaluationContext evalContext)
         {
+            var fromCurrentDateOnly = _settingsManager?.GetValue<bool>(ModuleConstants.Settings.General.PriceEvaluationCacheFromCurrentDateOnly) ?? false;
+            // Captured ONCE and reused as the default effective date below — two independent
+            // DateTime.UtcNow calls would make an unset CertainDate always compare as "historical"
+            // (the earlier-captured value trailing the later one by a few ticks).
+            var now = DateTime.UtcNow;
+            var effective = evalContext.CertainDate ?? now;
+
             var result = new List<Price>();
             var missing = new List<(string PricelistId, string ProductId, string MemKey)>();
+            var bypass = new List<(string PricelistId, string ProductId)>();
 
             foreach (var pricelistId in pricelistIds)
             {
@@ -242,15 +260,54 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var memKey = CacheKey.Normalize(
                         CacheKey.With(GetType(), nameof(EvaluateProductPricesAsync), PriceEvaluationCacheKey.TokenKey(pricelistId, productId)));
 
-                    if (_priceEvaluationCache.Cache.TryGetValue(memKey, out Price[] cached))
+                    if (_priceEvaluationCache.Cache.TryGetValue(memKey, out CachedPriceRows cached))
                     {
-                        RecordHit();
-                        AddClones(result, cached);                     // clone-on-read
+                        // [C2] A collapsed entry already dropped rows expired before its own LoadTime —
+                        // an effective date earlier than that load must not be served from it; fall
+                        // through to the bypass bucket instead of serving stale-collapsed rows.
+                        if (fromCurrentDateOnly && effective < cached.LoadTime)
+                        {
+                            bypass.Add((pricelistId, productId));
+                        }
+                        else
+                        {
+                            RecordHit();
+                            AddClones(result, cached.Rows);             // clone-on-read
+                        }
+                    }
+                    else if (fromCurrentDateOnly && effective < now)
+                    {
+                        // [C2] Cold miss at a historical date: a collapse-populate here would filter out
+                        // rows the historical date needs (same rows an entry loaded "now" would drop) —
+                        // a cold miss at a historical date must NOT collapse-populate-and-serve.
+                        bypass.Add((pricelistId, productId));
                     }
                     else
                     {
                         RecordMiss();
                         missing.Add((pricelistId, productId, memKey));
+                    }
+                }
+            }
+
+            if (bypass.Count > 0)
+            {
+                // [C2] Bypass never touches the collapsed cache — a fresh, unfiltered, request-scoped
+                // load only, never stored and never read from a collapsed entry.
+                var bypassLoaded = await LoadPricesFromDatabaseAsync(
+                    bypass.Select(x => x.ProductId).Distinct().ToArray(),
+                    bypass.Select(x => x.PricelistId).Distinct().ToArray(),
+                    fromCurrentDateOnly: false);
+
+                var bypassByPair = bypassLoaded
+                    .GroupBy(x => (x.PricelistId, x.ProductId))
+                    .ToDictionary(g => g.Key, g => g.ToArray());
+
+                foreach (var (pricelistId, productId) in bypass)
+                {
+                    if (bypassByPair.TryGetValue((pricelistId, productId), out var rows))
+                    {
+                        result.AddRange(rows);
                     }
                 }
             }
@@ -263,11 +320,11 @@ namespace VirtoCommerce.PricingModule.Data.Services
             using (await AsyncLock.GetLockByKey(_priceEvalLoadLockKey).LockAsync())
             {
                 // Double-check under the single-flight lock.
-                var stillMissing = missing.Where(x => !_priceEvaluationCache.Cache.TryGetValue(x.MemKey, out Price[] _)).ToList();
+                var stillMissing = missing.Where(x => !_priceEvaluationCache.Cache.TryGetValue(x.MemKey, out CachedPriceRows _)).ToList();
                 foreach (var pair in missing.Except(stillMissing))
                 {
-                    _priceEvaluationCache.Cache.TryGetValue(pair.MemKey, out Price[] justFilled);
-                    AddClones(result, justFilled);
+                    _priceEvaluationCache.Cache.TryGetValue(pair.MemKey, out CachedPriceRows justFilled);
+                    AddClones(result, justFilled.Rows);
                 }
 
                 if (stillMissing.Count == 0)
@@ -283,7 +340,13 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 var loaded = await LoadPricesFromDatabaseAsync(
                     stillMissing.Select(x => x.ProductId).Distinct().ToArray(),
-                    stillMissing.Select(x => x.PricelistId).Distinct().ToArray());
+                    stillMissing.Select(x => x.PricelistId).Distinct().ToArray(),
+                    fromCurrentDateOnly);
+
+                // [C2] Captured AFTER the load completes so LoadTime never precedes the SQL filter's own
+                // "now" (captured inside LoadPricesFromDatabaseAsync) — the read-side bypass check
+                // (effective < LoadTime) must never under-shoot the actual EndDate cutoff that was applied.
+                var loadTime = DateTime.UtcNow;
 
                 var byPair = loaded
                     .GroupBy(x => (x.PricelistId, x.ProductId))
@@ -299,10 +362,10 @@ namespace VirtoCommerce.PricingModule.Data.Services
                         options.AddExpirationToken(tokens[tokenKey]); // change-token freshness; empty arrays are stored as negative entries
                         options.Size = Math.Max(1, rows.Length); // SizeLimit requires every entry to declare Size
                         ApplyCacheEntryExpiration(options);
-                        return rows;
+                        return new CachedPriceRows(rows, loadTime);
                     });
 
-                    AddClones(result, stored);                        // clone-on-read even for just-stored rows
+                    AddClones(result, stored.Rows);                   // clone-on-read even for just-stored rows
                 }
             }
 

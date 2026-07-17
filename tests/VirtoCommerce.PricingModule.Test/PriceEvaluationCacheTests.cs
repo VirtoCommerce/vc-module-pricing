@@ -42,7 +42,7 @@ namespace VirtoCommerce.PricingModule.Test
         // mock backs both the evaluator's bool Enabled check (GetValueAsync<bool>) and
         // PriceEvaluationCache's int RowLimit read (GetValue<int>); a blanket bool value throws
         // InvalidCastException the moment RowLimit is read as int.
-        internal static Mock<ISettingsManager> CreateSettingsMock(bool cacheEnabled = true, int rowLimit = 1_000_000)
+        internal static Mock<ISettingsManager> CreateSettingsMock(bool cacheEnabled = true, int rowLimit = 1_000_000, bool fromCurrentDateOnly = false)
         {
             var settings = new Mock<ISettingsManager>();
             settings.Setup(x => x.GetObjectSettingAsync(
@@ -55,6 +55,11 @@ namespace VirtoCommerce.PricingModule.Test
                     It.IsAny<string>(),
                     It.IsAny<string>()))
                 .ReturnsAsync(new ObjectSettingEntry { Value = rowLimit });
+            settings.Setup(x => x.GetObjectSettingAsync(
+                    ModuleConstants.Settings.General.PriceEvaluationCacheFromCurrentDateOnly.Name,
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = fromCurrentDateOnly });
             return settings;
         }
 
@@ -67,10 +72,10 @@ namespace VirtoCommerce.PricingModule.Test
             public TestablePricingEvaluatorService(Func<IPricingRepository> f, IPlatformMemoryCache c, ISettingsManager s, PriceEvaluationCache priceEvaluationCache, IItemService p = null)
                 : base(f, p, null, c, new DefaultPricingPriorityFilterPolicy(), s, priceEvaluationCache) { }
 
-            protected override Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds)
+            protected override Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds, bool fromCurrentDateOnly = false)
             {
                 LoadBatches.Add(productIds.ToArray());
-                return base.LoadPricesFromDatabaseAsync(productIds, pricelistIds);
+                return base.LoadPricesFromDatabaseAsync(productIds, pricelistIds, fromCurrentDateOnly);
             }
         }
 

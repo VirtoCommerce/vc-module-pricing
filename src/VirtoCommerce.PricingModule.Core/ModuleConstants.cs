@@ -88,6 +88,14 @@ namespace VirtoCommerce.PricingModule.Core
                     DefaultValue = "00:15:00",
                 };
 
+                public static SettingDescriptor PriceEvaluationCacheFromCurrentDateOnly { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.FromCurrentDateOnly",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false,
+                };
+
                 public static SettingDescriptor LogPricingChanges { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.LogPricingChanges",
@@ -115,6 +123,7 @@ namespace VirtoCommerce.PricingModule.Core
                                    PriceEvaluationCacheEnabled,
                                    PriceEvaluationCacheRowLimit,
                                    PriceEvaluationCacheTtl,
+                                   PriceEvaluationCacheFromCurrentDateOnly,
                                    LogPricingChanges,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,
