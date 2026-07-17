@@ -4,11 +4,14 @@ using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using MockQueryable;
 using Moq;
+using VirtoCommerce.Platform.Caching;
 using VirtoCommerce.Platform.Core.Caching;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.PricingModule.Core;
+using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Data.Caching;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
@@ -438,6 +441,122 @@ namespace VirtoCommerce.PricingModule.Test
             Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.date_bypass") >= 1);
             Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.oversize_rejected") >= 1);
             Assert.NotEmpty(oversizeResult);
+        }
+
+        // AC-16 settings coverage (Task 12) — each setting's fallback / on-off behavior asserted in
+        // isolation, on top of the Task 8-11 mechanisms these settings already gate.
+
+        private static Mock<ISettingsManager> CreateSettingsMockWithTtl(string ttl)
+        {
+            var settings = PriceEvaluationCacheTests.CreateSettingsMock();
+            settings.Setup(x => x.GetObjectSettingAsync(
+                    ModuleConstants.Settings.General.PriceEvaluationCacheTtl.Name,
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
+                .ReturnsAsync(new ObjectSettingEntry { Value = ttl });
+
+            return settings;
+        }
+
+        // AC-16b / [I5]: an unparseable Ttl string and a non-positive-but-parseable one ("00:00:00")
+        // must both fall back to the 15-minute default, and must never let
+        // ArgumentOutOfRangeException escape — a non-positive SlidingExpiration throws at
+        // MemoryCache.Set time, so the fallback guard is load-bearing, not cosmetic.
+        [Theory]
+        [InlineData("not-a-timespan")]
+        [InlineData("00:00:00")]
+        public void Bounding_InvalidOrNonPositiveTtl_FallsBackToDefault(string ttl)
+        {
+            var settings = CreateSettingsMockWithTtl(ttl);
+            var service = new TestableExpirationEvaluatorService(settings.Object);
+            var options = new MemoryCacheEntryOptions();
+
+            var exception = Record.Exception(() => service.ApplyCacheEntryExpirationPublic(options));
+
+            Assert.Null(exception);
+            Assert.Equal(TimeSpan.FromMinutes(15), options.SlidingExpiration);
+        }
+
+        // AC-16c: the FromCurrentDateOnly setting directly toggles whether the historical row is
+        // dropped from (true) or retained in (false) the cached entry — mirrors Task 10's
+        // FromCurrentDateOnly_DropsHistoricalRows, but asserts BOTH sides driven by the same setting
+        // rather than inferring the false side from the unrelated 7-date anchor test.
+        [Theory]
+        [InlineData(true, 1)]
+        [InlineData(false, 2)]
+        public async Task FromCurrentDateOnly_SettingToggle_DropsOrRetainsHistoricalRow(bool fromCurrentDateOnly, int expectedRowCount)
+        {
+            var now = DateTime.UtcNow;
+            var prices = new[]
+            {
+                new PriceEntity { Id = "p1-hist", List = 5, PricelistId = "List1", ProductId = "p1", EndDate = now.AddDays(-1) },
+                new PriceEntity { Id = "p1-cur", List = 10, PricelistId = "List1", ProductId = "p1" },
+            };
+            var (service, _, cache) = BuildFromCurrentDateOnlyService(prices, fromCurrentDateOnly);
+
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
+
+            Assert.True(TryGetCachedRows(service, cache, "List1", "p1", out var cached));
+            Assert.Equal(expectedRowCount, cached.Rows.Length);
+        }
+
+        // AC-16d: Enabled=false is the module-level kill switch — every eval must hit the DB, never
+        // the private cache, regardless of how many times the same product is re-evaluated.
+        [Fact]
+        public async Task Enabled_False_AlwaysLoadsFreshFromDb()
+        {
+            var mockPrices = SingleRowEach("p1").BuildMock();
+            var mock = new Mock<IPricingRepository>();
+            mock.SetupGet(x => x.Prices).Returns(mockPrices);
+
+            var settings = PriceEvaluationCacheTests.CreateSettingsMock(cacheEnabled: false);
+            var cache = new PriceEvaluationCache(settings.Object);
+            var service = new PriceEvaluationCacheTests.TestablePricingEvaluatorService(() => mock.Object, PriceEvaluationCacheTests.CreateCache(), settings.Object, cache);
+
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
+
+            Assert.Equal(2, service.LoadBatches.Count);
+        }
+
+        // AC-16e / [platform-gate]: the platform-wide cache master switch (Caching:CacheEnabled=false)
+        // must disable the evaluator cache even when the module's own Enabled setting is true — a
+        // private MemoryCache does not observe the platform switch on its own (only
+        // PlatformMemoryCache.GetDefaultCacheEntryOptions does), so IsEvaluatorCacheEnabledAsync
+        // checks IOptions<CachingOptions> explicitly.
+        private sealed class TestablePlatformGateEvaluatorService : PricingEvaluatorService
+        {
+            public readonly List<string[]> LoadBatches = new();
+
+            public TestablePlatformGateEvaluatorService(Func<IPricingRepository> repositoryFactory, ISettingsManager settingsManager,
+                PriceEvaluationCache priceEvaluationCache, IOptions<CachingOptions> cachingOptions)
+                : base(repositoryFactory, null, null, PriceEvaluationCacheTests.CreateCache(), new DefaultPricingPriorityFilterPolicy(), settingsManager, priceEvaluationCache, cachingOptions)
+            {
+            }
+
+            protected override Task<IList<Price>> LoadPricesFromDatabaseAsync(IList<string> productIds, IList<string> pricelistIds, bool fromCurrentDateOnly = false)
+            {
+                LoadBatches.Add(productIds.ToArray());
+                return base.LoadPricesFromDatabaseAsync(productIds, pricelistIds, fromCurrentDateOnly);
+            }
+        }
+
+        [Fact]
+        public async Task PlatformCacheDisabled_ModuleEnabledTrue_AlwaysLoadsFreshFromDb()
+        {
+            var mockPrices = SingleRowEach("p1").BuildMock();
+            var mock = new Mock<IPricingRepository>();
+            mock.SetupGet(x => x.Prices).Returns(mockPrices);
+
+            var settings = PriceEvaluationCacheTests.CreateSettingsMock(cacheEnabled: true);
+            var cache = new PriceEvaluationCache(settings.Object);
+            var cachingOptions = Options.Create(new CachingOptions { CacheEnabled = false });
+            var service = new TestablePlatformGateEvaluatorService(() => mock.Object, settings.Object, cache, cachingOptions);
+
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
+
+            Assert.Equal(2, service.LoadBatches.Count);
         }
     }
 }
