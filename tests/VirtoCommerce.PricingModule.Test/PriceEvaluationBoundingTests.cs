@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -363,6 +365,79 @@ namespace VirtoCommerce.PricingModule.Test
 
             context.CertainDate = null;
             Assert.Equal(4, (await service.EvaluateProductPricesAsync(context)).Single().List);
+        }
+
+        // M3-bounding: proves the four new instruments actually move — a forced compaction eviction,
+        // an AC-15 historical bypass, and a single-entry oversize pair (rows.Length alone > RowLimit)
+        // — and that the oversize pair still returns its rows (graceful degradation, not OOM).
+        [Fact]
+        public async Task Bounding_EmitsEvictionAndBypassCounters()
+        {
+            var counts = new Dictionary<string, long>();
+
+            using var listener = new MeterListener();
+            listener.InstrumentPublished = (instrument, meterListener) =>
+            {
+                if (instrument.Meter.Name == "VirtoCommerce.PricingModule"
+                    && (instrument.Name == "pricing.evaluator.cache.evictions"
+                        || instrument.Name == "pricing.evaluator.cache.oversize_rejected"
+                        || instrument.Name == "pricing.evaluator.cache.date_bypass"))
+                {
+                    meterListener.EnableMeasurementEvents(instrument);
+                }
+            };
+            listener.SetMeasurementEventCallback<long>((instrument, measurement, tags, state) =>
+            {
+                lock (counts)
+                {
+                    counts[instrument.Name] = counts.GetValueOrDefault(instrument.Name) + measurement;
+                }
+            });
+            listener.Start();
+
+            var now = DateTime.UtcNow;
+            var prices = new[]
+            {
+                // (a) eviction trio — single row each, RowLimit below is set to 2.
+                new PriceEntity { Id = "p1-p", List = 10, PricelistId = "List1", ProductId = "p1" },
+                new PriceEntity { Id = "p2-p", List = 10, PricelistId = "List1", ProductId = "p2" },
+                new PriceEntity { Id = "p3-p", List = 10, PricelistId = "List1", ProductId = "p3" },
+                // (b) date-bypass pair — historical row collapsed at population, current row kept.
+                new PriceEntity { Id = "hist-old", List = 5, PricelistId = "List1", ProductId = "hist", EndDate = now.AddDays(-1) },
+                new PriceEntity { Id = "hist-cur", List = 10, PricelistId = "List1", ProductId = "hist" },
+                // (c) oversize product — 3 rows for one pair alone exceed RowLimit=2.
+                new PriceEntity { Id = "big-1", List = 1, PricelistId = "List1", ProductId = "big" },
+                new PriceEntity { Id = "big-2", List = 2, PricelistId = "List1", ProductId = "big" },
+                new PriceEntity { Id = "big-3", List = 3, PricelistId = "List1", ProductId = "big" },
+            };
+            var mockPrices = prices.BuildMock();
+            var mock = new Mock<IPricingRepository>();
+            mock.SetupGet(x => x.Prices).Returns(mockPrices);
+
+            var settings = PriceEvaluationCacheTests.CreateSettingsMock(rowLimit: 2, fromCurrentDateOnly: true);
+            var cache = new PriceEvaluationCache(settings.Object);
+            var service = new PriceEvaluationCacheTests.TestablePricingEvaluatorService(() => mock.Object, PriceEvaluationCacheTests.CreateCache(), settings.Object, cache);
+
+            // (a) eviction: warm 3 single-row entries past RowLimit=2, force compaction.
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p1"));
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p2"));
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("p3"));
+            ((MemoryCache)cache.Cache).Compact(0.5); // [I4] force async compaction synchronously
+
+            // (b) date_bypass: warm, then re-evaluate at a historical CertainDate earlier than LoadTime.
+            await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("hist"));
+            var historicalContext = PriceEvaluationCacheTests.Context("hist");
+            historicalContext.CertainDate = now.AddYears(-1);
+            await service.EvaluateProductPricesAsync(historicalContext);
+
+            // (c) oversize_rejected: "big"'s own row count (3) exceeds RowLimit (2) — must not throw,
+            // must not be cached, and must still return rows to the caller.
+            var oversizeResult = await service.EvaluateProductPricesAsync(PriceEvaluationCacheTests.Context("big"));
+
+            Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.evictions") >= 1);
+            Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.date_bypass") >= 1);
+            Assert.True(counts.GetValueOrDefault("pricing.evaluator.cache.oversize_rejected") >= 1);
+            Assert.NotEmpty(oversizeResult);
         }
     }
 }

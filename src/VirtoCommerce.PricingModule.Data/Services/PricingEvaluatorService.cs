@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -30,6 +31,16 @@ namespace VirtoCommerce.PricingModule.Data.Services
         private static readonly Meter _meter = new("VirtoCommerce.PricingModule");
         private static readonly Counter<long> _cacheHits = _meter.CreateCounter<long>("pricing.evaluator.cache.hits");
         private static readonly Counter<long> _cacheMisses = _meter.CreateCounter<long>("pricing.evaluator.cache.misses");
+        private static readonly Counter<long> _cacheEvictions = _meter.CreateCounter<long>("pricing.evaluator.cache.evictions");
+        private static readonly Counter<long> _cacheOversizeRejected = _meter.CreateCounter<long>("pricing.evaluator.cache.oversize_rejected");
+        private static readonly Counter<long> _cacheDateBypass = _meter.CreateCounter<long>("pricing.evaluator.cache.date_bypass");
+
+        // [I6] Cheap maintained counter backing the size gauge below: incremented on store, decremented
+        // in the eviction callback by the evicted entry's row count. Process-static like the other
+        // instruments above (the Meter itself is process-static).
+        private static long _cachedRowCount;
+        private static readonly ObservableGauge<long> _cacheSize =
+            _meter.CreateObservableGauge("pricing.evaluator.cache.size", () => Interlocked.Read(ref _cachedRowCount));
 
         private readonly IPlatformMemoryCache _platformMemoryCache;
         private readonly Func<IPricingRepository> _repositoryFactory;
@@ -292,6 +303,8 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
             if (bypass.Count > 0)
             {
+                _cacheDateBypass.Add(bypass.Count); // one increment per bypassed pair
+
                 // [C2] Bypass never touches the collapsed cache — a fresh, unfiltered, request-scoped
                 // load only, never stored and never read from a collapsed entry.
                 var bypassLoaded = await LoadPricesFromDatabaseAsync(
@@ -321,6 +334,12 @@ namespace VirtoCommerce.PricingModule.Data.Services
             {
                 // Double-check under the single-flight lock.
                 var stillMissing = missing.Where(x => !_priceEvaluationCache.Cache.TryGetValue(x.MemKey, out CachedPriceRows _)).ToList();
+                // [C2] Intentionally does NOT re-apply the `effective < LoadTime` bypass guard here: a
+                // pair only reaches `missing` (never `bypass`) when the first-pass routing above already
+                // established `effective >= now` under FromCurrentDateOnly (or the mode is off); a
+                // concurrent fill under this lock can only push `LoadTime` later than that `now`, never
+                // earlier, so `effective >= LoadTime` still holds. For a null `CertainDate`, the later
+                // `ApplyQuantityAndDateFilter` re-reads `DateTime.UtcNow` anyway — so completeness holds.
                 foreach (var pair in missing.Except(stillMissing))
                 {
                     _priceEvaluationCache.Cache.TryGetValue(pair.MemKey, out CachedPriceRows justFilled);
@@ -357,11 +376,31 @@ namespace VirtoCommerce.PricingModule.Data.Services
                     var rows = byPair.TryGetValue((pricelistId, productId), out var found) ? found : Array.Empty<Price>();
                     var tokenKey = PriceEvaluationCacheKey.TokenKey(pricelistId, productId);
 
+                    if (rows.Length > _priceEvaluationCache.RowLimit)
+                    {
+                        // [I6] A single pair's own row count already exceeds the ceiling — MemoryCache
+                        // would reject the Set anyway (immediate re-miss on the next eval), so skip the
+                        // wasted Set and make the rejection observable. Still return the rows: graceful
+                        // degradation, never OOM, never an error.
+                        _cacheOversizeRejected.Add(1);
+                        AddClones(result, rows);
+                        continue;
+                    }
+
                     var stored = _priceEvaluationCache.Cache.GetOrCreateExclusive(memKey, options =>
                     {
                         options.AddExpirationToken(tokens[tokenKey]); // change-token freshness; empty arrays are stored as negative entries
                         options.Size = Math.Max(1, rows.Length); // SizeLimit requires every entry to declare Size
+                        options.RegisterPostEvictionCallback((_, value, _, _) =>
+                        {
+                            _cacheEvictions.Add(1);
+                            if (value is CachedPriceRows evicted)
+                            {
+                                Interlocked.Add(ref _cachedRowCount, -evicted.Rows.Length);
+                            }
+                        });
                         ApplyCacheEntryExpiration(options);
+                        Interlocked.Add(ref _cachedRowCount, rows.Length); // [I6] maintained size-gauge counter
                         return new CachedPriceRows(rows, loadTime);
                     });
 
