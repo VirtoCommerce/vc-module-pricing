@@ -64,6 +64,38 @@ namespace VirtoCommerce.PricingModule.Core
                 };
 
 
+                public static SettingDescriptor PriceEvaluationCacheEnabled { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.Enable",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = true,
+                };
+
+                public static SettingDescriptor PriceEvaluationCacheRowLimit { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.RowLimit",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.PositiveInteger,
+                    DefaultValue = 100000,
+                };
+
+                public static SettingDescriptor PriceEvaluationCacheTtl { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.Ttl",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = "00:15:00",
+                };
+
+                public static SettingDescriptor PriceEvaluationCacheFromCurrentDateOnly { get; } = new SettingDescriptor
+                {
+                    Name = "Pricing.Evaluation.Cache.FromCurrentDateOnly",
+                    GroupName = "Pricing|General",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false,
+                };
+
                 public static SettingDescriptor LogPricingChanges { get; } = new SettingDescriptor
                 {
                     Name = "Pricing.LogPricingChanges",
@@ -88,6 +120,10 @@ namespace VirtoCommerce.PricingModule.Core
                         return new List<SettingDescriptor>
                                {
                                    ExportImportPageSize,
+                                   PriceEvaluationCacheEnabled,
+                                   PriceEvaluationCacheRowLimit,
+                                   PriceEvaluationCacheTtl,
+                                   PriceEvaluationCacheFromCurrentDateOnly,
                                    LogPricingChanges,
                                    IndexationDatePricingCalendar,
                                    PricingIndexing,

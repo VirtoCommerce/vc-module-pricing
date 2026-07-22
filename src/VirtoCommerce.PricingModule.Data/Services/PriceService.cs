@@ -10,6 +10,7 @@ using VirtoCommerce.Platform.Data.GenericCrud;
 using VirtoCommerce.PricingModule.Core.Events;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Caching;
 using VirtoCommerce.PricingModule.Data.Model;
 using VirtoCommerce.PricingModule.Data.Repositories;
 
@@ -80,6 +81,21 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
                 ClearCache(models);
 
+                // An edit that moves a price to a different (PricelistId, ProductId)
+                // leaves the OLD key's evaluator-cache entry unexpired if we only look at ClearCache's
+                // post-edit models. changedEntries still holds the pre-edit OldEntry here, so expire the
+                // old key too. No-op when the key is unchanged.
+                foreach (var changedEntry in changedEntries.Where(x => x.EntryState == EntryState.Modified))
+                {
+                    var oldPricelistId = changedEntry.OldEntry.PricelistId;
+                    var oldProductId = changedEntry.OldEntry.ProductId;
+                    if (oldPricelistId != null && oldProductId != null
+                        && (oldPricelistId != changedEntry.NewEntry.PricelistId || oldProductId != changedEntry.NewEntry.ProductId))
+                    {
+                        GenericCachingRegion<Price>.ExpireTokenForKey(PriceEvaluationCacheKey.TokenKey(oldPricelistId, oldProductId));
+                    }
+                }
+
                 await _eventPublisher.Publish(new PriceChangedEvent(changedEntries));
             }
         }
@@ -96,7 +112,15 @@ namespace VirtoCommerce.PricingModule.Data.Services
 
         protected override void ClearCache(IList<Price> models)
         {
-            GenericCachingRegion<Price>.ExpireRegion();
+            // invalidate ONLY the changed (pricelistId, productId) entries. Do NOT ExpireRegion() here: the
+            // per-key change token composites the region token, so a region flush would drop every product's
+            // entry and defeat per-key precision. Search caches stay invalidated via base.ClearCache
+            // (GenericSearchCachingRegion<Price>), which this override still calls.
+            foreach (var price in models.Where(x => x.PricelistId != null && x.ProductId != null))
+            {
+                GenericCachingRegion<Price>.ExpireTokenForKey(PriceEvaluationCacheKey.TokenKey(price.PricelistId, price.ProductId));
+            }
+
             base.ClearCache(models);
         }
 

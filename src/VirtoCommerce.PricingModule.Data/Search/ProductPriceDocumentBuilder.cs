@@ -86,6 +86,7 @@ namespace VirtoCommerce.PricingModule.Data.Search
             evalContext.CertainDate = DateTime.UtcNow;
             evalContext.SkipAssignmentValidation = true;
             evalContext.ReturnAllMatchedPrices = true;
+            evalContext.BypassEvaluatorCache = true; // index documents must not read cached prices — a stale price baked into a persisted search doc outlives the cache epoch
 
             return (await _pricingEvaluatorService.EvaluateProductPricesAsync(evalContext)).ToList();
         }
