@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -92,44 +91,37 @@ namespace VirtoCommerce.PricingModule.Data.Services
                 return await GetAllPricelistAssignments();
             });
 
-            var query = priceListAssignments.AsQueryable();
+            // Not .AsQueryable().Where(...): that recompiles the expression tree per enumeration, a lock convoy under load.
+            IEnumerable<PricelistAssignment> assignments = priceListAssignments;
 
-            var predicate = GetEvaluationPredicate(evalContext);
-            query = query.Where(predicate);
+            if (evalContext.StoreId != null || evalContext.CatalogId != null)
+            {
+                assignments = assignments.Where(x => MatchesScope(x, evalContext));
+            }
 
             if (evalContext.Currency != null)
             {
-                query = query.Where(x => x.Pricelist.Currency == evalContext.Currency);
+                assignments = assignments.Where(x => x.Pricelist.Currency == evalContext.Currency);
             }
 
             if (evalContext.CertainDate != null)
             {
-                query = query.Where(x => (x.StartDate == null || evalContext.CertainDate >= x.StartDate) && (x.EndDate == null || x.EndDate >= evalContext.CertainDate));
+                assignments = assignments.Where(x => MatchesDate(x, evalContext.CertainDate.Value));
             }
 
-            return query;
+            return assignments.AsQueryable();
         }
 
-        private Expression<Func<PricelistAssignment, bool>> GetEvaluationPredicate(PriceEvaluationContext evalContext)
+        private static bool MatchesScope(PricelistAssignment assignment, PriceEvaluationContext evalContext)
         {
-            if (evalContext.StoreId == null && evalContext.CatalogId == null)
-            {
-                return PredicateBuilder.True<PricelistAssignment>();
-            }
+            return (evalContext.StoreId != null && assignment.StoreId == evalContext.StoreId)
+                || (evalContext.CatalogId != null && assignment.CatalogId == evalContext.CatalogId);
+        }
 
-            var predicate = PredicateBuilder.False<PricelistAssignment>();
-
-            if (evalContext.StoreId != null)
-            {
-                predicate = predicate.Or(x => x.StoreId == evalContext.StoreId);
-            }
-
-            if (evalContext.CatalogId != null)
-            {
-                predicate = predicate.Or(x => x.CatalogId == evalContext.CatalogId);
-            }
-
-            return predicate;
+        private static bool MatchesDate(PricelistAssignment assignment, DateTime certainDate)
+        {
+            return (assignment.StartDate == null || certainDate >= assignment.StartDate)
+                && (assignment.EndDate == null || assignment.EndDate >= certainDate);
         }
 
         public virtual async Task<PricelistAssignment[]> GetAllPricelistAssignments()
