@@ -243,6 +243,15 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
                 Take = int.MaxValue,
             });
             var targetPricesGroups = result.Results.GroupBy(x => x.PricelistId).ToDictionary(g => g.Key);
+
+            foreach (var productPrice in productPrices)
+            {
+                foreach (var price in productPrice.Prices)
+                {
+                    price.ProductId ??= productPrice.ProductId;
+                }
+            }
+
             var sourcePricesGroups = productPrices.SelectMany(x => x.Prices).GroupBy(x => x.PricelistId);
 
             var changedPrices = new List<Price>();
