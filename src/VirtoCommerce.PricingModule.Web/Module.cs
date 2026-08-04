@@ -17,6 +17,7 @@ using VirtoCommerce.ExportModule.Data.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Events;
 using VirtoCommerce.Platform.Core.ExportImport;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -34,6 +35,7 @@ using VirtoCommerce.PricingModule.Core.Services;
 using VirtoCommerce.PricingModule.Data.Common;
 using VirtoCommerce.PricingModule.Data.ExportImport;
 using VirtoCommerce.PricingModule.Data.Handlers;
+using VirtoCommerce.PricingModule.Data.Jobs;
 using VirtoCommerce.PricingModule.Data.MySql;
 using VirtoCommerce.PricingModule.Data.PostgreSql;
 using VirtoCommerce.PricingModule.Data.Repositories;
@@ -89,6 +91,9 @@ namespace VirtoCommerce.PricingModule.Web
             serviceCollection.AddTransient<IPricingDocumentChangesProvider, ProductPriceDocumentChangesProvider>();
             serviceCollection.AddTransient<ProductPriceDocumentBuilder>();
             serviceCollection.AddTransient<LogChangesChangedEventHandler>();
+            // Not triggerable by name: this job writes audit-log rows, and an OperationLog whose Id matches an existing
+            // row takes ChangeLogService.SaveChangesAsync's Patch branch, so a caller-supplied payload must never reach it.
+            serviceCollection.AddBackgroundJob<LogEntityChangesJobHandler, LogEntityChangesJobPayload>(triggerable: false);
             serviceCollection.AddTransient<DeletePricesProductChangedEventHandler>();
             serviceCollection.AddTransient<IndexPricesProductChangedEventHandler>();
             serviceCollection.AddTransient<ObjectSettingEntryChangedEventHandler>();
