@@ -22,6 +22,8 @@ namespace VirtoCommerce.PricingModule.Core.Model
         public string Currency { get; set; }
         // Set this flag to true for indexing from all given pricelists and skip Dynamic Conditions except Start and End Date  
         public bool SkipAssignmentValidation { get; set; }
+        // Expected price-list IDs if SkipAssignmentValidation is set to true
+        public IList<string> ExpectedPriceListIds { get; set; }
 
         public object Clone()
         {
