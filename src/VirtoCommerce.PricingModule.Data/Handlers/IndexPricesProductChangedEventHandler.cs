@@ -44,7 +44,7 @@ namespace VirtoCommerce.PricingModule.Data.Handlers
                     .Select(x => new IndexEntry { Id = x.OldEntry.ProductId, EntryState = EntryState.Modified, Type = KnownDocumentTypes.Product })
                     .ToArray();
 
-                _indexingJobService.EnqueueIndexAndDeleteDocuments(indexEntries, JobPriority.Normal,
+                await _indexingJobService.EnqueueIndexAndDeleteDocumentsAsync(indexEntries, JobPriority.Normal,
                     _configurations.GetDocumentBuilders(KnownDocumentTypes.Product, typeof(ProductPriceDocumentChangesProvider)).ToList());
             }
         }
