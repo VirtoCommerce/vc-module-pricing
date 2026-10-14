@@ -134,7 +134,8 @@ const lists = computed<Record<string, Option[]>>(() => ({
 function add(id: unknown) {
   const prototype = props.palette.find((p) => p.id === id);
   if (!prototype) return;
-  (props.block.children ??= []).push(JSON.parse(JSON.stringify(prototype)));
+  props.block.children ??= [];
+  props.block.children.push(JSON.parse(JSON.stringify(prototype)));
 }
 </script>
 

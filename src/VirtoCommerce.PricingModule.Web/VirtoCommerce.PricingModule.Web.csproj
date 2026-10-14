@@ -31,6 +31,14 @@
     <None Remove="plugins\**" />
   </ItemGroup>
   <ItemGroup>
+    <!-- NSwag emits repeated request/response plumbing; regenerate these clients instead of refactoring them.
+         They stay project items so this project-level setting reaches them. -->
+    <None Include="vue\src\api_client\virtocommerce.*.ts" />
+    <SonarQubeSetting Include="sonar.cpd.exclusions">
+      <Value>**/vue/src/api_client/virtocommerce.*.ts</Value>
+    </SonarQubeSetting>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="VirtoCommerce.AssetsModule.Core" Version="3.1010.0" />
     <PackageReference Include="VirtoCommerce.Platform.Modules" Version="3.1076.0" />
   </ItemGroup>
