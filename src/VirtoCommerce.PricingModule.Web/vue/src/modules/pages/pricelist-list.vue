@@ -1,6 +1,6 @@
 <template>
   <VcBlade
-    :title="$t('PRICING.PRICELISTS.TITLE')"
+    :title="$t('PRICING.MENU.TITLE')"
     :toolbar-items="bladeToolbar"
     :loading="loading"
     width="50%"

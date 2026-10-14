@@ -17,7 +17,6 @@
       "EXPORT": "Export"
     },
     "PRICELISTS": {
-      "TITLE": "Pricing",
       "NEW": "New price list",
       "EMPTY": "No price lists",
       "COLUMNS": {
