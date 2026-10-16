@@ -31,7 +31,8 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         IItemService itemService,
         IMergedPriceSearchService mergedPriceSearchService,
         IBlobUrlResolver blobUrlResolver,
-        AbstractValidator<Pricelist> priceListValidator
+        AbstractValidator<Pricelist> priceListValidator,
+        AbstractValidator<ProductPrice> productPriceValidator
         ) : Controller
     {
         /// <summary>
@@ -237,6 +238,21 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         public async Task<ActionResult> UpdateProductsPrices([FromBody] ProductPrice[] productPrices)
         {
+            for (var i = 0; i < productPrices.Length; i++)
+            {
+                var validationResult = await productPriceValidator.ValidateAsync(productPrices[i]);
+
+                foreach (var error in validationResult.Errors)
+                {
+                    ModelState.AddModelError($"[{i}].{error.PropertyName}", error.ErrorMessage);
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await priceSearchService.SearchAsync(new PricesSearchCriteria
             {
                 ProductIds = productPrices.Select(x => x.ProductId).ToList(),
@@ -544,9 +560,7 @@ namespace VirtoCommerce.PricingModule.Web.Controllers.Api
             var productPrice = AbstractTypeFactory<ProductPrice>.TryCreateInstance();
             productPrice.Prices = [price];
 
-            await UpdateProductPrices(productPrice);
-
-            return NoContent();
+            return await UpdateProductPrices(productPrice);
         }
 
         /// <summary>
