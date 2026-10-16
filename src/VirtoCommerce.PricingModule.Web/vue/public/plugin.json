@@ -1,0 +1,17 @@
+{
+  "remote": { "name": "pricing_admin", "exposed": "./Module" },
+  "contributions": {
+    "menu": [
+      {
+        "id": "pricing",
+        "sectionId": "catalog",
+        "title": "Pricing",
+        "icon": "lucide-badge-dollar-sign",
+        "route": "/pricing",
+        "permission": "pricing:access",
+        "priority": 20,
+        "replaces": "legacy.pricing"
+      }
+    ]
+  }
+}

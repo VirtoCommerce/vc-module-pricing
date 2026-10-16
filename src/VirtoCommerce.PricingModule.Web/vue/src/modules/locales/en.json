@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Pricing"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Refresh",
+      "ADD": "Add",
+      "DELETE": "Delete",
+      "DELETE_ALL": "Delete all",
+      "DELETE_FILTERED": "Delete filtered",
+      "SAVE": "Save",
+      "CREATE": "Create",
+      "RESET": "Reset",
+      "ASSIGNMENTS": "Assignments",
+      "ADD_SELECTED": "Add selected",
+      "EXPORT": "Export"
+    },
+    "PRICELISTS": {
+      "NEW": "New price list",
+      "EMPTY": "No price lists",
+      "COLUMNS": {
+        "NAME": "Name",
+        "CURRENCY": "Currency",
+        "DESCRIPTION": "Description",
+        "MODIFIED": "Last modified"
+      },
+      "FIELDS": {
+        "NAME": "Name",
+        "CURRENCY": "Currency",
+        "DESCRIPTION": "Description"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Enter price list name",
+        "CURRENCY": "Select currency",
+        "DESCRIPTION": "Enter description"
+      },
+      "WIDGETS": {
+        "PRICES": "Prices",
+        "ASSIGNMENTS": "Assignments"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: prices",
+      "EMPTY": "No prices in this price list",
+      "NO_PRODUCT": "Product not found",
+      "COLUMNS": {
+        "IMAGE": "Img",
+        "NAME": "Product",
+        "CODE": "SKU",
+        "PRICES": "Prices",
+        "RANGE": "Price range"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "No prices",
+      "ADD": "Add price",
+      "COLUMNS": {
+        "PRICELIST": "Price list",
+        "CURRENCY": "Currency",
+        "CATALOG": "Catalog",
+        "STORE": "Store",
+        "LIST": "List price",
+        "SALE": "Sale price",
+        "MIN_QTY": "Min quantity",
+        "START": "Start date",
+        "END": "End date",
+        "MODIFIED": "Last modified"
+      },
+      "SELECT_PRICELIST": "Price list for a new price",
+      "ITEM_TITLE": "Prices: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Select products",
+      "SEARCH": "Search products",
+      "COLUMNS": {
+        "IMAGE": "Img",
+        "NAME": "Name",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Price list assignments",
+      "NEW": "New assignment",
+      "EMPTY": "No assignments",
+      "COLUMNS": {
+        "NAME": "Name",
+        "CATALOG": "Catalog",
+        "STORE": "Store",
+        "PRICELIST": "Price list",
+        "CURRENCY": "Currency",
+        "PRIORITY": "Priority",
+        "START": "Activation",
+        "END": "Expiration",
+        "MODIFIED": "Last modified",
+        "MODIFIED_BY": "Modified by"
+      },
+      "FIELDS": {
+        "NAME": "Assignment name",
+        "PRICELIST": "Price list",
+        "STORE": "Store",
+        "CATALOG": "Catalog",
+        "PRIORITY": "Priority",
+        "PRIORITY_HINT": "If two assignments match, the one with the higher priority wins",
+        "DESCRIPTION": "Description",
+        "START": "Enable date",
+        "START_HINT": "The assignment is active from this date",
+        "END": "Expiration date",
+        "END_HINT": "The assignment is inactive after this date",
+        "TARGET_HINT": "Select either a store or a catalog"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Enter assignment name",
+        "PRICELIST": "Select price list",
+        "STORE": "Select store",
+        "CATALOG": "Select catalog",
+        "DESCRIPTION": "Enter description"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Eligible shoppers",
+      "IF": "If",
+      "OF_THESE": "of these conditions are true",
+      "ALL": "all",
+      "ANY": "any",
+      "ADD": "Add condition",
+      "NONE": "No conditions: the assignment applies to all shoppers",
+      "VALUE": "Value",
+      "REMOVE": "Remove",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Shopper searched for ... in the store",
+        "ConditionLanguageIs": "User language is ...",
+        "ConditionAgeIs": "Shopper age is ...",
+        "ConditionGenderIs": "Shopper gender is ...",
+        "UserGroupsContainsCondition": "User group contains ...",
+        "ConditionGeoTimeZone": "Time zone",
+        "ConditionGeoZipCode": "Zip/postal code",
+        "ConditionGeoCity": "City",
+        "ConditionGeoCountry": "Country",
+        "ConditionGeoState": "Region/state/province"
+      },
+      "OPS": {
+        "IsMatching": "exactly",
+        "IsNotMatching": "anything but",
+        "IsGreaterThan": "greater than",
+        "IsGreaterThanOrEqual": "greater than or equals",
+        "IsLessThan": "less than",
+        "IsLessThanOrEqual": "less than or equals",
+        "AtLeast": "at least",
+        "Contains": "contains",
+        "NotContains": "does not contain",
+        "Matching": "is exactly",
+        "NotMatching": "is anything but"
+      },
+      "GENDERS": {
+        "female": "female",
+        "male": "male"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Prices"
+    },
+    "VALIDATION": {
+      "LIST": "List price is required and must not be negative",
+      "SALE": "Sale price must not exceed the list price",
+      "QTY": "Min quantity must be greater than 0",
+      "QTY_UNIQUE": "Min quantity must be unique",
+      "SINGLE_ITEM": "At least one price with min quantity 1 is required",
+      "ASSIGNMENT_TARGET": "Select either a store or a catalog"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "You have unsaved changes. Close anyway?",
+      "DELETE_PRICELISTS": "Delete {count} price list(s)?",
+      "DELETE_PRODUCT_PRICES": "Delete all prices of {count} product(s) from this price list?",
+      "DELETE_PRICES": "Delete {count} price(s)?",
+      "DELETE_ASSIGNMENTS": "Delete {count} assignment(s)?",
+      "DELETE_ALL_ASSIGNMENTS": "Delete all {count} assignment(s) matching the current filter?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Export prices",
+      "PRICES_SUBTITLE": "Export prices to a JSON or CSV file",
+      "PRICELISTS_TITLE": "Export price lists",
+      "PRICELISTS_SUBTITLE": "Export your price list to a JSON or CSV file",
+      "ASSIGNMENTS_TITLE": "Export price assignments",
+      "ASSIGNMENTS_SUBTITLE": "Export your price assignment to a JSON or CSV file",
+      "FILTER": {
+        "currencies": "Currencies",
+        "pricelistIds": "Price lists",
+        "productIds": "Products",
+        "catalogIds": "Catalogs",
+        "modifiedSince": "Modified since"
+      }
+    }
+  }
+}
