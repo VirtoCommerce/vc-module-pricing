@@ -154,8 +154,8 @@ function add(id: unknown) {
     gap: 10px;
   }
   &__item {
-    padding-left: 16px;
-    border-left: 2px solid var(--color-neutral-200);
+    padding-inline-start: 16px;
+    border-inline-start: 2px solid var(--color-neutral-200);
   }
   &__label {
     flex: 0 0 150px;
