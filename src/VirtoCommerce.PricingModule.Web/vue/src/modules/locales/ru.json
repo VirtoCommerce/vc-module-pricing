@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Ценообразование"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Обновить",
+      "ADD": "Добавить",
+      "DELETE": "Удалить",
+      "DELETE_ALL": "Удалить все",
+      "DELETE_FILTERED": "Удалить отфильтрованные",
+      "SAVE": "Сохранить",
+      "CREATE": "Создать",
+      "RESET": "Сбросить",
+      "ASSIGNMENTS": "Назначения",
+      "ADD_SELECTED": "Добавить выбранные",
+      "EXPORT": "Экспорт"
+    },
+    "PRICELISTS": {
+      "NEW": "Новый прайс-лист",
+      "EMPTY": "Нет прайс-листов",
+      "COLUMNS": {
+        "NAME": "Название",
+        "CURRENCY": "Валюта",
+        "DESCRIPTION": "Описание",
+        "MODIFIED": "Последнее изменение"
+      },
+      "FIELDS": {
+        "NAME": "Название",
+        "CURRENCY": "Валюта",
+        "DESCRIPTION": "Описание"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Введите название прайс-листа",
+        "CURRENCY": "Выберите валюту",
+        "DESCRIPTION": "Введите описание"
+      },
+      "WIDGETS": {
+        "PRICES": "Цены",
+        "ASSIGNMENTS": "Назначения"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: цены",
+      "EMPTY": "В этом прайс-листе нет цен",
+      "NO_PRODUCT": "Товар не найден",
+      "COLUMNS": {
+        "IMAGE": "Изобр.",
+        "NAME": "Товар",
+        "CODE": "SKU",
+        "PRICES": "Цены",
+        "RANGE": "Диапазон цен"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "Нет цен",
+      "ADD": "Добавить цену",
+      "COLUMNS": {
+        "PRICELIST": "Прайс-лист",
+        "CURRENCY": "Валюта",
+        "CATALOG": "Каталог",
+        "STORE": "Магазин",
+        "LIST": "Базовая цена",
+        "SALE": "Цена со скидкой",
+        "MIN_QTY": "Мин. количество",
+        "START": "Дата начала",
+        "END": "Дата окончания",
+        "MODIFIED": "Последнее изменение"
+      },
+      "SELECT_PRICELIST": "Прайс-лист для новой цены",
+      "ITEM_TITLE": "Цены: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Выберите товары",
+      "SEARCH": "Поиск товаров",
+      "COLUMNS": {
+        "IMAGE": "Изобр.",
+        "NAME": "Название",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Назначения прайс-листов",
+      "NEW": "Новое назначение",
+      "EMPTY": "Нет назначений",
+      "COLUMNS": {
+        "NAME": "Название",
+        "CATALOG": "Каталог",
+        "STORE": "Магазин",
+        "PRICELIST": "Прайс-лист",
+        "CURRENCY": "Валюта",
+        "PRIORITY": "Приоритет",
+        "START": "Активация",
+        "END": "Срок действия",
+        "MODIFIED": "Последнее изменение",
+        "MODIFIED_BY": "Кем изменено"
+      },
+      "FIELDS": {
+        "NAME": "Название назначения",
+        "PRICELIST": "Прайс-лист",
+        "STORE": "Магазин",
+        "CATALOG": "Каталог",
+        "PRIORITY": "Приоритет",
+        "PRIORITY_HINT": "Если подходят два назначения, применяется назначение с более высоким приоритетом",
+        "DESCRIPTION": "Описание",
+        "START": "Дата включения",
+        "START_HINT": "Назначение действует с этой даты",
+        "END": "Дата окончания",
+        "END_HINT": "После этой даты назначение не действует",
+        "TARGET_HINT": "Выберите магазин или каталог"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Введите название назначения",
+        "PRICELIST": "Выберите прайс-лист",
+        "STORE": "Выберите магазин",
+        "CATALOG": "Выберите каталог",
+        "DESCRIPTION": "Введите описание"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Подходящие покупатели",
+      "IF": "Если",
+      "OF_THESE": "из этих условий выполняются",
+      "ALL": "все",
+      "ANY": "любое",
+      "ADD": "Добавить условие",
+      "NONE": "Нет условий: назначение применяется ко всем покупателям",
+      "VALUE": "Значение",
+      "REMOVE": "Удалить",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Покупатель искал ... в магазине",
+        "ConditionLanguageIs": "Язык пользователя ...",
+        "ConditionAgeIs": "Возраст покупателя ...",
+        "ConditionGenderIs": "Пол покупателя ...",
+        "UserGroupsContainsCondition": "Группа пользователей содержит ...",
+        "ConditionGeoTimeZone": "Часовой пояс",
+        "ConditionGeoZipCode": "Почтовый индекс",
+        "ConditionGeoCity": "Город",
+        "ConditionGeoCountry": "Страна",
+        "ConditionGeoState": "Регион/штат/провинция"
+      },
+      "OPS": {
+        "IsMatching": "точно",
+        "IsNotMatching": "что угодно, кроме",
+        "IsGreaterThan": "больше",
+        "IsGreaterThanOrEqual": "больше или равно",
+        "IsLessThan": "меньше",
+        "IsLessThanOrEqual": "меньше или равно",
+        "AtLeast": "не менее",
+        "Contains": "содержит",
+        "NotContains": "не содержит",
+        "Matching": "точно равно",
+        "NotMatching": "что угодно, кроме"
+      },
+      "GENDERS": {
+        "female": "женский",
+        "male": "мужской"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Цены"
+    },
+    "VALIDATION": {
+      "LIST": "Базовая цена обязательна и не может быть отрицательной",
+      "SALE": "Цена со скидкой не может превышать базовую цену",
+      "QTY": "Мин. количество должно быть больше 0",
+      "QTY_UNIQUE": "Мин. количество должно быть уникальным",
+      "SINGLE_ITEM": "Требуется хотя бы одна цена с мин. количеством 1",
+      "ASSIGNMENT_TARGET": "Выберите магазин или каталог"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Есть несохраненные изменения. Все равно закрыть?",
+      "DELETE_PRICELISTS": "Удалить прайс-листы ({count})?",
+      "DELETE_PRODUCT_PRICES": "Удалить из этого прайс-листа все цены товаров ({count})?",
+      "DELETE_PRICES": "Удалить цены ({count})?",
+      "DELETE_ASSIGNMENTS": "Удалить назначения ({count})?",
+      "DELETE_ALL_ASSIGNMENTS": "Удалить все назначения, соответствующие текущему фильтру ({count})?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Экспорт цен",
+      "PRICES_SUBTITLE": "Экспорт цен в файл JSON или CSV",
+      "PRICELISTS_TITLE": "Экспорт прайс-листов",
+      "PRICELISTS_SUBTITLE": "Экспорт прайс-листа в файл JSON или CSV",
+      "ASSIGNMENTS_TITLE": "Экспорт назначений цен",
+      "ASSIGNMENTS_SUBTITLE": "Экспорт назначения цен в файл JSON или CSV",
+      "FILTER": {
+        "currencies": "Валюты",
+        "pricelistIds": "Прайс-листы",
+        "productIds": "Товары",
+        "catalogIds": "Каталоги",
+        "modifiedSince": "Изменено с"
+      }
+    }
+  }
+}

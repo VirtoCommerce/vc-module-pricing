@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "価格設定"
+    },
+    "TOOLBAR": {
+      "REFRESH": "更新",
+      "ADD": "追加",
+      "DELETE": "削除",
+      "DELETE_ALL": "すべて削除",
+      "DELETE_FILTERED": "絞り込み結果を削除",
+      "SAVE": "保存",
+      "CREATE": "作成",
+      "RESET": "リセット",
+      "ASSIGNMENTS": "割り当て",
+      "ADD_SELECTED": "選択項目を追加",
+      "EXPORT": "エクスポート"
+    },
+    "PRICELISTS": {
+      "NEW": "新しい価格リスト",
+      "EMPTY": "価格リストがありません",
+      "COLUMNS": {
+        "NAME": "名前",
+        "CURRENCY": "通貨",
+        "DESCRIPTION": "説明",
+        "MODIFIED": "最終更新日時"
+      },
+      "FIELDS": {
+        "NAME": "名前",
+        "CURRENCY": "通貨",
+        "DESCRIPTION": "説明"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "価格リスト名を入力",
+        "CURRENCY": "通貨を選択",
+        "DESCRIPTION": "説明を入力"
+      },
+      "WIDGETS": {
+        "PRICES": "価格",
+        "ASSIGNMENTS": "割り当て"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: 価格",
+      "EMPTY": "この価格リストには価格がありません",
+      "NO_PRODUCT": "製品が見つかりません",
+      "COLUMNS": {
+        "IMAGE": "画像",
+        "NAME": "製品",
+        "CODE": "SKU",
+        "PRICES": "価格",
+        "RANGE": "価格範囲"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "価格がありません",
+      "ADD": "価格を追加",
+      "COLUMNS": {
+        "PRICELIST": "価格リスト",
+        "CURRENCY": "通貨",
+        "CATALOG": "カタログ",
+        "STORE": "店舗",
+        "LIST": "定価",
+        "SALE": "販売価格",
+        "MIN_QTY": "最小数量",
+        "START": "開始日",
+        "END": "終了日",
+        "MODIFIED": "最終更新日時"
+      },
+      "SELECT_PRICELIST": "新しい価格の価格リスト",
+      "ITEM_TITLE": "価格: {name}"
+    },
+    "PICKER": {
+      "TITLE": "製品を選択",
+      "SEARCH": "製品を検索",
+      "COLUMNS": {
+        "IMAGE": "画像",
+        "NAME": "名前",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "価格リストの割り当て",
+      "NEW": "新しい割り当て",
+      "EMPTY": "割り当てがありません",
+      "COLUMNS": {
+        "NAME": "名前",
+        "CATALOG": "カタログ",
+        "STORE": "店舗",
+        "PRICELIST": "価格リスト",
+        "CURRENCY": "通貨",
+        "PRIORITY": "優先度",
+        "START": "有効化",
+        "END": "有効期限",
+        "MODIFIED": "最終更新日時",
+        "MODIFIED_BY": "変更者"
+      },
+      "FIELDS": {
+        "NAME": "割り当て名",
+        "PRICELIST": "価格リスト",
+        "STORE": "店舗",
+        "CATALOG": "カタログ",
+        "PRIORITY": "優先度",
+        "PRIORITY_HINT": "2 つの割り当てが一致する場合は、優先度の高い方が適用されます",
+        "DESCRIPTION": "説明",
+        "START": "有効開始日",
+        "START_HINT": "割り当てはこの日から有効になります",
+        "END": "有効終了日",
+        "END_HINT": "割り当てはこの日以降無効になります",
+        "TARGET_HINT": "店舗またはカタログのいずれかを選択してください"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "割り当て名を入力",
+        "PRICELIST": "価格リストを選択",
+        "STORE": "店舗を選択",
+        "CATALOG": "カタログを選択",
+        "DESCRIPTION": "説明を入力"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "対象の購入者",
+      "IF": "次の条件の",
+      "OF_THESE": "が満たされる場合",
+      "ALL": "すべて",
+      "ANY": "いずれか",
+      "ADD": "条件を追加",
+      "NONE": "条件なし: 割り当てはすべての購入者に適用されます",
+      "VALUE": "値",
+      "REMOVE": "削除",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "購入者が店舗で ... を検索した",
+        "ConditionLanguageIs": "ユーザーの言語が ...",
+        "ConditionAgeIs": "購入者の年齢が ...",
+        "ConditionGenderIs": "購入者の性別が ...",
+        "UserGroupsContainsCondition": "ユーザーグループに ... が含まれる",
+        "ConditionGeoTimeZone": "タイムゾーン",
+        "ConditionGeoZipCode": "郵便番号",
+        "ConditionGeoCity": "市区町村",
+        "ConditionGeoCountry": "国",
+        "ConditionGeoState": "地域/州/県"
+      },
+      "OPS": {
+        "IsMatching": "完全一致",
+        "IsNotMatching": "以外",
+        "IsGreaterThan": "より大きい",
+        "IsGreaterThanOrEqual": "以上",
+        "IsLessThan": "未満",
+        "IsLessThanOrEqual": "以下",
+        "AtLeast": "少なくとも",
+        "Contains": "を含む",
+        "NotContains": "を含まない",
+        "Matching": "と完全に一致",
+        "NotMatching": "以外"
+      },
+      "GENDERS": {
+        "female": "女性",
+        "male": "男性"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "価格"
+    },
+    "VALIDATION": {
+      "LIST": "定価は必須で、負の値にはできません",
+      "SALE": "販売価格は定価を超えることはできません",
+      "QTY": "最小数量は 0 より大きくする必要があります",
+      "QTY_UNIQUE": "最小数量は一意である必要があります",
+      "SINGLE_ITEM": "最小数量 1 の価格が少なくとも 1 つ必要です",
+      "ASSIGNMENT_TARGET": "店舗またはカタログのいずれかを選択してください"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "保存されていない変更があります。閉じてもよろしいですか？",
+      "DELETE_PRICELISTS": "{count} 件の価格リストを削除しますか？",
+      "DELETE_PRODUCT_PRICES": "この価格リストから {count} 件の製品のすべての価格を削除しますか？",
+      "DELETE_PRICES": "{count} 件の価格を削除しますか？",
+      "DELETE_ASSIGNMENTS": "{count} 件の割り当てを削除しますか？",
+      "DELETE_ALL_ASSIGNMENTS": "現在のフィルターに一致する {count} 件の割り当てをすべて削除しますか？"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "価格をエクスポート",
+      "PRICES_SUBTITLE": "価格を JSON または CSV ファイルにエクスポート",
+      "PRICELISTS_TITLE": "価格リストをエクスポート",
+      "PRICELISTS_SUBTITLE": "価格リストを JSON または CSV ファイルにエクスポート",
+      "ASSIGNMENTS_TITLE": "価格の割り当てをエクスポート",
+      "ASSIGNMENTS_SUBTITLE": "価格の割り当てを JSON または CSV ファイルにエクスポート",
+      "FILTER": {
+        "currencies": "通貨",
+        "pricelistIds": "価格リスト",
+        "productIds": "製品",
+        "catalogIds": "カタログ",
+        "modifiedSince": "変更日以降"
+      }
+    }
+  }
+}

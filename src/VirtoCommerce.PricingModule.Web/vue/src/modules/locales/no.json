@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Prising"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Oppdater",
+      "ADD": "Legg til",
+      "DELETE": "Slett",
+      "DELETE_ALL": "Slett alle",
+      "DELETE_FILTERED": "Slett filtrerte",
+      "SAVE": "Lagre",
+      "CREATE": "Opprett",
+      "RESET": "Tilbakestill",
+      "ASSIGNMENTS": "Tildelinger",
+      "ADD_SELECTED": "Legg til valgte",
+      "EXPORT": "Eksporter"
+    },
+    "PRICELISTS": {
+      "NEW": "Ny prisliste",
+      "EMPTY": "Ingen prislister",
+      "COLUMNS": {
+        "NAME": "Navn",
+        "CURRENCY": "Valuta",
+        "DESCRIPTION": "Beskrivelse",
+        "MODIFIED": "Sist endret"
+      },
+      "FIELDS": {
+        "NAME": "Navn",
+        "CURRENCY": "Valuta",
+        "DESCRIPTION": "Beskrivelse"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Skriv inn navn på prislisten",
+        "CURRENCY": "Velg valuta",
+        "DESCRIPTION": "Skriv inn beskrivelse"
+      },
+      "WIDGETS": {
+        "PRICES": "Priser",
+        "ASSIGNMENTS": "Tildelinger"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: priser",
+      "EMPTY": "Ingen priser i denne prislisten",
+      "NO_PRODUCT": "Fant ikke produktet",
+      "COLUMNS": {
+        "IMAGE": "Bilde",
+        "NAME": "Produkt",
+        "CODE": "SKU",
+        "PRICES": "Priser",
+        "RANGE": "Prisområde"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "Ingen priser",
+      "ADD": "Legg til pris",
+      "COLUMNS": {
+        "PRICELIST": "Prisliste",
+        "CURRENCY": "Valuta",
+        "CATALOG": "Katalog",
+        "STORE": "Butikk",
+        "LIST": "Listepris",
+        "SALE": "Salgspris",
+        "MIN_QTY": "Minimumsantall",
+        "START": "Startdato",
+        "END": "Sluttdato",
+        "MODIFIED": "Sist endret"
+      },
+      "SELECT_PRICELIST": "Prisliste for en ny pris",
+      "ITEM_TITLE": "Priser: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Velg produkter",
+      "SEARCH": "Søk etter produkter",
+      "COLUMNS": {
+        "IMAGE": "Bilde",
+        "NAME": "Navn",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Prislistetildelinger",
+      "NEW": "Ny tildeling",
+      "EMPTY": "Ingen tildelinger",
+      "COLUMNS": {
+        "NAME": "Navn",
+        "CATALOG": "Katalog",
+        "STORE": "Butikk",
+        "PRICELIST": "Prisliste",
+        "CURRENCY": "Valuta",
+        "PRIORITY": "Prioritet",
+        "START": "Aktivering",
+        "END": "Utløp",
+        "MODIFIED": "Sist endret",
+        "MODIFIED_BY": "Endret av"
+      },
+      "FIELDS": {
+        "NAME": "Navn på tildeling",
+        "PRICELIST": "Prisliste",
+        "STORE": "Butikk",
+        "CATALOG": "Katalog",
+        "PRIORITY": "Prioritet",
+        "PRIORITY_HINT": "Hvis to tildelinger samsvarer, gjelder den med høyest prioritet",
+        "DESCRIPTION": "Beskrivelse",
+        "START": "Aktiveringsdato",
+        "START_HINT": "Tildelingen er aktiv fra denne datoen",
+        "END": "Utløpsdato",
+        "END_HINT": "Tildelingen er inaktiv etter denne datoen",
+        "TARGET_HINT": "Velg enten en butikk eller en katalog"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Skriv inn navn på tildelingen",
+        "PRICELIST": "Velg prisliste",
+        "STORE": "Velg butikk",
+        "CATALOG": "Velg katalog",
+        "DESCRIPTION": "Skriv inn beskrivelse"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Kvalifiserte kunder",
+      "IF": "Hvis",
+      "OF_THESE": "av disse betingelsene er oppfylt",
+      "ALL": "alle",
+      "ANY": "noen",
+      "ADD": "Legg til betingelse",
+      "NONE": "Ingen betingelser: tildelingen gjelder alle kunder",
+      "VALUE": "Verdi",
+      "REMOVE": "Fjern",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Kunden søkte etter ... i butikken",
+        "ConditionLanguageIs": "Brukerens språk er ...",
+        "ConditionAgeIs": "Kundens alder er ...",
+        "ConditionGenderIs": "Kundens kjønn er ...",
+        "UserGroupsContainsCondition": "Brukergruppen inneholder ...",
+        "ConditionGeoTimeZone": "Tidssone",
+        "ConditionGeoZipCode": "Postnummer",
+        "ConditionGeoCity": "By",
+        "ConditionGeoCountry": "Land",
+        "ConditionGeoState": "Region/delstat/provins"
+      },
+      "OPS": {
+        "IsMatching": "nøyaktig",
+        "IsNotMatching": "alt unntatt",
+        "IsGreaterThan": "større enn",
+        "IsGreaterThanOrEqual": "større enn eller lik",
+        "IsLessThan": "mindre enn",
+        "IsLessThanOrEqual": "mindre enn eller lik",
+        "AtLeast": "minst",
+        "Contains": "inneholder",
+        "NotContains": "inneholder ikke",
+        "Matching": "er nøyaktig",
+        "NotMatching": "er alt unntatt"
+      },
+      "GENDERS": {
+        "female": "kvinne",
+        "male": "mann"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Priser"
+    },
+    "VALIDATION": {
+      "LIST": "Listepris er påkrevd og kan ikke være negativ",
+      "SALE": "Salgsprisen kan ikke overstige listeprisen",
+      "QTY": "Minimumsantallet må være større enn 0",
+      "QTY_UNIQUE": "Minimumsantallet må være unikt",
+      "SINGLE_ITEM": "Minst én pris med minimumsantall 1 er påkrevd",
+      "ASSIGNMENT_TARGET": "Velg enten en butikk eller en katalog"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Du har ulagrede endringer. Lukke likevel?",
+      "DELETE_PRICELISTS": "Slette {count} prisliste(r)?",
+      "DELETE_PRODUCT_PRICES": "Slette alle priser for {count} produkt(er) fra denne prislisten?",
+      "DELETE_PRICES": "Slette {count} pris(er)?",
+      "DELETE_ASSIGNMENTS": "Slette {count} tildeling(er)?",
+      "DELETE_ALL_ASSIGNMENTS": "Slette alle {count} tildeling(er) som samsvarer med gjeldende filter?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Eksporter priser",
+      "PRICES_SUBTITLE": "Eksporter priser til en JSON- eller CSV-fil",
+      "PRICELISTS_TITLE": "Eksporter prislister",
+      "PRICELISTS_SUBTITLE": "Eksporter prislisten til en JSON- eller CSV-fil",
+      "ASSIGNMENTS_TITLE": "Eksporter prislistetildelinger",
+      "ASSIGNMENTS_SUBTITLE": "Eksporter prislistetildelingen til en JSON- eller CSV-fil",
+      "FILTER": {
+        "currencies": "Valutaer",
+        "pricelistIds": "Prislister",
+        "productIds": "Produkter",
+        "catalogIds": "Kataloger",
+        "modifiedSince": "Endret siden"
+      }
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Hinnoittelu"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Päivitä",
+      "ADD": "Lisää",
+      "DELETE": "Poista",
+      "DELETE_ALL": "Poista kaikki",
+      "DELETE_FILTERED": "Poista suodatetut",
+      "SAVE": "Tallenna",
+      "CREATE": "Luo",
+      "RESET": "Palauta",
+      "ASSIGNMENTS": "Osoitukset",
+      "ADD_SELECTED": "Lisää valitut",
+      "EXPORT": "Vie"
+    },
+    "PRICELISTS": {
+      "NEW": "Uusi hintalista",
+      "EMPTY": "Ei hintalistoja",
+      "COLUMNS": {
+        "NAME": "Nimi",
+        "CURRENCY": "Valuutta",
+        "DESCRIPTION": "Kuvaus",
+        "MODIFIED": "Viimeksi muokattu"
+      },
+      "FIELDS": {
+        "NAME": "Nimi",
+        "CURRENCY": "Valuutta",
+        "DESCRIPTION": "Kuvaus"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Syötä hintalistan nimi",
+        "CURRENCY": "Valitse valuutta",
+        "DESCRIPTION": "Syötä kuvaus"
+      },
+      "WIDGETS": {
+        "PRICES": "Hinnat",
+        "ASSIGNMENTS": "Osoitukset"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: hinnat",
+      "EMPTY": "Tässä hintalistassa ei ole hintoja",
+      "NO_PRODUCT": "Tuotetta ei löytynyt",
+      "COLUMNS": {
+        "IMAGE": "Kuva",
+        "NAME": "Tuote",
+        "CODE": "SKU",
+        "PRICES": "Hinnat",
+        "RANGE": "Hintaväli"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "Ei hintoja",
+      "ADD": "Lisää hinta",
+      "COLUMNS": {
+        "PRICELIST": "Hintalista",
+        "CURRENCY": "Valuutta",
+        "CATALOG": "Katalogi",
+        "STORE": "Kauppa",
+        "LIST": "Listahinta",
+        "SALE": "Alennushinta",
+        "MIN_QTY": "Vähimmäismäärä",
+        "START": "Alkamispäivä",
+        "END": "Päättymispäivä",
+        "MODIFIED": "Viimeksi muokattu"
+      },
+      "SELECT_PRICELIST": "Uuden hinnan hintalista",
+      "ITEM_TITLE": "Hinnat: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Valitse tuotteet",
+      "SEARCH": "Hae tuotteita",
+      "COLUMNS": {
+        "IMAGE": "Kuva",
+        "NAME": "Nimi",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Hintalistan osoitukset",
+      "NEW": "Uusi osoitus",
+      "EMPTY": "Ei osoituksia",
+      "COLUMNS": {
+        "NAME": "Nimi",
+        "CATALOG": "Katalogi",
+        "STORE": "Kauppa",
+        "PRICELIST": "Hintalista",
+        "CURRENCY": "Valuutta",
+        "PRIORITY": "Prioriteetti",
+        "START": "Aktivointi",
+        "END": "Vanheneminen",
+        "MODIFIED": "Viimeksi muokattu",
+        "MODIFIED_BY": "Muokkaaja"
+      },
+      "FIELDS": {
+        "NAME": "Osoituksen nimi",
+        "PRICELIST": "Hintalista",
+        "STORE": "Kauppa",
+        "CATALOG": "Katalogi",
+        "PRIORITY": "Prioriteetti",
+        "PRIORITY_HINT": "Jos kaksi osoitusta täsmää, korkeamman prioriteetin osoitus voittaa",
+        "DESCRIPTION": "Kuvaus",
+        "START": "Käynnistyspäivä",
+        "START_HINT": "Osoitus on voimassa tästä päivästä alkaen",
+        "END": "Vanhentumispäivä",
+        "END_HINT": "Osoitus ei ole voimassa tämän päivän jälkeen",
+        "TARGET_HINT": "Valitse joko kauppa tai katalogi"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Syötä osoituksen nimi",
+        "PRICELIST": "Valitse hintalista",
+        "STORE": "Valitse kauppa",
+        "CATALOG": "Valitse katalogi",
+        "DESCRIPTION": "Syötä kuvaus"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Kelvolliset ostajat",
+      "IF": "Jos",
+      "OF_THESE": "näistä ehdoista täyttyy",
+      "ALL": "kaikki",
+      "ANY": "jokin",
+      "ADD": "Lisää ehto",
+      "NONE": "Ei ehtoja: osoitus koskee kaikkia ostajia",
+      "VALUE": "Arvo",
+      "REMOVE": "Poista",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Ostaja haki kaupasta ...",
+        "ConditionLanguageIs": "Käyttäjän kieli on ...",
+        "ConditionAgeIs": "Ostajan ikä on ...",
+        "ConditionGenderIs": "Ostajan sukupuoli on ...",
+        "UserGroupsContainsCondition": "Käyttäjäryhmä sisältää ...",
+        "ConditionGeoTimeZone": "Aikavyöhyke",
+        "ConditionGeoZipCode": "Postinumero",
+        "ConditionGeoCity": "Kaupunki",
+        "ConditionGeoCountry": "Maa",
+        "ConditionGeoState": "Alue/osavaltio/provinssi"
+      },
+      "OPS": {
+        "IsMatching": "täsmälleen",
+        "IsNotMatching": "mikä tahansa paitsi",
+        "IsGreaterThan": "suurempi kuin",
+        "IsGreaterThanOrEqual": "suurempi tai yhtä suuri kuin",
+        "IsLessThan": "pienempi kuin",
+        "IsLessThanOrEqual": "pienempi tai yhtä suuri kuin",
+        "AtLeast": "vähintään",
+        "Contains": "sisältää",
+        "NotContains": "ei sisällä",
+        "Matching": "on täsmälleen",
+        "NotMatching": "on mikä tahansa paitsi"
+      },
+      "GENDERS": {
+        "female": "nainen",
+        "male": "mies"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Hinnat"
+    },
+    "VALIDATION": {
+      "LIST": "Listahinta on pakollinen, eikä se voi olla negatiivinen",
+      "SALE": "Alennushinta ei voi ylittää listahintaa",
+      "QTY": "Vähimmäismäärän on oltava suurempi kuin 0",
+      "QTY_UNIQUE": "Vähimmäismäärän on oltava yksilöllinen",
+      "SINGLE_ITEM": "Vähintään yksi hinta, jonka vähimmäismäärä on 1, vaaditaan",
+      "ASSIGNMENT_TARGET": "Valitse joko kauppa tai katalogi"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Sinulla on tallentamattomia muutoksia. Suljetaanko silti?",
+      "DELETE_PRICELISTS": "Poistetaanko {count} hintalistaa?",
+      "DELETE_PRODUCT_PRICES": "Poistetaanko kaikki {count} tuotteen hinnat tästä hintalistasta?",
+      "DELETE_PRICES": "Poistetaanko {count} hintaa?",
+      "DELETE_ASSIGNMENTS": "Poistetaanko {count} osoitusta?",
+      "DELETE_ALL_ASSIGNMENTS": "Poistetaanko kaikki {count} nykyistä suodatinta vastaavaa osoitusta?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Vie hinnat",
+      "PRICES_SUBTITLE": "Vie hinnat JSON- tai CSV-tiedostoon",
+      "PRICELISTS_TITLE": "Vie hintalistat",
+      "PRICELISTS_SUBTITLE": "Vie hintalista JSON- tai CSV-tiedostoon",
+      "ASSIGNMENTS_TITLE": "Vie hintalistan osoitukset",
+      "ASSIGNMENTS_SUBTITLE": "Vie hintalistan osoitus JSON- tai CSV-tiedostoon",
+      "FILTER": {
+        "currencies": "Valuutat",
+        "pricelistIds": "Hintalistat",
+        "productIds": "Tuotteet",
+        "catalogIds": "Katalogit",
+        "modifiedSince": "Muokattu alkaen"
+      }
+    }
+  }
+}

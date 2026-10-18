@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "定价"
+    },
+    "TOOLBAR": {
+      "REFRESH": "刷新",
+      "ADD": "添加",
+      "DELETE": "删除",
+      "DELETE_ALL": "全部删除",
+      "DELETE_FILTERED": "删除筛选结果",
+      "SAVE": "保存",
+      "CREATE": "创建",
+      "RESET": "重置",
+      "ASSIGNMENTS": "分配",
+      "ADD_SELECTED": "添加所选项",
+      "EXPORT": "导出"
+    },
+    "PRICELISTS": {
+      "NEW": "新建价格表",
+      "EMPTY": "没有价格表",
+      "COLUMNS": {
+        "NAME": "名称",
+        "CURRENCY": "货币",
+        "DESCRIPTION": "描述",
+        "MODIFIED": "最后修改时间"
+      },
+      "FIELDS": {
+        "NAME": "名称",
+        "CURRENCY": "货币",
+        "DESCRIPTION": "描述"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "输入价格表名称",
+        "CURRENCY": "选择货币",
+        "DESCRIPTION": "输入描述"
+      },
+      "WIDGETS": {
+        "PRICES": "价格",
+        "ASSIGNMENTS": "分配"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}：价格",
+      "EMPTY": "此价格表中没有价格",
+      "NO_PRODUCT": "未找到产品",
+      "COLUMNS": {
+        "IMAGE": "图片",
+        "NAME": "产品",
+        "CODE": "SKU",
+        "PRICES": "价格",
+        "RANGE": "价格范围"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "没有价格",
+      "ADD": "添加价格",
+      "COLUMNS": {
+        "PRICELIST": "价格表",
+        "CURRENCY": "货币",
+        "CATALOG": "目录",
+        "STORE": "商店",
+        "LIST": "标价",
+        "SALE": "促销价",
+        "MIN_QTY": "最小数量",
+        "START": "开始日期",
+        "END": "结束日期",
+        "MODIFIED": "最后修改时间"
+      },
+      "SELECT_PRICELIST": "新价格所属的价格表",
+      "ITEM_TITLE": "价格：{name}"
+    },
+    "PICKER": {
+      "TITLE": "选择产品",
+      "SEARCH": "搜索产品",
+      "COLUMNS": {
+        "IMAGE": "图片",
+        "NAME": "名称",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "价格表分配",
+      "NEW": "新建分配",
+      "EMPTY": "没有分配",
+      "COLUMNS": {
+        "NAME": "名称",
+        "CATALOG": "目录",
+        "STORE": "商店",
+        "PRICELIST": "价格表",
+        "CURRENCY": "货币",
+        "PRIORITY": "优先级",
+        "START": "激活时间",
+        "END": "过期时间",
+        "MODIFIED": "最后修改时间",
+        "MODIFIED_BY": "修改人"
+      },
+      "FIELDS": {
+        "NAME": "分配名称",
+        "PRICELIST": "价格表",
+        "STORE": "商店",
+        "CATALOG": "目录",
+        "PRIORITY": "优先级",
+        "PRIORITY_HINT": "如果两个分配同时匹配，则优先级较高的分配生效",
+        "DESCRIPTION": "描述",
+        "START": "启用日期",
+        "START_HINT": "分配自该日期起生效",
+        "END": "过期日期",
+        "END_HINT": "分配在该日期之后失效",
+        "TARGET_HINT": "请选择商店或目录"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "输入分配名称",
+        "PRICELIST": "选择价格表",
+        "STORE": "选择商店",
+        "CATALOG": "选择目录",
+        "DESCRIPTION": "输入描述"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "符合条件的购物者",
+      "IF": "如果",
+      "OF_THESE": "条件成立",
+      "ALL": "全部",
+      "ANY": "任一",
+      "ADD": "添加条件",
+      "NONE": "无条件：分配适用于所有购物者",
+      "VALUE": "值",
+      "REMOVE": "移除",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "购物者在商店中搜索了 ...",
+        "ConditionLanguageIs": "用户语言为 ...",
+        "ConditionAgeIs": "购物者年龄为 ...",
+        "ConditionGenderIs": "购物者性别为 ...",
+        "UserGroupsContainsCondition": "用户组包含 ...",
+        "ConditionGeoTimeZone": "时区",
+        "ConditionGeoZipCode": "邮政编码",
+        "ConditionGeoCity": "城市",
+        "ConditionGeoCountry": "国家/地区",
+        "ConditionGeoState": "地区/州/省"
+      },
+      "OPS": {
+        "IsMatching": "完全匹配",
+        "IsNotMatching": "除此之外",
+        "IsGreaterThan": "大于",
+        "IsGreaterThanOrEqual": "大于或等于",
+        "IsLessThan": "小于",
+        "IsLessThanOrEqual": "小于或等于",
+        "AtLeast": "至少",
+        "Contains": "包含",
+        "NotContains": "不包含",
+        "Matching": "完全等于",
+        "NotMatching": "不等于"
+      },
+      "GENDERS": {
+        "female": "女",
+        "male": "男"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "价格"
+    },
+    "VALIDATION": {
+      "LIST": "标价为必填项，且不能为负数",
+      "SALE": "促销价不能高于标价",
+      "QTY": "最小数量必须大于 0",
+      "QTY_UNIQUE": "最小数量不能重复",
+      "SINGLE_ITEM": "至少需要一个最小数量为 1 的价格",
+      "ASSIGNMENT_TARGET": "请选择商店或目录"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "有未保存的更改。仍要关闭吗？",
+      "DELETE_PRICELISTS": "删除 {count} 个价格表？",
+      "DELETE_PRODUCT_PRICES": "从此价格表中删除 {count} 个产品的所有价格？",
+      "DELETE_PRICES": "删除 {count} 个价格？",
+      "DELETE_ASSIGNMENTS": "删除 {count} 个分配？",
+      "DELETE_ALL_ASSIGNMENTS": "删除与当前筛选条件匹配的全部 {count} 个分配？"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "导出价格",
+      "PRICES_SUBTITLE": "将价格导出为 JSON 或 CSV 文件",
+      "PRICELISTS_TITLE": "导出价格表",
+      "PRICELISTS_SUBTITLE": "将价格表导出为 JSON 或 CSV 文件",
+      "ASSIGNMENTS_TITLE": "导出价格分配",
+      "ASSIGNMENTS_SUBTITLE": "将价格分配导出为 JSON 或 CSV 文件",
+      "FILTER": {
+        "currencies": "货币",
+        "pricelistIds": "价格表",
+        "productIds": "产品",
+        "catalogIds": "目录",
+        "modifiedSince": "修改起始时间"
+      }
+    }
+  }
+}
