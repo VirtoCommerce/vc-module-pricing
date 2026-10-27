@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "תמחור"
+    },
+    "TOOLBAR": {
+      "REFRESH": "רענון",
+      "ADD": "הוספה",
+      "DELETE": "מחיקה",
+      "DELETE_ALL": "מחיקת הכול",
+      "DELETE_FILTERED": "מחיקת התוצאות המסוננות",
+      "SAVE": "שמירה",
+      "CREATE": "יצירה",
+      "RESET": "איפוס",
+      "ASSIGNMENTS": "שיוכים",
+      "ADD_SELECTED": "הוספת הפריטים שנבחרו",
+      "EXPORT": "ייצוא"
+    },
+    "PRICELISTS": {
+      "NEW": "מחירון חדש",
+      "EMPTY": "אין מחירונים",
+      "COLUMNS": {
+        "NAME": "שם",
+        "CURRENCY": "מטבע",
+        "DESCRIPTION": "תיאור",
+        "MODIFIED": "שינוי אחרון"
+      },
+      "FIELDS": {
+        "NAME": "שם",
+        "CURRENCY": "מטבע",
+        "DESCRIPTION": "תיאור"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "יש להזין שם מחירון",
+        "CURRENCY": "יש לבחור מטבע",
+        "DESCRIPTION": "יש להזין תיאור"
+      },
+      "WIDGETS": {
+        "PRICES": "מחירים",
+        "ASSIGNMENTS": "שיוכים"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: מחירים",
+      "EMPTY": "אין מחירים במחירון זה",
+      "NO_PRODUCT": "המוצר לא נמצא",
+      "COLUMNS": {
+        "IMAGE": "תמונה",
+        "NAME": "מוצר",
+        "CODE": "SKU",
+        "PRICES": "מחירים",
+        "RANGE": "טווח מחירים"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "אין מחירים",
+      "ADD": "הוספת מחיר",
+      "COLUMNS": {
+        "PRICELIST": "מחירון",
+        "CURRENCY": "מטבע",
+        "CATALOG": "קטלוג",
+        "STORE": "חנות",
+        "LIST": "מחיר בסיס",
+        "SALE": "מחיר מוזל",
+        "MIN_QTY": "כמות מינימלית",
+        "START": "תאריך התחלה",
+        "END": "תאריך סיום",
+        "MODIFIED": "שינוי אחרון"
+      },
+      "SELECT_PRICELIST": "מחירון למחיר החדש",
+      "ITEM_TITLE": "מחירים: {name}"
+    },
+    "PICKER": {
+      "TITLE": "בחירת מוצרים",
+      "SEARCH": "חיפוש מוצרים",
+      "COLUMNS": {
+        "IMAGE": "תמונה",
+        "NAME": "שם",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "שיוכי מחירונים",
+      "NEW": "שיוך חדש",
+      "EMPTY": "אין שיוכים",
+      "COLUMNS": {
+        "NAME": "שם",
+        "CATALOG": "קטלוג",
+        "STORE": "חנות",
+        "PRICELIST": "מחירון",
+        "CURRENCY": "מטבע",
+        "PRIORITY": "עדיפות",
+        "START": "הפעלה",
+        "END": "תפוגה",
+        "MODIFIED": "שינוי אחרון",
+        "MODIFIED_BY": "שונה על ידי"
+      },
+      "FIELDS": {
+        "NAME": "שם השיוך",
+        "PRICELIST": "מחירון",
+        "STORE": "חנות",
+        "CATALOG": "קטלוג",
+        "PRIORITY": "עדיפות",
+        "PRIORITY_HINT": "אם שני שיוכים מתאימים, חל השיוך בעל העדיפות הגבוהה יותר",
+        "DESCRIPTION": "תיאור",
+        "START": "תאריך הפעלה",
+        "START_HINT": "השיוך פעיל החל מתאריך זה",
+        "END": "תאריך תפוגה",
+        "END_HINT": "השיוך אינו פעיל אחרי תאריך זה",
+        "TARGET_HINT": "יש לבחור חנות או קטלוג"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "יש להזין שם שיוך",
+        "PRICELIST": "יש לבחור מחירון",
+        "STORE": "יש לבחור חנות",
+        "CATALOG": "יש לבחור קטלוג",
+        "DESCRIPTION": "יש להזין תיאור"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "לקוחות זכאים",
+      "IF": "אם מתקיים",
+      "OF_THESE": "מהתנאים האלה",
+      "ALL": "כל אחד",
+      "ANY": "לפחות אחד",
+      "ADD": "הוספת תנאי",
+      "NONE": "אין תנאים: השיוך חל על כל הלקוחות",
+      "VALUE": "ערך",
+      "REMOVE": "הסרה",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "חיפוש הלקוח בחנות ...",
+        "ConditionLanguageIs": "שפת המשתמש היא ...",
+        "ConditionAgeIs": "גיל הלקוח ...",
+        "ConditionGenderIs": "מגדר הלקוח הוא ...",
+        "UserGroupsContainsCondition": "קבוצות המשתמש כוללות ...",
+        "ConditionGeoTimeZone": "אזור זמן",
+        "ConditionGeoZipCode": "מיקוד",
+        "ConditionGeoCity": "עיר",
+        "ConditionGeoCountry": "מדינה",
+        "ConditionGeoState": "אזור/מדינה/מחוז"
+      },
+      "OPS": {
+        "IsMatching": "שווה ל-",
+        "IsNotMatching": "שונה מ-",
+        "IsGreaterThan": "גדול מ-",
+        "IsGreaterThanOrEqual": "גדול או שווה ל-",
+        "IsLessThan": "קטן מ-",
+        "IsLessThanOrEqual": "קטן או שווה ל-",
+        "AtLeast": "לפחות",
+        "Contains": "מכיל",
+        "NotContains": "לא מכיל",
+        "Matching": "זהה בדיוק ל-",
+        "NotMatching": "שונה מ-"
+      },
+      "GENDERS": {
+        "female": "נקבה",
+        "male": "זכר"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "מחירים"
+    },
+    "VALIDATION": {
+      "LIST": "מחיר הבסיס הוא שדה חובה ואינו יכול להיות שלילי",
+      "SALE": "המחיר המוזל אינו יכול לעלות על מחיר הבסיס",
+      "QTY": "הכמות המינימלית חייבת להיות גדולה מ-0",
+      "QTY_UNIQUE": "הכמות המינימלית חייבת להיות ייחודית",
+      "SINGLE_ITEM": "נדרש לפחות מחיר אחד עם כמות מינימלית 1",
+      "ASSIGNMENT_TARGET": "יש לבחור חנות או קטלוג"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "יש שינויים שלא נשמרו. האם לסגור בכל זאת?",
+      "DELETE_PRICELISTS": "האם למחוק את המחירונים ({count})?",
+      "DELETE_PRODUCT_PRICES": "האם למחוק מהמחירון את כל המחירים של המוצרים ({count})?",
+      "DELETE_PRICES": "האם למחוק את המחירים ({count})?",
+      "DELETE_ASSIGNMENTS": "האם למחוק את השיוכים ({count})?",
+      "DELETE_ALL_ASSIGNMENTS": "האם למחוק את כל השיוכים שתואמים למסנן הנוכחי ({count})?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "ייצוא מחירים",
+      "PRICES_SUBTITLE": "ייצוא מחירים לקובץ JSON או CSV",
+      "PRICELISTS_TITLE": "ייצוא מחירונים",
+      "PRICELISTS_SUBTITLE": "ייצוא המחירון לקובץ JSON או CSV",
+      "ASSIGNMENTS_TITLE": "ייצוא שיוכי מחירונים",
+      "ASSIGNMENTS_SUBTITLE": "ייצוא שיוך המחירון לקובץ JSON או CSV",
+      "FILTER": {
+        "currencies": "מטבעות",
+        "pricelistIds": "מחירונים",
+        "productIds": "מוצרים",
+        "catalogIds": "קטלוגים",
+        "modifiedSince": "שונו מאז"
+      }
+    }
+  }
+}

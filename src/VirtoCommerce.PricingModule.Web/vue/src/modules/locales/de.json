@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Preisgestaltung"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Aktualisieren",
+      "ADD": "Hinzufügen",
+      "DELETE": "Löschen",
+      "DELETE_ALL": "Alle löschen",
+      "DELETE_FILTERED": "Gefilterte löschen",
+      "SAVE": "Speichern",
+      "CREATE": "Erstellen",
+      "RESET": "Zurücksetzen",
+      "ASSIGNMENTS": "Zuweisungen",
+      "ADD_SELECTED": "Ausgewählte hinzufügen",
+      "EXPORT": "Exportieren"
+    },
+    "PRICELISTS": {
+      "NEW": "Neue Preisliste",
+      "EMPTY": "Keine Preislisten",
+      "COLUMNS": {
+        "NAME": "Name",
+        "CURRENCY": "Währung",
+        "DESCRIPTION": "Beschreibung",
+        "MODIFIED": "Zuletzt geändert"
+      },
+      "FIELDS": {
+        "NAME": "Name",
+        "CURRENCY": "Währung",
+        "DESCRIPTION": "Beschreibung"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Namen der Preisliste eingeben",
+        "CURRENCY": "Währung auswählen",
+        "DESCRIPTION": "Beschreibung eingeben"
+      },
+      "WIDGETS": {
+        "PRICES": "Preise",
+        "ASSIGNMENTS": "Zuweisungen"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: Preise",
+      "EMPTY": "Keine Preise in dieser Preisliste",
+      "NO_PRODUCT": "Produkt nicht gefunden",
+      "COLUMNS": {
+        "IMAGE": "Bild",
+        "NAME": "Produkt",
+        "CODE": "SKU",
+        "PRICES": "Preise",
+        "RANGE": "Preisspanne"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "Keine Preise",
+      "ADD": "Preis hinzufügen",
+      "COLUMNS": {
+        "PRICELIST": "Preisliste",
+        "CURRENCY": "Währung",
+        "CATALOG": "Katalog",
+        "STORE": "Shop",
+        "LIST": "Listenpreis",
+        "SALE": "Verkaufspreis",
+        "MIN_QTY": "Mindestmenge",
+        "START": "Startdatum",
+        "END": "Enddatum",
+        "MODIFIED": "Zuletzt geändert"
+      },
+      "SELECT_PRICELIST": "Preisliste für einen neuen Preis",
+      "ITEM_TITLE": "Preise: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Produkte auswählen",
+      "SEARCH": "Produkte suchen",
+      "COLUMNS": {
+        "IMAGE": "Bild",
+        "NAME": "Name",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Preislistenzuweisungen",
+      "NEW": "Neue Zuweisung",
+      "EMPTY": "Keine Zuweisungen",
+      "COLUMNS": {
+        "NAME": "Name",
+        "CATALOG": "Katalog",
+        "STORE": "Shop",
+        "PRICELIST": "Preisliste",
+        "CURRENCY": "Währung",
+        "PRIORITY": "Priorität",
+        "START": "Aktivierung",
+        "END": "Ablauf",
+        "MODIFIED": "Zuletzt geändert",
+        "MODIFIED_BY": "Geändert von"
+      },
+      "FIELDS": {
+        "NAME": "Name der Zuweisung",
+        "PRICELIST": "Preisliste",
+        "STORE": "Shop",
+        "CATALOG": "Katalog",
+        "PRIORITY": "Priorität",
+        "PRIORITY_HINT": "Wenn zwei Zuweisungen zutreffen, gilt die mit der höheren Priorität",
+        "DESCRIPTION": "Beschreibung",
+        "START": "Aktivierungsdatum",
+        "START_HINT": "Die Zuweisung ist ab diesem Datum aktiv",
+        "END": "Ablaufdatum",
+        "END_HINT": "Die Zuweisung ist nach diesem Datum inaktiv",
+        "TARGET_HINT": "Wählen Sie entweder einen Shop oder einen Katalog aus"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Namen der Zuweisung eingeben",
+        "PRICELIST": "Preisliste auswählen",
+        "STORE": "Shop auswählen",
+        "CATALOG": "Katalog auswählen",
+        "DESCRIPTION": "Beschreibung eingeben"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Berechtigte Käufer",
+      "IF": "Wenn",
+      "OF_THESE": "dieser Bedingungen erfüllt sind",
+      "ALL": "alle",
+      "ANY": "beliebige",
+      "ADD": "Bedingung hinzufügen",
+      "NONE": "Keine Bedingungen: Die Zuweisung gilt für alle Käufer",
+      "VALUE": "Wert",
+      "REMOVE": "Entfernen",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Käufer hat im Shop nach ... gesucht",
+        "ConditionLanguageIs": "Benutzersprache ist ...",
+        "ConditionAgeIs": "Alter des Käufers ist ...",
+        "ConditionGenderIs": "Geschlecht des Käufers ist ...",
+        "UserGroupsContainsCondition": "Benutzergruppe enthält ...",
+        "ConditionGeoTimeZone": "Zeitzone",
+        "ConditionGeoZipCode": "Postleitzahl",
+        "ConditionGeoCity": "Stadt",
+        "ConditionGeoCountry": "Land",
+        "ConditionGeoState": "Region/Bundesland/Provinz"
+      },
+      "OPS": {
+        "IsMatching": "genau",
+        "IsNotMatching": "alles außer",
+        "IsGreaterThan": "größer als",
+        "IsGreaterThanOrEqual": "größer oder gleich",
+        "IsLessThan": "kleiner als",
+        "IsLessThanOrEqual": "kleiner oder gleich",
+        "AtLeast": "mindestens",
+        "Contains": "enthält",
+        "NotContains": "enthält nicht",
+        "Matching": "ist genau",
+        "NotMatching": "ist alles außer"
+      },
+      "GENDERS": {
+        "female": "weiblich",
+        "male": "männlich"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Preise"
+    },
+    "VALIDATION": {
+      "LIST": "Der Listenpreis ist erforderlich und darf nicht negativ sein",
+      "SALE": "Der Verkaufspreis darf den Listenpreis nicht überschreiten",
+      "QTY": "Die Mindestmenge muss größer als 0 sein",
+      "QTY_UNIQUE": "Die Mindestmenge muss eindeutig sein",
+      "SINGLE_ITEM": "Mindestens ein Preis mit der Mindestmenge 1 ist erforderlich",
+      "ASSIGNMENT_TARGET": "Wählen Sie entweder einen Shop oder einen Katalog aus"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Sie haben nicht gespeicherte Änderungen. Trotzdem schließen?",
+      "DELETE_PRICELISTS": "{count} Preisliste(n) löschen?",
+      "DELETE_PRODUCT_PRICES": "Alle Preise von {count} Produkt(en) aus dieser Preisliste löschen?",
+      "DELETE_PRICES": "{count} Preis(e) löschen?",
+      "DELETE_ASSIGNMENTS": "{count} Zuweisung(en) löschen?",
+      "DELETE_ALL_ASSIGNMENTS": "Alle {count} Zuweisung(en) löschen, die dem aktuellen Filter entsprechen?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Preise exportieren",
+      "PRICES_SUBTITLE": "Preise in eine JSON- oder CSV-Datei exportieren",
+      "PRICELISTS_TITLE": "Preislisten exportieren",
+      "PRICELISTS_SUBTITLE": "Preisliste in eine JSON- oder CSV-Datei exportieren",
+      "ASSIGNMENTS_TITLE": "Preislistenzuweisungen exportieren",
+      "ASSIGNMENTS_SUBTITLE": "Preislistenzuweisung in eine JSON- oder CSV-Datei exportieren",
+      "FILTER": {
+        "currencies": "Währungen",
+        "pricelistIds": "Preislisten",
+        "productIds": "Produkte",
+        "catalogIds": "Kataloge",
+        "modifiedSince": "Geändert seit"
+      }
+    }
+  }
+}

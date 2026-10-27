@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "التسعير"
+    },
+    "TOOLBAR": {
+      "REFRESH": "تحديث",
+      "ADD": "إضافة",
+      "DELETE": "حذف",
+      "DELETE_ALL": "حذف الكل",
+      "DELETE_FILTERED": "حذف النتائج المصفّاة",
+      "SAVE": "حفظ",
+      "CREATE": "إنشاء",
+      "RESET": "إعادة تعيين",
+      "ASSIGNMENTS": "التعيينات",
+      "ADD_SELECTED": "إضافة المحدد",
+      "EXPORT": "تصدير"
+    },
+    "PRICELISTS": {
+      "NEW": "قائمة أسعار جديدة",
+      "EMPTY": "لا توجد قوائم أسعار",
+      "COLUMNS": {
+        "NAME": "الاسم",
+        "CURRENCY": "العملة",
+        "DESCRIPTION": "الوصف",
+        "MODIFIED": "آخر تعديل"
+      },
+      "FIELDS": {
+        "NAME": "الاسم",
+        "CURRENCY": "العملة",
+        "DESCRIPTION": "الوصف"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "أدخل اسم قائمة الأسعار",
+        "CURRENCY": "اختر العملة",
+        "DESCRIPTION": "أدخل الوصف"
+      },
+      "WIDGETS": {
+        "PRICES": "الأسعار",
+        "ASSIGNMENTS": "التعيينات"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: الأسعار",
+      "EMPTY": "لا توجد أسعار في قائمة الأسعار هذه",
+      "NO_PRODUCT": "لم يتم العثور على المنتج",
+      "COLUMNS": {
+        "IMAGE": "صورة",
+        "NAME": "المنتج",
+        "CODE": "SKU",
+        "PRICES": "الأسعار",
+        "RANGE": "نطاق السعر"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "لا توجد أسعار",
+      "ADD": "إضافة سعر",
+      "COLUMNS": {
+        "PRICELIST": "قائمة الأسعار",
+        "CURRENCY": "العملة",
+        "CATALOG": "الكتالوج",
+        "STORE": "المتجر",
+        "LIST": "السعر الأساسي",
+        "SALE": "سعر التخفيض",
+        "MIN_QTY": "الحد الأدنى للكمية",
+        "START": "تاريخ البدء",
+        "END": "تاريخ الانتهاء",
+        "MODIFIED": "آخر تعديل"
+      },
+      "SELECT_PRICELIST": "قائمة الأسعار للسعر الجديد",
+      "ITEM_TITLE": "الأسعار: {name}"
+    },
+    "PICKER": {
+      "TITLE": "اختيار المنتجات",
+      "SEARCH": "البحث في المنتجات",
+      "COLUMNS": {
+        "IMAGE": "صورة",
+        "NAME": "الاسم",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "تعيينات قوائم الأسعار",
+      "NEW": "تعيين جديد",
+      "EMPTY": "لا توجد تعيينات",
+      "COLUMNS": {
+        "NAME": "الاسم",
+        "CATALOG": "الكتالوج",
+        "STORE": "المتجر",
+        "PRICELIST": "قائمة الأسعار",
+        "CURRENCY": "العملة",
+        "PRIORITY": "الأولوية",
+        "START": "التفعيل",
+        "END": "انتهاء الصلاحية",
+        "MODIFIED": "آخر تعديل",
+        "MODIFIED_BY": "عدّله"
+      },
+      "FIELDS": {
+        "NAME": "اسم التعيين",
+        "PRICELIST": "قائمة الأسعار",
+        "STORE": "المتجر",
+        "CATALOG": "الكتالوج",
+        "PRIORITY": "الأولوية",
+        "PRIORITY_HINT": "إذا تطابق تعيينان، يُطبَّق التعيين ذو الأولوية الأعلى",
+        "DESCRIPTION": "الوصف",
+        "START": "تاريخ التفعيل",
+        "START_HINT": "يكون التعيين نشطًا بدءًا من هذا التاريخ",
+        "END": "تاريخ انتهاء الصلاحية",
+        "END_HINT": "يصبح التعيين غير نشط بعد هذا التاريخ",
+        "TARGET_HINT": "اختر متجرًا أو كتالوجًا"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "أدخل اسم التعيين",
+        "PRICELIST": "اختر قائمة الأسعار",
+        "STORE": "اختر المتجر",
+        "CATALOG": "اختر الكتالوج",
+        "DESCRIPTION": "أدخل الوصف"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "المتسوقون المؤهلون",
+      "IF": "إذا تحقق",
+      "OF_THESE": "من هذه الشروط",
+      "ALL": "كل",
+      "ANY": "أي",
+      "ADD": "إضافة شرط",
+      "NONE": "لا توجد شروط: ينطبق التعيين على كل المتسوقين",
+      "VALUE": "القيمة",
+      "REMOVE": "إزالة",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "بحث المتسوق عن ... في المتجر",
+        "ConditionLanguageIs": "لغة المستخدم ...",
+        "ConditionAgeIs": "عمر المتسوق ...",
+        "ConditionGenderIs": "جنس المتسوق ...",
+        "UserGroupsContainsCondition": "مجموعة المستخدم تحتوي على ...",
+        "ConditionGeoTimeZone": "المنطقة الزمنية",
+        "ConditionGeoZipCode": "الرمز البريدي",
+        "ConditionGeoCity": "المدينة",
+        "ConditionGeoCountry": "البلد",
+        "ConditionGeoState": "المنطقة/الولاية/المقاطعة"
+      },
+      "OPS": {
+        "IsMatching": "تمامًا",
+        "IsNotMatching": "أي شيء عدا",
+        "IsGreaterThan": "أكبر من",
+        "IsGreaterThanOrEqual": "أكبر من أو يساوي",
+        "IsLessThan": "أقل من",
+        "IsLessThanOrEqual": "أقل من أو يساوي",
+        "AtLeast": "على الأقل",
+        "Contains": "يحتوي على",
+        "NotContains": "لا يحتوي على",
+        "Matching": "يساوي تمامًا",
+        "NotMatching": "أي شيء عدا"
+      },
+      "GENDERS": {
+        "female": "أنثى",
+        "male": "ذكر"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "الأسعار"
+    },
+    "VALIDATION": {
+      "LIST": "السعر الأساسي مطلوب ويجب ألا يكون سالبًا",
+      "SALE": "يجب ألا يتجاوز سعر التخفيض السعر الأساسي",
+      "QTY": "يجب أن يكون الحد الأدنى للكمية أكبر من 0",
+      "QTY_UNIQUE": "يجب أن يكون الحد الأدنى للكمية فريدًا",
+      "SINGLE_ITEM": "مطلوب سعر واحد على الأقل بحد أدنى للكمية يساوي 1",
+      "ASSIGNMENT_TARGET": "اختر متجرًا أو كتالوجًا"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "لديك تغييرات غير محفوظة. هل تريد الإغلاق على أي حال؟",
+      "DELETE_PRICELISTS": "هل تريد حذف قوائم الأسعار ({count})؟",
+      "DELETE_PRODUCT_PRICES": "هل تريد حذف كل أسعار المنتجات ({count}) من قائمة الأسعار هذه؟",
+      "DELETE_PRICES": "هل تريد حذف الأسعار ({count})؟",
+      "DELETE_ASSIGNMENTS": "هل تريد حذف التعيينات ({count})؟",
+      "DELETE_ALL_ASSIGNMENTS": "هل تريد حذف كل التعيينات ({count}) المطابقة لعامل التصفية الحالي؟"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "تصدير الأسعار",
+      "PRICES_SUBTITLE": "تصدير الأسعار إلى ملف JSON أو CSV",
+      "PRICELISTS_TITLE": "تصدير قوائم الأسعار",
+      "PRICELISTS_SUBTITLE": "تصدير قائمة الأسعار إلى ملف JSON أو CSV",
+      "ASSIGNMENTS_TITLE": "تصدير تعيينات الأسعار",
+      "ASSIGNMENTS_SUBTITLE": "تصدير تعيين الأسعار إلى ملف JSON أو CSV",
+      "FILTER": {
+        "currencies": "العملات",
+        "pricelistIds": "قوائم الأسعار",
+        "productIds": "المنتجات",
+        "catalogIds": "الكتالوجات",
+        "modifiedSince": "تاريخ التعديل منذ"
+      }
+    }
+  }
+}

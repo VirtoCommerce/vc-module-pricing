@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Prissättning"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Uppdatera",
+      "ADD": "Lägg till",
+      "DELETE": "Ta bort",
+      "DELETE_ALL": "Ta bort alla",
+      "DELETE_FILTERED": "Ta bort filtrerade",
+      "SAVE": "Spara",
+      "CREATE": "Skapa",
+      "RESET": "Återställ",
+      "ASSIGNMENTS": "Tilldelningar",
+      "ADD_SELECTED": "Lägg till valda",
+      "EXPORT": "Exportera"
+    },
+    "PRICELISTS": {
+      "NEW": "Ny prislista",
+      "EMPTY": "Inga prislistor",
+      "COLUMNS": {
+        "NAME": "Namn",
+        "CURRENCY": "Valuta",
+        "DESCRIPTION": "Beskrivning",
+        "MODIFIED": "Senast ändrad"
+      },
+      "FIELDS": {
+        "NAME": "Namn",
+        "CURRENCY": "Valuta",
+        "DESCRIPTION": "Beskrivning"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Ange prislistans namn",
+        "CURRENCY": "Välj valuta",
+        "DESCRIPTION": "Ange beskrivning"
+      },
+      "WIDGETS": {
+        "PRICES": "Priser",
+        "ASSIGNMENTS": "Tilldelningar"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: priser",
+      "EMPTY": "Inga priser i den här prislistan",
+      "NO_PRODUCT": "Produkten hittades inte",
+      "COLUMNS": {
+        "IMAGE": "Bild",
+        "NAME": "Produkt",
+        "CODE": "SKU",
+        "PRICES": "Priser",
+        "RANGE": "Prisintervall"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "Inga priser",
+      "ADD": "Lägg till pris",
+      "COLUMNS": {
+        "PRICELIST": "Prislista",
+        "CURRENCY": "Valuta",
+        "CATALOG": "Katalog",
+        "STORE": "Butik",
+        "LIST": "Listpris",
+        "SALE": "Reapris",
+        "MIN_QTY": "Minsta kvantitet",
+        "START": "Startdatum",
+        "END": "Slutdatum",
+        "MODIFIED": "Senast ändrad"
+      },
+      "SELECT_PRICELIST": "Prislista för ett nytt pris",
+      "ITEM_TITLE": "Priser: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Välj produkter",
+      "SEARCH": "Sök produkter",
+      "COLUMNS": {
+        "IMAGE": "Bild",
+        "NAME": "Namn",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Prislistetilldelningar",
+      "NEW": "Ny tilldelning",
+      "EMPTY": "Inga tilldelningar",
+      "COLUMNS": {
+        "NAME": "Namn",
+        "CATALOG": "Katalog",
+        "STORE": "Butik",
+        "PRICELIST": "Prislista",
+        "CURRENCY": "Valuta",
+        "PRIORITY": "Prioritet",
+        "START": "Aktivering",
+        "END": "Utgång",
+        "MODIFIED": "Senast ändrad",
+        "MODIFIED_BY": "Ändrad av"
+      },
+      "FIELDS": {
+        "NAME": "Tilldelningens namn",
+        "PRICELIST": "Prislista",
+        "STORE": "Butik",
+        "CATALOG": "Katalog",
+        "PRIORITY": "Prioritet",
+        "PRIORITY_HINT": "Om två tilldelningar matchar gäller den med högst prioritet",
+        "DESCRIPTION": "Beskrivning",
+        "START": "Aktiveringsdatum",
+        "START_HINT": "Tilldelningen är aktiv från och med detta datum",
+        "END": "Utgångsdatum",
+        "END_HINT": "Tilldelningen är inaktiv efter detta datum",
+        "TARGET_HINT": "Välj antingen en butik eller en katalog"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Ange tilldelningens namn",
+        "PRICELIST": "Välj prislista",
+        "STORE": "Välj butik",
+        "CATALOG": "Välj katalog",
+        "DESCRIPTION": "Ange beskrivning"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Kvalificerade kunder",
+      "IF": "Om",
+      "OF_THESE": "av dessa villkor är uppfyllda",
+      "ALL": "alla",
+      "ANY": "något",
+      "ADD": "Lägg till villkor",
+      "NONE": "Inga villkor: tilldelningen gäller alla kunder",
+      "VALUE": "Värde",
+      "REMOVE": "Ta bort",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Kunden sökte efter ... i butiken",
+        "ConditionLanguageIs": "Användarens språk är ...",
+        "ConditionAgeIs": "Kundens ålder är ...",
+        "ConditionGenderIs": "Kundens kön är ...",
+        "UserGroupsContainsCondition": "Användargruppen innehåller ...",
+        "ConditionGeoTimeZone": "Tidszon",
+        "ConditionGeoZipCode": "Postnummer",
+        "ConditionGeoCity": "Stad",
+        "ConditionGeoCountry": "Land",
+        "ConditionGeoState": "Region/delstat/provins"
+      },
+      "OPS": {
+        "IsMatching": "exakt",
+        "IsNotMatching": "allt utom",
+        "IsGreaterThan": "större än",
+        "IsGreaterThanOrEqual": "större än eller lika med",
+        "IsLessThan": "mindre än",
+        "IsLessThanOrEqual": "mindre än eller lika med",
+        "AtLeast": "minst",
+        "Contains": "innehåller",
+        "NotContains": "innehåller inte",
+        "Matching": "är exakt",
+        "NotMatching": "är allt utom"
+      },
+      "GENDERS": {
+        "female": "kvinna",
+        "male": "man"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Priser"
+    },
+    "VALIDATION": {
+      "LIST": "Listpris krävs och får inte vara negativt",
+      "SALE": "Reapriset får inte överstiga listpriset",
+      "QTY": "Minsta kvantitet måste vara större än 0",
+      "QTY_UNIQUE": "Minsta kvantitet måste vara unik",
+      "SINGLE_ITEM": "Minst ett pris med minsta kvantitet 1 krävs",
+      "ASSIGNMENT_TARGET": "Välj antingen en butik eller en katalog"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Du har osparade ändringar. Stäng ändå?",
+      "DELETE_PRICELISTS": "Ta bort {count} prislista/prislistor?",
+      "DELETE_PRODUCT_PRICES": "Ta bort alla priser för {count} produkt(er) från den här prislistan?",
+      "DELETE_PRICES": "Ta bort {count} pris(er)?",
+      "DELETE_ASSIGNMENTS": "Ta bort {count} tilldelning(ar)?",
+      "DELETE_ALL_ASSIGNMENTS": "Ta bort alla {count} tilldelning(ar) som matchar det aktuella filtret?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Exportera priser",
+      "PRICES_SUBTITLE": "Exportera priser till en JSON- eller CSV-fil",
+      "PRICELISTS_TITLE": "Exportera prislistor",
+      "PRICELISTS_SUBTITLE": "Exportera prislistan till en JSON- eller CSV-fil",
+      "ASSIGNMENTS_TITLE": "Exportera prislistetilldelningar",
+      "ASSIGNMENTS_SUBTITLE": "Exportera prislistetilldelningen till en JSON- eller CSV-fil",
+      "FILTER": {
+        "currencies": "Valutor",
+        "pricelistIds": "Prislistor",
+        "productIds": "Produkter",
+        "catalogIds": "Kataloger",
+        "modifiedSince": "Ändrad sedan"
+      }
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Prezzi"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Aggiorna",
+      "ADD": "Aggiungi",
+      "DELETE": "Elimina",
+      "DELETE_ALL": "Elimina tutto",
+      "DELETE_FILTERED": "Elimina filtrati",
+      "SAVE": "Salva",
+      "CREATE": "Crea",
+      "RESET": "Reimposta",
+      "ASSIGNMENTS": "Assegnazioni",
+      "ADD_SELECTED": "Aggiungi selezionati",
+      "EXPORT": "Esporta"
+    },
+    "PRICELISTS": {
+      "NEW": "Nuova lista dei prezzi",
+      "EMPTY": "Nessuna lista dei prezzi",
+      "COLUMNS": {
+        "NAME": "Nome",
+        "CURRENCY": "Valuta",
+        "DESCRIPTION": "Descrizione",
+        "MODIFIED": "Ultima modifica"
+      },
+      "FIELDS": {
+        "NAME": "Nome",
+        "CURRENCY": "Valuta",
+        "DESCRIPTION": "Descrizione"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Inserisci il nome della lista dei prezzi",
+        "CURRENCY": "Seleziona valuta",
+        "DESCRIPTION": "Inserisci descrizione"
+      },
+      "WIDGETS": {
+        "PRICES": "Prezzi",
+        "ASSIGNMENTS": "Assegnazioni"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: prezzi",
+      "EMPTY": "Nessun prezzo in questa lista dei prezzi",
+      "NO_PRODUCT": "Prodotto non trovato",
+      "COLUMNS": {
+        "IMAGE": "Img",
+        "NAME": "Prodotto",
+        "CODE": "SKU",
+        "PRICES": "Prezzi",
+        "RANGE": "Fascia di prezzo"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "Nessun prezzo",
+      "ADD": "Aggiungi prezzo",
+      "COLUMNS": {
+        "PRICELIST": "Lista dei prezzi",
+        "CURRENCY": "Valuta",
+        "CATALOG": "Catalogo",
+        "STORE": "Negozio",
+        "LIST": "Prezzo di listino",
+        "SALE": "Prezzo di vendita",
+        "MIN_QTY": "Quantità minima",
+        "START": "Data di inizio",
+        "END": "Data di fine",
+        "MODIFIED": "Ultima modifica"
+      },
+      "SELECT_PRICELIST": "Lista dei prezzi per un nuovo prezzo",
+      "ITEM_TITLE": "Prezzi: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Seleziona prodotti",
+      "SEARCH": "Cerca prodotti",
+      "COLUMNS": {
+        "IMAGE": "Img",
+        "NAME": "Nome",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Assegnazioni delle liste dei prezzi",
+      "NEW": "Nuova assegnazione",
+      "EMPTY": "Nessuna assegnazione",
+      "COLUMNS": {
+        "NAME": "Nome",
+        "CATALOG": "Catalogo",
+        "STORE": "Negozio",
+        "PRICELIST": "Lista dei prezzi",
+        "CURRENCY": "Valuta",
+        "PRIORITY": "Priorità",
+        "START": "Attivazione",
+        "END": "Scadenza",
+        "MODIFIED": "Ultima modifica",
+        "MODIFIED_BY": "Modificato da"
+      },
+      "FIELDS": {
+        "NAME": "Nome dell'assegnazione",
+        "PRICELIST": "Lista dei prezzi",
+        "STORE": "Negozio",
+        "CATALOG": "Catalogo",
+        "PRIORITY": "Priorità",
+        "PRIORITY_HINT": "Se due assegnazioni corrispondono, prevale quella con priorità più alta",
+        "DESCRIPTION": "Descrizione",
+        "START": "Data di attivazione",
+        "START_HINT": "L'assegnazione è attiva a partire da questa data",
+        "END": "Data di scadenza",
+        "END_HINT": "L'assegnazione non è più attiva dopo questa data",
+        "TARGET_HINT": "Seleziona un negozio o un catalogo"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Inserisci il nome dell'assegnazione",
+        "PRICELIST": "Seleziona lista dei prezzi",
+        "STORE": "Seleziona negozio",
+        "CATALOG": "Seleziona catalogo",
+        "DESCRIPTION": "Inserisci descrizione"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Clienti ammissibili",
+      "IF": "Se",
+      "OF_THESE": "di queste condizioni sono soddisfatte",
+      "ALL": "tutte",
+      "ANY": "una qualsiasi",
+      "ADD": "Aggiungi condizione",
+      "NONE": "Nessuna condizione: l'assegnazione si applica a tutti i clienti",
+      "VALUE": "Valore",
+      "REMOVE": "Rimuovi",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Il cliente ha cercato ... nel negozio",
+        "ConditionLanguageIs": "La lingua dell'utente è ...",
+        "ConditionAgeIs": "L'età del cliente è ...",
+        "ConditionGenderIs": "Il genere del cliente è ...",
+        "UserGroupsContainsCondition": "Il gruppo utenti contiene ...",
+        "ConditionGeoTimeZone": "Fuso orario",
+        "ConditionGeoZipCode": "CAP/codice postale",
+        "ConditionGeoCity": "Città",
+        "ConditionGeoCountry": "Paese",
+        "ConditionGeoState": "Regione/stato/provincia"
+      },
+      "OPS": {
+        "IsMatching": "esattamente",
+        "IsNotMatching": "qualsiasi cosa tranne",
+        "IsGreaterThan": "maggiore di",
+        "IsGreaterThanOrEqual": "maggiore o uguale a",
+        "IsLessThan": "minore di",
+        "IsLessThanOrEqual": "minore o uguale a",
+        "AtLeast": "almeno",
+        "Contains": "contiene",
+        "NotContains": "non contiene",
+        "Matching": "è esattamente",
+        "NotMatching": "è qualsiasi cosa tranne"
+      },
+      "GENDERS": {
+        "female": "femminile",
+        "male": "maschile"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Prezzi"
+    },
+    "VALIDATION": {
+      "LIST": "Il prezzo di listino è obbligatorio e non può essere negativo",
+      "SALE": "Il prezzo di vendita non può superare il prezzo di listino",
+      "QTY": "La quantità minima deve essere maggiore di 0",
+      "QTY_UNIQUE": "La quantità minima deve essere univoca",
+      "SINGLE_ITEM": "È richiesto almeno un prezzo con quantità minima 1",
+      "ASSIGNMENT_TARGET": "Seleziona un negozio o un catalogo"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Ci sono modifiche non salvate. Chiudere comunque?",
+      "DELETE_PRICELISTS": "Eliminare {count} liste dei prezzi?",
+      "DELETE_PRODUCT_PRICES": "Eliminare tutti i prezzi di {count} prodotti da questa lista dei prezzi?",
+      "DELETE_PRICES": "Eliminare {count} prezzi?",
+      "DELETE_ASSIGNMENTS": "Eliminare {count} assegnazioni?",
+      "DELETE_ALL_ASSIGNMENTS": "Eliminare tutte le {count} assegnazioni corrispondenti al filtro corrente?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Esporta prezzi",
+      "PRICES_SUBTITLE": "Esporta i prezzi in un file JSON o CSV",
+      "PRICELISTS_TITLE": "Esporta liste dei prezzi",
+      "PRICELISTS_SUBTITLE": "Esporta la lista dei prezzi in un file JSON o CSV",
+      "ASSIGNMENTS_TITLE": "Esporta assegnazioni dei prezzi",
+      "ASSIGNMENTS_SUBTITLE": "Esporta l'assegnazione dei prezzi in un file JSON o CSV",
+      "FILTER": {
+        "currencies": "Valute",
+        "pricelistIds": "Liste dei prezzi",
+        "productIds": "Prodotti",
+        "catalogIds": "Cataloghi",
+        "modifiedSince": "Modificato dal"
+      }
+    }
+  }
+}

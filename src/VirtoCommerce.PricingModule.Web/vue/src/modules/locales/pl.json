@@ -1,0 +1,195 @@
+{
+  "PRICING": {
+    "MENU": {
+      "TITLE": "Cennik"
+    },
+    "TOOLBAR": {
+      "REFRESH": "Odśwież",
+      "ADD": "Dodaj",
+      "DELETE": "Usuń",
+      "DELETE_ALL": "Usuń wszystko",
+      "DELETE_FILTERED": "Usuń przefiltrowane",
+      "SAVE": "Zapisz",
+      "CREATE": "Utwórz",
+      "RESET": "Resetuj",
+      "ASSIGNMENTS": "Przypisania",
+      "ADD_SELECTED": "Dodaj wybrane",
+      "EXPORT": "Eksportuj"
+    },
+    "PRICELISTS": {
+      "NEW": "Nowa lista cen",
+      "EMPTY": "Brak list cen",
+      "COLUMNS": {
+        "NAME": "Nazwa",
+        "CURRENCY": "Waluta",
+        "DESCRIPTION": "Opis",
+        "MODIFIED": "Ostatnia modyfikacja"
+      },
+      "FIELDS": {
+        "NAME": "Nazwa",
+        "CURRENCY": "Waluta",
+        "DESCRIPTION": "Opis"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Wpisz nazwę listy cen",
+        "CURRENCY": "Wybierz walutę",
+        "DESCRIPTION": "Wpisz opis"
+      },
+      "WIDGETS": {
+        "PRICES": "Ceny",
+        "ASSIGNMENTS": "Przypisania"
+      }
+    },
+    "PRODUCTS": {
+      "TITLE": "{name}: ceny",
+      "EMPTY": "Brak cen na tej liście cen",
+      "NO_PRODUCT": "Nie znaleziono produktu",
+      "COLUMNS": {
+        "IMAGE": "Obraz",
+        "NAME": "Produkt",
+        "CODE": "SKU",
+        "PRICES": "Ceny",
+        "RANGE": "Zakres cen"
+      }
+    },
+    "PRICES": {
+      "EMPTY": "Brak cen",
+      "ADD": "Dodaj cenę",
+      "COLUMNS": {
+        "PRICELIST": "Lista cen",
+        "CURRENCY": "Waluta",
+        "CATALOG": "Katalog",
+        "STORE": "Sklep",
+        "LIST": "Cena katalogowa",
+        "SALE": "Cena sprzedaży",
+        "MIN_QTY": "Minimalna ilość",
+        "START": "Data rozpoczęcia",
+        "END": "Data zakończenia",
+        "MODIFIED": "Ostatnia modyfikacja"
+      },
+      "SELECT_PRICELIST": "Lista cen dla nowej ceny",
+      "ITEM_TITLE": "Ceny: {name}"
+    },
+    "PICKER": {
+      "TITLE": "Wybierz produkty",
+      "SEARCH": "Szukaj produktów",
+      "COLUMNS": {
+        "IMAGE": "Obraz",
+        "NAME": "Nazwa",
+        "CODE": "SKU"
+      }
+    },
+    "ASSIGNMENTS": {
+      "TITLE": "Przypisania list cen",
+      "NEW": "Nowe przypisanie",
+      "EMPTY": "Brak przypisań",
+      "COLUMNS": {
+        "NAME": "Nazwa",
+        "CATALOG": "Katalog",
+        "STORE": "Sklep",
+        "PRICELIST": "Lista cen",
+        "CURRENCY": "Waluta",
+        "PRIORITY": "Priorytet",
+        "START": "Aktywacja",
+        "END": "Wygaśnięcie",
+        "MODIFIED": "Ostatnia modyfikacja",
+        "MODIFIED_BY": "Zmodyfikowany przez"
+      },
+      "FIELDS": {
+        "NAME": "Nazwa przypisania",
+        "PRICELIST": "Lista cen",
+        "STORE": "Sklep",
+        "CATALOG": "Katalog",
+        "PRIORITY": "Priorytet",
+        "PRIORITY_HINT": "Jeśli pasują dwa przypisania, obowiązuje to z wyższym priorytetem",
+        "DESCRIPTION": "Opis",
+        "START": "Data aktywacji",
+        "START_HINT": "Przypisanie jest aktywne od tej daty",
+        "END": "Data wygaśnięcia",
+        "END_HINT": "Przypisanie jest nieaktywne po tej dacie",
+        "TARGET_HINT": "Wybierz sklep albo katalog"
+      },
+      "PLACEHOLDERS": {
+        "NAME": "Wpisz nazwę przypisania",
+        "PRICELIST": "Wybierz listę cen",
+        "STORE": "Wybierz sklep",
+        "CATALOG": "Wybierz katalog",
+        "DESCRIPTION": "Wpisz opis"
+      }
+    },
+    "CONDITIONS": {
+      "TITLE": "Uprawnieni kupujący",
+      "IF": "Jeśli",
+      "OF_THESE": "z tych warunków jest spełnionych",
+      "ALL": "wszystkie",
+      "ANY": "dowolny",
+      "ADD": "Dodaj warunek",
+      "NONE": "Brak warunków: przypisanie dotyczy wszystkich kupujących",
+      "VALUE": "Wartość",
+      "REMOVE": "Usuń",
+      "TYPES": {
+        "ConditionStoreSearchedPhrase": "Kupujący wyszukał ... w sklepie",
+        "ConditionLanguageIs": "Język użytkownika to ...",
+        "ConditionAgeIs": "Wiek kupującego to ...",
+        "ConditionGenderIs": "Płeć kupującego to ...",
+        "UserGroupsContainsCondition": "Grupa użytkowników zawiera ...",
+        "ConditionGeoTimeZone": "Strefa czasowa",
+        "ConditionGeoZipCode": "Kod pocztowy",
+        "ConditionGeoCity": "Miasto",
+        "ConditionGeoCountry": "Kraj",
+        "ConditionGeoState": "Region/stan/prowincja"
+      },
+      "OPS": {
+        "IsMatching": "dokładnie",
+        "IsNotMatching": "wszystko oprócz",
+        "IsGreaterThan": "większy niż",
+        "IsGreaterThanOrEqual": "większy lub równy",
+        "IsLessThan": "mniejszy niż",
+        "IsLessThanOrEqual": "mniejszy lub równy",
+        "AtLeast": "co najmniej",
+        "Contains": "zawiera",
+        "NotContains": "nie zawiera",
+        "Matching": "jest dokładnie",
+        "NotMatching": "jest czymkolwiek oprócz"
+      },
+      "GENDERS": {
+        "female": "kobieta",
+        "male": "mężczyzna"
+      }
+    },
+    "WIDGETS": {
+      "PRICES": "Ceny"
+    },
+    "VALIDATION": {
+      "LIST": "Cena katalogowa jest wymagana i nie może być ujemna",
+      "SALE": "Cena sprzedaży nie może przekraczać ceny katalogowej",
+      "QTY": "Minimalna ilość musi być większa niż 0",
+      "QTY_UNIQUE": "Minimalna ilość musi być unikalna",
+      "SINGLE_ITEM": "Wymagana jest co najmniej jedna cena z minimalną ilością 1",
+      "ASSIGNMENT_TARGET": "Wybierz sklep albo katalog"
+    },
+    "ALERTS": {
+      "CLOSE_CONFIRMATION": "Masz niezapisane zmiany. Zamknąć mimo to?",
+      "DELETE_PRICELISTS": "Usunąć listy cen ({count})?",
+      "DELETE_PRODUCT_PRICES": "Usunąć z tej listy cen wszystkie ceny produktów ({count})?",
+      "DELETE_PRICES": "Usunąć ceny ({count})?",
+      "DELETE_ASSIGNMENTS": "Usunąć przypisania ({count})?",
+      "DELETE_ALL_ASSIGNMENTS": "Usunąć wszystkie przypisania pasujące do bieżącego filtra ({count})?"
+    },
+    "EXPORT": {
+      "PRICES_TITLE": "Eksportuj ceny",
+      "PRICES_SUBTITLE": "Eksportuj ceny do pliku JSON lub CSV",
+      "PRICELISTS_TITLE": "Eksportuj listy cen",
+      "PRICELISTS_SUBTITLE": "Eksportuj listę cen do pliku JSON lub CSV",
+      "ASSIGNMENTS_TITLE": "Eksportuj przypisania cen",
+      "ASSIGNMENTS_SUBTITLE": "Eksportuj przypisanie cen do pliku JSON lub CSV",
+      "FILTER": {
+        "currencies": "Waluty",
+        "pricelistIds": "Listy cen",
+        "productIds": "Produkty",
+        "catalogIds": "Katalogi",
+        "modifiedSince": "Zmodyfikowano od"
+      }
+    }
+  }
+}
