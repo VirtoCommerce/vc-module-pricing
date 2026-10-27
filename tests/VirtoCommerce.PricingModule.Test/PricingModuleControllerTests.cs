@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.CatalogModule.Core.Services;
@@ -10,6 +11,7 @@ using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.PricingModule.Core.Model;
 using VirtoCommerce.PricingModule.Core.Model.Search;
 using VirtoCommerce.PricingModule.Core.Services;
+using VirtoCommerce.PricingModule.Data.Validators;
 using VirtoCommerce.PricingModule.Web.Controllers.Api;
 using Xunit;
 
@@ -55,7 +57,8 @@ namespace VirtoCommerce.PricingModule.Test
                 new Mock<IItemService>().Object,
                 new Mock<IMergedPriceSearchService>().Object,
                 new Mock<IBlobUrlResolver>().Object,
-                new Mock<AbstractValidator<Pricelist>>().Object);
+                new Mock<AbstractValidator<Pricelist>>().Object,
+                new ProductPriceValidator(new PriceValidator()));
         }
 
         [Fact]
@@ -144,13 +147,76 @@ namespace VirtoCommerce.PricingModule.Test
             _searchCriteria[0].ProductIds.Should().BeEquivalentTo([(string)null]);
         }
 
-        private static Price CreatePrice(string id, string productId, decimal list)
+        [Theory]
+        [InlineData(-10, null, 1, "[0].Prices[0].List")]
+        [InlineData(0, null, 1, "[0].Prices[0].List")]
+        [InlineData(10, -5, 1, "[0].Prices[0].Sale")]
+        [InlineData(10, 20, 1, "[0].Prices[0].Sale")]
+        [InlineData(10, null, 0, "[0].Prices[0].MinQuantity")]
+        public async Task UpdateProductPrices_InvalidPrice_ReturnsBadRequestAndDoesNotSave(int list, int? sale, int minQuantity, string expectedErrorKey)
+        {
+            //Arrange
+            var price = CreatePrice(id: null, productId: ProductId1, list: list, sale: sale, minQuantity: minQuantity);
+            var productPrice = CreateProductPrice(ProductId1, price);
+
+            //Act
+            var result = await _controller.UpdateProductPrices(productPrice);
+
+            //Assert
+            result.Should().BeOfType<BadRequestObjectResult>()
+                .Which.Value.Should().BeOfType<SerializableError>()
+                .Which.Keys.Should().BeEquivalentTo([expectedErrorKey]);
+            _savedPrices.Should().BeEmpty();
+            _searchCriteria.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task UpdateProductsPrices_InvalidPriceInSecondProduct_ReportsItsIndex()
+        {
+            //Arrange
+            var validProductPrice = CreateProductPrice(ProductId1, CreatePrice(id: null, productId: null, list: 10m));
+            var invalidProductPrice = CreateProductPrice(ProductId2,
+                CreatePrice(id: null, productId: null, list: 10m, minQuantity: 5),
+                CreatePrice(id: null, productId: null, list: -1m));
+
+            //Act
+            var result = await _controller.UpdateProductsPrices([validProductPrice, invalidProductPrice]);
+
+            //Assert
+            result.Should().BeOfType<BadRequestObjectResult>()
+                .Which.Value.Should().BeOfType<SerializableError>()
+                .Which.Keys.Should().BeEquivalentTo(["[1].Prices[1].List"]);
+            _savedPrices.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData(10, null)]
+        [InlineData(10, 0)]
+        [InlineData(10, 10)]
+        [InlineData(0.01, 0)]
+        public async Task UpdateProductPrices_ValidPrice_Saves(double list, int? sale)
+        {
+            //Arrange
+            var price = CreatePrice(id: null, productId: ProductId1, list: (decimal)list, sale: sale);
+            var productPrice = CreateProductPrice(ProductId1, price);
+
+            //Act
+            var result = await _controller.UpdateProductPrices(productPrice);
+
+            //Assert
+            result.Should().BeOfType<NoContentResult>();
+            _savedPrices.Should().ContainSingle();
+        }
+
+        private static Price CreatePrice(string id, string productId, decimal list, decimal? sale = null, int minQuantity = 1)
         {
             var price = AbstractTypeFactory<Price>.TryCreateInstance();
             price.Id = id;
             price.ProductId = productId;
             price.PricelistId = PricelistId;
             price.List = list;
+            price.Sale = sale;
+            price.MinQuantity = minQuantity;
 
             return price;
         }

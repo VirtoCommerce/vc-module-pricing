@@ -99,6 +99,8 @@ namespace VirtoCommerce.PricingModule.Web
             serviceCollection.AddTransient<ObjectSettingEntryChangedEventHandler>();
             serviceCollection.AddTransient<AbstractValidator<IEnumerable<PricelistAssignment>>, PricelistAssignmentsValidator>();
             serviceCollection.AddTransient<AbstractValidator<Pricelist>, PriceListValidator>();
+            serviceCollection.AddTransient<AbstractValidator<Price>, PriceValidator>();
+            serviceCollection.AddTransient<AbstractValidator<ProductPrice>, ProductPriceValidator>();
             serviceCollection.AddTransient<IMergedPriceSearchService, MergedPriceSearchService>();
             serviceCollection.AddTransient<ModuleConfigurator>();
             serviceCollection.AddTransient<IPricingExportPagedDataSourceFactory, PricingExportPagedDataSourceFactory>();
