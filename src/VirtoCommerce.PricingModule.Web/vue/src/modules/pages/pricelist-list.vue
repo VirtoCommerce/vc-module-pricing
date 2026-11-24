@@ -15,6 +15,7 @@
       :total-count="totalCount"
       :pagination="pagination"
       :searchable="true"
+      search-bar
       state-key="PRICING_PRICELISTS"
       :active-item-id="activeItemId"
       :show-all-columns="!activeItemId"
@@ -65,6 +66,7 @@ import { VcBlade, VcColumn, VcDataTable } from "@vc-shell/framework/ui";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { exportOptions, getCurrencies, useExportAvailable, usePricingClient } from "../api";
+import { useListFilters } from "../composables/useListFilters";
 import type { Pricelist } from "../../api_client/virtocommerce.pricing";
 
 defineBlade({
@@ -93,23 +95,14 @@ const { searchValue } = useTableSearch({ stateKey: "PRICING_PRICELISTS" });
 const pagination = useDataTablePagination({ stateKey: "PRICING_PRICELISTS", pageSize: PAGE_SIZE, totalCount });
 
 // currency filter (legacy: the currencies of an export saved filter)
-const currencies = ref<string[]>([]);
-const currencyFilter = ref<string[]>();
-getCurrencies().then((x) => (currencies.value = x.map((c) => c.code)));
-const globalFilters = computed(() => [
-  {
-    id: "currencies",
-    label: t("PRICING.PRICELISTS.COLUMNS.CURRENCY"),
-    filter: { options: currencies.value.map((c) => ({ value: c, label: c })), multiple: true },
-  },
-]);
-function onFilter(event: { filters: Record<string, unknown> }) {
-  const value = event.filters.currencies;
-  currencyFilter.value = value ? ([] as string[]).concat(value as string[]) : undefined;
-  // back to page 1 reloads through the paging watcher
-  if (pagination.skip) pagination.setPage(1);
-  else load();
-}
+const currencies = ref<Record<string, string>>({});
+getCurrencies().then((x) => (currencies.value = Object.fromEntries(x.map((c) => [c.code, c.code]))));
+const { values: filters, globalFilters, onFilter } = useListFilters({
+  filters: [{ id: "currencies", label: t("PRICING.PRICELISTS.COLUMNS.CURRENCY"), options: currencies }],
+  pagination,
+  load: () => load(),
+});
+const currencyFilter = computed(() => filters.value.currencies);
 
 const { loading, action: load } = useAsync(async () => {
   const r = await (await client()).searchPricelists(
