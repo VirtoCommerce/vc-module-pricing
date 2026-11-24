@@ -41,6 +41,7 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
 
             result.PriceListIds = _dataQuery.PriceListIds;
             result.CatalogIds = _dataQuery.CatalogIds;
+            result.StoreIds = _dataQuery.StoreIds;
             result.Keyword = _dataQuery.Keyword;
 
             return result;

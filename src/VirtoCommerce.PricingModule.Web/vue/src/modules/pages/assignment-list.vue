@@ -15,12 +15,15 @@
       :total-count="totalCount"
       :pagination="pagination"
       :searchable="true"
+      search-bar
       state-key="PRICING_ASSIGNMENTS"
       :active-item-id="activeItemId"
       :show-all-columns="!activeItemId"
+      :global-filters="globalFilters"
       :empty-state="{ icon: 'lucide-anchor', title: $t('PRICING.ASSIGNMENTS.EMPTY') }"
       @row-click="(e: { data: PricelistAssignment }) => openDetails(e.data)"
       @pagination-click="pagination.goToPage"
+      @filter="onFilter"
     >
       <VcColumn
         id="name"
@@ -94,6 +97,7 @@ import { VcBlade, VcColumn, VcDataTable } from "@vc-shell/framework/ui";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { exportOptions, loadNames, useExportAvailable, usePricingClient } from "../api";
+import { useListFilters } from "../composables/useListFilters";
 import type { Pricelist, PricelistAssignment } from "../../api_client/virtocommerce.pricing";
 
 defineBlade({ url: "/pricing-assignments", name: "PricingAssignmentList", permissions: ["pricing:read"] });
@@ -125,9 +129,20 @@ const pagination = useDataTablePagination({ stateKey: "PRICING_ASSIGNMENTS", pag
 
 const priceListIds = computed(() => (param.value ? [param.value] : undefined));
 
+// which assignments target a store or a catalog: the store and catalog filters
+const { values: filters, globalFilters, onFilter } = useListFilters({
+  filters: [
+    { id: "storeIds", label: t("PRICING.ASSIGNMENTS.COLUMNS.STORE"), options: stores },
+    { id: "catalogIds", label: t("PRICING.ASSIGNMENTS.COLUMNS.CATALOG"), options: catalogs },
+  ],
+  pagination,
+  load: () => load(),
+});
+const isFiltered = computed(() => !!searchValue.value || !!filters.value.storeIds || !!filters.value.catalogIds);
+
 const { loading, action: load } = useAsync(async () => {
   const r = await (await client()).searchPricelistAssignments(
-    undefined, undefined, undefined, priceListIds.value, undefined, undefined, undefined, undefined,
+    undefined, filters.value.catalogIds, filters.value.storeIds, priceListIds.value, undefined, undefined, undefined, undefined,
     searchValue.value || undefined, undefined, undefined, sortExpression.value, undefined, pagination.skip, PAGE_SIZE,
   );
   items.value = r.results ?? [];
@@ -178,7 +193,7 @@ const bladeToolbar = ref<IBladeToolbar[]>([
   },
   {
     id: "deleteAll",
-    title: computed(() => t(searchValue.value ? "PRICING.TOOLBAR.DELETE_FILTERED" : "PRICING.TOOLBAR.DELETE_ALL")),
+    title: computed(() => t(isFiltered.value ? "PRICING.TOOLBAR.DELETE_FILTERED" : "PRICING.TOOLBAR.DELETE_ALL")),
     icon: "lucide-trash",
     permissions: "pricing:delete",
     disabled: computed(() => !totalCount.value),
@@ -189,7 +204,7 @@ const bladeToolbar = ref<IBladeToolbar[]>([
       if (activeItemId.value) return; // the open record kept its unsaved edits: nothing deleted
       // the server deletes one search page (default take 20): ask for the whole confirmed count
       await (await client()).deleteFilteredAssignments(
-        undefined, undefined, undefined, priceListIds.value, undefined, undefined, undefined, undefined, searchValue.value || undefined,
+        undefined, filters.value.catalogIds, filters.value.storeIds, priceListIds.value, undefined, undefined, undefined, undefined, searchValue.value || undefined,
         undefined, undefined, undefined, undefined, 0, count,
       );
       selection.value = [];
@@ -209,12 +224,14 @@ const bladeToolbar = ref<IBladeToolbar[]>([
           "VirtoCommerce.PricingModule.Data.ExportImport.ExportablePricelistAssignment",
           {
             exportTypeName: "PricelistAssignmentExportDataQuery",
-            // nothing selected: everything the current search (and price list) match
+            // nothing selected: everything the current search, filters (and price list) match
             isAllSelected: !selection.value.length,
             objectIds: selection.value.map((x) => x.id!),
             keyword: searchValue.value || undefined,
             sort: sortExpression.value,
             pricelistIds: priceListIds.value ?? [],
+            catalogIds: filters.value.catalogIds,
+            storeIds: filters.value.storeIds,
           },
           selection.value.length || totalCount.value,
           "PRICING.EXPORT.ASSIGNMENTS_TITLE",

@@ -6,5 +6,6 @@ namespace VirtoCommerce.PricingModule.Data.ExportImport
     {
         public string[] PriceListIds { get; set; }
         public string[] CatalogIds { get; set; }
+        public string[] StoreIds { get; set; }
     }
 }
